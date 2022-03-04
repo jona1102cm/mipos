@@ -117,6 +117,16 @@
                     <i class="voyager-puzzle"></i> <span>Volver</span>
                 </a>
                 @break
+            @case('cajas')
+                <a href="{{ url('admin/sucursales') }}" class="btn btn-default btn-add-new" title="">
+                    <i class="voyager-helm"></i> <span>Sucursales</span>
+                </a>
+                @break
+            @case('sucursales')
+                <a href="{{ url('admin/cajas') }}" class="btn btn-default btn-add-new" title="">
+                    <i class="voyager-helm"></i> <span>Volver</span>
+                </a>
+                @break
             @default
             @foreach($actions as $action)
                 @if (method_exists($action, 'massAction'))
@@ -129,6 +139,7 @@
 @stop
 
 @section('content')
+
     <div class="page-content browse container-fluid">
         @include('voyager::alerts')
         <div class="row">
@@ -136,120 +147,91 @@
                 <div class="panel panel-bordered">
                     <div class="panel-body">
                         @if ($isServerSide)
+                            @switch($dataType->getTranslatedAttribute('slug'))
+                                @case('ventas')
+                                        <div id="search-input">
+                                            <div class="col-4">
+                                                <select id="search_key" name="key" style="width: 200px" class="js-example-basic-single">
+                                                        <option value=""> ---- Elige un Filtro ----</option>
+                                                        <option value="cliente_id"> Cliente </option>
+                                                        <option value="status_id"> Estado</option>
+                                                        <option value="pago_id"> Pago </option>
+                                                        <option value="register_id"> Cajero </option>
+                                                        <option value="cupon_id"> Cupón </option>
+                                                        <option value="option_id"> Tipo Entrega </option>
+                                                </select>
+                                            </div>
+                                            <div class="col-6">
+                                                <select id="filter" name="filter"  readonly>
+                                                        <option value="equals"> = </option>
+                                                </select>
+                                                <select class="js-example-basic-single" id="s" name="s" style="width: 350px" onchange="this.form.submit()">
+                                                </select>
+                                                <!-- <a href="https://pos.loginweb.dev/admin/ventas" class="btn btn-sm btn-primary">Volver</a> -->
 
-                        @switch($dataType->getTranslatedAttribute('slug'))
-                            @case('ventas')
-                                    <div id="search-input">
-                                        <div class="col-4">
-                                            <select id="search_key" name="key" style="width: 200px" class="js-example-basic-single">
-                                                    <option value=""> ---- Elige un Filtro ----</option>
-                                                    <option value="cliente_id"> Cliente </option>
-                                                    <option value="status_id"> Estado</option>
-                                                    <option value="pago_id"> Pago </option>
-                                                    <option value="register_id"> Cajero </option>
-                                                    <option value="cupon_id"> Cupón </option>
-                                                    <option value="option_id"> Tipo Entrega </option>
-                                            </select>
+                                            </div>
                                         </div>
-                                        <div class="col-6">
-                                            <select id="filter" name="filter"  readonly>
-                                                    <option value="equals"> = </option>
-                                            </select>
-                                            <select class="js-example-basic-single" id="s" name="s" style="width: 350px" onchange="this.form.submit()">
-                                            </select>
-                                            <!-- <a href="https://pos.loginweb.dev/admin/ventas" class="btn btn-sm btn-primary">Volver</a> -->
-
-                                        </div>
-                                    </div>
-                                @break
-                        
-                            @case('productions')
+                                    @break
                             
-                                <!-- <form method="get" class="form-search"> -->
-                                    <div id="search-input">
-                                        <div class="col-6">
-                                            <select id="search_key" name="key" style="width: 200px">
-                                                    <option value=""> ---- Elige un Filtro ----</option>
-                                                    <option value="production_id"> Producción </option>
-
-                                            </select>
-                                        </div>
-                                        <div class="col-6">
-                                            <select id="filter" name="filter"  readonly>
-                                                    <option value="equals"> = </option>
-                                            </select>
-                                            <select id="s" name="s" style="width: 500px" onchange="this.form.submit()">
-                                            </select>
-                                        </div>
-                                    </div>
-                                <!-- </form>  -->
+                                @case('productions')
                                 
-                                @break
+                                    <!-- <form method="get" class="form-search"> -->
+                                        <div id="search-input">
+                                            <div class="col-6">
+                                                <select id="search_key" name="key" style="width: 200px">
+                                                        <option value=""> ---- Elige un Filtro ----</option>
+                                                        <option value="production_id"> Producción </option>
 
-                            @case('detalle-ventas')
-                            <!-- <div class="group-control col-sm-6"> -->
+                                                </select>
+                                            </div>
+                                            <div class="col-6">
+                                                <select id="filter" name="filter"  readonly>
+                                                        <option value="equals"> = </option>
+                                                </select>
+                                                <select id="s" name="s" style="width: 500px" onchange="this.form.submit()">
+                                                </select>
+                                            </div>
+                                        </div>
+                                    <!-- </form>  -->
+                                    
+                                    @break
 
-                                @php
-                                    $venta =  App\Venta::find($_GET['s']);
-                                @endphp
-                                <!-- <div class="form-group"> -->
-                                <pre> <code>{{ $venta }}</code></pre>
-                                <!-- </div> -->
-                                
-                                <!-- <table class="table table-responsive table-bordered">    
-                                    <thead>
-                                        <tr>
-                                            <th>Llave</th>
-                                            <th>Valor</th>
-                                        </tr>
-                                    </thead>    
-                                    <tbody>
-                                        <tr>
-                                            <td>ID</td>
-                                            <td>{{ $venta->id }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Cliente</td>
-                                            <td>{{ $venta->cliente_id }}</td>
-                                        </tr>
-                                       
-                                    </tbody>
-                                </table> -->
-                            <!-- </div> -->
-                                <!-- <hr> -->
-                                @break
+                                @case('detalle-ventas')
+                                    @php
+                                        $venta =  App\Venta::find($_GET['s']);
+                                    @endphp
+                                    <pre> <code>{{ $venta }}</code></pre>
+                                    @break
                                 @default
-                                
-                                <form method="get" class="form-search">
-                                    <div id="search-input">
-                                        <div class="col-2">
-                                            <select id="search_key" name="key">
-                                                @foreach($searchNames as $key => $name)
-                                                    <option value="{{ $key }}" @if($search->key == $key || (empty($search->key) && $key == $defaultSearchKey)) selected @endif>{{ $name }}</option>
-                                                @endforeach
-                                            </select>
+                                    <form method="get" class="form-search">
+                                        <div id="search-input">
+                                            <div class="col-2">
+                                                <select id="search_key" name="key">
+                                                    @foreach($searchNames as $key => $name)
+                                                        <option value="{{ $key }}" @if($search->key == $key || (empty($search->key) && $key == $defaultSearchKey)) selected @endif>{{ $name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-2">
+                                                <select id="filter" name="filter">
+                                                    <option value="contains" @if($search->filter == "contains") selected @endif>contains</option>
+                                                    <option value="equals" @if($search->filter == "equals") selected @endif>=</option>
+                                                </select>
+                                            </div>
+                                            <div class="input-group col-md-12">
+                                                <input type="text" class="form-control" placeholder="{{ __('voyager::generic.search') }}" name="s" value="{{ $search->value }}">
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-info btn-lg" type="submit">
+                                                        <i class="voyager-search"></i>
+                                                    </button>
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div class="col-2">
-                                            <select id="filter" name="filter">
-                                                <option value="contains" @if($search->filter == "contains") selected @endif>contains</option>
-                                                <option value="equals" @if($search->filter == "equals") selected @endif>=</option>
-                                            </select>
-                                        </div>
-                                        <div class="input-group col-md-12">
-                                            <input type="text" class="form-control" placeholder="{{ __('voyager::generic.search') }}" name="s" value="{{ $search->value }}">
-                                            <span class="input-group-btn">
-                                                <button class="btn btn-info btn-lg" type="submit">
-                                                    <i class="voyager-search"></i>
-                                                </button>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    @if (Request::has('sort_order') && Request::has('order_by'))
-                                        <input type="hidden" name="sort_order" value="{{ Request::get('sort_order') }}">
-                                        <input type="hidden" name="order_by" value="{{ Request::get('order_by') }}">
-                                    @endif
-                                </form>
-
+                                        @if (Request::has('sort_order') && Request::has('order_by'))
+                                            <input type="hidden" name="sort_order" value="{{ Request::get('sort_order') }}">
+                                            <input type="hidden" name="order_by" value="{{ Request::get('order_by') }}">
+                                        @endif
+                                    </form>
                             @endswitch
                         @endif
 
@@ -263,29 +245,30 @@
                                             </th>
                                         @endif
                                         @foreach($dataType->browseRows as $row)
-                                        <th>
-                                            @if ($isServerSide && in_array($row->field, $sortableColumns))
-                                                <a href="{{ $row->sortByUrl($orderBy, $sortOrder) }}">
-                                            @endif
-                                            {{ $row->getTranslatedAttribute('display_name') }}
-                                            @if ($isServerSide)
-                                                @if ($row->isCurrentSortField($orderBy))
-                                                    @if ($sortOrder == 'asc')
-                                                        <i class="voyager-angle-up pull-right"></i>
-                                                    @else
-                                                        <i class="voyager-angle-down pull-right"></i>
-                                                    @endif
+                                            <th>
+                                                @if ($isServerSide && in_array($row->field, $sortableColumns))
+                                                    <a href="{{ $row->sortByUrl($orderBy, $sortOrder) }}">
                                                 @endif
-                                                </a>
-                                            @endif
-                                        </th>
+                                                {{ $row->getTranslatedAttribute('display_name') }}
+                                                @if ($isServerSide)
+                                                    @if ($row->isCurrentSortField($orderBy))
+                                                        @if ($sortOrder == 'asc')
+                                                            <i class="voyager-angle-up pull-right"></i>
+                                                        @else
+                                                            <i class="voyager-angle-down pull-right"></i>
+                                                        @endif
+                                                    @endif
+                                                    </a>
+                                                @endif
+                                            </th>
                                         @endforeach
                                         <th class="actions text-right dt-not-orderable">{{ __('voyager::generic.actions') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                 
                                     @foreach($dataTypeContent as $data)
-
+                                       
                                         @switch($dataType->getTranslatedAttribute('slug'))
                                             @case('ventas')
                                                 @if($data->register_id == Auth::user()->id )
@@ -746,7 +729,7 @@
                                                     </tr>
                                                     
                                                 @endif
-                                                @break
+                                            @break
                                         
                                             @case('productions')
                                                 @if($data->user_id == Auth::user()->id )
@@ -1439,6 +1422,7 @@
                                                 </tr>
                                                 @break
                                             @default
+                                            
                                                 <tr>
                                                     @if($showCheckboxColumn)
                                                         <td>
@@ -1609,29 +1593,29 @@
                                 </tbody>
                             </table>
                         </div>
+ 
+                        @if ($isServerSide)
+                            <div class="pull-left">
+                                <div role="status" class="show-res" aria-live="polite">{{ trans_choice(
+                                    'voyager::generic.showing_entries', $dataTypeContent->total(), [
+                                        'from' => $dataTypeContent->firstItem(),
+                                        'to' => $dataTypeContent->lastItem(),
+                                        'all' => $dataTypeContent->total()
+                                    ]) }}</div>
+                            </div>
+                            <div class="pull-right"> 
+                                {{ $dataTypeContent->appends([
+                                    's' => $search->value,
+                                    'filter' => $search->filter,
+                                    'key' => $search->key,
+                                    'order_by' => $orderBy,
+                                    'sort_order' => $sortOrder,
+                                    'showSoftDeleted' => $showSoftDeleted,
+                                ])->links() }}
 
-                       
-                            @if ($isServerSide)
-                                <div class="pull-left">
-                                    <div role="status" class="show-res" aria-live="polite">{{ trans_choice(
-                                        'voyager::generic.showing_entries', $dataTypeContent->total(), [
-                                            'from' => $dataTypeContent->firstItem(),
-                                            'to' => $dataTypeContent->lastItem(),
-                                            'all' => $dataTypeContent->total()
-                                        ]) }}</div>
-                                </div>
-                                <div class="pull-right">
-                                    {{ $dataTypeContent->appends([
-                                        's' => $search->value,
-                                        'filter' => $search->filter,
-                                        'key' => $search->key,
-                                        'order_by' => $orderBy,
-                                        'sort_order' => $sortOrder,
-                                        'showSoftDeleted' => $showSoftDeleted,
-                                    ])->links() }}
-                                </div>
-                            @endif
-                          
+                                {{-- {{ $dataTypeContent->links() }} --}}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -1674,16 +1658,14 @@
 @stop
 
 
+
+<!-- ---------------------CSS-------------------  -->
+<!-- ---------------------CSS-------------------  -->
 @section('css')
     @if(!$dataType->server_side && config('dashboard.data_tables.responsive'))
         <link rel="stylesheet" href="{{ voyager_asset('lib/css/responsive.dataTables.min.css') }}">
     @endif
 @stop
-
-
-
-<!-- ---------------------CSS-------------------  -->
-<!-- ---------------------CSS-------------------  -->
 
 @if(!$dataType->server_side && config('dashboard.data_tables.responsive'))
     <script src="{{ voyager_asset('lib/js/dataTables.responsive.min.js') }}"></script>
@@ -1692,9 +1674,11 @@
 <!-- ---------------------JS-------------------  -->
 <!-- ---------------------JS-------------------  -->
 @section('javascript')
-
+    @if(!$dataType->server_side && config('dashboard.data_tables.responsive'))
+    <script src="{{ voyager_asset('lib/js/dataTables.responsive.min.js') }}"></script>
+    @endif
     @php
-    $mislug =  $dataType->getTranslatedAttribute('slug');
+        $mislug =  $dataType->getTranslatedAttribute('slug');
     @endphp
     <script>
         $(document).ready(function () {
@@ -1771,140 +1755,140 @@
 
         @switch($mislug)
             @case('ventas')
-            $('#search_key').on('change', function() {
-                switch (this.value) {
-                    case 'cliente_id':
-                        $('#s').find('option').remove().end();
-                        $.ajax({
-                            url: "https://pos.loginweb.dev/api/pos/clientes",
-                            dataType: "json",
-                            success: function (response) {
+                $('#search_key').on('change', function() {
+                    switch (this.value) {
+                        case 'cliente_id':
+                            $('#s').find('option').remove().end();
+                            $.ajax({
+                                url: "https://pos.loginweb.dev/api/pos/clientes",
+                                dataType: "json",
+                                success: function (response) {
+                                    $('#s').append($('<option>', {
+                                        value: null,
+                                        text: 'Elige un Cliente'
+                                    }));
+                                    for (let index = 0; index < response.length; index++) {
+                                        $('#s').append($('<option>', {
+                                            value: response[index].id,
+                                            text: response[index].first_name +" "+ response[index].last_name  +" "+ response[index].ci_nit
+                                        }));
+                                    }
+                                }
+                            });
+
+                            break;
+                        case 'status_id':
+                            $('#s').find('option').remove().end();
+                            $.ajax({
+                                url: "https://lamarea.loginweb.dev/api/pos/estados",
+                                dataType: "json",
+                                success: function (response) {
+                                    $('#s').append($('<option>', {
+                                        value: null,
+                                        text: 'Elige un Estado'
+                                    }));
+                                    for (let index = 0; index < response.length; index++) {
+                                        $('#s').append($('<option>', {
+                                            value: response[index].id,
+                                            text: response[index].title
+                                        }));
+                                    }
+                                }
+                            });
+
+                            break                   
+                        case 'pago_id':
+                            $('#s').find('option').remove().end();
+                            $.ajax({
+                                url: "https://lamarea.loginweb.dev/api/pos/pagos",
+                                dataType: "json",
+                                success: function (response) {
+                                    $('#s').append($('<option>', {
+                                        value: null,
+                                        text: 'Elige un Tipo de Pago'
+                                    }));
+                                    for (let index = 0; index < response.length; index++) {
+                                        // const element = response[index];
+                                        $('#s').append($('<option>', {
+                                            value: response[index].id,
+                                            text: response[index].title
+                                        }));
+                                    }
+                                }
+                            });
+                            break
+                        case'register_id':
+                            $('#s').find('option').remove().end();
+                            $.ajax({
+                                url: "https://lamarea.loginweb.dev/api/pos/cajeros",
+                                dataType: "json",
+                                success: function (response) {
+                                    $('#s').append($('<option>', {
+                                        value: null,
+                                        text: 'Elige un Cajero'
+                                    }));
+                                    for (let index = 0; index < response.length; index++) {
+                                        // const element = response[index];
+                                        $('#s').append($('<option>', {
+                                            value: response[index].id,
+                                            text: response[index].name
+                                        }));
+                                    }
+                                }
+                            });
+                            break             
+                        case'cupon_id':
+                            $('#s').find('option').remove().end();
+                            $.ajax({
+                                url: "https://lamarea.loginweb.dev/api/pos/cupones",
+                                dataType: "json",
+                                success: function (response) {
+                                    $('#s').append($('<option>', {
+                                        value: null,
+                                        text: 'Elige un Cajero'
+                                    }));
+                                    for (let index = 0; index < response.length; index++) {
+                                        // const element = response[index];
+                                        $('#s').append($('<option>', {
+                                            value: response[index].id,
+                                            text: response[index].title
+                                        }));
+                                    }
+                                }
+                            });
+
+                            break
+                        case'option_id':
+                            $('#s').find('option').remove().end();
                                 $('#s').append($('<option>', {
                                     value: null,
-                                    text: 'Elige un Cliente'
+                                    text: 'Elige una Opción'
                                 }));
-                                for (let index = 0; index < response.length; index++) {
-                                    $('#s').append($('<option>', {
-                                        value: response[index].id,
-                                        text: response[index].first_name +" "+ response[index].last_name  +" "+ response[index].ci_nit
-                                    }));
-                                }
-                            }
-                        });
-
-                        break;
-                    case 'status_id':
-                        $('#s').find('option').remove().end();
-                        $.ajax({
-                            url: "https://lamarea.loginweb.dev/api/pos/estados",
-                            dataType: "json",
-                            success: function (response) {
                                 $('#s').append($('<option>', {
-                                    value: null,
-                                    text: 'Elige un Estado'
+                                    value: 'Mesa',
+                                    text: 'En Mesa'
                                 }));
-                                for (let index = 0; index < response.length; index++) {
-                                    $('#s').append($('<option>', {
-                                        value: response[index].id,
-                                        text: response[index].title
-                                    }));
-                                }
-                            }
-                        });
-
-                        break                   
-                    case 'pago_id':
-                        $('#s').find('option').remove().end();
-                        $.ajax({
-                            url: "https://lamarea.loginweb.dev/api/pos/pagos",
-                            dataType: "json",
-                            success: function (response) {
                                 $('#s').append($('<option>', {
-                                    value: null,
-                                    text: 'Elige un Tipo de Pago'
+                                    value: 'Delivery',
+                                    text: 'Delivery'
                                 }));
-                                for (let index = 0; index < response.length; index++) {
-                                    // const element = response[index];
-                                    $('#s').append($('<option>', {
-                                        value: response[index].id,
-                                        text: response[index].title
-                                    }));
-                                }
-                            }
-                        });
-                        break
-                    case'register_id':
-                        $('#s').find('option').remove().end();
-                        $.ajax({
-                            url: "https://lamarea.loginweb.dev/api/pos/cajeros",
-                            dataType: "json",
-                            success: function (response) {
                                 $('#s').append($('<option>', {
-                                    value: null,
-                                    text: 'Elige un Cajero'
+                                    value: 'Recoger',
+                                    text: 'Para Llevar'
                                 }));
-                                for (let index = 0; index < response.length; index++) {
-                                    // const element = response[index];
-                                    $('#s').append($('<option>', {
-                                        value: response[index].id,
-                                        text: response[index].name
-                                    }));
-                                }
-                            }
-                        });
-                        break             
-                    case'cupon_id':
-                        $('#s').find('option').remove().end();
-                        $.ajax({
-                            url: "https://lamarea.loginweb.dev/api/pos/cupones",
-                            dataType: "json",
-                            success: function (response) {
-                                $('#s').append($('<option>', {
-                                    value: null,
-                                    text: 'Elige un Cajero'
-                                }));
-                                for (let index = 0; index < response.length; index++) {
-                                    // const element = response[index];
-                                    $('#s').append($('<option>', {
-                                        value: response[index].id,
-                                        text: response[index].title
-                                    }));
-                                }
-                            }
-                        });
-
-                        break
-                    case'option_id':
-                        $('#s').find('option').remove().end();
-                            $('#s').append($('<option>', {
-                                value: null,
-                                text: 'Elige una Opción'
-                            }));
-                            $('#s').append($('<option>', {
-                                value: 'Mesa',
-                                text: 'En Mesa'
-                            }));
-                            $('#s').append($('<option>', {
-                                value: 'Delivery',
-                                text: 'Delivery'
-                            }));
-                            $('#s').append($('<option>', {
-                                value: 'Recoger',
-                                text: 'Para Llevar'
-                            }));
 
 
-                        break
-                    default:
-                        //Declaraciones ejecutadas cuando ninguno de los valores coincide con el valor de la expresión
-                        break
+                            break
+                        default:
+                            //Declaraciones ejecutadas cuando ninguno de los valores coincide con el valor de la expresión
+                            break
+                    }
+                });
+                function imprimir(){
+                    const queryString = window.location.search;
+                    const urlParams = new URLSearchParams(queryString);
+                    location.href = 'https://cerma.loginweb.dev/admin/afiliados/recepciones/imprimir?key='+urlParams.get('key')+'&s='+urlParams.get('s');
                 }
-            });
-            function imprimir(){
-                const queryString = window.location.search;
-                const urlParams = new URLSearchParams(queryString);
-                location.href = 'https://cerma.loginweb.dev/admin/afiliados/recepciones/imprimir?key='+urlParams.get('key')+'&s='+urlParams.get('s');
-            }
             
 
             @break

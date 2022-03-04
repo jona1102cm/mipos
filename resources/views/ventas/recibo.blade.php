@@ -74,19 +74,7 @@
                 <!-- consulta para saber si es factura o recibo -->
                 <td colspan="2" align="center">
                     <h2>TICKET # {{ $ventas->ticket }}</h2>
-                    @if($ventas->option_id==1)
-                    <span class="badge">MESA</span>
-                    @endif
-                    @if($ventas->option_id==2)
-                    <span class="badge">PARA LLEVAR</span>
-                    @endif
-                    @if($ventas->option_id==3)
-                    <span class="badge">PEDIDO</span>
-                    @endif
-                    @if($ventas->option_id==4)
-                    <span class="badge">A DOMICILIO</span>
-                    @endif
-                    <!-- <span class="badge">{{ strtoupper($ventas->option_id) }}</span> -->
+                     <span class="badge">{{ strtoupper($option->title) }}</span>
                     <hr>
                 </td>
             </tr>
@@ -117,35 +105,39 @@
                 <td colspan="2">
                     <table width="100%">
                         <tr>
-                           
-                           <th>DETALLE</th>
-                           <th align="right">IMPORTE</th>
-                        </tr>
-                    
-                        @foreach ($detalle_ventas as $item)
-                        @php
-                            $miproduct = App\Producto::find($item->producto_id);
-                        @endphp
-                        <tr>
-                            <td align="center"><b>{{ $item->cantidad }}</b></td>
-                            <td align="center"><b>{{ $miproduct->name }}</b></td>
-                            <td align="center"><b>{{ $item->precio }}</b></td>
-                            
-
-                        </tr>
-                        @endforeach
+                            <th>CANTIDAD</th>
+                            <th>DETALLE</th>
+                            <th>PRECIO UNIT.</th>
+                            <th align="right">TOTAL UNIT.</th>
+ 
+                         </tr>
+ 
+                         @foreach ($detalle_ventas as $item)
+                             @php
+                                 $miproduct = App\Producto::find($item->producto_id);
+                                 $totalunit=($item->cantidad)*($item->precio);
+                             @endphp
+                             <tr>
+                                 <td align="center"><b>{{ $item->cantidad }}</b></td>
+                                 <td align="center"><b>{{ $miproduct->name }}</b></td>
+                                 <td align="center"><b>{{ $item->precio }}</b></td>
+                                 <td align="center"><b>{{ $totalunit }}</b></td>
+                                 
+ 
+                             </tr>
+                         @endforeach
                         <br>
 
                         <tr>
-                            <td colspan="2" align="right"><b>SUB TOTAL Bs.</b></td>
+                            <td colspan="3" align="right"><b>SUB TOTAL Bs.</b></td>
                             <td align="right"><b>{{number_format($ventas->subtotal, 2, ',', '.')}}</b></td>
                         </tr>
                         <tr>
-                            <td colspan="2" align="right"><b>DESCUENTO Bs.</b></td>
+                            <td colspan="3" align="right"><b>DESCUENTO Bs.</b></td>
                             <td align="right"><b>{{number_format($ventas->descuento, 2, ',', '.')}}</b></td>
                         </tr>
                         <tr>
-                            <td colspan="2" align="right"><b>TOTAL Bs.</b></td>
+                            <td colspan="3" align="right"><b>TOTAL Bs.</b></td>
                             <td align="right"><b>{{number_format($ventas->total, 2, ',', '.')}}</b></td>
                         </tr>
                     </table>
@@ -183,18 +175,8 @@
                     <h3>
                         ORDEN #{{$ventas->ticket}}<br>
                         {{date('d/m/Y H:i:s')}}<br>
-                        @if($ventas->option_id==1)
-                        <span class="badge">MESA</span>
-                        @endif
-                        @if($ventas->option_id==2)
-                        <span class="badge">PARA LLEVAR</span>
-                        @endif
-                        @if($ventas->option_id==3)
-                        <span class="badge">PEDIDO</span>s
-                        @endif
-                        @if($ventas->option_id==4)
-                        <span class="badge">A DOMICILIO</span>
-                        @endif
+                        <span class="badge">{{ strtoupper($option->title) }}</span>
+
                     </h3><hr>
                 </td>
             </tr>

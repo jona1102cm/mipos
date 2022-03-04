@@ -147,14 +147,14 @@
 
                                     <div class="form-group col-md-4">
 
-                                         <div class="form-group col-md-12">
+                                         {{-- <div class="form-group col-md-12">
                                             <strong>Opciones</strong>
                                             <br>
                                             <form class="form-horizontal" role="form">
                                                 <label class="radio-inline"> <input type="radio" name="season" id="seasonSummer" value="summer" checked> Imprimir </label>
-                                                <label class="radio-inline"> <input type="radio" name="season" id="seasonWinter" value="winter"> Recargar </label>
+                                                <label class="radio-inline"> <input type="radio" name="season" id="seasonWinter" value="winter"> Limpiar </label>
                                             </form>
-                                        </div>
+                                        </div> --}}
                                         <div class="form-group col-md-12">
                                             <strong>Estado</strong>
                                             <select class="form-control js-example-basic-single" id="miestado"> </select>
@@ -164,18 +164,13 @@
                                             <select class="form-control js-example-basic-single" id="mipagos"> </select>
                                         </div>
 
-                                        <div class="form-group col-md-12">
+                                        <div class="form-group col-sm-12">
                                             <strong>Tipo</strong>
                                             <select class="form-control js-example-basic-single" id="venta_type"> </select>
                                         </div>
 
-
                                         <div class="form-group col-md-12">
-                                            <strong>
-                                                Cliente
-                                                <a href="#" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal_cliente">Nuevo</a>
-                                            </strong>
-                                            
+                                            <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal_cliente">Nuevo Cliente</a>
                                             <select class="form-control js-example-basic-single" id="micliente" name="micliente"> </select>
                                         </div>
 

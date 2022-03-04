@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Producto;
 use App\Venta;
 use App\DetalleVenta;
-
+use App\Option;
 
 use App\Imports\UsersImport;
 use App\Imports\ClienteImport;
@@ -28,7 +28,8 @@ class PosController extends Controller
         $detalle_ventas = DetalleVenta::where('venta_id',$id)->get();
         $cliente = Cliente::find($ventas->cliente_id);
         $sucursal=Sucursale::find($ventas->sucursal_id);
-        $vista = view('ventas.recibo', compact('ventas' ,'detalle_ventas', 'cliente','sucursal'));
+        $option=Option::find($ventas->option_id);
+        $vista = view('ventas.recibo', compact('ventas' ,'detalle_ventas', 'cliente','sucursal','option'));
 
 
         $pdf = \App::make('dompdf.wrapper');

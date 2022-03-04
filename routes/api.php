@@ -26,6 +26,9 @@ use App\Production;
 use App\ProductionInsumo;
 use App\Proveedore;
 use App\DetalleProductionSemi;
+
+
+use Illuminate\Support\Facades\DB;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -152,7 +155,8 @@ Route::get('pos/ventas/{id}', function ($id) {
 
 // TODAS LOS CLIENTES
 Route::get('pos/clientes', function () {
-    return  Cliente::all();
+    // return  Cliente::where('active', true)->orderBy('id', 'desc');
+    // return DB::table('clientes')->paginate(100);
 });
 Route::get('pos/cliente/{id}', function ($id) {
     return  Cliente::where('id', $id)->get();
