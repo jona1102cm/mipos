@@ -668,13 +668,13 @@
                                   <input class="form-control" type="text" placeholder="Carnet o NIT" id="nit">
                               </div>
 
-                              <!-- <div class="form-group col-sm-6">
-                                <input class="form-control" type="text" placeholder="Correo Electronico">
+                              <div class="form-group col-sm-6">
+                                <input class="form-control" type="text" placeholder="Nick" id="display">
                                 </div>
 
-                              <div class="form-group col-sm-6">
-                                <a href="/admin/clientes/create" class="btn btn-sm btn-success" target="_blank">Vista Completa</a> -->
-                            <!-- </div> -->
+                              {{-- <div class="form-group col-sm-6">
+                                <a href="/admin/clientes/create" class="btn btn-sm btn-success" target="_blank">Vista Completa</a>
+                             </div> --}}
                           
                     
 
@@ -790,7 +790,7 @@
 
                        // TODOS LOS CATEGORIAS 
                        $.ajax({
-                        url: "https://pos.loginweb.dev/api/pos/categorias",
+                        url: "{{ setting('admin.url') }}api/pos/categorias",
                         dataType: "json",
                         success: function (response) {
                             $('#category').append($('<option>', {
@@ -809,7 +809,7 @@
                 
                     // TODOS LOS PRODUCTOS 
                     $.ajax({
-                        url: "https://pos.loginweb.dev/api/pos/productos",
+                        url: "{{ setting('admin.url') }}api/pos/productos",
                         dataType: "json",
                         success: function (response) {
                             // $('#s').append($('<option>', {
@@ -829,7 +829,7 @@
                     
                     // get Deliverys--------------------------
                     $.ajax({
-                        url: "https://pos.loginweb.dev/api/pos/deliverys",
+                        url: "{{ setting('admin.url') }}api/pos/deliverys",
                         dataType: "json",
                         success: function (response) {
                             for (let index = 0; index < response.length; index++) {
@@ -852,7 +852,7 @@
 
                     // get clientes--------------------------
                     $.ajax({
-                        url: "https://pos.loginweb.dev/api/pos/cliente/"+1,
+                        url: "{{ setting('admin.url') }}api/pos/clientes",
                         dataType: "json",
                         success: function (response) {
                             for (let index = 0; index < response.length; index++) {
@@ -875,7 +875,7 @@
 
                     // get cup[ones]
                     $.ajax({
-                        url: "https://pos.loginweb.dev/api/pos/cupones",
+                        url: "{{ setting('admin.url') }}api/pos/cupones",
                         dataType: "json",
                         success: function (response) {
                             for (let index = 0; index < response.length; index++) {
@@ -898,7 +898,7 @@
 
                     // get pasarela-----------------------------
                     $.ajax({
-                        url: "https://pos.loginweb.dev/api/pos/pagos",
+                        url: "{{ setting('admin.url') }}api/pos/pagos",
                         dataType: "json",
                         success: function (response) {
                             for (let index = 0; index < response.length; index++) {
@@ -921,7 +921,7 @@
 
                     // get estados-----------------------------
                     $.ajax({
-                        url: "https://pos.loginweb.dev/api/pos/estados",
+                        url: "{{ setting('admin.url') }}api/pos/estados",
                         dataType: "json",
                         success: function (response) {
                             for (let index = 0; index < response.length; index++) {
@@ -944,7 +944,7 @@
 
                     // venta_type
                     $.ajax({
-                        url: "https://pos.loginweb.dev/api/pos/options",
+                        url: "{{ setting('admin.url') }}api/pos/options",
                         dataType: "json",
                         success: function (response) {
                             for (let index = 0; index < response.length; index++) {
@@ -972,11 +972,11 @@
                         var milist = JSON.parse(localStorage.getItem('micart'));
                         // console.log(milist.length);
                         if(milist.length == 0){
-                            $("#micart").append("<tr id=0><td colspan='4'> <img class='img-responsive img-sm' src=https://pos.loginweb.dev/storage/231-2317260_an-empty-shopping-cart-viewed-from-the-side.png></td></tr>");
+                            $("#micart").append("<tr id=0><td colspan='4'> <img class='img-responsive img-sm' src={{ setting('admin.url') }}storage/231-2317260_an-empty-shopping-cart-viewed-from-the-side.png></td></tr>");
                         }else{
                             for (let index = 0; index < milist.length; index++) {
 
-                                $("#micart").append("<tr id="+milist[index].id+"><td>"+milist[index].id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src=https://pos.loginweb.dev/storage/"+milist[index].image+"></td><td>"+milist[index].name+"</td><td><input class='form-control' type='number' value='"+milist[index].precio+"' id='precio_"+milist[index].id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+milist[index].id+")' value='"+milist[index].cant+"' id='cant_"+milist[index].id+"'></td><td><input class='form-control' type='number' value='"+milist[index].total+"' id='total_"+milist[index].id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+milist[index].id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                $("#micart").append("<tr id="+milist[index].id+"><td>"+milist[index].id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+milist[index].image+"></td><td>"+milist[index].name+"</td><td><input class='form-control' type='number' value='"+milist[index].precio+"' id='precio_"+milist[index].id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+milist[index].id+")' value='"+milist[index].cant+"' id='cant_"+milist[index].id+"'></td><td><input class='form-control' type='number' value='"+milist[index].total+"' id='total_"+milist[index].id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+milist[index].id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
                             }
                             mitotal();
                         }
@@ -991,7 +991,7 @@
 
                     var micaja = JSON.parse(localStorage.getItem('micaja'));
                     $.ajax({
-                        url: "https://pos.loginweb.dev/api/pos/caja/state/close/"+micaja.caja_id,
+                        url: "{{ setting('admin.url') }}api/pos/caja/state/close/"+micaja.caja_id,
                         success: function (response){
                             localStorage.removeItem('micaja');
                             location.href = '/admin/profile';
@@ -1004,7 +1004,7 @@
                     $('#productos_caja tbody').empty();
 
                     $.ajax({
-                        url: "https://pos.loginweb.dev/api/pos/ventas/caja/"+$("input[name='caja_id']").val(),
+                        url: "{{ setting('admin.url') }}api/pos/ventas/caja/"+$("input[name='caja_id']").val(),
                         dataType: "json",
                         success: function (response) {
                             for (let index = 0; index < response.length; index++) {
@@ -1023,7 +1023,7 @@
         
                 function abrir_caja(id, title, sucursal, sucursal_id) {
                     $.ajax({
-                        url: "https://pos.loginweb.dev/api/pos/caja/state/open/"+id,
+                        url: "{{ setting('admin.url') }}api/pos/caja/state/open/"+id,
                         success: function (response){
                             localStorage.setItem('micaja', JSON.stringify({caja_id: id, open: 'open', user_id: '{{ Auth::user()->id  }}', title: title, sucursal: sucursal, importe: $('#importe').val(), sucursal_id: sucursal_id } ));
                             $("input[name='caja_id']").val(id);
@@ -1062,10 +1062,11 @@
                     var last = $('#last_name').val();
                     var phone = $('#phone').val();
                     var nit = $('#nit').val();
-                    var midata = JSON.stringify({first_name: first, last_name: last, phone: phone, nit: nit});
+                    var display = $('#display').val();
+                    var midata = JSON.stringify({first_name: first, last_name: last, phone: phone, nit: nit, display: display});
                     console.log(midata);
                     $.ajax({
-                        url: "https://pos.loginweb.dev/api/pos/savacliente/"+midata,
+                        url: "{{ setting('admin.url') }}api/pos/savacliente/"+midata,
                         success: function (response){
                             toastr.success('Cliente Creado..');
                             $('#micliente').append($('<option>', {
@@ -1083,7 +1084,7 @@
 
                 $('#micupon').on('change', function() {
                     $.ajax({
-                        url: "https://pos.loginweb.dev/api/pos/cupon/"+this.value,
+                        url: "{{ setting('admin.url') }}api/pos/cupon/"+this.value,
                         dataType: "json",
                         success: function (response) {
                             toastr.success('Cupon Asignado');
@@ -1119,13 +1120,13 @@
                     var midata = JSON.stringify({'cliente_id': cliente_id, 'cupon_id': cupon_id, 'option_id': option_id, 'pago_id': pago_id, 'factura': factura, 'total': total, 'descuento': descuento, 'observacion': observacion, 'register_id': register_id, 'status_id': status_id, 'caja_id': caja_id, 'delivery_id': delivery_id, 'sucursal_id': sucursal_id, subtotal: subtotal });
                 
                     $.ajax({
-                        url: "https://pos.loginweb.dev/api/pos/ventas/save/"+midata,
+                        url: "{{ setting('admin.url') }}api/pos/ventas/save/"+midata,
                         success: function (response) {
                             var micart = JSON.parse(localStorage.getItem('micart'));
                             for (let index = 0; index < micart.length; index++) {
 
                                 var midata = JSON.stringify({'producto_id': micart[index].id, 'venta_id': response, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total});
-                                var urli = "https://pos.loginweb.dev/api/pos/ventas/save/detalle/"+midata;
+                                var urli = "{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata;
 
                                 console.log(urli);
                                 $.ajax({
@@ -1148,7 +1149,7 @@
                 $('#category').on('change', function() {
                     $.ajax({
                         type: "get",
-                        url: "https://pos.loginweb.dev/api/pos/productos/category/"+this.value,
+                        url: "{{ setting('admin.url') }}api/pos/productos/category/"+this.value,
                         dataType: "json",
                         success: function (response) {
                             $('#s').find('option').remove().end();
@@ -1199,10 +1200,10 @@
                         toastr.warning("Producto ya Registrado");
                     }else{
                         $.ajax({
-                            url: "https://pos.loginweb.dev/api/pos/producto/"+id,
+                            url: "{{ setting('admin.url') }}api/pos/producto/"+id,
                             dataType: "json",
                             success: function (response) {
-                                $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src=https://pos.loginweb.dev/storage/"+response.image+"></td><td>"+response.name+"</td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"</td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
 
                                 
                                 var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio};
@@ -1269,7 +1270,7 @@
                     
                     // PRODUCTOS PRE ELABORADO
                     $.ajax({
-                        url: "https://pos.loginweb.dev/api/pos/productosemi",
+                        url: "{{ setting('admin.url') }}api/pos/productosemi",
                         dataType: "json",
                         success: function (response) {
                             $('#prod_semi').append($('<option>', {
@@ -1287,7 +1288,7 @@
 
                     // PRODUCTOS PARA PRODUCCION
                     $.ajax({
-                        url: "https://pos.loginweb.dev/api/pos/productos/production",
+                        url: "{{ setting('admin.url') }}api/pos/productos/production",
                         dataType: "json",
                         success: function (response) {
                             $('#new_producto_id').append($('<option>', {
@@ -1329,7 +1330,7 @@
 
                     // TODOS LOS INSUMOS 
                     $.ajax({
-                        url: "https://pos.loginweb.dev/api/pos/insumos",
+                        url: "{{ setting('admin.url') }}api/pos/insumos",
                         dataType: "json",
                         success: function (response) {
                             $('#insumos').append($('<option>', {
@@ -1348,7 +1349,7 @@
 
                     //-------------------
                     // $.ajax({
-                    //     url: "https://pos.loginweb.dev/api/pos/unidades",
+                    //     url: "{{ setting('admin.url') }}api/pos/unidades",
                     //     dataType: "json",
                     //     success: function (response) {
                     //         $('#unidades').append($('<option>', {
@@ -1368,7 +1369,7 @@
 
                     // TODOS LOS INSUMOS SEMI
                     $.ajax({
-                            url: "https://pos.loginweb.dev/api/pos/insumos",
+                            url: "{{ setting('admin.url') }}api/pos/insumos",
                             dataType: "json",
                             success: function (response) {
                                 $('#insumossemi').append($('<option>', {
@@ -1387,7 +1388,7 @@
                     
                     //--------------------------------
                     $.ajax({
-                            url: "https://pos.loginweb.dev/api/pos/unidades",
+                            url: "{{ setting('admin.url') }}api/pos/unidades",
                             dataType: "json",
                             success: function (response) {
                                 $('#unidadessemi').append($('<option>', {
@@ -1406,7 +1407,7 @@
             
                     //PROVEDORES
                     $.ajax({
-                        url: "https://pos.loginweb.dev/api/pos/proveedores",
+                        url: "{{ setting('admin.url') }}api/pos/proveedores",
                         dataType: "json",
                         success: function (response) {
                             // $('#proveedorelab').append($('<option>', {
@@ -1425,7 +1426,7 @@
 
                     //--------------
                     $.ajax({
-                            url: "https://pos.loginweb.dev/api/pos/proveedores",
+                            url: "{{ setting('admin.url') }}api/pos/proveedores",
                             dataType: "json",
                             success: function (response) {
                                 $('#proveedorsemi').append($('<option>', {
@@ -1462,7 +1463,7 @@
                         var idpro = $('#proveedorelab').val();
                         var miprotext = $('#proveedorelab option:selected').text();
                         $.ajax({
-                            url: "https://pos.loginweb.dev/api/pos/productopreid/"+this.value,
+                            url: "{{ setting('admin.url') }}api/pos/productopreid/"+this.value,
                             dataType: "json",
                             success: function (jchavez) {
                                 var cod = Math.floor(Math.random() * 999) + 800;
@@ -1504,7 +1505,7 @@
                 $('#unidades').on('change', function() {
                     $.ajax({
                         type: "get",
-                        url: "https://pos.loginweb.dev/api/pos/insumo/unidad/"+this.value,
+                        url: "{{ setting('admin.url') }}api/pos/insumo/unidad/"+this.value,
                         dataType: "json",
                         success: function (response) {
                             $('#insumos').find('option').remove().end();
@@ -1526,7 +1527,7 @@
                 $('#unidadessemi').on('change', function() {
                     $.ajax({
                         type: "get",
-                        url: "https://pos.loginweb.dev/api/pos/insumo/unidad/"+this.value,
+                        url: "{{ setting('admin.url') }}api/pos/insumo/unidad/"+this.value,
                         dataType: "json",
                         success: function (response) {
                             $('#insumossemi').find('option').remove().end();
@@ -1563,7 +1564,7 @@
                         var idpro = $('#proveedorelab').val();
                         var miprotext = $('#proveedorelab option:selected').text();
                         $.ajax({
-                            url: "https://pos.loginweb.dev/api/pos/insumos/"+this.value,
+                            url: "{{ setting('admin.url') }}api/pos/insumos/"+this.value,
                             dataType: "json",
                             success: function (jchavez) {
                                 var cod = Math.floor(Math.random() * 999) + 800;
@@ -1601,7 +1602,7 @@
                         var mipro = $('#proveedorsemi').val();
                         var miprotext = $('#proveedorsemi option:selected').text();
                     $.ajax({
-                        url: "https://pos.loginweb.dev/api/pos/insumos/"+id,
+                        url: "{{ setting('admin.url') }}api/pos/insumos/"+id,
                         dataType: "json",
                         success: function (jchavez) {
 
@@ -1707,7 +1708,7 @@
                 
                     var midata = JSON.stringify({'producto_id': producto_id, 'cantidad': cantidad, 'valor': valor, 'description': description, 'user_id': user_id });
                     // console.log(midata);
-                    var urli = "https://pos.loginweb.dev/api/pos/productions/save/"+midata;
+                    var urli = "{{ setting('admin.url') }}api/pos/productions/save/"+midata;
                     console.log(urli);
                     $.ajax({
                         url: urli,
@@ -1715,7 +1716,7 @@
                             var miproduction = JSON.parse(localStorage.getItem('miproduction'));
                             for (let index = 0; index < miproduction.length; index++) {
                                 var midata = JSON.stringify({'type': miproduction[index].type, 'production_id': response, 'insumo_id': miproduction[index].id, 'proveedor_id': miproduction[index].idpro, 'precio': miproduction[index].costo, 'cantidad': miproduction[index].cant, 'total': miproduction[index].total});
-                                var urli = "https://pos.loginweb.dev/api/pos/productions/save/detalle/"+midata;
+                                var urli = "{{ setting('admin.url') }}api/pos/productions/save/detalle/"+midata;
                                 console.log(urli);
                                 $.ajax({
                                     url: urli,
@@ -1746,7 +1747,7 @@
                     var midata = JSON.stringify({'producto_semi_id': producto_semi_id, 'cantidad': cantidad, 'valor': valor, 'description': description, 'user_id': user_id });
                     // console.log(midata)
                     $.ajax({
-                        url: "https://pos.loginweb.dev/api/pos/productions/savesemi/"+midata,
+                        url: "{{ setting('admin.url') }}api/pos/productions/savesemi/"+midata,
                         success: function (response) {
                             var miproduction = JSON.parse(localStorage.getItem('miprodsemi'));
                             
@@ -1755,14 +1756,14 @@
                                 var midata = JSON.stringify({'production_semi_id': response, 'insumo_id': miproduction[index].id, 'proveedor_id': miproduction[index].proveedor, 'precio': miproduction[index].costo, 'cantidad': miproduction[index].cant, 'total': miproduction[index].total});
 
                                 $.ajax({
-                                    url: "https://pos.loginweb.dev/api/pos/productions/savesemi/detalle/"+midata,
+                                    url: "{{ setting('admin.url') }}api/pos/productions/savesemi/detalle/"+midata,
                                     success: function () {
                                         
                                     }
                                 });
                             }
                             localStorage.setItem('miprodsemi', JSON.stringify([]));
-                            location.href='https://pos.loginweb.dev/admin/production-semis';
+                            location.href='{{ setting('admin.url') }}admin/production-semis';
                         }
                     });
 
@@ -1796,7 +1797,7 @@
 
                     // TODOS LOS INSUMOS SEMI
                     $.ajax({
-                            url: "https://pos.loginweb.dev/api/pos/insumos",
+                            url: "{{ setting('admin.url') }}api/pos/insumos",
                             dataType: "json",
                             success: function (response) {
                                 $('#insumossemi').append($('<option>', {
@@ -1815,7 +1816,7 @@
 
                     //--------------------------------
                     $.ajax({
-                            url: "https://pos.loginweb.dev/api/pos/unidades",
+                            url: "{{ setting('admin.url') }}api/pos/unidades",
                             dataType: "json",
                             success: function (response) {
                                 $('#unidadessemi').append($('<option>', {
@@ -1834,7 +1835,7 @@
 
                     //--------------
                     $.ajax({
-                            url: "https://pos.loginweb.dev/api/pos/proveedores",
+                            url: "{{ setting('admin.url') }}api/pos/proveedores",
                             dataType: "json",
                             success: function (response) {
                                 $('#proveedorsemi').append($('<option>', {
@@ -1859,7 +1860,7 @@
                 $('#unidadessemi').on('change', function() {
                     $.ajax({
                         type: "get",
-                        url: "https://pos.loginweb.dev/api/pos/insumo/unidad/"+this.value,
+                        url: "{{ setting('admin.url') }}api/pos/insumo/unidad/"+this.value,
                         dataType: "json",
                         success: function (response) {
                             $('#insumossemi').find('option').remove().end();
@@ -1909,7 +1910,7 @@
                         var mipro = $('#proveedorsemi').val();
                         var miprotext = $('#proveedorsemi option:selected').text();
                     $.ajax({
-                        url: "https://pos.loginweb.dev/api/pos/insumos/"+id,
+                        url: "{{ setting('admin.url') }}api/pos/insumos/"+id,
                         dataType: "json",
                         success: function (jchavez) {
 
@@ -1978,7 +1979,7 @@
                     var midata = JSON.stringify({'producto_semi_id': producto_semi_id, 'cantidad': cantidad, 'valor': valor, 'description': description, 'user_id': user_id });
                     // console.log(midata)
                     $.ajax({
-                        url: "https://pos.loginweb.dev/api/pos/productions/savesemi/"+midata,
+                        url: "{{ setting('admin.url') }}api/pos/productions/savesemi/"+midata,
                         success: function (response) {
                             var miproduction = JSON.parse(localStorage.getItem('miprodsemi'));
                             
@@ -1987,14 +1988,14 @@
                                 var midata = JSON.stringify({'production_semi_id': response, 'insumo_id': miproduction[index].id, 'proveedor_id': miproduction[index].proveedor, 'precio': miproduction[index].costo, 'cantidad': miproduction[index].cant, 'total': miproduction[index].total});
 
                                 $.ajax({
-                                    url: "https://pos.loginweb.dev/api/pos/productions/savesemi/detalle/"+midata,
+                                    url: "{{ setting('admin.url') }}api/pos/productions/savesemi/detalle/"+midata,
                                     success: function () {
                                         
                                     }
                                 });
                             }
                             localStorage.setItem('miprodsemi', JSON.stringify([]));
-                            location.href='https://pos.loginweb.dev/admin/production-semis';
+                            location.href='{{ setting('admin.url') }}admin/production-semis';
                         }
                     });
 
@@ -2090,7 +2091,7 @@
 
             $.ajax({
                     type: "get",
-                    url: "https://pos.loginweb.dev/api/pos/productos",
+                    url: "{{ setting('admin.url') }}api/pos/productos",
                     dataType: "json",
                     success: function (response) {
                         $('#s').append($('<option>', {

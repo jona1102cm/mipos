@@ -113,6 +113,7 @@ Route::get('pos/savacliente/{midata}', function ($midata) {
         'last_name' => $cliente->last_name,
         'phone' => $cliente->phone,
         'ci_nit' => $cliente->nit,
+        'display' => $cliente->display,
     ]);
     return $cliente;
 });
@@ -157,6 +158,7 @@ Route::get('pos/ventas/{id}', function ($id) {
 Route::get('pos/clientes', function () {
     // return  Cliente::where('active', true)->orderBy('id', 'desc');
     // return DB::table('clientes')->paginate(100);
+    return Cliente::all();
 });
 Route::get('pos/cliente/{id}', function ($id) {
     return  Cliente::where('id', $id)->get();
