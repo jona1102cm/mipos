@@ -5,7 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <!-- <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet"> -->
+        {{-- <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet"> --}}
         <title>Recibo de venta</title>
         <style>
             .btn-print{
@@ -51,18 +51,14 @@
 		</style>
     </head>
     <body>
-        <!-- <div style="text-align:right" id="print">
+        <div style="text-align:right" id="print">
             <button onclick="javascript:window.print()" class="btn-print">Imprimir</button>
-        </div> -->
+        </div>
 
         <table width="300px">
             <tr>
-               
                 <td colspan="2" align="center" style="font-size:10px">
-                    
-                  
                     <img src="{{ url('storage').'/'.setting('empresa.logo') }}" alt="loginweb" width="100px"><br>
-                   
                     <b>De: {{ setting('empresa.propietario') }}</b><br>
                     <b>{{ strtoupper($sucursal->name) }}</b><br>
                     <b>{{ setting('empresa.direccion') }}<b><br>
@@ -78,9 +74,6 @@
                     <hr>
                 </td>
             </tr>
-            {{-- datos de la factura --}}
-
-            {{-- datos de la venta --}}
             <tr>
                 <td><b>Razón social</b></td>
                 <td>: {{$cliente->display}}</td>
@@ -99,9 +92,7 @@
             <tr>
                 <td colspan="2"><hr></td>
             </tr>
-
             <tr>
-               
                 <td colspan="2">
                     <table width="100%">
                         <tr>
@@ -127,7 +118,6 @@
                              </tr>
                          @endforeach
                         <br>
-
                         <tr>
                             <td colspan="3" align="right"><b>SUB TOTAL Bs.</b></td>
                             <td align="right"><b>{{number_format($ventas->subtotal, 2, ',', '.')}}</b></td>
@@ -143,9 +133,8 @@
                     </table>
                 </td>
             </tr>
-         
             <tr>
-                <td colspan="2">Son {{ $ventas->total }}</td>
+                <td colspan="2">Son: {{ $literal }}</td>
             </tr>
             <tr>
                 <td colspan="2"><hr></td>
@@ -162,13 +151,9 @@
             <tr>
                 <td colspan="2"><b>Hora : {{ date('H:i:s') }}</b></td>
             </tr>
-
         </table>
-
         <div class="saltopagina"></div>
-
         <table width="300px">
-
             <tr>
                 {{-- consulta para saber si es factura o recibo --}}
                 <td colspan="2" align="center">
@@ -180,7 +165,6 @@
                     </h3><hr>
                 </td>
             </tr>
-
             <tr>
                 {{-- detalle de la venta --}}
                 <td colspan="2">
@@ -203,11 +187,8 @@
                                 <td align="center"><b>{{ $miproduct->name }}</b></td>
                                 <td align="center"><b>{{ $item->precio }}</b></td>
                                 <td align="center"><b>{{ $totalunit }}</b></td>
-                                
-
                             </tr>
                         @endforeach
-                      
                         <br>
                         <tr>
                             <td colspan="3" align="right"><b>SUB TOTAL Bs.</b></td>
@@ -224,16 +205,13 @@
                     </table>
                 </td>
             </tr>
-            
             <tr>
                 <td colspan="2"><hr></td>
             </tr>
             <tr>
                 <td colspan="2"><h3>Cliente: {{$cliente->display}}.</h3> </td>
             </tr>
-
         </table>
-
         <script>
             window.print();
             setTimeout(function(){

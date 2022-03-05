@@ -142,19 +142,17 @@
                                                 <tbody>
                                                 </tbody>
                                         </table>
-
                                     </div>
 
                                     <div class="form-group col-md-4">
-
-                                         {{-- <div class="form-group col-md-12">
+                                         <div class="form-group col-md-12">
                                             <strong>Opciones</strong>
                                             <br>
                                             <form class="form-horizontal" role="form">
-                                                <label class="radio-inline"> <input type="radio" name="season" id="seasonSummer" value="summer" checked> Imprimir </label>
-                                                <label class="radio-inline"> <input type="radio" name="season" id="seasonWinter" value="winter"> Limpiar </label>
+                                                <label class="radio-inline"> <input type="radio" name="season" id="" value="imprimir" checked> Imprimir </label>
+                                                <label class="radio-inline"> <input type="radio" name="season" id="" value="seguir"> Seguir </label>
                                             </form>
-                                        </div> --}}
+                                        </div>
                                         <div class="form-group col-md-12">
                                             <strong>Estado</strong>
                                             <select class="form-control js-example-basic-single" id="miestado"> </select>
@@ -305,7 +303,6 @@
                                 </div>
                             @break
 
-
                             @case('production-semis')
                                 <div class="form-group col-md-8">
 
@@ -422,7 +419,6 @@
                                     </div>
                                 </div>
 
-                            
                             @break
                             @default
                                 @foreach($dataTypeRows as $row)
@@ -591,7 +587,7 @@
             </div>
 
             <div class="modal fade modal-primary" id="cerrar_caja">
-                <div class="modal-dialog">
+                <div class="modal-dialog modal-sm">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"
@@ -599,42 +595,7 @@
                         <h4>Cerrar Caja</h4>
                         </div>
                         <div class="modal-body">
-                            <table class="table table-responsive">
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <h4>Total en Ventas: </h4>
-                                        </td>
-                                        <td>
-                                            <h4> 8 </h4>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <h4>Importe Inicial </h4>
-                                        </td>
-                                        <td>
-                                            <h4> 100 </h4>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <h4>Dinero en Caja: </h4>
-                                        </td>
-                                        <td>
-                                            <h4> 360 </h4>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <h4>TOTAL</h4>
-                                        </td>
-                                        <td>
-                                            <h4> 460 </h4>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <h4>¿Estás seguro que deseas cerra?</h4>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
@@ -662,23 +623,15 @@
                             </div>
                             <div class="form-group col-sm-6">
                                 <input class="form-control" type="text" placeholder="Telefono" id="phone">
-                              </div>
+                            </div>
 
-                              <div class="form-group col-sm-6">
+                            <div class="form-group col-sm-6">
                                   <input class="form-control" type="text" placeholder="Carnet o NIT" id="nit">
-                              </div>
+                            </div>
 
-                              <div class="form-group col-sm-6">
+                            <div class="form-group col-sm-6">
                                 <input class="form-control" type="text" placeholder="Nick" id="display">
-                                </div>
-
-                              {{-- <div class="form-group col-sm-6">
-                                <a href="/admin/clientes/create" class="btn btn-sm btn-success" target="_blank">Vista Completa</a>
-                             </div> --}}
-                          
-                    
-
-                          
+                            </div>                          
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
@@ -780,7 +733,7 @@
                     if (localStorage.getItem('micaja')) {
                         var micaja = JSON.parse(localStorage.getItem('micaja'));
                         $("input[name='caja_id']").val(micaja.caja_id);
-                        $('input[name="sucursal_id"]').val('{{ Auth::user()->id }}');
+                        $('input[name="sucursal_id"]').val(micaja.sucursal_id);
                         $("#info_caja").html('<h4>'+micaja.title+" - "+micaja.sucursal+" - "+micaja.importe+' Bs.</h4>');
                         
 
@@ -965,8 +918,6 @@
                         }
                     });
 
-                    venta_type
-
                     //-----------------------
                     if (localStorage.getItem('micart')) {
                         var milist = JSON.parse(localStorage.getItem('micart'));
@@ -1030,6 +981,7 @@
                             var micaja = JSON.parse(localStorage.getItem('micaja'));
                             $("input[name='caja_id']").val(micaja.caja_id);
                             $("input[name='sucursal_id']").val(micaja.sucursal_id);
+                            
                             $("#info_caja").html('<h4>'+micaja.title+" - "+micaja.sucursal+" - "+micaja.importe+' Bs.</h4>');
                             toastr.success('Caja Abierta Correctamente.');
                             $('#micaja').modal('hide');
@@ -1074,6 +1026,7 @@
                                 value: response.id,
                                 text: response.first_name + ' ' + response.last_name+ ' ' + response.ci_nit
                             }));
+                            $("input[name='cliente_id']").val(response.id);
                             // location.reload();
                             $('#modal_cliente').modal('hide');
                         }
@@ -1138,11 +1091,18 @@
                                 });
                             }
                             localStorage.setItem('micart', JSON.stringify([]));
-                            // location.href='/admin/ventas/create';
                             $('#modal_save_venta').modal('hide');
-                            // toastr.success('Venta Realizada')
+                            $("input[name='descuento']").val(0);
+                           
+                            if ($("input[name='season']:checked").val() == 'imprimir') {
+                                location.href = 'https://pos.loginweb.dev/admin/ventas/imprimir/'+response;
+                            }else{
+                                toastr.success('Venta Realizada');
+                            }
                         }
+                       
                     });
+                    
                     
                 }
 
@@ -1169,6 +1129,7 @@
                 });
 
                 function mitotal() {
+                    
                     var milist = JSON.parse(localStorage.getItem('micart'));
                     var des = $("input[name='descuento']").val();
                     var total = 0

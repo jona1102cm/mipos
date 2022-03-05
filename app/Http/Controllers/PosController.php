@@ -18,6 +18,10 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\User;
 use App\Cliente;
 use App\Sucursale;
+
+
+use NumerosEnLetras;
+
 class PosController extends Controller
 {
 
@@ -29,8 +33,9 @@ class PosController extends Controller
         $cliente = Cliente::find($ventas->cliente_id);
         $sucursal=Sucursale::find($ventas->sucursal_id);
         $option=Option::find($ventas->option_id);
-        $vista = view('ventas.recibo', compact('ventas' ,'detalle_ventas', 'cliente','sucursal','option'));
+        $literal = NumerosEnLetras::convertir($ventas->total,'Bolivianos',true);
 
+        $vista = view('ventas.recibo', compact('ventas' ,'detalle_ventas', 'cliente','sucursal','option', 'literal'));
 
         $pdf = \App::make('dompdf.wrapper');
         $pdf->loadHTML($vista)->setPaper('legal');

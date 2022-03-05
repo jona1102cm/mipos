@@ -61,20 +61,40 @@ Route::get('pos/users', function () {
 //open caja
 Route::get('pos/caja/state/{state}/{id}', function ($state, $id) {
 
-    $caja = Caja::find($id);
-    $caja->estado = $state;
-    $caja->save();
+    switch ($state) {
+        case 'open':
+            $caja = Caja::find($id);
+            $caja->estado = $state;
+            $caja->save();
+            break;
+        case 'close':
+            $ventas = Venta::where('caja_id', $id)->where('caja_status', false)->get();
+            foreach ($ventas as $item) {
+                $venta = Venta::find($item->id);
+                $venta->caja_status = true;
+                $venta->save();
+            }
+            $caja = Caja::find($id);
+            $caja->estado = $state;
+            $caja->save();
+            break;
+        default:
+            # code...
+            break;
+    }
+   
     return  true;
 });
 
 Route::get('pos/ventas/save/{midata}', function($midata) {
     $midata2 = json_decode($midata);
+    $ticket = count(Venta::where('caja_id', $midata2->caja_id)->where('caja_status', false)->get());
     $venta = Venta::create([
         'cliente_id' => $midata2->cliente_id,
         'cupon_id' => $midata2->cupon_id,
         'option_id' => $midata2->option_id,
         'pago_id' => $midata2->pago_id,
-        // 'factura' => $midata2->factura ? $midata2->factura : null,
+        'factura' => $midata2->factura ? $midata2->factura : null,
         'total' => $midata2->total,
         'descuento' => $midata2->descuento,
         'observacion' => $midata2->observacion,
@@ -84,8 +104,8 @@ Route::get('pos/ventas/save/{midata}', function($midata) {
         'delivery_id' => $midata2->delivery_id,
         'sucursal_id' => $midata2->sucursal_id,
         'subtotal' => $midata2->subtotal,
-        'caja_status' => false
-        // 'ticket_id' => $midata2->ticket_id
+        'caja_status' => false,
+        'ticket' => $ticket + 1
     ]);
     return $venta->id;
 });
@@ -146,7 +166,7 @@ Route::get('pos/ventas', function () {
 
 // TODAS LAS VENTAS POR CAJA
 Route::get('pos/ventas/caja/{caja_id}', function ($caja_id) {
-    return  Venta::where('caja_id', $caja_id)->get();
+    return  Venta::where('caja_id', $caja_id)->where('caja_status', false)->get();
 });
 
 // VENTA POR ID
