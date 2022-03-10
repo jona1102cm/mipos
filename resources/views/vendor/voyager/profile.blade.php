@@ -60,7 +60,35 @@
                 </div>
                 
             </div>
-       
+
+            <div class="col-sm-3">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">MODULO DE PRODUCCION</div>
+                        <div class="panel-body">
+                            <p>Funciones</p>
+                        </div>
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td>Gestion de Insumos</td>
+                                </tr>
+                                <tr>
+                                    <td> Gestion de Precios </td>
+                                </tr>
+                                <tr>
+                                    <td> Proveedores & Produccion </td>
+                                </tr>
+                                <tr>
+                                    <td> Logistica & Tiempos </td>
+                                </tr>
+                                <tr>
+                                    <td> Personal & Objetivos </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                </div>
+            </div>
+
             <div class="col-sm-3">
                 <div class="panel panel-primary">
                     <div class="panel-heading">MODULO CHATBOT</div>
@@ -103,7 +131,7 @@
                         <div class="panel-body">
                             <p>Funciones</p>
                         </div>
-                        <table class="table">
+                        {{-- <table class="table">
                             <tbody>
                                 <tr>
                                     <td>Gestion de Insumos</td>
@@ -121,36 +149,10 @@
                                     <td> Personal & Objetivos </td>
                                 </tr>
                             </tbody>
-                        </table>
+                        </table> --}}
                 </div>
             </div>
-            <div class="col-sm-3">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">MODULO DE PRODUCCION</div>
-                        <div class="panel-body">
-                            <p>Funciones</p>
-                        </div>
-                        <table class="table">
-                            <tbody>
-                                <tr>
-                                    <td>Gestion de Insumos</td>
-                                </tr>
-                                <tr>
-                                    <td> Gestion de Precios </td>
-                                </tr>
-                                <tr>
-                                    <td> Proveedores & Produccion </td>
-                                </tr>
-                                <tr>
-                                    <td> Logistica & Tiempos </td>
-                                </tr>
-                                <tr>
-                                    <td> Personal & Objetivos </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                </div>
-            </div>
+            
 
         </div>
     </div>

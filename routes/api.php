@@ -52,7 +52,9 @@ Route::get('pos/users', function () {
 
 
 
-
+Route::get('pos/info', function () {
+    return  DB::table('settings')->where('group', 'Empresa')->get();
+});
 
 
 // --------------------------------------- VENTAS  ------------------------------------------
@@ -105,7 +107,8 @@ Route::get('pos/ventas/save/{midata}', function($midata) {
         'sucursal_id' => $midata2->sucursal_id,
         'subtotal' => $midata2->subtotal,
         'caja_status' => false,
-        'ticket' => $ticket + 1
+        'ticket' => $ticket + 1,
+        'cantidad' => $midata2->cantidad
     ]);
     return $venta->id;
 });
@@ -134,6 +137,8 @@ Route::get('pos/savacliente/{midata}', function ($midata) {
         'phone' => $cliente->phone,
         'ci_nit' => $cliente->nit,
         'display' => $cliente->display,
+        'email' => $cliente->email,
+        'default' => 0
     ]);
     return $cliente;
 });
@@ -159,9 +164,12 @@ Route::get('pos/productos/category/{id}', function ($id) {
     return  Producto::where('categoria_id', $id)->get();
 });
 
-// TODAS LAS VENTAS
+// TODAS LAS VENTAS y By ID
 Route::get('pos/ventas', function () {
     return  Venta::all();
+});
+Route::get('pos/venta/{id}', function ($id) {
+    return  Venta::find($id);
 });
 
 // TODAS LAS VENTAS POR CAJA
@@ -176,13 +184,15 @@ Route::get('pos/ventas/{id}', function ($id) {
 
 // TODAS LOS CLIENTES
 Route::get('pos/clientes', function () {
-    // return  Cliente::where('active', true)->orderBy('id', 'desc');
-    // return DB::table('clientes')->paginate(100);
     return Cliente::all();
 });
 Route::get('pos/cliente/{id}', function ($id) {
     return  Cliente::where('id', $id)->get();
 });
+Route::get('pos/cliente/default/get', function () {
+    return  Cliente::where('default', 1)->first();
+});
+
 
 // UN VENTAS POR CLINTE
 Route::get('pos/ventas/cliente/{cliente_id}', function ($cliente_id) {

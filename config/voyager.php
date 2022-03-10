@@ -185,7 +185,7 @@ return [
     |
     */
 
-    'primary_color' => '#FBBC00',
+    'primary_color' => '',
 
     'show_dev_tips' => true, // Show development tip "How To Use:" in Menu and Settings
 

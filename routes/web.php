@@ -19,6 +19,8 @@ Route::get('/', function () {
     return redirect('/admin/profile');
 });
 
+Route::get('venta/{id}', 'App\Http\Controllers\PosController@venta_public')->name('venta.public');
+
 Route::get('/encola', function () {
     return view('encola');
 });
@@ -37,6 +39,8 @@ Route::group(['prefix' => 'admin'], function () {
     // Route::get('producto/detalle', 'App\Http\Controllers\PosController@producto_detalle')->name('producto.detalle');
     Route::get('import/products', 'App\Http\Controllers\PosController@import_products')->name('import.products');
     Route::get('import/ventas', 'App\Http\Controllers\PosController@import_ventas')->name('import.ventas');
+
+
     
 });
 

@@ -32,7 +32,7 @@
                     <div class="col-sm-4">
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#cerrar_caja">Cerrar</button>
-                                <button type="button" class="btn btn-secondary" onclick="venta_caja()">Ventas</button>
+                                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#modal_cliente">Cliente</button>
                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal_save_venta">Guardar</button>
                                 <!-- <button type="button" class="btn btn-primary" onclick="modal_save_venta()">Guardar</button> -->
                                 
@@ -42,7 +42,31 @@
                     
                 </div>
             @stop
-            @break
+        @break
+
+        @case('chatbots')
+            @php
+                $miuser = TCG\Voyager\Models\User::find(Auth::user()->id);
+                $micajas = App\Caja::all();
+            @endphp
+            @section('page_header')
+                <br>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <strong style="font-size: 30px;">
+                            <i class="{{ $dataType->icon }}"></i>
+                            CHATBOT
+                        </strong>
+                    </div>
+                    <div class="col-sm-4">
+                           
+                    </div>
+                    <div class="col-sm-4">
+                    </div>
+                    
+                </div>
+            @stop
+        @break
     
         @case('productions')
             @section('page_header')
@@ -76,6 +100,7 @@
                 @include('voyager::multilingual.language-selector')
             @stop
     @endswitch
+
 
 
 @section('content')
@@ -154,9 +179,16 @@
                                             </form>
                                         </div>
                                         <div class="form-group col-md-12">
+                                            {{-- <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal_cliente">Nuevo Cliente</a> --}}
+                                            {{-- <select class="form-control js-example-basic-single" id="micliente" name="micliente"> </select> --}}
+                                            <strong>Cliente</strong>
+                                            <input type="text" id="micliente" class="form-control">
+                                            <input type="text" id="phone_client" class="form-control">
+                                        </div>
+                                        {{-- <div class="form-group col-md-12">
                                             <strong>Estado</strong>
                                             <select class="form-control js-example-basic-single" id="miestado"> </select>
-                                        </div>
+                                        </div> --}}
                                         <div class="form-group col-md-12">
                                             <strong>Pasarela</strong>
                                             <select class="form-control js-example-basic-single" id="mipagos"> </select>
@@ -167,10 +199,7 @@
                                             <select class="form-control js-example-basic-single" id="venta_type"> </select>
                                         </div>
 
-                                        <div class="form-group col-md-12">
-                                            <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal_cliente">Nuevo Cliente</a>
-                                            <select class="form-control js-example-basic-single" id="micliente" name="micliente"> </select>
-                                        </div>
+                                      
 
                                         @foreach($dataTypeRows as $row)
                                             <!-- GET THE DISPLAY OPTIONS -->
@@ -420,6 +449,58 @@
                                 </div>
 
                             @break
+
+                        @case('chatbots')
+                            <div class="form-group col-sm-5">
+                                <h4 class="title">Cliente</h4>
+                                <select id="customer" class="form-control">
+                                    <option> Elije una opcion</option>
+                                </select>
+                                <h4 class="title">Producto</h4>
+                                <select id="product" class="form-control">
+                                    <option value="0" > Elije una opcion</option>
+                                </select> 
+                            </div>
+                            <div class="form-group col-sm-7">
+                                <h4 class="title">CHAT - <small>Copia y Pega los Emojis!</small>
+                                    <br />
+                                    <a class="btn btn-sm btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                        Smileys
+                                    </a>
+                                    <button class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample2">Gestures</button>
+                                    <button class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample3" aria-expanded="false" aria-controls="collapseExample3">People</button>
+                                    <button class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample4" aria-expanded="false" aria-controls="collapseExample4">Clothing</button>
+                                    <button class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample5" aria-expanded="false" aria-controls="collapseExample5">Objects</button>
+                                        
+                                </h4>
+                                <div class="collapse multi-collapse" id="collapseExample">
+                                    😀 😃 😄 😁 😆 😅 😂 🤣 🥲 ☺️ 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😝 😜 🤪 🤨 🧐 🤓 😎 🥸 🤩 🥳 😏 😒 😞 😔 😟 😕 🙁 ☹️ 😣 😖 😫 😩 🥺 😢 😭 😤 😠 😡 🤬 🤯 😳 🥵 🥶 😱 😨 😰 😥 😓 🤗 🤔 🤭 🤫 🤥 😶 😐 😑 😬 🙄 😯 😦 😧 😮 😲 🥱 😴 🤤 😪 😵 🤐 🥴 🤢 🤮 🤧 😷 🤒 🤕 🤑 🤠 😈 👿 👹 👺 🤡 💩 👻 💀 ☠️ 👽 👾 🤖 🎃 😺 😸 😹 😻 😼 😽 🙀 😿 😾
+                                </div>
+                                <div class="collapse multi-collapse" id="collapseExample2">                                        
+                                    👋 🤚 🖐 ✋ 🖖 👌 🤌 🤏 ✌️ 🤞 🤟 🤘 🤙 👈 👉 👆 🖕 👇 ☝️ 👍 👎 ✊ 👊 🤛 🤜 👏 🙌 👐 🤲 🤝 🙏 ✍️ 💅 🤳 💪 🦾 🦵 🦿 🦶 👣 👂 🦻 👃 🫀 🫁 🧠 🦷 🦴 👀 👁 👅 👄 💋 🩸                                        
+                                </div>
+                                <div class="collapse multi-collapse" id="collapseExample3">                                        
+                                    👶 👧 🧒 👦 👩 🧑 👨 👩‍🦱 🧑‍🦱 👨‍🦱 👩‍🦰 🧑‍🦰 👨‍🦰 👱‍♀️ 👱 👱‍♂️ 👩‍🦳 🧑‍🦳 👨‍🦳 👩‍🦲 🧑‍🦲 👨‍🦲 🧔 👵 🧓 👴 👲 👳‍♀️ 👳 👳‍♂️ 🧕 👮‍♀️ 👮 👮‍♂️ 👷‍♀️ 👷 👷‍♂️ 💂‍♀️ 💂 💂‍♂️ 🕵️‍♀️ 🕵️ 🕵️‍♂️ 👩‍⚕️ 🧑‍⚕️ 👨‍⚕️ 👩‍🌾 🧑‍🌾 👨‍🌾 👩‍🍳 🧑‍🍳 👨‍🍳 👩‍🎓 🧑‍🎓 👨‍🎓 👩‍🎤 🧑‍🎤 👨‍🎤 👩‍🏫 🧑‍🏫 👨‍🏫 👩‍🏭 🧑‍🏭 👨‍🏭 👩‍💻 🧑‍💻 👨‍💻 👩‍💼 🧑‍💼 👨‍💼 👩‍🔧 🧑‍🔧 👨‍🔧 👩‍🔬 🧑‍🔬 👨‍🔬 👩‍🎨 🧑‍🎨 👨‍🎨 👩‍🚒 🧑‍🚒 👨‍🚒 👩‍✈️ 🧑‍✈️ 👨‍✈️ 👩‍🚀 🧑‍🚀 👨‍🚀 👩‍⚖️ 🧑‍⚖️ 👨‍⚖️ 👰‍♀️ 👰 👰‍♂️ 🤵‍♀️ 🤵 🤵‍♂️ 👸 🤴 🥷 🦸‍♀️ 🦸 🦸‍♂️ 🦹‍♀️ 🦹 🦹‍♂️ 🤶 🧑‍🎄 🎅 🧙‍♀️ 🧙 🧙‍♂️ 🧝‍♀️ 🧝 🧝‍♂️ 🧛‍♀️ 🧛 🧛‍♂️ 🧟‍♀️ 🧟 🧟‍♂️ 🧞‍♀️ 🧞 🧞‍♂️ 🧜‍♀️ 🧜 🧜‍♂️ 🧚‍♀️ 🧚 🧚‍♂️ 👼 🤰 🤱 👩‍🍼 🧑‍🍼 👨‍🍼 🙇‍♀️ 🙇 🙇‍♂️ 💁‍♀️ 💁 💁‍♂️ 🙅‍♀️ 🙅 🙅‍♂️ 🙆‍♀️ 🙆 🙆‍♂️ 🙋‍♀️ 🙋 🙋‍♂️ 🧏‍♀️ 🧏 🧏‍♂️ 🤦‍♀️ 🤦 🤦‍♂️ 🤷‍♀️ 🤷 🤷‍♂️ 🙎‍♀️ 🙎 🙎‍♂️ 🙍‍♀️ 🙍 🙍‍♂️ 💇‍♀️ 💇 💇‍♂️ 💆‍♀️ 💆 💆‍♂️ 🧖‍♀️ 🧖 🧖‍♂️ 💅 🤳 💃 🕺 👯‍♀️ 👯 👯‍♂️ 🕴 👩‍🦽 🧑‍🦽 👨‍🦽 👩‍🦼 🧑‍🦼 👨‍🦼 🚶‍♀️ 🚶 🚶‍♂️ 👩‍🦯 🧑‍🦯 👨‍🦯 🧎‍♀️ 🧎 🧎‍♂️ 🏃‍♀️ 🏃 🏃‍♂️ 🧍‍♀️ 🧍 🧍‍♂️ 👭 🧑‍🤝‍🧑 👬 👫 👩‍❤️‍👩 💑 👨‍❤️‍👨 👩‍❤️‍👨 👩‍❤️‍💋‍👩 💏 👨‍❤️‍💋‍👨 👩‍❤️‍💋‍👨 👪 👨‍👩‍👦 👨‍👩‍👧 👨‍👩‍👧‍👦 👨‍👩‍👦‍👦 👨‍👩‍👧‍👧 👨‍👨‍👦 👨‍👨‍👧 👨‍👨‍👧‍👦 👨‍👨‍👦‍👦 👨‍👨‍👧‍👧 👩‍👩‍👦 👩‍👩‍👧 👩‍👩‍👧‍👦 👩‍👩‍👦‍👦 👩‍👩‍👧‍👧 👨‍👦 👨‍👦‍👦 👨‍👧 👨‍👧‍👦 👨‍👧‍👧 👩‍👦 👩‍👦‍👦 👩‍👧 👩‍👧‍👦 👩‍👧‍👧 🗣 👤 👥 🫂                                        
+                                </div>
+                                <div class="collapse multi-collapse" id="collapseExample4">      
+                                    🧳 🌂 ☂️ 🧵 🪡 🪢 🧶 👓 🕶 🥽 🥼 🦺 👔 👕 👖 🧣 🧤 🧥 🧦 👗 👘 🥻 🩴 🩱 🩲 🩳 👙 👚 👛 👜 👝 🎒 👞 👟 🥾 🥿 👠 👡 🩰 👢 👑 👒 🎩 🎓 🧢 ⛑ 🪖 💄 💍 💼
+                                </div>
+                                <div class="collapse multi-collapse" id="collapseExample5">      
+                                    ⌚️ 📱 📲 💻 ⌨️ 🖥 🖨 🖱 🖲 🕹 🗜 💽 💾 💿 📀 📼 📷 📸 📹 🎥 📽 🎞 📞 ☎️ 📟 📠 📺 📻 🎙 🎚 🎛 🧭 ⏱ ⏲ ⏰ 🕰 ⌛️ ⏳ 📡 🔋 🔌 💡 🔦 🕯 🪔 🧯 🛢 💸 💵 💴 💶 💷 🪙 💰 💳 💎 ⚖️ 🪜 🧰 🪛 🔧 🔨 ⚒ 🛠 ⛏ 🪚 🔩 ⚙️ 🪤 🧱 ⛓ 🧲 🔫 💣 🧨 🪓 🔪 🗡 ⚔️ 🛡 🚬 ⚰️ 🪦 ⚱️ 🏺 🔮 📿 🧿 💈 ⚗️ 🔭 🔬 🕳 🩹 🩺 💊 💉 🩸 🧬 🦠 🧫 🧪 🌡 🧹 🪠 🧺 🧻 🚽 🚰 🚿 🛁 🛀 🧼 🪥 🪒 🧽 🪣 🧴 🛎 🔑 🗝 🚪 🪑 🛋 🛏 🛌 🧸 🪆 🖼 🪞 🪟 🛍 🛒 🎁 🎈 🎏 🎀 🪄 🪅 🎊 🎉 🎎 🏮 🎐 🧧 ✉️ 📩 📨 📧 💌 📥 📤 📦 🏷 🪧 📪 📫 📬 📭 📮 📯 📜 📃 📄 📑 🧾 📊 📈 📉 🗒 🗓 📆 📅 🗑 📇 🗃 🗳 🗄 📋 📁 📂 🗂 🗞 📰 📓 📔 📒 📕 📗 📘 📙 📚 📖 🔖 🧷 🔗 📎 🖇 📐 📏 🧮 📌 📍 ✂️ 🖊 🖋 ✒️ 🖌 🖍 📝 ✏️ 🔍 🔎 🔏 🔐 🔒 🔓
+                                </div>
+                                <textarea class="form-control" name="" id="message" rows="8"></textarea>
+                                <label class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" id="option1" name="gender" value="option1" checked>
+                                    <span class="form-check-label"> Texto </span>
+                                </label>
+                                <label class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" id="option2" name="gender" value="option2">
+                                    <span class="form-check-label"> Imagen </span>
+                                </label>
+                                <br>
+                                <a href="#" onclick="send()" class="btn btn-sm btn-primary">Enviar</a>
+                            </div>
+                        @break
                             @default
                                 @foreach($dataTypeRows as $row)
                                     <!-- GET THE DISPLAY OPTIONS -->
@@ -469,7 +550,9 @@
                                 @case('imports')
                                     
                                 @break
-
+                                @case('chatbots')
+                                   
+                                @break
                                 @case('productions')
                                     <!-- <a class="btn btn-primary" href="#" onclick="saveproductions()">Guardar</a> -->
                                     @break
@@ -609,29 +692,61 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title"><i class="voyager-info"></i> Nuevo Cliente - Vista Rapida</h4>
+                            <h4 class="modal-title"><i class="voyager-info"></i> Nuevo Cliente</h4>
                         </div>
                         <div class="modal-body">
-                           
-                          
-                            <div class="form-group col-sm-6">
-                              <input class="form-control" type="text" placeholder="Nombres" id="first_name">
-                            </div>
 
-                            <div class="form-group col-sm-6">
-                                <input class="form-control" type="text" placeholder="Apellidos" id="last_name">
-                            </div>
-                            <div class="form-group col-sm-6">
-                                <input class="form-control" type="text" placeholder="Telefono" id="phone">
-                            </div>
 
-                            <div class="form-group col-sm-6">
-                                  <input class="form-control" type="text" placeholder="Carnet o NIT" id="nit">
-                            </div>
+                            <div>
 
-                            <div class="form-group col-sm-6">
-                                <input class="form-control" type="text" placeholder="Nick" id="display">
-                            </div>                          
+                                <!-- Nav tabs -->
+                                <ul class="nav nav-tabs" role="tablist">
+                                  <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Nuevo</a></li>
+                                  <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Buscar</a></li>
+                                 
+                                </ul>
+                              
+                                <!-- Tab panes -->
+                                <div class="tab-content">
+                                  <div role="tabpanel" class="tab-pane active" id="home">
+                                    <div class="form-group col-sm-6">
+                                        <label for="">Nombres</label>
+                                      <input class="form-control" type="text" placeholder="Nombres" id="first_name">
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="">Apellidos</label>
+                                        <input class="form-control" type="text" placeholder="Apellidos" id="last_name">
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="">Telefono</label>
+                                        <input class="form-control" type="text" placeholder="Telefono" id="phone" value="0">
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="">NIT</label>
+                                          <input class="form-control" type="text" placeholder="Carnet o NIT" id="nit" value="0">
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="">Display</label>
+                                        <input class="form-control" type="text" placeholder="Display" id="display">
+                                    </div>      
+                                    <div class="form-group col-sm-6">
+                                        <label for="">Correo</label>
+                                        <input class="form-control" type="text" placeholder="Email" id="email">
+                                    </div>
+                                  </div>
+                                  <div role="tabpanel" class="tab-pane" id="profile">
+
+                                    <h4>en desarrollo</h4>
+                                    
+                                  </div>
+                                </div>
+                              
+                              </div>
+                              
+
+                   
+                            
+
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
@@ -765,10 +880,10 @@
                         url: "{{ setting('admin.url') }}api/pos/productos",
                         dataType: "json",
                         success: function (response) {
-                            // $('#s').append($('<option>', {
-                            //     value: null,
-                            //     text: 'Elige un Producto'
-                            // }));
+                            $('#s').append($('<option>', {
+                                value: null,
+                                text: 'Elige un Producto'
+                            }));
                             for (let index = 0; index < response.length; index++) {
                                 const element = response[index];
                                 $('#s').append($('<option>', {
@@ -780,7 +895,7 @@
                     });
 
                     
-                    // get Deliverys--------------------------
+                    // get Deliverys
                     $.ajax({
                         url: "{{ setting('admin.url') }}api/pos/deliverys",
                         dataType: "json",
@@ -803,26 +918,14 @@
                         }
                     });
 
-                    // get clientes--------------------------
+                    // get cliente default
                     $.ajax({
-                        url: "{{ setting('admin.url') }}api/pos/clientes",
+                        url: "{{ setting('admin.url') }}api/pos/cliente/default/get",
                         dataType: "json",
                         success: function (response) {
-                            for (let index = 0; index < response.length; index++) {
-                                if (response[index].id == 1) {
-                                    $('#micliente').append($('<option>', {
-                                    selected: true,
-                                    value: response[index].id,
-                                    text: response[index].display
-                                }));
-                                $("input[name='cliente_id']").val(response[index].id);
-                                } else {
-                                    $('#micliente').append($('<option>', {
-                                    value: response[index].id,
-                                    text: response[index].display
-                                }));
-                                }
-                            }
+                            $("input[name='cliente_id']").val(response.id);
+                            $('#micliente').val(response.display+' - '+response.phone)
+                            $('#phone_client').val(response.phone)
                         }
                     });
 
@@ -937,6 +1040,19 @@
                     }
                 });
 
+                // ADD DISPLAY
+                $('#first_name').keyup(function (e) { 
+                    e.preventDefault();
+
+                    $('#display').val(this.value+' '+$('#last_name').val());
+                    $('#email').val(this.value+'.'+$('#last_name').val()+'@loginweb.dev');
+                });
+                $('#last_name').keyup(function (e) { 
+                    e.preventDefault();
+
+                    $('#display').val($('#first_name').val()+' '+this.value);
+                    $('#email').val($('#first_name').val()+'.'+this.value+'@loginweb.dev');
+                });
 
                 function cerrar_caja() {
 
@@ -993,9 +1109,6 @@
                 $('#midelivery').on('change', function() {
                     $("input[name='delivery_id']").val(this.value);
                 });
-                $('#micliente').on('change', function() {
-                    $("input[name='cliente_id']").val(this.value);
-                });
 
                 $('#mipagos').on('change', function() {
                     $("input[name='pago_id']").val(this.value);
@@ -1015,19 +1128,15 @@
                     var phone = $('#phone').val();
                     var nit = $('#nit').val();
                     var display = $('#display').val();
-                    var midata = JSON.stringify({first_name: first, last_name: last, phone: phone, nit: nit, display: display});
-                    console.log(midata);
+                    var email = $('#email').val();
+                    var midata = JSON.stringify({first_name: first, last_name: last, phone: phone, nit: nit, display: display, email: email});
                     $.ajax({
                         url: "{{ setting('admin.url') }}api/pos/savacliente/"+midata,
                         success: function (response){
                             toastr.success('Cliente Creado..');
-                            $('#micliente').append($('<option>', {
-                                selected: true,
-                                value: response.id,
-                                text: response.first_name + ' ' + response.last_name+ ' ' + response.ci_nit
-                            }));
+                            $('#micliente').val(response.display+' - '+response.phone);
+                            $('#phone_client').val(response.phone);
                             $("input[name='cliente_id']").val(response.id);
-                            // location.reload();
                             $('#modal_cliente').modal('hide');
                         }
                     });
@@ -1058,7 +1167,6 @@
                     var cupon_id = $("input[name='cupon_id']").val();
                     var pago_id = $("input[name='pago_id']").val();
                     var status_id = $("input[name='status_id']").val();
-
                     var option_id = $("input[name='option_id']").val();
                     var factura = $("input[name='factura']:checked").val();
                     var total = $("input[name='total']").val();
@@ -1070,40 +1178,54 @@
                     var sucursal_id = $("input[name='sucursal_id']").val();
                     var subtotal = $("input[name='subtotal']").val();
 
-                    var midata = JSON.stringify({'cliente_id': cliente_id, 'cupon_id': cupon_id, 'option_id': option_id, 'pago_id': pago_id, 'factura': factura, 'total': total, 'descuento': descuento, 'observacion': observacion, 'register_id': register_id, 'status_id': status_id, 'caja_id': caja_id, 'delivery_id': delivery_id, 'sucursal_id': sucursal_id, subtotal: subtotal });
-                
+                    var micart = JSON.parse(localStorage.getItem('micart'));
+
+                    var midata = JSON.stringify({'cliente_id': cliente_id, 'cupon_id': cupon_id, 'option_id': option_id, 'pago_id': pago_id, 'factura': factura, 'total': total, 'descuento': descuento, 'observacion': observacion, 'register_id': register_id, 'status_id': status_id, 'caja_id': caja_id, 'delivery_id': delivery_id, 'sucursal_id': sucursal_id, subtotal: subtotal, 'cantidad': micart.length });
+
+                    $('#modal_save_venta').modal('hide');
+                    
                     $.ajax({
                         url: "{{ setting('admin.url') }}api/pos/ventas/save/"+midata,
                         success: function (response) {
+                            
+                            // enviando detalle de venta
                             var micart = JSON.parse(localStorage.getItem('micart'));
                             for (let index = 0; index < micart.length; index++) {
-
                                 var midata = JSON.stringify({'producto_id': micart[index].id, 'venta_id': response, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total});
                                 var urli = "{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata;
-
-                                console.log(urli);
                                 $.ajax({
                                     url: urli,
                                     success: function () {
-                                        $("#micart tr#"+micart[index].id).remove();
-                                        mitotal();
+                                        
+                                        // setTimeout(function(){
+                                            $("#micart tr#"+micart[index].id).remove();
+                                            mitotal();
+                                        // }, 10000);
+                                        
                                     }
                                 });
                             }
+                            
+                            // enviado notification 
+                            $("input[name='descuento']").val(0)
                             localStorage.setItem('micart', JSON.stringify([]));
-                            $('#modal_save_venta').modal('hide');
-                            $("input[name='descuento']").val(0);
-                           
-                            if ($("input[name='season']:checked").val() == 'imprimir') {
-                                location.href = 'https://pos.loginweb.dev/admin/ventas/imprimir/'+response;
-                            }else{
-                                toastr.success('Venta Realizada');
-                            }
+
+                            var phone = $('#phone_client').val();
+                            $.ajax({
+                                url: "{{ setting('admin.chatbot') }}?type=pedido&phone="+phone+"&message="+response,
+                                success: function () {
+                                  
+                                    if ($("input[name='season']:checked").val() == 'imprimir') {
+                                        location.href = "{{ setting('admin.url') }}admin/ventas/imprimir/"+response;
+                                    }else{
+                                    
+                                        toastr.success('Venta Realizada');
+                                    }
+                                }
+                            });
+
                         }
-                       
                     });
-                    
-                    
                 }
 
                 $('#category').on('change', function() {
@@ -1131,13 +1253,16 @@
                 function mitotal() {
                     
                     var milist = JSON.parse(localStorage.getItem('micart'));
+                    var cant = milist.length;
                     var des = $("input[name='descuento']").val();
                     var total = 0
                     for (let index = 0; index < milist.length; index++) {
                         total = total + milist[index].total;
                     }
+                    
                     $("input[name='subtotal']").val(parseFloat(total).toFixed(2));
                     $("input[name='total']").val(parseFloat(total-des).toFixed(2));
+                    $("input[name='cantidad']").val(cant);
                 }
 
                 $('#s').on('change', function() {

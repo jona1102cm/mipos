@@ -13,6 +13,8 @@ class Cliente extends Model
 		'last_name',
 		'display',
 		'phone',
-		'ci_nit'
+		'ci_nit',
+		'email',
+		'default'
 	];
 }

@@ -69,4 +69,10 @@ class PosController extends Controller
 
     }
 
+    public function venta_public($id){
+        $venta = Venta::find($id);
+        return view('ventas.public', compact('venta'));
+
+    }
+
 }

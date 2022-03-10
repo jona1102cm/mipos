@@ -133,6 +133,12 @@
                     <i class="voyager-helm"></i> <span>Volver</span>
                 </a>
                 @break
+            @case('compras')
+                <a href="{{ url('admin/proveedores') }}" class="btn btn-default btn-add-new" title="">
+                    <i class="voyager-helm"></i> <span>Proveedores</span>
+                </a>
+                <h1>EN DESARROLLO</h1>
+                @break
             @default
             @foreach($actions as $action)
                 @if (method_exists($action, 'massAction'))
@@ -210,7 +216,7 @@
                                         $venta =  App\Venta::find($_GET['s']);
                                     @endphp
                                     <pre> <code>{{ $venta }}</code></pre>
-                                    @break
+                                @break
                                 
                                 @case('productos')
                                     <form method="get" class="form-search">
@@ -1622,8 +1628,18 @@
                                                     </td>
                                                 </tr>
                                                 @break
-                                            @default
+                                            
+                                            @case('compras')
+                                            <tr>
+                                                <td>
+                                                    <h1>EN DESARROLLO</h1>
+                                                </td>
+                                            </tr>
                                                
+                                            @break
+
+                                            @default
+                                                
                                                 <tr>
                                                   
                                                     @if($showCheckboxColumn)

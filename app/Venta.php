@@ -27,6 +27,7 @@ class Venta extends Model
 		'ticket',
 		'fiscal',
 		'adicional',
-		'created_at'
+		'created_at',
+		'cantidad'
 	];
 }
