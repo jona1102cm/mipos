@@ -110,10 +110,11 @@ Route::get('pos/ventas/save/{midata}', function($midata) {
         'ticket' => $ticket + 1,
         'cantidad' => $midata2->cantidad
     ]);
-    return $venta->id;
+    return $venta;
 });
 
 Route::get('pos/ventas/save/detalle/{micart}', function($micart) {
+    // return $micart;
     $micart2 = json_decode($micart);
     $miproducto = Producto::find($micart2->producto_id);
     DetalleVenta::create([
@@ -123,7 +124,8 @@ Route::get('pos/ventas/save/detalle/{micart}', function($micart) {
         'cantidad' => $micart2->cantidad,
         'total' => $micart2->total,
         'foto' => $miproducto->image ? $miproducto->image : null,
-        'name' => $miproducto->name
+        'name' => $miproducto->name,
+        'description' => $micart2->description ? $micart2->description : null
     ]);
     return true;
 });
@@ -138,7 +140,7 @@ Route::get('pos/savacliente/{midata}', function ($midata) {
         'ci_nit' => $cliente->nit,
         'display' => $cliente->display,
         'email' => $cliente->email,
-        'default' => 0
+        'default' => 1
     ]);
     return $cliente;
 });
@@ -153,14 +155,22 @@ Route::get('pos/producto/{id}', function ($id) {
     return  Producto::find($id);
 });
 
+// UN PRODUCT MIXTAS
+Route::get('pos/producto/mixto/{id}/{category}', function ($id, $category) {
+    return  Producto::where('mixta', $id)->where('categoria_id', $category)->get();
+});
+
 //--  TODAS LAS CATEGORY PRODUCTOS
 Route::get('pos/categorias', function () {
     return  Categoria::all();
 });
 
+Route::get('pos/category/{id}', function ($id) {
+    return  Categoria::find($id);
+});
+
 // PRODUCTS FOR CATEGORY
 Route::get('pos/productos/category/{id}', function ($id) {
-
     return  Producto::where('categoria_id', $id)->get();
 });
 
@@ -190,7 +200,8 @@ Route::get('pos/cliente/{id}', function ($id) {
     return  Cliente::where('id', $id)->get();
 });
 Route::get('pos/cliente/default/get', function () {
-    return  Cliente::where('default', 1)->first();
+    return  Cliente::where('default', 1)->orderBy('created_at', 'desc')->first();
+    // return true;
 });
 
 

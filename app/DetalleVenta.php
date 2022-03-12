@@ -14,7 +14,8 @@ class DetalleVenta extends Model
 		'cantidad',
 		'total',
 		'name',
-		'foto'
+		'foto',
+		'description'
 	];
 
 }

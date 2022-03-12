@@ -144,14 +144,18 @@
                                     <div class="form-group col-md-8">
                                         <strong>Carrito</strong>
                                         <div id="search-input">
-                                            <div class="input-group col-md-6">
-                                                <select class="form-control js-example-basic-single" id="category"> </select>
+                                            <div class="input-group col-sm-6">
+                                                <select class="form-control js-example-basic-single" id="category"></select>
                                             </div>
-                                            <div class="input-group col-md-6">
+                                            <div class="input-group col-sm-6">
                                                 <select class="form-control js-example-basic-single" id="s"></select>
                                             </div>
                                         </div>
-                                    
+                                        <div class="form-group" id="mixtos" hidden>
+                                            <select class="form-control js-example-basic-single" id="mixta1" style="width: 250px"></select>
+                                            <select class="form-control js-example-basic-single" id="mixta2" style="width: 250px"></select>
+                                            <a href="#" onclick="addmixta()" class="btn btn-sm btn-primary">Agregar</a>
+                                        </div>
                                         <table class="table table-striped table-inverse table-responsive" id="micart">
                                             <thead class="thead-inverse">
                                                 <tr>
@@ -179,16 +183,10 @@
                                             </form>
                                         </div>
                                         <div class="form-group col-md-12">
-                                            {{-- <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal_cliente">Nuevo Cliente</a> --}}
-                                            {{-- <select class="form-control js-example-basic-single" id="micliente" name="micliente"> </select> --}}
                                             <strong>Cliente</strong>
                                             <input type="text" id="micliente" class="form-control">
-                                            <input type="text" id="phone_client" class="form-control">
+                                            <input type="hidden" id="phone_client" class="form-control">
                                         </div>
-                                        {{-- <div class="form-group col-md-12">
-                                            <strong>Estado</strong>
-                                            <select class="form-control js-example-basic-single" id="miestado"> </select>
-                                        </div> --}}
                                         <div class="form-group col-md-12">
                                             <strong>Pasarela</strong>
                                             <select class="form-control js-example-basic-single" id="mipagos"> </select>
@@ -197,9 +195,7 @@
                                         <div class="form-group col-sm-12">
                                             <strong>Tipo</strong>
                                             <select class="form-control js-example-basic-single" id="venta_type"> </select>
-                                        </div>
-
-                                      
+                                        </div>                                      
 
                                         @foreach($dataTypeRows as $row)
                                             <!-- GET THE DISPLAY OPTIONS -->
@@ -237,7 +233,6 @@
                                             </div>
                                         @endforeach
 
-                                    
                                         <div class="form-group col-md-12">
                                             <strong>Cupon</strong>
                                             <select class="form-control js-example-basic-single" id="micupon"> </select>
@@ -248,7 +243,6 @@
                                             <select class="form-control js-example-basic-single" id="midelivery"> </select>
                                         </div>
                                 
-
                                     </div>
                             @break
                         
@@ -450,57 +444,97 @@
 
                             @break
 
-                        @case('chatbots')
-                            <div class="form-group col-sm-5">
-                                <h4 class="title">Cliente</h4>
-                                <select id="customer" class="form-control">
-                                    <option> Elije una opcion</option>
-                                </select>
-                                <h4 class="title">Producto</h4>
-                                <select id="product" class="form-control">
-                                    <option value="0" > Elije una opcion</option>
-                                </select> 
-                            </div>
-                            <div class="form-group col-sm-7">
-                                <h4 class="title">CHAT - <small>Copia y Pega los Emojis!</small>
-                                    <br />
-                                    <a class="btn btn-sm btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                                        Smileys
-                                    </a>
-                                    <button class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample2">Gestures</button>
-                                    <button class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample3" aria-expanded="false" aria-controls="collapseExample3">People</button>
-                                    <button class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample4" aria-expanded="false" aria-controls="collapseExample4">Clothing</button>
-                                    <button class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample5" aria-expanded="false" aria-controls="collapseExample5">Objects</button>
-                                        
-                                </h4>
-                                <div class="collapse multi-collapse" id="collapseExample">
-                                    😀 😃 😄 😁 😆 😅 😂 🤣 🥲 ☺️ 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😝 😜 🤪 🤨 🧐 🤓 😎 🥸 🤩 🥳 😏 😒 😞 😔 😟 😕 🙁 ☹️ 😣 😖 😫 😩 🥺 😢 😭 😤 😠 😡 🤬 🤯 😳 🥵 🥶 😱 😨 😰 😥 😓 🤗 🤔 🤭 🤫 🤥 😶 😐 😑 😬 🙄 😯 😦 😧 😮 😲 🥱 😴 🤤 😪 😵 🤐 🥴 🤢 🤮 🤧 😷 🤒 🤕 🤑 🤠 😈 👿 👹 👺 🤡 💩 👻 💀 ☠️ 👽 👾 🤖 🎃 😺 😸 😹 😻 😼 😽 🙀 😿 😾
+                            @case('productos')
+                                <div class="form-group col-md-6">
+                                    <strong>Categoria</strong>
+                                    <select class="form-control js-example-basic-single" name="micategory" id="micategory"></select>
                                 </div>
-                                <div class="collapse multi-collapse" id="collapseExample2">                                        
-                                    👋 🤚 🖐 ✋ 🖖 👌 🤌 🤏 ✌️ 🤞 🤟 🤘 🤙 👈 👉 👆 🖕 👇 ☝️ 👍 👎 ✊ 👊 🤛 🤜 👏 🙌 👐 🤲 🤝 🙏 ✍️ 💅 🤳 💪 🦾 🦵 🦿 🦶 👣 👂 🦻 👃 🫀 🫁 🧠 🦷 🦴 👀 👁 👅 👄 💋 🩸                                        
+                                @foreach($dataTypeRows as $row)
+                                    <!-- GET THE DISPLAY OPTIONS -->
+                                    @php
+                                        $display_options = $row->details->display ?? NULL;
+                                        if ($dataTypeContent->{$row->field.'_'.($edit ? 'edit' : 'add')}) {
+                                            $dataTypeContent->{$row->field} = $dataTypeContent->{$row->field.'_'.($edit ? 'edit' : 'add')};
+                                        }
+                                    @endphp
+                                    @if (isset($row->details->legend) && isset($row->details->legend->text))
+                                        <legend class="text-{{ $row->details->legend->align ?? 'center' }}" style="background-color: {{ $row->details->legend->bgcolor ?? '#f0f0f0' }};padding: 5px;">{{ $row->details->legend->text }}</legend>
+                                    @endif
+
+                                    <div class="form-group @if($row->type == 'hidden') hidden @endif col-md-{{ $display_options->width ?? 12 }} {{ $errors->has($row->field) ? 'has-error' : '' }}" @if(isset($display_options->id)){{ "id=$display_options->id" }}@endif>
+                                        {{ $row->slugify }}
+                                        <label class="control-label" for="name">{{ $row->getTranslatedAttribute('display_name') }}</label>
+                                        @include('voyager::multilingual.input-hidden-bread-edit-add')
+                                        @if (isset($row->details->view))
+                                            @include($row->details->view, ['row' => $row, 'dataType' => $dataType, 'dataTypeContent' => $dataTypeContent, 'content' => $dataTypeContent->{$row->field}, 'action' => ($edit ? 'edit' : 'add'), 'view' => ($edit ? 'edit' : 'add'), 'options' => $row->details])
+                                        @elseif ($row->type == 'relationship')
+                                            @include('voyager::formfields.relationship', ['options' => $row->details])
+                                        @else
+                                            {!! app('voyager')->formField($row, $dataType, $dataTypeContent) !!}
+                                        @endif
+
+                                        @foreach (app('voyager')->afterFormFields($row, $dataType, $dataTypeContent) as $after)
+                                            {!! $after->handle($row, $dataType, $dataTypeContent) !!}
+                                        @endforeach
+                                        @if ($errors->has($row->field))
+                                            @foreach ($errors->get($row->field) as $error)
+                                                <span class="help-block">{{ $error }}</span>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                @endforeach
+                                @break
+                            @case('chatbots')
+                                <div class="form-group col-sm-5">
+                                    <h4 class="title">Cliente</h4>
+                                    <select id="customer" class="form-control">
+                                        <option> Elije una opcion</option>
+                                    </select>
+                                    <h4 class="title">Producto</h4>
+                                    <select id="product" class="form-control">
+                                        <option value="0" > Elije una opcion</option>
+                                    </select> 
                                 </div>
-                                <div class="collapse multi-collapse" id="collapseExample3">                                        
-                                    👶 👧 🧒 👦 👩 🧑 👨 👩‍🦱 🧑‍🦱 👨‍🦱 👩‍🦰 🧑‍🦰 👨‍🦰 👱‍♀️ 👱 👱‍♂️ 👩‍🦳 🧑‍🦳 👨‍🦳 👩‍🦲 🧑‍🦲 👨‍🦲 🧔 👵 🧓 👴 👲 👳‍♀️ 👳 👳‍♂️ 🧕 👮‍♀️ 👮 👮‍♂️ 👷‍♀️ 👷 👷‍♂️ 💂‍♀️ 💂 💂‍♂️ 🕵️‍♀️ 🕵️ 🕵️‍♂️ 👩‍⚕️ 🧑‍⚕️ 👨‍⚕️ 👩‍🌾 🧑‍🌾 👨‍🌾 👩‍🍳 🧑‍🍳 👨‍🍳 👩‍🎓 🧑‍🎓 👨‍🎓 👩‍🎤 🧑‍🎤 👨‍🎤 👩‍🏫 🧑‍🏫 👨‍🏫 👩‍🏭 🧑‍🏭 👨‍🏭 👩‍💻 🧑‍💻 👨‍💻 👩‍💼 🧑‍💼 👨‍💼 👩‍🔧 🧑‍🔧 👨‍🔧 👩‍🔬 🧑‍🔬 👨‍🔬 👩‍🎨 🧑‍🎨 👨‍🎨 👩‍🚒 🧑‍🚒 👨‍🚒 👩‍✈️ 🧑‍✈️ 👨‍✈️ 👩‍🚀 🧑‍🚀 👨‍🚀 👩‍⚖️ 🧑‍⚖️ 👨‍⚖️ 👰‍♀️ 👰 👰‍♂️ 🤵‍♀️ 🤵 🤵‍♂️ 👸 🤴 🥷 🦸‍♀️ 🦸 🦸‍♂️ 🦹‍♀️ 🦹 🦹‍♂️ 🤶 🧑‍🎄 🎅 🧙‍♀️ 🧙 🧙‍♂️ 🧝‍♀️ 🧝 🧝‍♂️ 🧛‍♀️ 🧛 🧛‍♂️ 🧟‍♀️ 🧟 🧟‍♂️ 🧞‍♀️ 🧞 🧞‍♂️ 🧜‍♀️ 🧜 🧜‍♂️ 🧚‍♀️ 🧚 🧚‍♂️ 👼 🤰 🤱 👩‍🍼 🧑‍🍼 👨‍🍼 🙇‍♀️ 🙇 🙇‍♂️ 💁‍♀️ 💁 💁‍♂️ 🙅‍♀️ 🙅 🙅‍♂️ 🙆‍♀️ 🙆 🙆‍♂️ 🙋‍♀️ 🙋 🙋‍♂️ 🧏‍♀️ 🧏 🧏‍♂️ 🤦‍♀️ 🤦 🤦‍♂️ 🤷‍♀️ 🤷 🤷‍♂️ 🙎‍♀️ 🙎 🙎‍♂️ 🙍‍♀️ 🙍 🙍‍♂️ 💇‍♀️ 💇 💇‍♂️ 💆‍♀️ 💆 💆‍♂️ 🧖‍♀️ 🧖 🧖‍♂️ 💅 🤳 💃 🕺 👯‍♀️ 👯 👯‍♂️ 🕴 👩‍🦽 🧑‍🦽 👨‍🦽 👩‍🦼 🧑‍🦼 👨‍🦼 🚶‍♀️ 🚶 🚶‍♂️ 👩‍🦯 🧑‍🦯 👨‍🦯 🧎‍♀️ 🧎 🧎‍♂️ 🏃‍♀️ 🏃 🏃‍♂️ 🧍‍♀️ 🧍 🧍‍♂️ 👭 🧑‍🤝‍🧑 👬 👫 👩‍❤️‍👩 💑 👨‍❤️‍👨 👩‍❤️‍👨 👩‍❤️‍💋‍👩 💏 👨‍❤️‍💋‍👨 👩‍❤️‍💋‍👨 👪 👨‍👩‍👦 👨‍👩‍👧 👨‍👩‍👧‍👦 👨‍👩‍👦‍👦 👨‍👩‍👧‍👧 👨‍👨‍👦 👨‍👨‍👧 👨‍👨‍👧‍👦 👨‍👨‍👦‍👦 👨‍👨‍👧‍👧 👩‍👩‍👦 👩‍👩‍👧 👩‍👩‍👧‍👦 👩‍👩‍👦‍👦 👩‍👩‍👧‍👧 👨‍👦 👨‍👦‍👦 👨‍👧 👨‍👧‍👦 👨‍👧‍👧 👩‍👦 👩‍👦‍👦 👩‍👧 👩‍👧‍👦 👩‍👧‍👧 🗣 👤 👥 🫂                                        
+                                <div class="form-group col-sm-7">
+                                    <h4 class="title">CHAT - <small>Copia y Pega los Emojis!</small>
+                                        <br />
+                                        <a class="btn btn-sm btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                            Smileys
+                                        </a>
+                                        <button class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample2">Gestures</button>
+                                        <button class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample3" aria-expanded="false" aria-controls="collapseExample3">People</button>
+                                        <button class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample4" aria-expanded="false" aria-controls="collapseExample4">Clothing</button>
+                                        <button class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample5" aria-expanded="false" aria-controls="collapseExample5">Objects</button>
+                                            
+                                    </h4>
+                                    <div class="collapse multi-collapse" id="collapseExample">
+                                        😀 😃 😄 😁 😆 😅 😂 🤣 🥲 ☺️ 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😝 😜 🤪 🤨 🧐 🤓 😎 🥸 🤩 🥳 😏 😒 😞 😔 😟 😕 🙁 ☹️ 😣 😖 😫 😩 🥺 😢 😭 😤 😠 😡 🤬 🤯 😳 🥵 🥶 😱 😨 😰 😥 😓 🤗 🤔 🤭 🤫 🤥 😶 😐 😑 😬 🙄 😯 😦 😧 😮 😲 🥱 😴 🤤 😪 😵 🤐 🥴 🤢 🤮 🤧 😷 🤒 🤕 🤑 🤠 😈 👿 👹 👺 🤡 💩 👻 💀 ☠️ 👽 👾 🤖 🎃 😺 😸 😹 😻 😼 😽 🙀 😿 😾
+                                    </div>
+                                    <div class="collapse multi-collapse" id="collapseExample2">                                        
+                                        👋 🤚 🖐 ✋ 🖖 👌 🤌 🤏 ✌️ 🤞 🤟 🤘 🤙 👈 👉 👆 🖕 👇 ☝️ 👍 👎 ✊ 👊 🤛 🤜 👏 🙌 👐 🤲 🤝 🙏 ✍️ 💅 🤳 💪 🦾 🦵 🦿 🦶 👣 👂 🦻 👃 🫀 🫁 🧠 🦷 🦴 👀 👁 👅 👄 💋 🩸                                        
+                                    </div>
+                                    <div class="collapse multi-collapse" id="collapseExample3">                                        
+                                        👶 👧 🧒 👦 👩 🧑 👨 👩‍🦱 🧑‍🦱 👨‍🦱 👩‍🦰 🧑‍🦰 👨‍🦰 👱‍♀️ 👱 👱‍♂️ 👩‍🦳 🧑‍🦳 👨‍🦳 👩‍🦲 🧑‍🦲 👨‍🦲 🧔 👵 🧓 👴 👲 👳‍♀️ 👳 👳‍♂️ 🧕 👮‍♀️ 👮 👮‍♂️ 👷‍♀️ 👷 👷‍♂️ 💂‍♀️ 💂 💂‍♂️ 🕵️‍♀️ 🕵️ 🕵️‍♂️ 👩‍⚕️ 🧑‍⚕️ 👨‍⚕️ 👩‍🌾 🧑‍🌾 👨‍🌾 👩‍🍳 🧑‍🍳 👨‍🍳 👩‍🎓 🧑‍🎓 👨‍🎓 👩‍🎤 🧑‍🎤 👨‍🎤 👩‍🏫 🧑‍🏫 👨‍🏫 👩‍🏭 🧑‍🏭 👨‍🏭 👩‍💻 🧑‍💻 👨‍💻 👩‍💼 🧑‍💼 👨‍💼 👩‍🔧 🧑‍🔧 👨‍🔧 👩‍🔬 🧑‍🔬 👨‍🔬 👩‍🎨 🧑‍🎨 👨‍🎨 👩‍🚒 🧑‍🚒 👨‍🚒 👩‍✈️ 🧑‍✈️ 👨‍✈️ 👩‍🚀 🧑‍🚀 👨‍🚀 👩‍⚖️ 🧑‍⚖️ 👨‍⚖️ 👰‍♀️ 👰 👰‍♂️ 🤵‍♀️ 🤵 🤵‍♂️ 👸 🤴 🥷 🦸‍♀️ 🦸 🦸‍♂️ 🦹‍♀️ 🦹 🦹‍♂️ 🤶 🧑‍🎄 🎅 🧙‍♀️ 🧙 🧙‍♂️ 🧝‍♀️ 🧝 🧝‍♂️ 🧛‍♀️ 🧛 🧛‍♂️ 🧟‍♀️ 🧟 🧟‍♂️ 🧞‍♀️ 🧞 🧞‍♂️ 🧜‍♀️ 🧜 🧜‍♂️ 🧚‍♀️ 🧚 🧚‍♂️ 👼 🤰 🤱 👩‍🍼 🧑‍🍼 👨‍🍼 🙇‍♀️ 🙇 🙇‍♂️ 💁‍♀️ 💁 💁‍♂️ 🙅‍♀️ 🙅 🙅‍♂️ 🙆‍♀️ 🙆 🙆‍♂️ 🙋‍♀️ 🙋 🙋‍♂️ 🧏‍♀️ 🧏 🧏‍♂️ 🤦‍♀️ 🤦 🤦‍♂️ 🤷‍♀️ 🤷 🤷‍♂️ 🙎‍♀️ 🙎 🙎‍♂️ 🙍‍♀️ 🙍 🙍‍♂️ 💇‍♀️ 💇 💇‍♂️ 💆‍♀️ 💆 💆‍♂️ 🧖‍♀️ 🧖 🧖‍♂️ 💅 🤳 💃 🕺 👯‍♀️ 👯 👯‍♂️ 🕴 👩‍🦽 🧑‍🦽 👨‍🦽 👩‍🦼 🧑‍🦼 👨‍🦼 🚶‍♀️ 🚶 🚶‍♂️ 👩‍🦯 🧑‍🦯 👨‍🦯 🧎‍♀️ 🧎 🧎‍♂️ 🏃‍♀️ 🏃 🏃‍♂️ 🧍‍♀️ 🧍 🧍‍♂️ 👭 🧑‍🤝‍🧑 👬 👫 👩‍❤️‍👩 💑 👨‍❤️‍👨 👩‍❤️‍👨 👩‍❤️‍💋‍👩 💏 👨‍❤️‍💋‍👨 👩‍❤️‍💋‍👨 👪 👨‍👩‍👦 👨‍👩‍👧 👨‍👩‍👧‍👦 👨‍👩‍👦‍👦 👨‍👩‍👧‍👧 👨‍👨‍👦 👨‍👨‍👧 👨‍👨‍👧‍👦 👨‍👨‍👦‍👦 👨‍👨‍👧‍👧 👩‍👩‍👦 👩‍👩‍👧 👩‍👩‍👧‍👦 👩‍👩‍👦‍👦 👩‍👩‍👧‍👧 👨‍👦 👨‍👦‍👦 👨‍👧 👨‍👧‍👦 👨‍👧‍👧 👩‍👦 👩‍👦‍👦 👩‍👧 👩‍👧‍👦 👩‍👧‍👧 🗣 👤 👥 🫂                                        
+                                    </div>
+                                    <div class="collapse multi-collapse" id="collapseExample4">      
+                                        🧳 🌂 ☂️ 🧵 🪡 🪢 🧶 👓 🕶 🥽 🥼 🦺 👔 👕 👖 🧣 🧤 🧥 🧦 👗 👘 🥻 🩴 🩱 🩲 🩳 👙 👚 👛 👜 👝 🎒 👞 👟 🥾 🥿 👠 👡 🩰 👢 👑 👒 🎩 🎓 🧢 ⛑ 🪖 💄 💍 💼
+                                    </div>
+                                    <div class="collapse multi-collapse" id="collapseExample5">      
+                                        ⌚️ 📱 📲 💻 ⌨️ 🖥 🖨 🖱 🖲 🕹 🗜 💽 💾 💿 📀 📼 📷 📸 📹 🎥 📽 🎞 📞 ☎️ 📟 📠 📺 📻 🎙 🎚 🎛 🧭 ⏱ ⏲ ⏰ 🕰 ⌛️ ⏳ 📡 🔋 🔌 💡 🔦 🕯 🪔 🧯 🛢 💸 💵 💴 💶 💷 🪙 💰 💳 💎 ⚖️ 🪜 🧰 🪛 🔧 🔨 ⚒ 🛠 ⛏ 🪚 🔩 ⚙️ 🪤 🧱 ⛓ 🧲 🔫 💣 🧨 🪓 🔪 🗡 ⚔️ 🛡 🚬 ⚰️ 🪦 ⚱️ 🏺 🔮 📿 🧿 💈 ⚗️ 🔭 🔬 🕳 🩹 🩺 💊 💉 🩸 🧬 🦠 🧫 🧪 🌡 🧹 🪠 🧺 🧻 🚽 🚰 🚿 🛁 🛀 🧼 🪥 🪒 🧽 🪣 🧴 🛎 🔑 🗝 🚪 🪑 🛋 🛏 🛌 🧸 🪆 🖼 🪞 🪟 🛍 🛒 🎁 🎈 🎏 🎀 🪄 🪅 🎊 🎉 🎎 🏮 🎐 🧧 ✉️ 📩 📨 📧 💌 📥 📤 📦 🏷 🪧 📪 📫 📬 📭 📮 📯 📜 📃 📄 📑 🧾 📊 📈 📉 🗒 🗓 📆 📅 🗑 📇 🗃 🗳 🗄 📋 📁 📂 🗂 🗞 📰 📓 📔 📒 📕 📗 📘 📙 📚 📖 🔖 🧷 🔗 📎 🖇 📐 📏 🧮 📌 📍 ✂️ 🖊 🖋 ✒️ 🖌 🖍 📝 ✏️ 🔍 🔎 🔏 🔐 🔒 🔓
+                                    </div>
+                                    <textarea class="form-control" name="" id="message" rows="8"></textarea>
+                                    <label class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" id="option1" name="gender" value="option1" checked>
+                                        <span class="form-check-label"> Texto </span>
+                                    </label>
+                                    <label class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" id="option2" name="gender" value="option2">
+                                        <span class="form-check-label"> Imagen </span>
+                                    </label>
+                                    <br>
+                                    <a href="#" onclick="send()" class="btn btn-sm btn-primary">Enviar</a>
                                 </div>
-                                <div class="collapse multi-collapse" id="collapseExample4">      
-                                    🧳 🌂 ☂️ 🧵 🪡 🪢 🧶 👓 🕶 🥽 🥼 🦺 👔 👕 👖 🧣 🧤 🧥 🧦 👗 👘 🥻 🩴 🩱 🩲 🩳 👙 👚 👛 👜 👝 🎒 👞 👟 🥾 🥿 👠 👡 🩰 👢 👑 👒 🎩 🎓 🧢 ⛑ 🪖 💄 💍 💼
-                                </div>
-                                <div class="collapse multi-collapse" id="collapseExample5">      
-                                    ⌚️ 📱 📲 💻 ⌨️ 🖥 🖨 🖱 🖲 🕹 🗜 💽 💾 💿 📀 📼 📷 📸 📹 🎥 📽 🎞 📞 ☎️ 📟 📠 📺 📻 🎙 🎚 🎛 🧭 ⏱ ⏲ ⏰ 🕰 ⌛️ ⏳ 📡 🔋 🔌 💡 🔦 🕯 🪔 🧯 🛢 💸 💵 💴 💶 💷 🪙 💰 💳 💎 ⚖️ 🪜 🧰 🪛 🔧 🔨 ⚒ 🛠 ⛏ 🪚 🔩 ⚙️ 🪤 🧱 ⛓ 🧲 🔫 💣 🧨 🪓 🔪 🗡 ⚔️ 🛡 🚬 ⚰️ 🪦 ⚱️ 🏺 🔮 📿 🧿 💈 ⚗️ 🔭 🔬 🕳 🩹 🩺 💊 💉 🩸 🧬 🦠 🧫 🧪 🌡 🧹 🪠 🧺 🧻 🚽 🚰 🚿 🛁 🛀 🧼 🪥 🪒 🧽 🪣 🧴 🛎 🔑 🗝 🚪 🪑 🛋 🛏 🛌 🧸 🪆 🖼 🪞 🪟 🛍 🛒 🎁 🎈 🎏 🎀 🪄 🪅 🎊 🎉 🎎 🏮 🎐 🧧 ✉️ 📩 📨 📧 💌 📥 📤 📦 🏷 🪧 📪 📫 📬 📭 📮 📯 📜 📃 📄 📑 🧾 📊 📈 📉 🗒 🗓 📆 📅 🗑 📇 🗃 🗳 🗄 📋 📁 📂 🗂 🗞 📰 📓 📔 📒 📕 📗 📘 📙 📚 📖 🔖 🧷 🔗 📎 🖇 📐 📏 🧮 📌 📍 ✂️ 🖊 🖋 ✒️ 🖌 🖍 📝 ✏️ 🔍 🔎 🔏 🔐 🔒 🔓
-                                </div>
-                                <textarea class="form-control" name="" id="message" rows="8"></textarea>
-                                <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" id="option1" name="gender" value="option1" checked>
-                                    <span class="form-check-label"> Texto </span>
-                                </label>
-                                <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" id="option2" name="gender" value="option2">
-                                    <span class="form-check-label"> Imagen </span>
-                                </label>
-                                <br>
-                                <a href="#" onclick="send()" class="btn btn-sm btn-primary">Enviar</a>
-                            </div>
-                        @break
+                                @break
                             @default
                                 @foreach($dataTypeRows as $row)
                                     <!-- GET THE DISPLAY OPTIONS -->
@@ -844,20 +878,67 @@
                     $('.js-example-basic-single').select2();
                     $('input[name="register_id"]').val('{{ Auth::user()->id }}');
                     
-
                     if (localStorage.getItem('micaja')) {
                         var micaja = JSON.parse(localStorage.getItem('micaja'));
                         $("input[name='caja_id']").val(micaja.caja_id);
                         $('input[name="sucursal_id"]').val(micaja.sucursal_id);
                         $("#info_caja").html('<h4>'+micaja.title+" - "+micaja.sucursal+" - "+micaja.importe+' Bs.</h4>');
-                        
-
                     }else{
                         $("#micaja").modal();
                     }
 
-                       // TODOS LOS CATEGORIAS 
-                       $.ajax({
+                    // MIXTA 1 y 2 
+                    // $.ajax({
+                    //     url: "{{ setting('admin.url') }}api/pos/producto/mixto/0",
+                    //     dataType: "json",
+                    //     success: function (response) {
+                    //         $('#mixta1').append($('<option>', {
+                    //             value: null,
+                    //             text: 'Elige un Mitad'
+                    //         }));
+                    //         for (let index = 0; index < response.length; index++) {
+
+                    //             $.ajax({
+                    //                 url: "{{ setting('admin.url') }}api/pos/category/"+response[index].categoria_id,
+                    //                 dataType: "json",
+                    //                 success: function (midata) {
+                    //                     $('#mixta1').append($('<option>', {
+                    //                         value: response[index].id,
+                    //                         text: midata.abreviatura + ' - ' + response[index].name + ' - ' + response[index].precio+' Bs.'
+                    //                     }));
+                    //                 }
+                    //             });
+
+                    //         }
+                    //     }
+                    // });
+                    // $.ajax({
+                    //     url: "{{ setting('admin.url') }}api/pos/producto/mixto/0",
+                    //     dataType: "json",
+                    //     success: function (response) {
+                    //         $('#mixta2').append($('<option>', {
+                    //             value: null,
+                    //             text: 'Elige una Mitad'
+                    //         }));
+                    //         for (let index = 0; index < response.length; index++) {
+
+                    //             $.ajax({
+                    //                 url: "{{ setting('admin.url') }}api/pos/category/"+response[index].categoria_id,
+                    //                 dataType: "json",
+                    //                 success: function (midata) {
+                    //                     $('#mixta2').append($('<option>', {
+                    //                         value: response[index].id,
+                    //                         text: midata.abreviatura + ' - ' + response[index].name + ' - ' + response[index].precio+' Bs.'
+                    //                     }));
+                    //                 }
+                    //             });
+
+                    //         }
+                    //     }
+                    // });
+
+                    // TODOS LOS CATEGORIAS 
+                    $.ajax({
                         url: "{{ setting('admin.url') }}api/pos/categorias",
                         dataType: "json",
                         success: function (response) {
@@ -876,25 +957,31 @@
                     });
                 
                     // TODOS LOS PRODUCTOS 
-                    $.ajax({
-                        url: "{{ setting('admin.url') }}api/pos/productos",
-                        dataType: "json",
-                        success: function (response) {
-                            $('#s').append($('<option>', {
-                                value: null,
-                                text: 'Elige un Producto'
-                            }));
-                            for (let index = 0; index < response.length; index++) {
-                                const element = response[index];
-                                $('#s').append($('<option>', {
-                                    value: response[index].id,
-                                    text: response[index].name
-                                }));
-                            }
-                        }
-                    });
+                    // $.ajax({
+                    //     url: "{{ setting('admin.url') }}api/pos/productos",
+                    //     dataType: "json",
+                    //     success: function (response) {
+                    //         $('#s').append($('<option>', {
+                    //             value: null,
+                    //             text: 'Elige un Producto'
+                    //         }));
+                    //         for (let index = 0; index < response.length; index++) {
 
-                    
+                    //             $.ajax({
+                    //                 url: "{{ setting('admin.url') }}api/pos/category/"+response[index].categoria_id,
+                    //                 dataType: "json",
+                    //                 success: function (midata) {
+                    //                     $('#s').append($('<option>', {
+                    //                         value: response[index].id,
+                    //                         text: midata.abreviatura + ' - ' + response[index].name + ' - ' + response[index].precio+' Bs.'
+                    //                     }));
+                    //                 }
+                    //             });
+
+                    //         }
+                    //     }
+                    // });
+
                     // get Deliverys
                     $.ajax({
                         url: "{{ setting('admin.url') }}api/pos/deliverys",
@@ -1030,7 +1117,7 @@
                         }else{
                             for (let index = 0; index < milist.length; index++) {
 
-                                $("#micart").append("<tr id="+milist[index].id+"><td>"+milist[index].id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+milist[index].image+"></td><td>"+milist[index].name+"</td><td><input class='form-control' type='number' value='"+milist[index].precio+"' id='precio_"+milist[index].id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+milist[index].id+")' value='"+milist[index].cant+"' id='cant_"+milist[index].id+"'></td><td><input class='form-control' type='number' value='"+milist[index].total+"' id='total_"+milist[index].id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+milist[index].id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                $("#micart").append("<tr id="+milist[index].id+"><td>"+milist[index].id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+milist[index].image+"></td><td>"+milist[index].name+"<br>"+milist[index].description+"</td><td><input class='form-control' type='number' value='"+milist[index].precio+"' id='precio_"+milist[index].id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+milist[index].id+")' value='"+milist[index].cant+"' id='cant_"+milist[index].id+"'></td><td><input class='form-control' type='number' value='"+milist[index].total+"' id='total_"+milist[index].id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+milist[index].id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
                             }
                             mitotal();
                         }
@@ -1039,6 +1126,34 @@
                         localStorage.setItem('micart', JSON.stringify([]));
                     }
                 });
+
+                //ADD MIXTA 
+                function addmixta() {
+                    var id = $('#s').val();
+                    var mixta1 = $('#mixta1').val(); 
+                    var mixta2 = $('#mixta2').val();
+                    // console.log({product: product, mixta1: mixta1, mixta2: mixta2});
+                    var micart = JSON.parse(localStorage.getItem('micart'));
+                    var description = $('#mixta1 :selected').text() + ' - ' + $('#mixta2 :selected').text();
+                    $.ajax({
+                        url: "{{ setting('admin.url') }}api/pos/producto/"+id,
+                        dataType: "json",
+                        success: function (response) {
+
+                            $('#mixtos').attr("hidden", true);
+                            $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                            
+                            var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': description};
+                            micart.push(temp);
+                            localStorage.setItem('micart', JSON.stringify(micart));
+
+                            mitotal();
+                            toastr.success(response.name+" - REGISTRADO");
+
+                        }
+                    });
+
+                }
 
                 // ADD DISPLAY
                 $('#first_name').keyup(function (e) { 
@@ -1191,38 +1306,42 @@
                             // enviando detalle de venta
                             var micart = JSON.parse(localStorage.getItem('micart'));
                             for (let index = 0; index < micart.length; index++) {
-                                var midata = JSON.stringify({'producto_id': micart[index].id, 'venta_id': response, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total});
+                                var midata = JSON.stringify({'producto_id': micart[index].id, 'venta_id': response.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'description': micart[index].description});
                                 var urli = "{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata;
+                                // console.log();
                                 $.ajax({
                                     url: urli,
-                                    success: function () {
+                                    success: function (midata) {
                                         
-                                        // setTimeout(function(){
-                                            $("#micart tr#"+micart[index].id).remove();
-                                            mitotal();
-                                        // }, 10000);
+                                    if ((response.cantidad - 1) == index) {
+
+                                        if ($("input[name='season']:checked").val() == 'imprimir') {
+                                            $("input[name='descuento']").val(0)
+                                            localStorage.setItem('micart', JSON.stringify([]));
+                                            location.href = "{{ setting('admin.url') }}admin/ventas/imprimir/"+response.id;
+                                        }else{                                        
+                                            toastr.success('Venta Realizada');
+                                        }
+                                    }
+                                    $("#micart tr#"+micart[index].id).remove();
+                                    mitotal();
                                         
                                     }
+                                    
                                 });
                             }
                             
                             // enviado notification 
-                            $("input[name='descuento']").val(0)
-                            localStorage.setItem('micart', JSON.stringify([]));
+                          
 
-                            var phone = $('#phone_client').val();
-                            $.ajax({
-                                url: "{{ setting('admin.chatbot') }}?type=pedido&phone="+phone+"&message="+response,
-                                success: function () {
+                            // var phone = $('#phone_client').val();
+                            // $.ajax({
+                            //     url: "{{ setting('admin.chatbot') }}?type=pedido&phone="+phone+"&message="+response,
+                            //     success: function () {
                                   
-                                    if ($("input[name='season']:checked").val() == 'imprimir') {
-                                        location.href = "{{ setting('admin.url') }}admin/ventas/imprimir/"+response;
-                                    }else{
-                                    
-                                        toastr.success('Venta Realizada');
-                                    }
-                                }
-                            });
+                                   
+                            //     }
+                            // });
 
                         }
                     });
@@ -1289,15 +1408,52 @@
                             url: "{{ setting('admin.url') }}api/pos/producto/"+id,
                             dataType: "json",
                             success: function (response) {
-                                $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"</td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
 
-                                
-                                var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio};
-                                micart.push(temp);
-                                localStorage.setItem('micart', JSON.stringify(micart));
+                                if (response.mixta == 1 ) {
+                                    $('#mixtos').attr("hidden",false);
+                                    var micategory = $('#category').val();
+                                    console.log(micategory);
+                                    $.ajax({
+                                        url: "{{ setting('admin.url') }}api/pos/producto/mixto/0/"+micategory,
+                                        dataType: "json",
+                                        success: function (response) {
 
-                                mitotal();
-                                toastr.success(response.name+" - REGISTRADO");
+                                            $('#mixta1').append($('<option>', {
+                                                value: null,
+                                                text: 'Elige un Mitad'
+                                            }));
+                                            for (let index = 0; index < response.length; index++) {                                         
+                                                $('#mixta1').append($('<option>', {
+                                                    value: response[index].id,
+                                                    text: response[index].name
+                                                }));                                                        
+                                            }
+
+                                            $('#mixta2').append($('<option>', {
+                                                value: null,
+                                                text: 'Elige un Mitad'
+                                            }));
+                                            for (let index = 0; index < response.length; index++) {                                         
+                                                $('#mixta2').append($('<option>', {
+                                                    value: response[index].id,
+                                                    text: response[index].name
+                                                }));                                                        
+                                            }
+
+                                        }
+                                    });
+                                } else {
+                                    $('#mixtos').attr("hidden",true);
+                               
+                                    $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"</td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                    
+                                    var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': null};
+                                    micart.push(temp);
+                                    localStorage.setItem('micart', JSON.stringify(micart));
+
+                                    mitotal();
+                                    toastr.success(response.name+" - REGISTRADO");
+                                }
                             }
                         });
                     }
@@ -2093,18 +2249,51 @@
             </script>
         @stop
     @break
-    @default
-
-
-    @section('javascript')
+    @case('productos')
+        @section('javascript')
         <script>
-        var params = {};
-        var $file;
 
-        function deleteHandler(tag, isMulti) {
-            return function() {
+            $('document').ready(function () {
+
+
+                $.ajax({
+                        url: "{{ setting('admin.url') }}api/pos/categorias",
+                        dataType: "json",
+                        success: function (response) {
+                            $('#micategory').append($('<option>', {
+                                value: null,
+                                text: 'Elige una Categoria'
+                            }));
+                            for (let index = 0; index < response.length; index++) {
+                                const element = response[index];
+                                $('#micategory').append($('<option>', {
+                                    value: response[index].id,
+                                    text: response[index].name
+                                }));
+                            }
+                        }
+                    });
+
+
+
+
+            });
+
+            $('#micategory').on('change', function() {
+
+                var category = $('#micategory').val();
+                $('input[name="categoria_id"]').val(category);
+
+            });
+
+
+            var params = {};
+            var $file;
+    
+            function deleteHandler(tag, isMulti) {
+              return function() {
                 $file = $(this).siblings(tag);
-
+    
                 params = {
                     slug:   '{{ $dataType->slug }}',
                     filename:  $file.data('file-name'),
@@ -2113,90 +2302,140 @@
                     multi: isMulti,
                     _token: '{{ csrf_token() }}'
                 }
-
+    
                 $('.confirm_delete_name').text(params.filename);
                 $('#confirm_delete_modal').modal('show');
-            };
-        }
-
-        $('document').ready(function () {
-            $('.toggleswitch').bootstrapToggle();
-
-            //Init datepicker for date fields if data-datepicker attribute defined
-            //or if browser does not handle date inputs
-            $('.form-group input[type=date]').each(function (idx, elt) {
-                if (elt.hasAttribute('data-datepicker')) {
-                    elt.type = 'text';
-                    $(elt).datetimepicker($(elt).data('datepicker'));
-                } else if (elt.type != 'date') {
-                    elt.type = 'text';
-                    $(elt).datetimepicker({
-                        format: 'L',
-                        extraFormats: [ 'YYYY-MM-DD' ]
-                    }).datetimepicker($(elt).data('datepicker'));
-                }
-            });
-
-            @if ($isModelTranslatable)
-                $('.side-body').multilingual({"editing": true});
-            @endif
-
-            $('.side-body input[data-slug-origin]').each(function(i, el) {
-                $(el).slugify();
-            });
-
-            $('.form-group').on('click', '.remove-multi-image', deleteHandler('img', true));
-            $('.form-group').on('click', '.remove-single-image', deleteHandler('img', false));
-            $('.form-group').on('click', '.remove-multi-file', deleteHandler('a', true));
-            $('.form-group').on('click', '.remove-single-file', deleteHandler('a', false));
-
-            $('#confirm_delete').on('click', function(){
-                $.post('{{ route('voyager.'.$dataType->slug.'.media.remove') }}', params, function (response) {
-                    if ( response
-                        && response.data
-                        && response.data.status
-                        && response.data.status == 200 ) {
-
-                        toastr.success(response.data.message);
-                        $file.parent().fadeOut(300, function() { $(this).remove(); })
-                    } else {
-                        toastr.error("Error removing file.");
-                    }
-                });
-
-                $('#confirm_delete_modal').modal('hide');
-            });
-            $('[data-toggle="tooltip"]').tooltip();
-        });
-
-        $('#search_key').on('keydown', function (e) {
-            var code = (e.keyCode ? e.keyCode : e.which);
-            if (code==13) {
-                e.preventDefault();
-            console.log(this.value);
-
-            $.ajax({
-                    type: "get",
-                    url: "{{ setting('admin.url') }}api/pos/productos",
-                    dataType: "json",
-                    success: function (response) {
-                        $('#s').append($('<option>', {
-                            value: null,
-                            text: 'Elige un Producto'
-                        }));
-                        for (let index = 0; index < response.length; index++) {
-                            const element = response[index];
-                            $('#s').append($('<option>', {
-                                value: response[index].id,
-                                text: response[index].name
-                            }));
-                        }
-                    }
-                });
+              };
             }
-        });
+    
+            $('document').ready(function () {
+                $('.toggleswitch').bootstrapToggle();
+    
+                //Init datepicker for date fields if data-datepicker attribute defined
+                //or if browser does not handle date inputs
+                $('.form-group input[type=date]').each(function (idx, elt) {
+                    if (elt.hasAttribute('data-datepicker')) {
+                        elt.type = 'text';
+                        $(elt).datetimepicker($(elt).data('datepicker'));
+                    } else if (elt.type != 'date') {
+                        elt.type = 'text';
+                        $(elt).datetimepicker({
+                            format: 'L',
+                            extraFormats: [ 'YYYY-MM-DD' ]
+                        }).datetimepicker($(elt).data('datepicker'));
+                    }
+                });
+    
+                @if ($isModelTranslatable)
+                    $('.side-body').multilingual({"editing": true});
+                @endif
+    
+                $('.side-body input[data-slug-origin]').each(function(i, el) {
+                    $(el).slugify();
+                });
+    
+                $('.form-group').on('click', '.remove-multi-image', deleteHandler('img', true));
+                $('.form-group').on('click', '.remove-single-image', deleteHandler('img', false));
+                $('.form-group').on('click', '.remove-multi-file', deleteHandler('a', true));
+                $('.form-group').on('click', '.remove-single-file', deleteHandler('a', false));
+    
+                $('#confirm_delete').on('click', function(){
+                    $.post('{{ route('voyager.'.$dataType->slug.'.media.remove') }}', params, function (response) {
+                        if ( response
+                            && response.data
+                            && response.data.status
+                            && response.data.status == 200 ) {
+    
+                            toastr.success(response.data.message);
+                            $file.parent().fadeOut(300, function() { $(this).remove(); })
+                        } else {
+                            toastr.error("Error removing file.");
+                        }
+                    });
+    
+                    $('#confirm_delete_modal').modal('hide');
+                });
+                $('[data-toggle="tooltip"]').tooltip();
+            });
         </script>
-    @stop
+        @stop
+     @break
+    @default
+
+        @section('javascript')
+            <script>
+                var params = {};
+                var $file;
+        
+                function deleteHandler(tag, isMulti) {
+                return function() {
+                    $file = $(this).siblings(tag);
+        
+                    params = {
+                        slug:   '{{ $dataType->slug }}',
+                        filename:  $file.data('file-name'),
+                        id:     $file.data('id'),
+                        field:  $file.parent().data('field-name'),
+                        multi: isMulti,
+                        _token: '{{ csrf_token() }}'
+                    }
+        
+                    $('.confirm_delete_name').text(params.filename);
+                    $('#confirm_delete_modal').modal('show');
+                };
+                }
+        
+                $('document').ready(function () {
+                    $('.toggleswitch').bootstrapToggle();
+        
+                    //Init datepicker for date fields if data-datepicker attribute defined
+                    //or if browser does not handle date inputs
+                    $('.form-group input[type=date]').each(function (idx, elt) {
+                        if (elt.hasAttribute('data-datepicker')) {
+                            elt.type = 'text';
+                            $(elt).datetimepicker($(elt).data('datepicker'));
+                        } else if (elt.type != 'date') {
+                            elt.type = 'text';
+                            $(elt).datetimepicker({
+                                format: 'L',
+                                extraFormats: [ 'YYYY-MM-DD' ]
+                            }).datetimepicker($(elt).data('datepicker'));
+                        }
+                    });
+        
+                    @if ($isModelTranslatable)
+                        $('.side-body').multilingual({"editing": true});
+                    @endif
+        
+                    $('.side-body input[data-slug-origin]').each(function(i, el) {
+                        $(el).slugify();
+                    });
+        
+                    $('.form-group').on('click', '.remove-multi-image', deleteHandler('img', true));
+                    $('.form-group').on('click', '.remove-single-image', deleteHandler('img', false));
+                    $('.form-group').on('click', '.remove-multi-file', deleteHandler('a', true));
+                    $('.form-group').on('click', '.remove-single-file', deleteHandler('a', false));
+        
+                    $('#confirm_delete').on('click', function(){
+                        $.post('{{ route('voyager.'.$dataType->slug.'.media.remove') }}', params, function (response) {
+                            if ( response
+                                && response.data
+                                && response.data.status
+                                && response.data.status == 200 ) {
+        
+                                toastr.success(response.data.message);
+                                $file.parent().fadeOut(300, function() { $(this).remove(); })
+                            } else {
+                                toastr.error("Error removing file.");
+                            }
+                        });
+        
+                        $('#confirm_delete_modal').modal('hide');
+                    });
+                    $('[data-toggle="tooltip"]').tooltip();
+                });
+            </script>
+        @stop
 
 @endswitch
 
