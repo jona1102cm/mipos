@@ -60,7 +60,7 @@ Route::get('pos/info', function () {
 // --------------------------------------- VENTAS  ------------------------------------------
 // --------------------------------------- VENTAS  ------------------------------------------
 
-//open caja
+//open y close caja
 Route::get('pos/caja/state/{state}/{id}', function ($state, $id) {
 
     switch ($state) {
@@ -86,6 +86,16 @@ Route::get('pos/caja/state/{state}/{id}', function ($state, $id) {
     }
    
     return  true;
+});
+Route::get('pos/caja/total/{id}', function ( $id) {
+
+    $ventas = Venta::where('caja_id', $id)->where('caja_status', false)->get();
+    $cantidad = count($ventas);
+    $total = 0;
+    foreach ($ventas as $item) {
+        $total = $total + $item->total;
+    }
+    return  response()->json(array('total' => $total, 'cantidad' => $cantidad));
 });
 
 Route::get('pos/ventas/save/{midata}', function($midata) {

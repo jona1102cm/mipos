@@ -12,6 +12,9 @@
 @section('page_title', __('voyager::generic.'.($edit ? 'edit' : 'add')).' '.$dataType->getTranslatedAttribute('display_name_singular'))
 
     @switch($dataType->getTranslatedAttribute('slug'))
+        @case('cocinas')
+            
+            @break
         @case('ventas')
             @php
                 $miuser = TCG\Voyager\Models\User::find(Auth::user()->id);
@@ -31,7 +34,7 @@
                     </div>
                     <div class="col-sm-4">
                             <div class="btn-group" role="group" aria-label="Basic example">
-                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#cerrar_caja">Cerrar</button>
+                                <button type="button" class="btn btn-danger" data-toggle="modal" onclick="get_total()" data-target="#cerrar_caja">Cerrar</button>
                                 <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#modal_cliente">Cliente</button>
                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal_save_venta">Guardar</button>
                                 <!-- <button type="button" class="btn btn-primary" onclick="modal_save_venta()">Guardar</button> -->
@@ -42,7 +45,7 @@
                     
                 </div>
             @stop
-        @break
+            @break
 
         @case('chatbots')
             @php
@@ -66,7 +69,7 @@
                     
                 </div>
             @stop
-        @break
+            @break
     
         @case('productions')
             @section('page_header')
@@ -135,6 +138,10 @@
                             @endphp
 
                         @switch($dataType->getTranslatedAttribute('slug'))
+                            @case('cocinas')
+                                  
+                                      
+                                @break
                             @case('ventas')
                                 @php
                                     $miuser = TCG\Voyager\Models\User::find(Auth::user()->id);
@@ -197,6 +204,16 @@
                                             <select class="form-control js-example-basic-single" id="venta_type"> </select>
                                         </div>                                      
 
+                                        <div class="form-group col-md-12">
+                                            <strong>Cupon</strong>
+                                            <select class="form-control js-example-basic-single" id="micupon"> </select>
+                                        </div>
+                                
+                                        <div class="form-group col-md-12">
+                                            <strong>Delivery</strong>
+                                            <select class="form-control js-example-basic-single" id="midelivery"> </select>
+                                        </div>
+                                        
                                         @foreach($dataTypeRows as $row)
                                             <!-- GET THE DISPLAY OPTIONS -->
                                             @php
@@ -233,15 +250,7 @@
                                             </div>
                                         @endforeach
 
-                                        <div class="form-group col-md-12">
-                                            <strong>Cupon</strong>
-                                            <select class="form-control js-example-basic-single" id="micupon"> </select>
-                                        </div>
-                                
-                                        <div class="form-group col-md-12">
-                                            <strong>Delivery</strong>
-                                            <select class="form-control js-example-basic-single" id="midelivery"> </select>
-                                        </div>
+                                     
                                 
                                     </div>
                             @break
@@ -577,6 +586,9 @@
 
                         <div class="panel-footer">
                             @switch($dataType->getTranslatedAttribute('slug'))
+                                @case('cocinas')
+                                        
+                                @break
                                 @case('ventas')
                                     
                                 @break
@@ -612,7 +624,6 @@
                         <input type="hidden" name="type_slug" id="type_slug" value="{{ $dataType->slug }}">
                         {{ csrf_field() }}
                     </form>
-
                 </div>
             </div>
         </div>
@@ -631,39 +642,74 @@
                             <h4 class="modal-title"><i class="voyager-info"></i> Abrir Caja</h4>
                         </div>
                         <div class="modal-body">
-                            @foreach($micajas as $caja)
-                                @php
-                                        $tienda = App\Sucursale::find($caja->sucursal_id);
-                                @endphp
-                                <table class="table table-responsive">
-                                    <thead>
-                                        <tr>
-                                            <th>Titulo</th>
-                                            <th>Estado</th>
+                         
+                            <table class="table table-responsive">
+                                <thead>
+                                    <tr>
+                                        <th>Titulo</th>
+                                        <th>Estado</th>
+                                        
+                                        <th>Sucursal</th>
+                                        <th>Cajeros</th>
+                                        <th>Importe</th>
+                                        
+                                        <th>Accion</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                        $micajas = App\Caja::where('estado', 'close')->get();
+                                        
+                                    @endphp
+                                    @foreach($micajas as $caja)
+                                        @php
+                                            $tienda = App\Sucursale::find($caja->sucursal_id);
+                                            $cajeros =  App\CajaUser::where('caja_id' ,$caja->id)->get();
+                                            $mipermiso = false;
+                                            foreach ($cajeros as $value) {
+                                                if ($value->user_id == Auth::user()->id) {
+                                                    $mipermiso = true;
+                                                    break;
+                                                }
+                                            }
+                                        @endphp
+                                        @if( $mipermiso )
+                                            <tr>
+                                                <td>
+                                                    # {{ $caja->id }}
+                                                    <br>
+                                                    {{ $caja->title }}
+                                                        
+                                                </td>
+                                                <td>{{ $caja->estado }}</td>
+                                                
+                                                <td>
+                                                    {{ $tienda->name }}
+                                                    <br>
+                                                    {{ $caja->sucursal_id }}
+                                                </td>
                                             
-                                            <th>Sucursal</th>
-                                            <th>Importe</th>
-                                            <th>Accion</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>{{ $caja->title }}</td>
-                                            <td>{{ $caja->estado }}</td>
                                             
-                                            <td>
-                                                {{ $tienda->name }}
-                                                <br>
-                                                {{ $caja->sucursal_id }}
-                                            </td>
-                                            <td>
-                                                <input class="form-control" type="number" value="0" name="" id="importe">
-                                            </td>
-                                            <td> <button onclick="abrir_caja('{{ $caja->id }}', '{{ $caja->title }}', '{{ $tienda->name }}', '{{ $caja->sucursal_id }}' )" class="btn btn-sm btn-success"> Abrir </button> </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            @endforeach
+                                                <td>
+                                                    @foreach ($cajeros as $item)
+                                                        @php
+                                                            $miuser = TCG\Voyager\Models\User::find($item->user_id);
+                                                        @endphp
+                                                        
+                                                        {{ $miuser->name }} <br>
+                                                    @endforeach
+                                                </td>
+                                                <td>
+                                                    <input class="form-control" type="number" value="0" name="" id="importe_{{$caja->id }}">
+                                                </td>
+                                                <td> <button onclick="abrir_caja('{{ $caja->id }}', '{{ $caja->title }}', '{{ $tienda->name }}', '{{ $caja->sucursal_id }}' )" class="btn btn-sm btn-success"> Abrir </button> </td>
+                                            </tr>
+                                     
+                                        @endif
+                                      
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                         <div class="modal-footer">
                             <a href="/admin/ventas" type="button" class="btn btn-default">{{ __('voyager::generic.cancel') }}</a>
@@ -709,14 +755,28 @@
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"
                                     aria-hidden="true">&times;</button>
-                        <h4>Cerrar Caja</h4>
+                        <h4>¿Estás seguro que deseas cerra?</h4>
                         </div>
                         <div class="modal-body">
-                            <h4>¿Estás seguro que deseas cerra?</h4>
+                            {{-- <h4>¿Estás seguro que deseas cerra?</h4> --}}
+                            <table class="table">
+                                <tr>
+                                    <td>Cant. Ventas:</td><td><div id="cant_ventas"></div></td>
+                                </tr>
+                                <tr>
+                                    <td>Total Ventas:</td><td><div id="total_ventas"></div></td>
+                                </tr>
+                                <tr>
+                                    <td>Importe Inicial:</td><td><div id="importe_inicial"></div></td>
+                                </tr>
+                                <tr>
+                                    <td>Total Caja:</td><td><div id="_total"></div></td>
+                                </tr>
+                            </table>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
-                            <button type="button" class="btn btn-primary" id="" onclick="cerrar_caja()">Enviar</button>
+                            <button type="button" class="btn btn-primary" id="" onclick="cerrar_caja()">SI</button>
                         </div>
                     </div>
                 </div>
@@ -870,10 +930,26 @@
 
 <!-- -------------------CARGADO DE JS----------------------- -->
 <!-- -------------------CARGADO DE JS----------------------- -->
+<script src="https://socket.loginweb.dev/socket.io/socket.io.js"></script>
+<script>
+    const socket = io('https://socket.loginweb.dev')
+</script>
 @switch($dataType->getTranslatedAttribute('slug'))
-    @case('ventas')
+    @case('cocinas')
         @section('javascript')
             <script>
+                socket.on('chat', (msg) =>{
+                    alert(msg)
+                })
+            </script>
+        @stop
+        @break
+        
+    @case('ventas')
+        @section('javascript')
+        
+            <script>
+               
                 $('document').ready(function () {
                     $('.js-example-basic-single').select2();
                     $('input[name="register_id"]').val('{{ Auth::user()->id }}');
@@ -1155,6 +1231,21 @@
 
                 }
 
+                //get totales
+                function get_total() {
+                    var micaja = JSON.parse(localStorage.getItem('micaja'));
+                    $.ajax({
+                        url: "{{ setting('admin.url') }}api/pos/caja/total/"+micaja.caja_id,
+                        dataType: "json",
+                        success: function (response) {
+                            $('#cant_ventas').html('<h3>'+response.cantidad+'</h3>');
+                            $('#total_ventas').html('<h3>'+response.total+' Bs.</h3>');
+                            $('#importe_inicial').html('<h3>'+micaja.importe+' Bs.</h3>');
+                            var total = response.total + parseFloat(micaja.importe);
+                            $('#_total').html('<h3>'+total +' Bs.</h3>');
+                        }
+                    });
+                }
                 // ADD DISPLAY
                 $('#first_name').keyup(function (e) { 
                     e.preventDefault();
@@ -1207,7 +1298,7 @@
                     $.ajax({
                         url: "{{ setting('admin.url') }}api/pos/caja/state/open/"+id,
                         success: function (response){
-                            localStorage.setItem('micaja', JSON.stringify({caja_id: id, open: 'open', user_id: '{{ Auth::user()->id  }}', title: title, sucursal: sucursal, importe: $('#importe').val(), sucursal_id: sucursal_id } ));
+                            localStorage.setItem('micaja', JSON.stringify({caja_id: id, open: 'open', user_id: '{{ Auth::user()->id  }}', title: title, sucursal: sucursal, importe: $('#importe_'+id).val(), sucursal_id: sucursal_id } ));
                             $("input[name='caja_id']").val(id);
                             var micaja = JSON.parse(localStorage.getItem('micaja'));
                             $("input[name='caja_id']").val(micaja.caja_id);
@@ -1308,31 +1399,30 @@
                             for (let index = 0; index < micart.length; index++) {
                                 var midata = JSON.stringify({'producto_id': micart[index].id, 'venta_id': response.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'description': micart[index].description});
                                 var urli = "{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata;
-                                // console.log();
                                 $.ajax({
                                     url: urli,
                                     success: function (midata) {
-                                        
                                     if ((response.cantidad - 1) == index) {
+                                        
 
                                         if ($("input[name='season']:checked").val() == 'imprimir') {
                                             $("input[name='descuento']").val(0)
                                             localStorage.setItem('micart', JSON.stringify([]));
                                             location.href = "{{ setting('admin.url') }}admin/ventas/imprimir/"+response.id;
-                                        }else{                                        
+                                        }else{       
+                                            localStorage.setItem('micart', JSON.stringify([]));                                 
                                             toastr.success('Venta Realizada');
                                         }
                                     }
                                     $("#micart tr#"+micart[index].id).remove();
-                                    mitotal();
-                                        
+                                    mitotal(); 
                                     }
-                                    
                                 });
                             }
                             
                             // enviado notification 
-                          
+                            
+                            socket.emit('chat', 'VENTA REALIZADA: '+response.id)
 
                             // var phone = $('#phone_client').val();
                             // $.ajax({
@@ -1362,7 +1452,7 @@
                                 const element = response[index];
                                 $('#s').append($('<option>', {
                                     value: response[index].id,
-                                    text: response[index].name
+                                    text: response[index].name + ' '+ response[index].precio + ' Bs.'
                                 }));
                             }
                         }
@@ -1425,7 +1515,7 @@
                                             for (let index = 0; index < response.length; index++) {                                         
                                                 $('#mixta1').append($('<option>', {
                                                     value: response[index].id,
-                                                    text: response[index].name
+                                                    text: response[index].name + ' '+ response[index].precio + ' Bs.'
                                                 }));                                                        
                                             }
 
@@ -1436,7 +1526,7 @@
                                             for (let index = 0; index < response.length; index++) {                                         
                                                 $('#mixta2').append($('<option>', {
                                                     value: response[index].id,
-                                                    text: response[index].name
+                                                    text: response[index].name+ ' '+ response[index].precio + ' Bs.'
                                                 }));                                                        
                                             }
 
@@ -2438,5 +2528,6 @@
         @stop
 
 @endswitch
+
 
 

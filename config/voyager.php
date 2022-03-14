@@ -14,7 +14,7 @@ return [
         'add_default_role_on_register' => true,
         'default_role'                 => 'user',
         'default_avatar'               => 'users/default.png',
-        'redirect'                     => '/admin/profile',
+        'redirect'                     => '/admin',
     ],
 
     /*
@@ -104,13 +104,13 @@ return [
         /*
          * Select default language
          */
-        'default' => 'en',
+        'default' => 'es',
 
         /*
          * Select languages that are supported.
          */
         'locales' => [
-            'en',
+            'es',
             //'pt',
         ],
     ],
@@ -133,7 +133,7 @@ return [
                 'icon_class' => 'voyager-person',
             ],
             'voyager::generic.home' => [
-                'route'        => '/profile',
+                'route'        => '/',
                 'icon_class'   => 'voyager-home',
                 'target_blank' => true,
             ],
@@ -141,10 +141,6 @@ return [
                 'route'      => 'voyager.logout',
                 'icon_class' => 'voyager-power',
             ],
-        ],
-
-        'data_tables' => [
-            "pageLength" => 6,
         ],
 
         'widgets' => [
@@ -167,7 +163,7 @@ return [
         'add_menu_item' => true,
 
         // which menu add item to
-        'default_menu' => 'profile',
+        'default_menu' => 'admin',
 
         // When a BREAD is added, create the related Permission.
         'add_permission' => true,
@@ -185,14 +181,13 @@ return [
     |
     */
 
-    'primary_color' => '',
+    'primary_color' => '#22A7F0',
 
     'show_dev_tips' => true, // Show development tip "How To Use:" in Menu and Settings
 
     // Here you can specify additional assets you would like to be included in the master.blade
     'additional_css' => [
         //'css/custom.css',
-        // 'theme.css',
     ],
 
     'additional_js' => [
@@ -224,7 +219,7 @@ return [
     ],
 
     // Activate compass when environment is NOT local
-    'compass_in_production' => true,
+    'compass_in_production' => false,
 
     'media' => [
         // The allowed mimetypes to be uploaded through the media-manager.
@@ -235,8 +230,6 @@ return [
           'image/gif',
           'image/bmp',
           'video/mp4',
-          'excel/xsx',
-          'db/sql',
         ],
         //Path for media-manager. Relative to the filesystem.
         'path'                => '/',
