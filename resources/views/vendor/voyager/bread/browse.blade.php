@@ -873,7 +873,7 @@
                                 </div>
                             @break
                             @case('productos')
-                           <span>Hola</span>
+                                <span>Hola</span>
                                 <div class="table-responsive">
                                     <table id="dataTable" class="table table-hover">
                                         <thead>                                  
