@@ -249,11 +249,8 @@
                                                 @endif
                                             </div>
                                         @endforeach
-
-                                     
-                                
                                     </div>
-                            @break
+                                @break
                         
                             @case('productions')
                                 <div class="form-group col-md-8">
@@ -930,10 +927,7 @@
 
 <!-- -------------------CARGADO DE JS----------------------- -->
 <!-- -------------------CARGADO DE JS----------------------- -->
-<script src="https://socket.loginweb.dev/socket.io/socket.io.js"></script>
-<script>
-    const socket = io('https://socket.loginweb.dev')
-</script>
+
 @switch($dataType->getTranslatedAttribute('slug'))
     @case('cocinas')
         @section('javascript')
@@ -947,9 +941,9 @@
         
     @case('ventas')
         @section('javascript')
-        
+            <script src="https://socket.loginweb.dev/socket.io/socket.io.js"></script>
             <script>
-               
+                const socket = io('https://socket.loginweb.dev')
                 $('document').ready(function () {
                     $('.js-example-basic-single').select2();
                     $('input[name="register_id"]').val('{{ Auth::user()->id }}');
@@ -2528,6 +2522,5 @@
         @stop
 
 @endswitch
-
 
 

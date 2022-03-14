@@ -192,6 +192,7 @@ return [
 
     'additional_js' => [
         //'js/custom.js',
+        // 'https://socket.loginweb.dev/socket.io/socket.io.js',
     ],
 
     'googlemaps' => [
