@@ -288,6 +288,7 @@
                                             <div class="col-4">
                                                 <select id="search_key" name="key" style="width: 200px" class="js-example-basic-single">
                                                         <option value=""> ---- Elige un Filtro ----</option>
+                                                        <option value="name"> NOMBRE </option>
                                                         <option value="categoria_id"> CATEGORIA </option>
                                                        
                                                 </select>
@@ -873,7 +874,6 @@
                                 </div>
                             @break
                             @case('productos')
-                                <span>Hola</span>
                                 <div class="table-responsive">
                                     <table id="dataTable" class="table table-hover">
                                         <thead>                                  
@@ -1056,8 +1056,21 @@
                                                                 @endif
                                                             @else
                                                                     {{-- AQUI EL CODIGO --}}
-                                                                @include('voyager::multilingual.input-hidden-bread-browse')
-                                                                <span>{{ $data->{$row->field} }}</span>
+                                                                @switch($row->field)   
+                                                                    @case('categoria_id')
+                                                                    @php
+                                                                        $categoria = App\Categoria::find($data->{$row->field});
+                                                                    @endphp
+                                                                    <span>{{ $categoria ? $categoria->name : null }}</span>
+                                                                    @break
+
+                                                                    @default
+                                                                    @include('voyager::multilingual.input-hidden-bread-browse')
+                                                                    <span>{{ $data->{$row->field} }}</span>
+
+                                                                @endswitch
+
+                                                                
                                                             @endif
                                                         </td>
                                                     @endforeach
@@ -1613,6 +1626,27 @@
                                     $('#s').append($('<option>', {
                                         value: null,
                                         text: 'Elige un Categoria'
+                                    }));
+                                    for (let index = 0; index < response.length; index++) {
+                                        $('#s').append($('<option>', {
+                                            value: response[index].id,
+                                            text: response[index].name
+                                        }));
+                                    }
+                                }
+                            });
+
+                        break;
+
+                        case ('name'):
+                            $('#s').find('option').remove().end();
+                            $.ajax({
+                                url: "{{ setting('admin.url') }}api/pos/productos",
+                                dataType: "json",
+                                success: function (response) {
+                                    $('#s').append($('<option>', {
+                                        value: null,
+                                        text: 'Elige un Producto'
                                     }));
                                     for (let index = 0; index < response.length; index++) {
                                         $('#s').append($('<option>', {
