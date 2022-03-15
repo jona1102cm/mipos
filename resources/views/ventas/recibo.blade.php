@@ -51,9 +51,9 @@
 		</style>
     </head>
     <body>
-        <div style="text-align:right" id="print">
+        {{-- <div style="text-align:right" id="print">
             <button onclick="javascript:window.print()" class="btn-print">Imprimir</button>
-        </div>
+        </div> --}}
 
         <table width="300px">
             <tr>

@@ -36,11 +36,8 @@
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <button type="button" class="btn btn-danger" data-toggle="modal" onclick="get_total()" data-target="#cerrar_caja">Cerrar</button>
                                 <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#modal_cliente">Cliente</button>
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal_save_venta">Guardar</button>
-                                <!-- <button type="button" class="btn btn-primary" onclick="modal_save_venta()">Guardar</button> -->
-                                
-                            </div>
-                        
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal_save_venta" onclick="get_cambio()">Guardar</button>                                
+                            </div>                        
                     </div>
                     
                 </div>
@@ -181,14 +178,14 @@
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                         <div class="form-group col-md-12">
+                                         {{-- <div class="form-group col-md-12">
                                             <strong>Opciones</strong>
                                             <br>
                                             <form class="form-horizontal" role="form">
                                                 <label class="radio-inline"> <input type="radio" name="season" id="" value="imprimir" checked> Imprimir </label>
                                                 <label class="radio-inline"> <input type="radio" name="season" id="" value="seguir"> Seguir </label>
                                             </form>
-                                        </div>
+                                        </div> --}}
                                         <div class="form-group col-md-12">
                                             <strong>Cliente</strong>
                                             <input type="text" id="micliente" class="form-control">
@@ -330,7 +327,7 @@
                                         </div>
                                     @endforeach
                                 </div>
-                            @break
+                                @break
 
                             @case('production-semis')
                                 <div class="form-group col-md-8">
@@ -405,7 +402,7 @@
                                         </div>
                                     @endforeach
                                 </div>
-                            @break
+                                @break
 
                             @case('imports')
                                 <div class="form-group col-sm-6">
@@ -654,10 +651,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php
-                                        $micajas = App\Caja::where('estado', 'close')->get();
-                                        
-                                    @endphp
+                                   
                                     @foreach($micajas as $caja)
                                         @php
                                             $tienda = App\Sucursale::find($caja->sucursal_id);
@@ -675,8 +669,7 @@
                                                 <td>
                                                     # {{ $caja->id }}
                                                     <br>
-                                                    {{ $caja->title }}
-                                                        
+                                                    {{ $caja->title }}                                                        
                                                 </td>
                                                 <td>{{ $caja->estado }}</td>
                                                 
@@ -685,14 +678,11 @@
                                                     <br>
                                                     {{ $caja->sucursal_id }}
                                                 </td>
-                                            
-                                            
                                                 <td>
                                                     @foreach ($cajeros as $item)
                                                         @php
                                                             $miuser = TCG\Voyager\Models\User::find($item->user_id);
-                                                        @endphp
-                                                        
+                                                        @endphp                                                        
                                                         {{ $miuser->name }} <br>
                                                     @endforeach
                                                 </td>
@@ -700,10 +690,8 @@
                                                     <input class="form-control" type="number" value="0" name="" id="importe_{{$caja->id }}">
                                                 </td>
                                                 <td> <button onclick="abrir_caja('{{ $caja->id }}', '{{ $caja->title }}', '{{ $tienda->name }}', '{{ $caja->sucursal_id }}' )" class="btn btn-sm btn-success"> Abrir </button> </td>
-                                            </tr>
-                                     
-                                        @endif
-                                      
+                                            </tr>                                     
+                                        @endif                                      
                                     @endforeach
                                 </tbody>
                             </table>
@@ -786,18 +774,12 @@
                             <h4 class="modal-title"><i class="voyager-info"></i> Nuevo Cliente</h4>
                         </div>
                         <div class="modal-body">
-
-
                             <div>
-
-                                <!-- Nav tabs -->
                                 <ul class="nav nav-tabs" role="tablist">
                                   <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Nuevo</a></li>
                                   <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Buscar</a></li>
                                  
                                 </ul>
-                              
-                                <!-- Tab panes -->
                                 <div class="tab-content">
                                   <div role="tabpanel" class="tab-pane active" id="home">
                                     <div class="form-group col-sm-6">
@@ -826,18 +808,20 @@
                                     </div>
                                   </div>
                                   <div role="tabpanel" class="tab-pane" id="profile">
-
-                                    <h4>en desarrollo</h4>
-                                    
+                                        <input type="text" class="form-control" placeholder="Criterio de Busquedas.." id="cliente_busqueda">
+                                        <br>
+                                        <table class="table" id="cliente_list">
+                                            <thead>
+                                                <th>#</th>
+                                                <th>Cliente</th>
+                                                <th>Opciones</th>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
                                   </div>
-                                </div>
-                              
+                                </div>                              
                               </div>
-                              
-
-                   
-                            
-
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
@@ -850,16 +834,39 @@
 
             <div class="modal fade modal-primary" id="modal_save_venta">
                 <div class="modal-dialog modal-sm">
-                    <div class="modal-content">
-        
+                    <div class="modal-content">        
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"
                                     aria-hidden="true">&times;</button>
                             <h4 class="modal-title"><i class="voyager-warning"></i> {{ __('voyager::generic.are_you_sure') }}</h4>
-                        </div>
-        
+                        </div>        
                         <div class="modal-body">
-                            <h4>¿Estás seguro que quieres guardar ?</h4>
+                            <div class="form-group text-center">                               
+                                <form class="form-horizontal" role="form">
+                                    <label class="radio-inline"> <input type="radio" name="season" id="" value="imprimir" checked> Imprimir </label>
+                                    <label class="radio-inline"> <input type="radio" name="season" id="" value="seguir"> Seguir </label>
+                                </form>
+                            </div>
+                            <table class="table">                                                               
+                                    <tr>
+                                        <td>Importe: </td>
+                                        <td>
+                                            <input type="number" class="form-control" id="recibido">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Venta: </td>
+                                        <td>
+                                            <input type="number" class="form-control" id="venta_total" readonly>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Cambio: </td>
+                                        <td>
+                                            <input type="number" class="form-control" id="cambio" readonly>
+                                        </td>
+                                    </tr>                               
+                            </table>
                         </div>
         
                         <div class="modal-footer">
@@ -933,7 +940,7 @@
         @section('javascript')
             <script>
                 socket.on('chat', (msg) =>{
-                    alert(msg)
+                    console.log(msg);
                 })
             </script>
         @stop
@@ -944,6 +951,10 @@
             <script src="https://socket.loginweb.dev/socket.io/socket.io.js"></script>
             <script>
                 const socket = io('https://socket.loginweb.dev')
+                socket.on('chat', (msg) =>{
+                    toastr.success('La Cocina Libero el Pedido: '+msg);
+                })
+
                 $('document').ready(function () {
                     $('.js-example-basic-single').select2();
                     $('input[name="register_id"]').val('{{ Auth::user()->id }}');
@@ -1197,6 +1208,23 @@
                     }
                 });
 
+                // GET CAMBIO 
+                $('#recibido').keyup(function (e) { 
+                    e.preventDefault();
+                    var cambio = $('#recibido').val() - $('#venta_total').val();
+                    $('#cambio').val(cambio);
+                });
+                function get_cambio() {
+                    $('#recibido').val(0);
+                    $('#cambio').val(0);
+                    var micart = JSON.parse(localStorage.getItem('micart'));
+                    var total = 0;
+                    for (let index = 0; index < micart.length; index++) {
+                      total = total + micart[index].total;
+                    }
+                    $('#venta_total').val(total);
+                }
+
                 //ADD MIXTA 
                 function addmixta() {
                     var id = $('#s').val();
@@ -1240,16 +1268,38 @@
                         }
                     });
                 }
+
+                //Busquedas de Clientes                 
+                $('#cliente_busqueda').keyup(function (e) { 
+                    e.preventDefault();
+                    if (e.keyCode == 13) {
+                        $("#cliente_list tbody tr").remove();
+                        var mitable = "";
+                        $.ajax({
+                            url: "{{ setting('admin.url') }}api/pos/clientes/search/"+this.value,
+                            dataType: "json",
+                            success: function (response) {
+                                if (response.length == 0 ) {
+                                    toastr.success('Sin Resultados.');
+                                } else {
+                                    for (let index = 0; index < response.length; index++) {                                    
+                                        mitable = mitable + "<tr><td>"+response[index].id+"</td><td>"+response[index].display+"</td><td><a class='btn btn-sm btn-success' href='#' onclick='cliente_get()'>Elegir</a></td></tr>";
+                                    }
+                                    $('#cliente_list').append(mitable);
+                                }
+                            }
+                        });
+                    }
+                });
+
                 // ADD DISPLAY
                 $('#first_name').keyup(function (e) { 
                     e.preventDefault();
-
                     $('#display').val(this.value+' '+$('#last_name').val());
                     $('#email').val(this.value+'.'+$('#last_name').val()+'@loginweb.dev');
                 });
                 $('#last_name').keyup(function (e) { 
                     e.preventDefault();
-
                     $('#display').val($('#first_name').val()+' '+this.value);
                     $('#email').val($('#first_name').val()+'.'+this.value+'@loginweb.dev');
                 });
@@ -1377,10 +1427,11 @@
                     var delivery_id = $("input[name='delivery_id']").val();
                     var sucursal_id = $("input[name='sucursal_id']").val();
                     var subtotal = $("input[name='subtotal']").val();
-
+                    var recibido = $("#recibido").val();
+                    var cambio = $("#cambio").val();
                     var micart = JSON.parse(localStorage.getItem('micart'));
 
-                    var midata = JSON.stringify({'cliente_id': cliente_id, 'cupon_id': cupon_id, 'option_id': option_id, 'pago_id': pago_id, 'factura': factura, 'total': total, 'descuento': descuento, 'observacion': observacion, 'register_id': register_id, 'status_id': status_id, 'caja_id': caja_id, 'delivery_id': delivery_id, 'sucursal_id': sucursal_id, subtotal: subtotal, 'cantidad': micart.length });
+                    var midata = JSON.stringify({'cliente_id': cliente_id, 'cupon_id': cupon_id, 'option_id': option_id, 'pago_id': pago_id, 'factura': factura, 'total': total, 'descuento': descuento, 'observacion': observacion, 'register_id': register_id, 'status_id': status_id, 'caja_id': caja_id, 'delivery_id': delivery_id, 'sucursal_id': sucursal_id, subtotal: subtotal, 'cantidad': micart.length, 'recibido': recibido, 'cambio': cambio });
 
                     $('#modal_save_venta').modal('hide');
                     
@@ -1496,7 +1547,7 @@
                                 if (response.mixta == 1 ) {
                                     $('#mixtos').attr("hidden",false);
                                     var micategory = $('#category').val();
-                                    console.log(micategory);
+                                    // console.log(micategory);
                                     $.ajax({
                                         url: "{{ setting('admin.url') }}api/pos/producto/mixto/0/"+micategory,
                                         dataType: "json",
@@ -2033,17 +2084,15 @@
                     var user_id = $("input[name='user_id']").val();
                 
                     var midata = JSON.stringify({'producto_id': producto_id, 'cantidad': cantidad, 'valor': valor, 'description': description, 'user_id': user_id });
-                    // console.log(midata);
                     var urli = "{{ setting('admin.url') }}api/pos/productions/save/"+midata;
-                    console.log(urli);
                     $.ajax({
                         url: urli,
                         success: function (response) {
                             var miproduction = JSON.parse(localStorage.getItem('miproduction'));
                             for (let index = 0; index < miproduction.length; index++) {
+
                                 var midata = JSON.stringify({'type': miproduction[index].type, 'production_id': response, 'insumo_id': miproduction[index].id, 'proveedor_id': miproduction[index].idpro, 'precio': miproduction[index].costo, 'cantidad': miproduction[index].cant, 'total': miproduction[index].total});
                                 var urli = "{{ setting('admin.url') }}api/pos/productions/save/detalle/"+midata;
-                                console.log(urli);
                                 $.ajax({
                                     url: urli,
                                     success: function () {
@@ -2051,6 +2100,7 @@
                                         mitotal2();
                                     }
                                 });
+                                
                             }
                             localStorage.setItem('miproduction', JSON.stringify([]));
                             // location.reload();

@@ -29,6 +29,8 @@ class Venta extends Model
 		'fiscal',
 		'adicional',
 		'created_at',
-		'cantidad'
+		'cantidad',
+		'recibido',
+		'cambio'
 	];
 }

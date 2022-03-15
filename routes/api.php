@@ -60,9 +60,16 @@ Route::get('pos/info', function () {
 // --------------------------------------- VENTAS  ------------------------------------------
 // --------------------------------------- VENTAS  ------------------------------------------
 
+//update cocina
+Route::get('pos/cocina/{id}', function ($id) {
+    $venta = Venta::find($id);
+    $venta->status_id = 2;
+    $venta->save();
+    return true;
+});
+
 //open y close caja
 Route::get('pos/caja/state/{state}/{id}', function ($state, $id) {
-
     switch ($state) {
         case 'open':
             $caja = Caja::find($id);
@@ -83,8 +90,7 @@ Route::get('pos/caja/state/{state}/{id}', function ($state, $id) {
         default:
             # code...
             break;
-    }
-   
+    }   
     return  true;
 });
 Route::get('pos/caja/total/{id}', function ( $id) {
@@ -118,7 +124,9 @@ Route::get('pos/ventas/save/{midata}', function($midata) {
         'subtotal' => $midata2->subtotal,
         'caja_status' => false,
         'ticket' => $ticket + 1,
-        'cantidad' => $midata2->cantidad
+        'cantidad' => $midata2->cantidad,
+        'recibido' => $midata2->recibido,
+        'cambio' => $midata2->cambio
     ]);
     return $venta;
 });
@@ -140,7 +148,7 @@ Route::get('pos/ventas/save/detalle/{micart}', function($micart) {
     return true;
 });
 
-//--  SAVE CLIENTE
+// SAVE CLIENTE
 Route::get('pos/savacliente/{midata}', function ($midata) {
     $cliente = json_decode($midata);
     $cliente = Cliente::create([
@@ -155,7 +163,12 @@ Route::get('pos/savacliente/{midata}', function ($midata) {
     return $cliente;
 });
 
-//--  TODOS LOS PRODUCTOS
+Route::get('pos/clientes/search/{criterio}', function ($criterio) {
+    $clientes = Cliente::where('display', 'like', '%'.$criterio.'%')->get();
+    return $clientes;
+});
+
+// TODOS LOS PRODUCTOS
 Route::get('pos/productos', function () {
     return  Producto::all();
 });
