@@ -20,27 +20,29 @@
                 $miuser = TCG\Voyager\Models\User::find(Auth::user()->id);
                 $micajas = App\Caja::all();
             @endphp
+            
             @section('page_header')
-                <br>
-                <div class="row">
-                    <div class="col-sm-4">
-                        <strong style="font-size: 30px;">
+            <br>
+                {{-- <div class="row"> --}}
+                    <div class="col-sm-2">
+                        <h4 class="">
                             <i class="{{ $dataType->icon }}"></i>
                             {{ __('voyager::generic.'.($edit ? 'edit' : 'add')).' '.$dataType->getTranslatedAttribute('display_name_singular') }}
-                        </strong>
-                    </div>
-                    <div class="col-sm-4">
-                            <div id="info_caja"></div>
-                    </div>
-                    <div class="col-sm-4">
+                        </h4>
+                    </div>               
+                    <div class="col-sm-6">
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <button type="button" class="btn btn-danger" data-toggle="modal" onclick="get_total()" data-target="#cerrar_caja">Cerrar</button>
-                                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#modal_cliente">Cliente</button>
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal_save_venta" onclick="get_cambio()">Guardar</button>                                
+                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#venta_caja" onclick="venta_caja()">Ventas</button>
+                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal_cliente">Cliente</button>
+                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal_asientos" onclick="cargar_asientos()">Asientos</button>        
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal_save_venta" onclick="get_cambio()">Guardar</button>                            
                             </div>                        
                     </div>
-                    
-                </div>
+                    <div class="col-sm-4">
+                        <div id="info_caja"></div>
+                    </div>
+                {{-- </div> --}}
             @stop
             @break
 
@@ -178,14 +180,14 @@
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                         {{-- <div class="form-group col-md-12">
-                                            <strong>Opciones</strong>
-                                            <br>
-                                            <form class="form-horizontal" role="form">
-                                                <label class="radio-inline"> <input type="radio" name="season" id="" value="imprimir" checked> Imprimir </label>
-                                                <label class="radio-inline"> <input type="radio" name="season" id="" value="seguir"> Seguir </label>
-                                            </form>
+                                        
+                                        {{-- <div class="form-group col-md-12">
+                                            <strong>Estados</strong>
+                                            <select class="form-control js-example-basic-single" id="miestado"> </select>                                            
                                         </div> --}}
+                                        <audio id="audio">
+                                            <source type="audio/mp3" src="iphone-notificacion.mp3">
+                                        </audio>
                                         <div class="form-group col-md-12">
                                             <strong>Cliente</strong>
                                             <input type="text" id="micliente" class="form-control">
@@ -210,7 +212,8 @@
                                             <strong>Delivery</strong>
                                             <select class="form-control js-example-basic-single" id="midelivery"> </select>
                                         </div>
-                                        
+                                
+
                                         @foreach($dataTypeRows as $row)
                                             <!-- GET THE DISPLAY OPTIONS -->
                                             @php
@@ -715,12 +718,13 @@
                             <table class="table table-striped table-inverse table-responsive" id="productos_caja">
                                 <thead class="thead-inverse">
                                     <tr>
-                                        <th>Ticket</th>
+                                        <th>ID</th>
                                         <th>Tipo</th>
-                                        <th>Orden</th>
-                                        <th>Creado</th>
+                                        <th>Ticket</th>
+                                        
                                         <th>Total</th>
-                                        <th>Estado</th>
+                                        <th>Control</th>
+                                        <th>Creado</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -735,29 +739,74 @@
             </div>
 
             <div class="modal fade modal-primary" id="cerrar_caja">
-                <div class="modal-dialog modal-sm">
+                <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"
                                     aria-hidden="true">&times;</button>
-                        <h4>¿Estás seguro que deseas cerra?</h4>
+                        <h4>¿Estás seguro de cerrar?</h4>
                         </div>
                         <div class="modal-body">
-                            {{-- <h4>¿Estás seguro que deseas cerra?</h4> --}}
-                            <table class="table">
+                            <table class="table table-responsive">
+                            <thead>
                                 <tr>
-                                    <td>Cant. Ventas:</td><td><div id="cant_ventas"></div></td>
+                                    <th>INGRESOS</th>
+                                    <th>EGRESOS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Total Ventas Bs.
+                                        <br>
+                                        <input type="number" class="form-control" id="total_ventas" value="0" readonly>
+                                    </td>
+                                    <td></td>
                                 </tr>
                                 <tr>
-                                    <td>Total Ventas:</td><td><div id="total_ventas"></div></td>
+                                    
+                                    <td>
+                                        Importe Inicial Bs.
+                                        <br>
+                                        <input type="number" class="form-control" id="importe_inicial" value="0" readonly>
+                                    </td>
+                                    <td></td>
                                 </tr>
                                 <tr>
-                                    <td>Importe Inicial:</td><td><div id="importe_inicial"></div></td>
+                                    
+                                    <td>
+                                        Total Asiento Bs.
+                                        <br>
+                                        <input type="number" class="form-control" id="ingresos" value="0" readonly>
+                                    </td>
+                                    <td>
+                                        Total Asientos Bs.<br>
+                                        <input type="number" class="form-control" id="egresos" value="0" readonly>
+                                    </td>
                                 </tr>
-                                <tr>
-                                    <td>Total Caja:</td><td><div id="_total"></div></td>
-                                </tr>
+                            </tbody>
                             </table>
+                          
+                            <div class="row"> 
+                                {{-- <div class="col-sm-12 text-center">
+                                    <h4>RESUMEN</h4>
+                                </div> --}}
+                                <div class="col-sm-12">
+                                    <label for="">Observaciones</label>
+                                    <textarea name="" id="description" class="form-control"></textarea> 
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="">Total Caja Bs.</label>
+                                    <input type="number" class="form-control col-6" id="_total" value="0" readonly>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="">Cantidad de Ventas</label>
+                                    <input type="number" class="form-control" id="cant_ventas" value="0" readonly>
+                                </div>
+                                
+                                
+                            </div>
+                            
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
@@ -774,54 +823,54 @@
                             <h4 class="modal-title"><i class="voyager-info"></i> Nuevo Cliente</h4>
                         </div>
                         <div class="modal-body">
-                            <div>
-                                <ul class="nav nav-tabs" role="tablist">
-                                  <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Nuevo</a></li>
-                                  <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Buscar</a></li>
-                                 
-                                </ul>
-                                <div class="tab-content">
-                                  <div role="tabpanel" class="tab-pane active" id="home">
-                                    <div class="form-group col-sm-6">
-                                        <label for="">Nombres</label>
-                                      <input class="form-control" type="text" placeholder="Nombres" id="first_name">
-                                    </div>
-                                    <div class="form-group col-sm-6">
-                                        <label for="">Apellidos</label>
-                                        <input class="form-control" type="text" placeholder="Apellidos" id="last_name">
-                                    </div>
-                                    <div class="form-group col-sm-6">
-                                        <label for="">Telefono</label>
-                                        <input class="form-control" type="text" placeholder="Telefono" id="phone" value="0">
-                                    </div>
-                                    <div class="form-group col-sm-6">
-                                        <label for="">NIT</label>
-                                          <input class="form-control" type="text" placeholder="Carnet o NIT" id="nit" value="0">
-                                    </div>
-                                    <div class="form-group col-sm-6">
-                                        <label for="">Display</label>
-                                        <input class="form-control" type="text" placeholder="Display" id="display">
-                                    </div>      
-                                    <div class="form-group col-sm-6">
-                                        <label for="">Correo</label>
-                                        <input class="form-control" type="text" placeholder="Email" id="email">
-                                    </div>
-                                  </div>
-                                  <div role="tabpanel" class="tab-pane" id="profile">
-                                        <input type="text" class="form-control" placeholder="Criterio de Busquedas.." id="cliente_busqueda">
-                                        <br>
-                                        <table class="table" id="cliente_list">
-                                            <thead>
-                                                <th>#</th>
-                                                <th>Cliente</th>
-                                                <th>Opciones</th>
-                                            </thead>
-                                            <tbody>
-                                            </tbody>
-                                        </table>
-                                  </div>
-                                </div>                              
-                              </div>
+                         
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Nuevo</a></li>
+                                <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Buscar</a></li>
+                                
+                            </ul>
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane active" id="home">
+                                <div class="form-group col-sm-6">
+                                    <label for="">Nombres</label>
+                                    <input class="form-control" type="text" placeholder="Nombres" id="first_name">
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="">Apellidos</label>
+                                    <input class="form-control" type="text" placeholder="Apellidos" id="last_name">
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="">Telefono</label>
+                                    <input class="form-control" type="text" placeholder="Telefono" id="phone" value="0">
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="">NIT</label>
+                                        <input class="form-control" type="text" placeholder="Carnet o NIT" id="nit" value="0">
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="">Display</label>
+                                    <input class="form-control" type="text" placeholder="Display" id="display">
+                                </div>      
+                                <div class="form-group col-sm-6">
+                                    <label for="">Correo</label>
+                                    <input class="form-control" type="text" placeholder="Email" id="email">
+                                </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="profile">
+                                    <input type="text" class="form-control" placeholder="Criterio de Busquedas.." id="cliente_busqueda">
+                                    <br>
+                                    <table class="table" id="cliente_list">
+                                        <thead>
+                                            <th>#</th>
+                                            <th>Cliente</th>
+                                            <th>Opciones</th>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>                              
+                    
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
@@ -872,6 +921,64 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">NO</button>
                             <button type="button" class="btn btn-primary" onclick="saveventas()">SI</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade modal-primary" id="modal_asientos">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"
+                                    aria-hidden="true">&times;</button>
+                            <h4>Ingresos & Egresos</h4>
+                        </div>
+                        <div class="modal-body">
+                            
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li role="presentation" class="active"><a href="#home1" aria-controls="home1" role="tab" data-toggle="tab">Registrar</a></li>
+                                <li role="presentation"><a href="#profile1" aria-controls="profile1" role="tab" data-toggle="tab">Historial</a></li>
+                                
+                            </ul>
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane active" id="home1">
+                                    <div class="form-group col-sm-6">
+                                            <label for="">Tipo</label>
+                                        <select class="form-control" name="" id="type">
+                                            <option value="Egresos" selected>Egresos</option>
+                                            <option value="Ingresos">Ingresos</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="">Monto</label>
+                                        <input type="number" class="form-control" id="monto" value="0">
+                                    </div>
+                                    <div class="form-group col-sm-12">
+                                        <label for="">Concepto</label>
+                                        <textarea class="form-control" name="" id="concepto"></textarea>
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="profile1">
+                               
+                                    <table class="table" id="asiento_list">
+                                        <thead>
+                                            <th>#</th>
+                                            <th>Tipo</th>
+                                            <th>Monto</th>
+                                            <th>Concepto</th>
+                                            <th>Creado</th>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>  
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
+                            <button type="button" class="btn btn-primary" onclick="save_asiento()">Enviar</button>
+                            
                         </div>
                     </div>
                 </div>
@@ -968,6 +1075,28 @@
                         $("#micaja").modal();
                     }
 
+                    // CARGANDO ASENTOS 
+                    // $("#asiento_list tbody tr").remove();
+                    // var mitable = "";
+                    // var editor = '{{ Auth::user()->id; }}';
+                    // var micaja = JSON.parse(localStorage.getItem('micaja'));
+                    // var midata = JSON.stringify({caja_id: micaja.caja_id, editor_id: editor});
+                    // var urli = "{{ setting('admin.url') }}api/pos/asientos/caja/editor/"+midata;
+                    // // console.log(urli);
+                    // $.ajax({
+                    //     url: urli,
+                    //     dataType: "json",
+                    //     success: function (response) {
+                    //         if (response.length == 0 ) {
+                    //             toastr.success('Sin Resultados.');
+                    //         } else {
+                    //             for (let index = 0; index < response.length; index++) {                                    
+                    //                 mitable = mitable + "<tr><td>"+response[index].id+"</td><td>"+response[index].type+"</td><td>"+response[index].monto+"</td><td>"+response[index].concepto+"</td><td>"+response[index].created_at+"</td></tr>";
+                    //             }
+                    //             $('#asiento_list').append(mitable);
+                    //         }
+                    //     }
+                    // });
                     // MIXTA 1 y 2 
                     // $.ajax({
                     //     url: "{{ setting('admin.url') }}api/pos/producto/mixto/0",
@@ -1208,21 +1337,72 @@
                     }
                 });
 
+                // cargar asientos
+                function cargar_asientos() {
+                    $("#asiento_list tbody tr").remove();
+                    var mitable = "";
+                    var editor = '{{ Auth::user()->id; }}';
+                    var micaja = JSON.parse(localStorage.getItem('micaja'));
+                    var midata = JSON.stringify({caja_id: micaja.caja_id, editor_id: editor});
+                    var urli = "{{ setting('admin.url') }}api/pos/asientos/caja/editor/"+midata;
+                    // console.log(urli);
+                    $.ajax({
+                        url: urli,
+                        dataType: "json",
+                        success: function (response) {
+                            if (response.length == 0 ) {
+                                toastr.error('Sin Resultados.');
+                            } else {
+                                for (let index = 0; index < response.length; index++) {                                    
+                                    mitable = mitable + "<tr><td>"+response[index].id+"</td><td>"+response[index].type+"</td><td>"+response[index].monto+"</td><td>"+response[index].concepto+"</td><td>"+response[index].created_at+"</td></tr>";
+                                }
+                                $('#asiento_list').append(mitable);
+                            }
+                        }
+                    });
+                }
+                //SAVE ASIENTOS
+                function save_asiento() {
+                    var micaja = JSON.parse(localStorage.getItem('micaja'));
+                    var concepto = $('#concepto').val();
+                    var monto = $('#monto').val();
+                    var type = $('#type option:selected').val();
+                    var caja_id = micaja.caja_id;
+                    var editor_id = '{{ Auth::user()->id }}';
+                    var midata = JSON.stringify({caja_id: caja_id, type: type, monto: monto, editor_id: editor_id, concepto: concepto});
+                    console.log(midata);
+                    $.ajax({
+                        url: "{{ setting('admin.url') }}api/pos/asiento/save/"+midata,
+                        dataType: "json",
+                        success: function (response) {
+                            // console.log(response);
+                            toastr.success('Asiento registrado como: '+response.type);
+                            $('#modal_asientos').modal('hide');
+                        }
+                    });
+                }
                 // GET CAMBIO 
                 $('#recibido').keyup(function (e) { 
                     e.preventDefault();
                     var cambio = $('#recibido').val() - $('#venta_total').val();
                     $('#cambio').val(cambio);
                 });
+
+                // CAMBIO TPV
                 function get_cambio() {
-                    $('#recibido').val(0);
-                    $('#cambio').val(0);
                     var micart = JSON.parse(localStorage.getItem('micart'));
-                    var total = 0;
-                    for (let index = 0; index < micart.length; index++) {
-                      total = total + micart[index].total;
+                    if (micart.length == 0 ) {
+                        toastr.error('Tu Carrito esta Vacio');
+                        $('#modal_save_venta').modal('hide');
+                    } else {                                       
+                        $('#recibido').val(0);
+                        $('#cambio').val(0);
+                        var total = 0;
+                        for (let index = 0; index < micart.length; index++) {
+                        total = total + micart[index].total;
+                        }
+                        $('#venta_total').val(total);
                     }
-                    $('#venta_total').val(total);
                 }
 
                 //ADD MIXTA 
@@ -1256,15 +1436,21 @@
                 //get totales
                 function get_total() {
                     var micaja = JSON.parse(localStorage.getItem('micaja'));
+                    var editor_id = '{{ Auth::user()->id; }}';
+                    var midata = JSON.stringify({caja_id: micaja.caja_id, editor_id: editor_id});
                     $.ajax({
-                        url: "{{ setting('admin.url') }}api/pos/caja/total/"+micaja.caja_id,
+                        url: "{{ setting('admin.url') }}api/pos/caja/get_total/"+midata,
                         dataType: "json",
                         success: function (response) {
-                            $('#cant_ventas').html('<h3>'+response.cantidad+'</h3>');
-                            $('#total_ventas').html('<h3>'+response.total+' Bs.</h3>');
-                            $('#importe_inicial').html('<h3>'+micaja.importe+' Bs.</h3>');
-                            var total = response.total + parseFloat(micaja.importe);
-                            $('#_total').html('<h3>'+total +' Bs.</h3>');
+                            // console.log(response);
+                            $('#cant_ventas').val(response.cantidad);
+                            $('#total_ventas').val(response.total);
+                            $('#importe_inicial').val(micaja.importe);
+                            $('#ingresos').val(response.ingresos);
+                            $('#egresos').val(response.egresos);
+
+                            var total = (response.total + parseFloat(micaja.importe) + response.ingresos) - response.egresos;
+                            $('#_total').val(total);
                         }
                     });
                 }
@@ -1280,8 +1466,9 @@
                             dataType: "json",
                             success: function (response) {
                                 if (response.length == 0 ) {
-                                    toastr.success('Sin Resultados.');
+                                    toastr.error('Sin Resultados.');
                                 } else {
+                                    toastr.success('Clintes Encontrados');
                                     for (let index = 0; index < response.length; index++) {                                    
                                         mitable = mitable + "<tr><td>"+response[index].id+"</td><td>"+response[index].display+"</td><td><a class='btn btn-sm btn-success' href='#' onclick='cliente_get()'>Elegir</a></td></tr>";
                                     }
@@ -1307,9 +1494,23 @@
                 function cerrar_caja() {
 
                     var micaja = JSON.parse(localStorage.getItem('micaja'));
+
+                    var total_ventas = $('#total_ventas').val();
+                    var importe_inicial = $('#importe_inicial').val();
+                    var ingresos = $('#ingresos').val();
+                    var egresos = $('#egresos').val();
+                    var description = $('#description').val();
+                    var _total = $('#_total').val();
+                    var cant_ventas = $('#cant_ventas').val();
+                    var editor_id = '{{ Auth::user()->id }}';
+                    var caja_id = micaja.caja_id;
+                    var status = 'close';
+
+                    var midata = JSON.stringify({caja_id: caja_id, editor_id: editor_id, cant_ventas: cant_ventas, _total: _total, description: description, egresos: egresos, ingresos: ingresos, importe_inicial: importe_inicial, total_ventas: total_ventas, status: status});
+                    // console.log(midata);
                     $.ajax({
-                        url: "{{ setting('admin.url') }}api/pos/caja/state/close/"+micaja.caja_id,
-                        success: function (response){
+                        url: "{{ setting('admin.url') }}api/pos/caja/detalle/save/"+midata,
+                        success: function (){
                             localStorage.removeItem('micaja');
                             location.href = '/admin/profile';
                         }
@@ -1317,7 +1518,7 @@
                 }
 
                 function venta_caja() {
-                    $('#venta_caja').modal();
+                    // $('#venta_caja').modal();
                     $('#productos_caja tbody').empty();
 
                     $.ajax({
@@ -1327,7 +1528,7 @@
                             for (let index = 0; index < response.length; index++) {
                                 
                                 if (response[index].register_id == '{{ Auth::user()->id }}') {
-                                    $("#productos_caja").append("<tr><td>"+response[index].id+"</td><td>"+response[index].factura+"</td><td>"+response[index].option_id+"</td><td>"+response[index].created_at+"</td><td>"+response[index].total+"</td><td>"+response[index].caja_status+"</td></tr>");
+                                    $("#productos_caja").append("<tr><td>"+response[index].id+"</td><td>"+response[index].factura+"</td><td>"+response[index].ticket+"</td><td>"+response[index].total+"</td><td>"+response[index].caja_status+"</td><td>"+response[index].created_at+"</td></tr>");
                                 } else {
                                     
                                 }
@@ -1448,7 +1649,7 @@
                                     url: urli,
                                     success: function (midata) {
                                     if ((response.cantidad - 1) == index) {
-                                        
+                                        document.getElementById("audio").play();
 
                                         if ($("input[name='season']:checked").val() == 'imprimir') {
                                             $("input[name='descuento']").val(0)
@@ -1467,7 +1668,7 @@
                             
                             // enviado notification 
                             
-                            socket.emit('chat', 'VENTA REALIZADA: '+response.id)
+                            socket.emit('ventas', 'VENTA REALIZADA: '+response.id)
 
                             // var phone = $('#phone_client').val();
                             // $.ajax({
@@ -1537,7 +1738,7 @@
                     }
 
                     if(mirep){
-                        toastr.warning("Producto ya Registrado");
+                        toastr.error("Producto ya Registrado");
                     }else{
                         $.ajax({
                             url: "{{ setting('admin.url') }}api/pos/producto/"+id,

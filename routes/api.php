@@ -15,7 +15,8 @@ use App\Cupone;
 use App\Pago;
 use App\Estado;
 use App\Cliente;
-
+use App\Asiento;
+use App\DetalleCaja;
 
 use App\Insumo;
 use App\Unidade;
@@ -48,10 +49,6 @@ Route::get('pos/users', function () {
     return  User::all();
 });
 
-
-
-
-
 Route::get('pos/info', function () {
     return  DB::table('settings')->where('group', 'Empresa')->get();
 });
@@ -59,6 +56,25 @@ Route::get('pos/info', function () {
 
 // --------------------------------------- VENTAS  ------------------------------------------
 // --------------------------------------- VENTAS  ------------------------------------------
+
+//Asientos
+Route::get('pos/asiento/save/{midata}', function ($midata) {
+    $midata2 = json_decode($midata);
+    $asiento = Asiento::create([
+        'caja_id' => $midata2->caja_id,
+        'type' => $midata2->type,
+        'monto' => $midata2->monto,
+        'concepto' => $midata2->concepto,
+        'editor_id' => $midata2->editor_id,
+        'caja_status' => false
+    ]);
+    return $asiento;
+});
+Route::get('pos/asientos/caja/editor/{midata}', function ($midata) {
+    $midata2 = json_decode($midata);
+    $asientos = Asiento::where('caja_id', $midata2->caja_id)->where('editor_id', $midata2->editor_id)->where('caja_status', false)->get();
+    return $asientos;
+});
 
 //update cocina
 Route::get('pos/cocina/{id}', function ($id) {
@@ -77,31 +93,77 @@ Route::get('pos/caja/state/{state}/{id}', function ($state, $id) {
             $caja->save();
             break;
         case 'close':
-            $ventas = Venta::where('caja_id', $id)->where('caja_status', false)->get();
-            foreach ($ventas as $item) {
-                $venta = Venta::find($item->id);
-                $venta->caja_status = true;
-                $venta->save();
-            }
-            $caja = Caja::find($id);
-            $caja->estado = $state;
-            $caja->save();
-            break;
+            // $ventas = Venta::where('caja_id', $id)->where('caja_status', false)->get();
+            // foreach ($ventas as $item) {
+            //     $venta = Venta::find($item->id);
+            //     $venta->caja_status = true;
+            //     $venta->save();
+            // }
+            // $caja = Caja::find($id);
+            // $caja->estado = $state;
+            // $caja->save();
+            // break;
         default:
             # code...
             break;
     }   
     return  true;
 });
-Route::get('pos/caja/total/{id}', function ( $id) {
+Route::get('pos/caja/detalle/save/{midata}', function ($midata) {
+    $midata2 = json_decode($midata);
 
-    $ventas = Venta::where('caja_id', $id)->where('caja_status', false)->get();
+    $ventas = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->get();
+    foreach ($ventas as $item) {
+        $venta = Venta::find($item->id);
+        $venta->caja_status = true;
+        $venta->save();
+    }
+
+    $asientos = Asiento::where('caja_id', $midata2->caja_id)->where('editor_id', $midata2->editor_id)->where('caja_status', false)->get();
+    foreach ($asientos as $item) {
+        $asiento = Asiento::find($item->id);
+        $asiento->caja_status = true;
+        $asiento->save();
+    }
+
+    DetalleCaja::create([
+        'cantidad_ventas' => $midata2->cant_ventas,
+        'importe_inicial' => $midata2->importe_inicial,
+        'total_ventas' => $midata2->_total,
+        'ingresos' => $midata2->ingresos,
+        'egresos' => $midata2->egresos,
+        'caja_id' => $midata2->caja_id,
+        'editor_id' => $midata2->editor_id,
+        'description' => $midata2->description
+    ]);
+
+    $caja = Caja::find($midata2->caja_id);
+    $caja->estado = $midata2->status;
+    $caja->save();
+
+    return  true;
+});
+
+Route::get('pos/caja/get_total/{midata}', function ( $midata) {
+    $midata2 = json_decode($midata);
+
+    $ventas = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->get();
     $cantidad = count($ventas);
     $total = 0;
     foreach ($ventas as $item) {
         $total = $total + $item->total;
     }
-    return  response()->json(array('total' => $total, 'cantidad' => $cantidad));
+    $ingresos = Asiento::where('type', 'Ingresos')->where('caja_id', $midata2->caja_id)->where('editor_id', $midata2->editor_id)->where('caja_status', false)->get();
+    $ti = 0;
+    foreach ($ingresos as $item) {
+        $ti = $ti + $item->monto;
+    }
+    $egresos = Asiento::where('type', 'Egresos')->where('caja_id', $midata2->caja_id)->where('editor_id', $midata2->editor_id)->where('caja_status', false)->get();
+    $te = 0;
+    foreach ($egresos as $item) {
+        $te = $te + $item->monto;
+    }
+    return  response()->json(array('total' => $total, 'cantidad' => $cantidad, 'ingresos' => $ti, 'egresos'=> $te));
 });
 
 Route::get('pos/ventas/save/{midata}', function($midata) {

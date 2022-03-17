@@ -4,7 +4,7 @@ namespace App\Actions;
 
 use TCG\Voyager\Actions\AbstractAction;
 
-class VentaDetalle extends AbstractAction
+class CajaDetalle extends AbstractAction
 {
     public function getTitle()
     {
@@ -30,11 +30,12 @@ class VentaDetalle extends AbstractAction
 
     public function getDefaultRoute()
     {
-        return route('voyager.detalle-ventas.index', ['key' => 'venta_id', 'filter' => 'equals', 's' => $this->data->{$this->data->getKeyName()} ]);
+        return route('voyager.detalle-cajas.index', ['key' => 'caja_id', 'filter' => 'equals', 's' => $this->data->{$this->data->getKeyName()} ]);
+
     }
 
     public function shouldActionDisplayOnDataType()
     {
-        return $this->dataType->slug == 'ventas';
+        return $this->dataType->slug == 'cajas';
     }
 }

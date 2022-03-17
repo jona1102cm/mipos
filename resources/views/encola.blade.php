@@ -59,7 +59,7 @@
             <div class="col-sm-8">
                 <div class="col-md-12" id="data" style="margin-top:20px;overflow-y:hidden"></div>
                     @php
-                        $ventas = App\Venta::where('status_id', 1 )->orderby('id', 'desc')->get();
+                        $ventas = App\Venta::where('caja_status', false )->orderby('id', 'desc')->get();
                     @endphp       
                     <div class="table-responsive">
                         <table id="dataTable" class="table table-hover">
@@ -124,7 +124,7 @@
     <script>
         document.getElementById("audio").play();
         const socket = io('https://socket.loginweb.dev')
-        socket.on('chat', (msg) =>{
+        socket.on('ventas', (msg) =>{
             location.reload();
         })
     </script>
