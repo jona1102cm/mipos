@@ -12,13 +12,14 @@ use App\Imports\UsersImport;
 use App\Imports\ClienteImport;
 use App\Imports\ProductsImport;
 use App\Imports\VentaImport;
-
+use App\DetalleCaja;
+use App\Caja;
 use Maatwebsite\Excel\Facades\Excel;
 
 use App\User;
 use App\Cliente;
 use App\Sucursale;
-
+use App\Asiento;
 
 use NumerosEnLetras;
 
@@ -36,6 +37,20 @@ class PosController extends Controller
         $literal = NumerosEnLetras::convertir($ventas->total,'Bolivianos',true);
 
         $vista = view('ventas.recibo', compact('ventas' ,'detalle_ventas', 'cliente','sucursal','option', 'literal'));
+
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->loadHTML($vista)->setPaper('legal');
+        return $pdf->stream();
+    }
+
+       // PARA IMPRIMIR CIERRE CAJA
+	public function cierre_caja($id){
+        $detalle_caja=DetalleCaja::find($id);
+        $caja=Caja::find($detalle_caja->caja_id);
+        $sucursal=Sucursale::find($caja->sucursal_id);
+        $asiento=Asiento::where('caja_id',$detalle_caja->caja_id)->get();
+
+        $vista = view('cajas.cierre_caja', compact('detalle_caja','caja','sucursal','asiento'));
 
         $pdf = \App::make('dompdf.wrapper');
         $pdf->loadHTML($vista)->setPaper('legal');

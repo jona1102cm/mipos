@@ -23,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Voyager::addAction(\App\Actions\CierreCaja::class);
         //
         Voyager::addAction(\App\Actions\VentaDetalle::class);
         // Voyager::addAction(\App\Actions\VentaRecibo::class);

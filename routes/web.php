@@ -31,6 +31,7 @@ Route::group(['prefix' => 'admin'], function () {
 
     Route::get('ventas/imprimir/{id}', 'App\Http\Controllers\PosController@imprimir')->name('venta.imprimir');
 
+    Route::get('detalle_cajas/imprimir/{id}', 'App\Http\Controllers\PosController@cierre_caja')->name('cajas.cierre_caja');
 
 
     

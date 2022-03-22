@@ -1075,29 +1075,29 @@
                         $("#micaja").modal();
                     }
 
-                    // CARGANDO ASENTOS 
-                    // $("#asiento_list tbody tr").remove();
-                    // var mitable = "";
-                    // var editor = '{{ Auth::user()->id; }}';
-                    // var micaja = JSON.parse(localStorage.getItem('micaja'));
-                    // var midata = JSON.stringify({caja_id: micaja.caja_id, editor_id: editor});
-                    // var urli = "{{ setting('admin.url') }}api/pos/asientos/caja/editor/"+midata;
-                    // // console.log(urli);
-                    // $.ajax({
-                    //     url: urli,
-                    //     dataType: "json",
-                    //     success: function (response) {
-                    //         if (response.length == 0 ) {
-                    //             toastr.success('Sin Resultados.');
-                    //         } else {
-                    //             for (let index = 0; index < response.length; index++) {                                    
-                    //                 mitable = mitable + "<tr><td>"+response[index].id+"</td><td>"+response[index].type+"</td><td>"+response[index].monto+"</td><td>"+response[index].concepto+"</td><td>"+response[index].created_at+"</td></tr>";
-                    //             }
-                    //             $('#asiento_list').append(mitable);
-                    //         }
-                    //     }
-                    // });
-                    // MIXTA 1 y 2 
+                    //CARGANDO ASENTOS 
+                    $("#asiento_list tbody tr").remove();
+                    var mitable = "";
+                    var editor = '{{ Auth::user()->id; }}';
+                    var micaja = JSON.parse(localStorage.getItem('micaja'));
+                    var midata = JSON.stringify({caja_id: micaja.caja_id, editor_id: editor});
+                    var urli = "{{ setting('admin.url') }}api/pos/asientos/caja/editor/"+midata;
+                    // console.log(urli);
+                    $.ajax({
+                        url: urli,
+                        dataType: "json",
+                        success: function (response) {
+                            if (response.length == 0 ) {
+                                toastr.success('Sin Resultados.');
+                            } else {
+                                for (let index = 0; index < response.length; index++) {                                    
+                                    mitable = mitable + "<tr><td>"+response[index].id+"</td><td>"+response[index].type+"</td><td>"+response[index].monto+"</td><td>"+response[index].concepto+"</td><td>"+response[index].created_at+"</td></tr>";
+                                }
+                                $('#asiento_list').append(mitable);
+                            }
+                        }
+                    });
+                   // MIXTA 1 y 2 
                     // $.ajax({
                     //     url: "{{ setting('admin.url') }}api/pos/producto/mixto/0",
                     //     dataType: "json",
@@ -1114,7 +1114,9 @@
                     //                 success: function (midata) {
                     //                     $('#mixta1').append($('<option>', {
                     //                         value: response[index].id,
-                    //                         text: midata.abreviatura + ' - ' + response[index].name + ' - ' + response[index].precio+' Bs.'
+                    //                         //text: midata.abreviatura + ' - ' + response[index].name + ' - ' + response[index].precio+' Bs.'
+                    //                         text:response[index].name + ' - ' + response[index].precio+' Bs.'
+
                     //                     }));
                     //                 }
                     //             });
@@ -1138,7 +1140,9 @@
                     //                 success: function (midata) {
                     //                     $('#mixta2').append($('<option>', {
                     //                         value: response[index].id,
-                    //                         text: midata.abreviatura + ' - ' + response[index].name + ' - ' + response[index].precio+' Bs.'
+                    //                         //text: midata.abreviatura + ' - ' + response[index].name + ' - ' + response[index].precio+' Bs.'
+                    //                         text:response[index].name + ' - ' + response[index].precio+' Bs.'
+
                     //                     }));
                     //                 }
                     //             });
@@ -1166,7 +1170,7 @@
                         }
                     });
                 
-                    // TODOS LOS PRODUCTOS 
+                    //TODOS LOS PRODUCTOS 
                     // $.ajax({
                     //     url: "{{ setting('admin.url') }}api/pos/productos",
                     //     dataType: "json",
@@ -1183,7 +1187,9 @@
                     //                 success: function (midata) {
                     //                     $('#s').append($('<option>', {
                     //                         value: response[index].id,
-                    //                         text: midata.abreviatura + ' - ' + response[index].name + ' - ' + response[index].precio+' Bs.'
+                    //                         //text: midata.abreviatura + ' - ' + response[index].name + ' - ' + response[index].precio+' Bs.'
+                    //                         text:response[index].name + ' - ' + response[index].precio+' Bs.'
+
                     //                     }));
                     //                 }
                     //             });
