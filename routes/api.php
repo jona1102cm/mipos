@@ -247,7 +247,7 @@ Route::get('pos/producto/mixto/{id}/{category}', function ($id, $category) {
 
 //--  TODAS LAS CATEGORY PRODUCTOS
 Route::get('pos/categorias', function () {
-    return  Categoria::all();
+    return  Categoria::orderBy('order', 'asc')->get();
 });
 
 Route::get('pos/category/{id}', function ($id) {
@@ -256,7 +256,7 @@ Route::get('pos/category/{id}', function ($id) {
 
 // PRODUCTS FOR CATEGORY
 Route::get('pos/productos/category/{id}', function ($id) {
-    return  Producto::where('categoria_id', $id)->get();
+    return  Producto::where('categoria_id', $id)->with('categoria')->get();
 });
 
 // TODAS LAS VENTAS y By ID
@@ -446,4 +446,11 @@ Route::get('pos/productions/savesemi/detalle/{miproduction}', function($miproduc
 //PRODUCTIOS PARA PRODUCCION
 Route::get('pos/productos/production', function () {
     return  Producto::where('production', true)->get();
+});
+
+
+// MOVIL 
+// TODOS LOS PRODUCTOS
+Route::get('movil/productos', function () {
+    return  Producto::with('categoria')->get();
 });

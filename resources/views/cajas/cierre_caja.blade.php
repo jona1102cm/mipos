@@ -91,21 +91,27 @@
                 <td colspan="2">
                     <table width="100%">
                         <tr>
-                            
+                                <th></th>
                                 <th align="center" style="font-size:18px">CIERRE CAJA # {{ $detalle_caja->id }}</th>
-                           
+                                <th></th>
                         </tr>
                         <tr>
                             <th></th>
                             <th align="center">{{$caja->title}} - {{$sucursal->name}}</th>
                             <th></th>
                         </tr> <br>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <table width="100%">
                         <tr>
                             <td>
-                                Nº Venta Inicial: {{$detalle_caja->venta_inicio}}
+                                <b> Nº Venta Inicial: </b>{{$detalle_caja->venta_inicio}}
                             </td>
                             <td>
-                                Nº Venta Final: {{$detalle_caja->venta_final}}
+                                <b> Nº Venta Final: </b>{{$detalle_caja->venta_final}}
                             </td>
                         </tr>
                         <tr>
@@ -118,7 +124,10 @@
                         </tr>
 
                     </table>
+
                 </td>
+
+
             </tr>
         
             
@@ -130,9 +139,19 @@
                     <table width="100%">
                         <tr>
                             <th></th>
-                            <th align="center" style="font-size:15px">INGRESOS</th>
-                            <th></th>
+                           <th align="center" style="font-size:15px">INGRESOS</th>
+                           <th></th>
                         </tr>
+                    </table>
+                </td>
+            </tr>
+           
+            <tr>
+                <td colspan="2">
+                    
+                    <table width="100%">
+                        
+                       
                         <tr>
                             <th>Cantidad</th>
                             <th>Detalle</th>
@@ -201,9 +220,15 @@
                     <table width="100%">
                         <tr>
                             <th></th>
-                            <th align="center" style="font-size:15px">EGRESOS</th>
-                            <th></th>
+                           <th align="center" style="font-size:15px">EGRESOS</th>
+                           <th></th>
                         </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <table width="100%">
                         
                         <tr>
                             <th></th>
@@ -341,55 +366,35 @@
 
             <tr>
                 <td colspan="2"><hr></td>
-            </tr>
+            </tr><br><br><br>
             <tr>
                 <td colspan="2">
                     <table width="100%">
                         <tr>
-                            <th>CANTIDAD</th>
-                            <th>DETALLE</th>
-                            <th>PRECIO UNIT.</th>
-                            <th align="right">TOTAL UNIT.</th>
- 
-                         </tr>
- 
-                        
-                             <tr>
-                                 <td align="center"><b></b></td>
-                                 <td align="center"><b></b></td>
-                                 <td align="center"><b></b></td>
-                                 <td align="center"><b></b></td>
-                                 
- 
-                             </tr>
-                        
-                        <br>
-                        <tr>
-                            <td colspan="3" align="right"><b>SUB TOTAL Bs.</b></td>
-                            <td align="right"><b></b></td>
+                    
+                            <th><hr></th>
+                           
                         </tr>
                         <tr>
-                            <td colspan="3" align="right"><b>DESCUENTO Bs.</b></td>
-                            <td align="right"><b></b></td>
+                            <th align="center">Cajero(a): {{$cajero->name}}</th>
+                        </tr><br><br><br>
+
+                        <tr>
+                            
+                            
+                            <th align="center"><hr></th>
+                            
                         </tr>
                         <tr>
-                            <td colspan="3" align="right"><b>TOTAL Bs.</b></td>
-                            <td align="right"><b></b></td>
+                            <th align="center">Administrador(a): </th>
                         </tr>
+
                     </table>
+
                 </td>
             </tr>
             
-            <tr>
-                <td colspan="2"><hr></td>
-            </tr> <br>
-            <tr>
-                <td colspan="2"><hr></td>
-            </tr>
            
-            <tr>
-                <td colspan="2"><b>Hora : {{ date('H:i:s') }}</b></td>
-            </tr>
         </table>
         
         <script>

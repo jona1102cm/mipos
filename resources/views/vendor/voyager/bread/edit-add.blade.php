@@ -1157,7 +1157,7 @@
                         dataType: "json",
                         success: function (response) {
                             $('#category').append($('<option>', {
-                                value: null,
+                                value: 0,
                                 text: 'Elige una Categoria'
                             }));
                             for (let index = 0; index < response.length; index++) {
@@ -1690,25 +1690,47 @@
                 }
 
                 $('#category').on('change', function() {
-                    $.ajax({
-                        type: "get",
-                        url: "{{ setting('admin.url') }}api/pos/productos/category/"+this.value,
-                        dataType: "json",
-                        success: function (response) {
-                            $('#s').find('option').remove().end();
-                            $('#s').append($('<option>', {
-                                value: null,
-                                text: 'Elige un Producto'
-                            }));
-                            for (let index = 0; index < response.length; index++) {
-                                const element = response[index];
+                    if (+this.value == 0) {
+                        $.ajax({
+                            url: "{{ setting('admin.url') }}api/pos/productos/",
+                            dataType: "json",
+                            success: function (response) {
+                                $('#s').find('option').remove().end();
                                 $('#s').append($('<option>', {
-                                    value: response[index].id,
-                                    text: response[index].name + ' '+ response[index].precio + ' Bs.'
+                                    value: null,
+                                    text: 'Elige un Producto'
                                 }));
+                                for (let index = 0; index < response.length; index++) {
+                                    // const element = response[index];
+                                    $('#s').append($('<option>', {
+                                        value: response[index].id,
+                                        text: response[index].abreviatura+' '+response[index].name + ' '+ response[index].precio + ' Bs.'
+                                    }));
+                                }
                             }
-                        }
-                    });
+                        });
+                        toastr.success('Todos los Productos');
+                    } else {
+                        $.ajax({
+                            url: "{{ setting('admin.url') }}api/pos/productos/category/"+this.value,
+                            dataType: "json",
+                            success: function (response) {
+                                $('#s').find('option').remove().end();
+                                $('#s').append($('<option>', {
+                                    value: null,
+                                    text: 'Elige un Producto'
+                                }));
+                                for (let index = 0; index < response.length; index++) {
+                                    const element = response[index];
+                                    $('#s').append($('<option>', {
+                                        value: response[index].id,
+                                        text: response[index].categoria.abreviatura+' '+response[index].name + ' '+ response[index].precio + ' Bs.'
+                                    }));
+                                }
+                            }
+                        });
+                    }
+                    
                 });
 
                 function mitotal() {

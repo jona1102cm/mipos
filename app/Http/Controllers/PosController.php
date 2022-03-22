@@ -7,7 +7,7 @@ use App\Producto;
 use App\Venta;
 use App\DetalleVenta;
 use App\Option;
-
+use TCG\Voyager\Models\User;
 use App\Imports\UsersImport;
 use App\Imports\ClienteImport;
 use App\Imports\ProductsImport;
@@ -16,7 +16,6 @@ use App\DetalleCaja;
 use App\Caja;
 use Maatwebsite\Excel\Facades\Excel;
 
-use App\User;
 use App\Cliente;
 use App\Sucursale;
 use App\Asiento;
@@ -35,7 +34,6 @@ class PosController extends Controller
         $sucursal=Sucursale::find($ventas->sucursal_id);
         $option=Option::find($ventas->option_id);
         $literal = NumerosEnLetras::convertir($ventas->total,'Bolivianos',true);
-
         $vista = view('ventas.recibo', compact('ventas' ,'detalle_ventas', 'cliente','sucursal','option', 'literal'));
 
         $pdf = \App::make('dompdf.wrapper');
@@ -49,8 +47,8 @@ class PosController extends Controller
         $caja=Caja::find($detalle_caja->caja_id);
         $sucursal=Sucursale::find($caja->sucursal_id);
         $asiento=Asiento::where('caja_id',$detalle_caja->caja_id)->get();
-
-        $vista = view('cajas.cierre_caja', compact('detalle_caja','caja','sucursal','asiento'));
+        $cajero=User::find($detalle_caja->editor_id);
+        $vista = view('cajas.cierre_caja', compact('detalle_caja','caja','sucursal','asiento','cajero'));
 
         $pdf = \App::make('dompdf.wrapper');
         $pdf->loadHTML($vista)->setPaper('legal');
