@@ -66,7 +66,8 @@ Route::get('pos/asiento/save/{midata}', function ($midata) {
         'monto' => $midata2->monto,
         'concepto' => $midata2->concepto,
         'editor_id' => $midata2->editor_id,
-        'caja_status' => false
+        'caja_status' => false,
+        'pago'=> $midata2->pago,
     ]);
     return $asiento;
 });

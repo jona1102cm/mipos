@@ -14,6 +14,7 @@ class Asiento extends Model
 		'monto',
 		'concepto',
 		'editor_id',
-		'caja_status'
+		'caja_status',
+		'pago'
 	];
 }

@@ -775,13 +775,65 @@
                                 <tr>
                                     
                                     <td>
-                                        Total Asiento Bs.
+                                        Asientos - Ingresos Bs.
                                         <br>
                                         <input type="number" class="form-control" id="ingresos" value="0" readonly>
                                     </td>
                                     <td>
-                                        Total Asientos Bs.<br>
+                                        Asientos - Egresos Bs.<br>
                                         <input type="number" class="form-control" id="egresos" value="0" readonly>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Venta en Efectivo
+                                        <input type="number" class="form-control" id="venta_efectivo" value="0" readonly>
+                                    </td>
+                                    <td>
+                                        Venta con Tarjeta
+                                        <input type="number" class="form-control" id="venta_tarjeta" value="0" readonly>
+                                    </td>
+                                    <td>
+                                        Venta por Transferencia
+                                        <input type="number" class="form-control" id="venta_transferencia" value="0" readonly>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Venta por QR
+                                        <input type="number" class="form-control" id="venta_qr" value="0" readonly>
+                                    </td>
+                                    <td>
+                                        Venta por TigoMoney
+                                        <input type="number" class="form-control" id="venta_tigomoney" value="0" readonly>
+                                    </td>
+                                    <td>
+                                        Cantidad en Efectivo
+                                        <input type="number" class="form-control" id="cantidad_efectivo" value="0" readonly>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Cantidad por Tarjeta
+                                        <input type="number" class="form-control" id="cantidad_tarjeta" value="0" readonly>
+                                    </td>
+                                    <td>
+                                        Cantidad por Transferencia
+                                        <input type="number" class="form-control" id="cantidad_transferencia" value="0" readonly>
+                                    </td>
+                                    <td>
+                                        Cantidad por QR
+                                        <input type="number" class="form-control" id="cantidad_qr" value="0" readonly>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Cantidad por TigoMoney
+                                        <input type="number" class="form-control" id="cantidad_tigomoney" value="0" readonly>
+                                    </td>
+                                    <td>
+                                        Monto Entregado
+                                        <input type="number" class="form-control" id="efectivo_entregado" value="0" readonly>
                                     </td>
                                 </tr>
                             </tbody>
@@ -806,6 +858,17 @@
                                 
                                 
                             </div>
+
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Corte</th>
+                                        <th>Cantidad</th>
+                                        <th>Sub Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lista_cortes"></tbody>
+                            </table>
                             
                         </div>
                         <div class="modal-footer">
@@ -943,14 +1006,18 @@
                             </ul>
                             <div class="tab-content">
                                 <div role="tabpanel" class="tab-pane active" id="home1">
-                                    <div class="form-group col-sm-6">
+                                    <div class="form-group col-sm-4">
                                             <label for="">Tipo</label>
                                         <select class="form-control" name="" id="type">
                                             <option value="Egresos" selected>Egresos</option>
                                             <option value="Ingresos">Ingresos</option>
                                         </select>
                                     </div>
-                                    <div class="form-group col-sm-6">
+                                    <div class="form-group col-sm-4"><br>
+                                        <label class="radio-inline"> <input type="radio" name="pago" id="pago" value="0" checked> En Línea </label> <br>
+                                        <label class="radio-inline"> <input type="radio" name="pago" id="pago" value="1"> En Efectivo </label>
+                                    </div>
+                                    <div class="form-group col-sm-4">
                                         <label for="">Monto</label>
                                         <input type="number" class="form-control" id="monto" value="0">
                                     </div>
@@ -965,6 +1032,7 @@
                                         <thead>
                                             <th>#</th>
                                             <th>Tipo</th>
+                                            <th>Pago</th>
                                             <th>Monto</th>
                                             <th>Concepto</th>
                                             <th>Creado</th>
@@ -1076,27 +1144,27 @@
                     }
 
                     //CARGANDO ASENTOS 
-                    $("#asiento_list tbody tr").remove();
-                    var mitable = "";
-                    var editor = '{{ Auth::user()->id; }}';
-                    var micaja = JSON.parse(localStorage.getItem('micaja'));
-                    var midata = JSON.stringify({caja_id: micaja.caja_id, editor_id: editor});
-                    var urli = "{{ setting('admin.url') }}api/pos/asientos/caja/editor/"+midata;
-                    // console.log(urli);
-                    $.ajax({
-                        url: urli,
-                        dataType: "json",
-                        success: function (response) {
-                            if (response.length == 0 ) {
-                                toastr.success('Sin Resultados.');
-                            } else {
-                                for (let index = 0; index < response.length; index++) {                                    
-                                    mitable = mitable + "<tr><td>"+response[index].id+"</td><td>"+response[index].type+"</td><td>"+response[index].monto+"</td><td>"+response[index].concepto+"</td><td>"+response[index].created_at+"</td></tr>";
-                                }
-                                $('#asiento_list').append(mitable);
-                            }
-                        }
-                    });
+                    // $("#asiento_list tbody tr").remove();
+                    // var mitable = "";
+                    // var editor = '{{ Auth::user()->id; }}';
+                    // var micaja = JSON.parse(localStorage.getItem('micaja'));
+                    // var midata = JSON.stringify({caja_id: micaja.caja_id, editor_id: editor});
+                    // var urli = "{{ setting('admin.url') }}api/pos/asientos/caja/editor/"+midata;
+                    // // console.log(urli);
+                    // $.ajax({
+                    //     url: urli,
+                    //     dataType: "json",
+                    //     success: function (response) {
+                    //         if (response.length == 0 ) {
+                    //             toastr.success('Sin Resultados.');
+                    //         } else {
+                    //             for (let index = 0; index < response.length; index++) {                                    
+                    //                 mitable = mitable + "<tr><td>"+response[index].id+"</td><td>"+response[index].type+"</td><td>"+response[index].monto+"</td><td>"+response[index].concepto+"</td><td>"+response[index].created_at+"</td></tr>";
+                    //             }
+                    //             $('#asiento_list').append(mitable);
+                    //         }
+                    //     }
+                    // });
                    // MIXTA 1 y 2 
                     // $.ajax({
                     //     url: "{{ setting('admin.url') }}api/pos/producto/mixto/0",
@@ -1341,7 +1409,48 @@
                     } else {
                         localStorage.setItem('micart', JSON.stringify([]));
                     }
+
+
+                
                 });
+
+                $('.input-corte').keyup(function(){
+                    let corte = $(this).data('value');
+                    let cantidad = $(this).val() ? $(this).val() : 0;
+                    calcular_subtottal(corte, cantidad);
+                });
+                $('.input-corte').change(function(){
+                    let corte = $(this).data('value');
+                    let cantidad = $(this).val() ? $(this).val() : 0;
+                    calcular_subtottal(corte, cantidad);
+                });
+
+                function calcular_subtottal(corte, cantidad){
+                    let total = (parseFloat(corte)*parseFloat(cantidad)).toFixed(2);
+                    $('#label-'+corte.toString().replace('.', '')).text(total+' Bs.');
+                    $('#input-'+corte.toString().replace('.', '')).val(total);
+                    calcular_total();
+                }
+
+                function calcular_total(){
+                    let total = 0;
+                    $(".input-subtotal").each(function(){
+                        total += $(this).val() ? parseFloat($(this).val()) : 0;
+                    });
+                    $('#label-total').html('<b>'+(total).toFixed(2)+' Bs.</b>');
+                    $('#input-total').val(total);
+                    $('#label-faltante').html('<b>'+(monto_cierre-total).toFixed(2)+' Bs.</b>');
+                    $('#input-faltante').val(monto_cierre-total);
+
+                    if(monto_cierre-total>0){
+                        $('#label-faltante').css('color', 'red')
+                    }else if(monto_cierre-total==0){
+                        $('#label-faltante').css('color', 'green')
+                    }else{
+                        $('#label-faltante').css('color', 'blue')
+                    }
+
+                }
 
                 // cargar asientos
                 function cargar_asientos() {
@@ -1352,6 +1461,7 @@
                     var midata = JSON.stringify({caja_id: micaja.caja_id, editor_id: editor});
                     var urli = "{{ setting('admin.url') }}api/pos/asientos/caja/editor/"+midata;
                     // console.log(urli);
+                    
                     $.ajax({
                         url: urli,
                         dataType: "json",
@@ -1359,8 +1469,16 @@
                             if (response.length == 0 ) {
                                 toastr.error('Sin Resultados.');
                             } else {
-                                for (let index = 0; index < response.length; index++) {                                    
-                                    mitable = mitable + "<tr><td>"+response[index].id+"</td><td>"+response[index].type+"</td><td>"+response[index].monto+"</td><td>"+response[index].concepto+"</td><td>"+response[index].created_at+"</td></tr>";
+                                for (let index = 0; index < response.length; index++) { 
+
+                                    if (response[index].pago == 0) {
+                                        var pagotext="En Linea";
+                                    }
+                                    if (response[index].pago == 1){
+                                        var pagotext="En Efectivo";
+                                    }
+
+                                    mitable = mitable + "<tr><td>"+response[index].id+"</td><td>"+response[index].type+"</td><td>"+pagotext+"</td><td>"+response[index].monto+"</td><td>"+response[index].concepto+"</td><td>"+response[index].created_at+"</td></tr>";
                                 }
                                 $('#asiento_list').append(mitable);
                             }
@@ -1369,13 +1487,22 @@
                 }
                 //SAVE ASIENTOS
                 function save_asiento() {
+
+                    if ($("input[name='pago']:checked").val() == '0') {
+                        var pagotext="En Linea";
+                    }
+                    if ($("input[name='pago']:checked").val() == '1'){
+                        var pagotext="En Efectivo";
+                    }
+                    var pago=$("input[name='pago']:checked").val();
                     var micaja = JSON.parse(localStorage.getItem('micaja'));
                     var concepto = $('#concepto').val();
                     var monto = $('#monto').val();
                     var type = $('#type option:selected').val();
+                    
                     var caja_id = micaja.caja_id;
                     var editor_id = '{{ Auth::user()->id }}';
-                    var midata = JSON.stringify({caja_id: caja_id, type: type, monto: monto, editor_id: editor_id, concepto: concepto});
+                    var midata = JSON.stringify({caja_id: caja_id, type: type, monto: monto, editor_id: editor_id, concepto: concepto, pago:pago});
                     console.log(midata);
                     $.ajax({
                         url: "{{ setting('admin.url') }}api/pos/asiento/save/"+midata,
@@ -1458,6 +1585,15 @@
                             var total = (response.total + parseFloat(micaja.importe) + response.ingresos) - response.egresos;
                             $('#_total').val(total);
                         }
+                    });
+
+                    let cortes = new Array('0.5', '1', '2', '5', '10', '20', '50', '100', '200')
+                    cortes.map(function(value){
+                    $('#lista_cortes').append(`<tr>
+                                    <td><h4><img src="{{url('billetes/${value}.jpg')}}" alt="${value} Bs." width="80px"> ${value} Bs. </h4></td>
+                                    <td><input type="number" min="0" step="1" style="width:100px" data-value="${value}" class="form-control input-corte" value="0" required></td>
+                                    <td><label id="label-${value.replace('.', '')}">0.00 Bs.</label><input type="hidden" class="input-subtotal" id="input-${value.replace('.', '')}"></td>
+                                </tr>`)
                     });
                 }
 
@@ -1724,7 +1860,7 @@
                                     const element = response[index];
                                     $('#s').append($('<option>', {
                                         value: response[index].id,
-                                        text: response[index].categoria.abreviatura+' '+response[index].name + ' '+ response[index].precio + ' Bs.'
+                                        text: response[index].categoria.abreviatura+' - '+response[index].name + ' '+ response[index].precio + ' Bs.'
                                     }));
                                 }
                             }
