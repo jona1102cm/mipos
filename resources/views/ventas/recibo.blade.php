@@ -153,65 +153,67 @@
             </tr>
         </table>
         <div class="saltopagina"></div>
-        <table width="300px">
-            <tr>
-                {{-- consulta para saber si es factura o recibo --}}
-                <td colspan="2" align="center">
-                    <h3>
-                        ORDEN #{{$ventas->ticket}}<br>
-                        {{date('d/m/Y H:i:s')}}<br>
-                        <span class="badge">{{ strtoupper($option->title) }}</span>
 
-                    </h3><hr>
-                </td>
-            </tr>
-            <tr>
-                {{-- detalle de la venta --}}
-                <td colspan="2">
-                    <table width="100%">
-                        <tr>
-                           <th>CANTIDAD</th>
-                           <th>DETALLE</th>
-                           <th>PRECIO UNIT.</th>
-                           <th align="right">TOTAL UNIT.</th>
+        @if(setting('ventas.cocina'))
+        
+            <table width="300px">
+                    <td colspan="2" align="center">
+                        <h3>
+                            ORDEN #{{$ventas->ticket}}<br>
+                            {{date('d/m/Y H:i:s')}}<br>
+                            <span class="badge">{{ strtoupper($option->title) }}</span>
 
-                        </tr>
-
-                        @foreach ($detalle_ventas as $item)
-                            @php
-                                $miproduct = App\Producto::find($item->producto_id);
-                                $totalunit=($item->cantidad)*($item->precio);
-                            @endphp
+                        </h3><hr>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <table width="100%">
                             <tr>
-                                <td align="center"><b>{{ $item->cantidad }}</b></td>
-                                <td align="center"><b>{{ $miproduct->name }}</b></td>
-                                <td align="center"><b>{{ $item->precio }}</b></td>
-                                <td align="center"><b>{{ $totalunit }}</b></td>
+                            <th>CANTIDAD</th>
+                            <th>DETALLE</th>
+                            <th>PRECIO UNIT.</th>
+                            <th align="right">TOTAL UNIT.</th>
+
                             </tr>
-                        @endforeach
-                        <br>
-                        <tr>
-                            <td colspan="3" align="right"><b>SUB TOTAL Bs.</b></td>
-                            <td align="right"><b>{{number_format($ventas->subtotal, 2, ',', '.')}}</b></td>
-                        </tr>
-                        <tr>
-                            <td colspan="3" align="right"><b>DESCUENTO Bs.</b></td>
-                            <td align="right"><b>{{number_format($ventas->descuento, 2, ',', '.')}}</b></td>
-                        </tr>
-                        <tr>
-                            <td colspan="3" align="right"><b>TOTAL Bs.</b></td>
-                            <td align="right"><b>{{number_format($ventas->total, 2, ',', '.')}}</b></td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2"><hr></td>
-            </tr>
-            <tr>
-                <td colspan="2"><h3>Cliente: {{$cliente->display}}.</h3> </td>
-            </tr>
-        </table>
+
+                            @foreach ($detalle_ventas as $item)
+                                @php
+                                    $miproduct = App\Producto::find($item->producto_id);
+                                    $totalunit=($item->cantidad)*($item->precio);
+                                @endphp
+                                <tr>
+                                    <td align="center"><b>{{ $item->cantidad }}</b></td>
+                                    <td align="center"><b>{{ $miproduct->name }}</b></td>
+                                    <td align="center"><b>{{ $item->precio }}</b></td>
+                                    <td align="center"><b>{{ $totalunit }}</b></td>
+                                </tr>
+                            @endforeach
+                            <br>
+                            <tr>
+                                <td colspan="3" align="right"><b>SUB TOTAL Bs.</b></td>
+                                <td align="right"><b>{{number_format($ventas->subtotal, 2, ',', '.')}}</b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" align="right"><b>DESCUENTO Bs.</b></td>
+                                <td align="right"><b>{{number_format($ventas->descuento, 2, ',', '.')}}</b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" align="right"><b>TOTAL Bs.</b></td>
+                                <td align="right"><b>{{number_format($ventas->total, 2, ',', '.')}}</b></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"><hr></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><h3>Cliente: {{$cliente->display}}.</h3> </td>
+                </tr>
+            </table>
+            
+        @endif
         <script>
             window.print();
             setTimeout(function(){

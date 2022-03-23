@@ -164,7 +164,46 @@ Route::get('pos/caja/get_total/{midata}', function ( $midata) {
     foreach ($egresos as $item) {
         $te = $te + $item->monto;
     }
-    return  response()->json(array('total' => $total, 'cantidad' => $cantidad, 'ingresos' => $ti, 'egresos'=> $te));
+
+    //desde aqui jchavez
+    $venta_efectivo = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('pago_id',1)->get();
+    $cantidad_efectivo = count($venta_efectivo);
+    $total_efectivo = 0;
+    foreach ($venta_efectivo as $item) {
+        $total_efectivo = $total_efectivo + $item->total;
+    }
+
+    $venta_tarjeta = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('pago_id',2)->get();
+    $cantidad_tarjeta = count($venta_tarjeta);
+    $total_tarjeta = 0;
+    foreach ($venta_tarjeta as $item) {
+        $total_tarjeta = $total_tarjeta + $item->total;
+    }
+
+    $venta_transferencia = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('pago_id',3)->get();
+    $cantidad_transferencia = count($venta_transferencia);
+    $total_transferencia = 0;
+    foreach ($venta_transferencia as $item) {
+        $total_transferencia = $total_transferencia + $item->total;
+    }
+
+    $venta_qr = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('pago_id',4)->get();
+    $cantidad_qr = count($venta_qr);
+    $total_qr = 0;
+    foreach ($venta_qr as $item) {
+        $total_qr = $total_qr + $item->total;
+    }
+
+    $venta_tigomoney = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('pago_id',5)->get();
+    $cantidad_tigomoney = count($venta_tigomoney);
+    $total_tigomoney = 0;
+    foreach ($venta_tigomoney as $item) {
+        $total_tigomoney = $total_tigomoney + $item->total;
+    }
+
+
+
+    return  response()->json(array('total' => $total, 'cantidad' => $cantidad, 'ingresos' => $ti, 'egresos'=> $te, 'total_efectivo'=> $total_efectivo, 'cantidad_efectivo'=> $cantidad_efectivo,'total_tarjeta'=> $total_tarjeta,'cantidad_tarjeta'=>$cantidad_tarjeta,'total_transferencia'=> $total_transferencia,'cantidad_transferencia'=>$cantidad_transferencia, 'total_qr'=>$total_qr,'cantidad_qr'=>$cantidad_qr,'total_tigomoney'=>$total_tigomoney,'cantidad_tigomoney'=>$cantidad_tigomoney));
 });
 
 Route::get('pos/ventas/save/{midata}', function($midata) {
@@ -191,6 +230,8 @@ Route::get('pos/ventas/save/{midata}', function($midata) {
         'recibido' => $midata2->recibido,
         'cambio' => $midata2->cambio
     ]);
+
+
     return $venta;
 });
 
@@ -198,16 +239,37 @@ Route::get('pos/ventas/save/detalle/{micart}', function($micart) {
     // return $micart;
     $micart2 = json_decode($micart);
     $miproducto = Producto::find($micart2->producto_id);
-    DetalleVenta::create([
-        'producto_id' => $micart2->producto_id,
-        'venta_id' => $micart2->venta_id,
-        'precio' => $micart2->precio,
-        'cantidad' => $micart2->cantidad,
-        'total' => $micart2->total,
-        'foto' => $miproducto->image ? $miproducto->image : null,
-        'name' => $miproducto->name,
-        'description' => $micart2->description ? $micart2->description : null
-    ]);
+
+    if (setting('ventas.stock')) {
+        $cant_a = $miproducto->stock;
+        $cant_b = $micart2->cantidad;
+        $cant_c = $cant_a - $cant_b;
+        $miproducto->stock = $cant_c;
+        $miproducto->save();
+        DetalleVenta::create([
+            'producto_id' => $micart2->producto_id,
+            'venta_id' => $micart2->venta_id,
+            'precio' => $micart2->precio,
+            'cantidad' => $micart2->cantidad,
+            'total' => $micart2->total,
+            'foto' => $miproducto->image ? $miproducto->image : null,
+            'name' => $miproducto->name,
+            // 'description' => $micart2->description ? $micart2->description : null
+        ]);
+
+    } else {
+        DetalleVenta::create([
+            'producto_id' => $micart2->producto_id,
+            'venta_id' => $micart2->venta_id,
+            'precio' => $micart2->precio,
+            'cantidad' => $micart2->cantidad,
+            'total' => $micart2->total,
+            'foto' => $miproducto->image ? $miproducto->image : null,
+            'name' => $miproducto->name,
+            // 'description' => $micart2->description ? $micart2->description : null
+        ]);
+    }
+    
     return true;
 });
 
@@ -221,7 +283,7 @@ Route::get('pos/savacliente/{midata}', function ($midata) {
         'ci_nit' => $cliente->nit,
         'display' => $cliente->display,
         'email' => $cliente->email,
-        'default' => 1
+        'default' => 0
     ]);
     return $cliente;
 });
@@ -283,7 +345,7 @@ Route::get('pos/clientes', function () {
     return Cliente::all();
 });
 Route::get('pos/cliente/{id}', function ($id) {
-    return  Cliente::where('id', $id)->get();
+    return  Cliente::find($id);
 });
 Route::get('pos/cliente/default/get', function () {
     return  Cliente::where('default', 1)->orderBy('created_at', 'desc')->first();

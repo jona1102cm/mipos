@@ -926,6 +926,7 @@
                                         <thead>
                                             <th>#</th>
                                             <th>Cliente</th>
+                                            <th>CI - NIT</th>
                                             <th>Opciones</th>
                                         </thead>
                                         <tbody>
@@ -1295,7 +1296,7 @@
                         dataType: "json",
                         success: function (response) {
                             $("input[name='cliente_id']").val(response.id);
-                            $('#micliente').val(response.display+' - '+response.phone)
+                            $('#micliente').val(response.display+' - '+response.ci_nit)
                             $('#phone_client').val(response.phone)
                         }
                     });
@@ -1575,12 +1576,29 @@
                         url: "{{ setting('admin.url') }}api/pos/caja/get_total/"+midata,
                         dataType: "json",
                         success: function (response) {
-                            // console.log(response);
+                            console.log(response);
                             $('#cant_ventas').val(response.cantidad);
                             $('#total_ventas').val(response.total);
                             $('#importe_inicial').val(micaja.importe);
                             $('#ingresos').val(response.ingresos);
                             $('#egresos').val(response.egresos);
+                            
+                            $('#venta_efectivo').val(response.total_efectivo);
+                            $('#venta_tarjeta').val(response.total_tarjeta);
+                            $('#venta_transferencia').val(response.total_transferencia);
+                            $('#venta_qr').val(response.total_qr);
+                            $('#venta_tigomoney').val(response.total_tigomoney);
+
+
+                            $('#cantidad_efectivo').val(response.cantidad_efectivo);
+                            $('#cantidad_tarjeta').val(response.cantidad_tarjeta);
+                            $('#cantidad_transferencia').val(response.cantidad_transferencia);
+                            $('#cantidad_qr').val(response.cantidad_qr);
+                            $('#cantidad_tigomoney').val(response.cantidad_tigomoney);
+
+
+
+
 
                             var total = (response.total + parseFloat(micaja.importe) + response.ingresos) - response.egresos;
                             $('#_total').val(total);
@@ -1612,7 +1630,7 @@
                                 } else {
                                     toastr.success('Clintes Encontrados');
                                     for (let index = 0; index < response.length; index++) {                                    
-                                        mitable = mitable + "<tr><td>"+response[index].id+"</td><td>"+response[index].display+"</td><td><a class='btn btn-sm btn-success' href='#' onclick='cliente_get()'>Elegir</a></td></tr>";
+                                        mitable = mitable + "<tr><td>"+response[index].id+"</td><td>"+response[index].display+"</td><td>"+response[index].ci_nit+"</td><td><a class='btn btn-sm btn-success' href='#' onclick='cliente_get("+response[index].id+")'>Elegir</a></td></tr>";
                                     }
                                     $('#cliente_list').append(mitable);
                                 }
@@ -1621,6 +1639,22 @@
                     }
                 });
 
+                // cliente_get
+                function cliente_get(id) {
+                    
+
+                    $.ajax({
+                        url: "{{ setting('admin.url') }}api/pos/cliente/"+id,
+                        dataType: "json",
+                        success: function (response) {
+                            $("input[name='cliente_id']").val(id);
+                            $('#micliente').val(id + ' - ' + response.display);
+                            // $('#phone_client').val(response.phone)
+                            $('#modal_cliente').modal('hide');
+                        }
+                    });
+                  
+                }
                 // ADD DISPLAY
                 $('#first_name').keyup(function (e) { 
                     e.preventDefault();
@@ -1727,7 +1761,7 @@
                         url: "{{ setting('admin.url') }}api/pos/savacliente/"+midata,
                         success: function (response){
                             toastr.success('Cliente Creado..');
-                            $('#micliente').val(response.display+' - '+response.phone);
+                            $('#micliente').val(response.display+' - '+response.ci_nit);
                             $('#phone_client').val(response.phone);
                             $("input[name='cliente_id']").val(response.id);
                             $('#modal_cliente').modal('hide');
