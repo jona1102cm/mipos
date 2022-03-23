@@ -1648,7 +1648,8 @@
                         dataType: "json",
                         success: function (response) {
                             $("input[name='cliente_id']").val(id);
-                            $('#micliente').val(id + ' - ' + response.display);
+                            //$('#micliente').val(id + ' - ' + response.display);
+                            $('#micliente').val(response.display + ' - ' + response.ci_nit);
                             // $('#phone_client').val(response.phone)
                             $('#modal_cliente').modal('hide');
                         }

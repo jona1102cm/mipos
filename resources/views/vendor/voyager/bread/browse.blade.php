@@ -2945,26 +2945,26 @@
             @case('ventas')
                 $('#search_key').on('change', function() {
                     switch (this.value) {
-                        case 'cliente_id':
-                            $('#s').find('option').remove().end();
-                            $.ajax({
-                                url: "https://pos.loginweb.dev/api/pos/clientes",
-                                dataType: "json",
-                                success: function (response) {
-                                    $('#s').append($('<option>', {
-                                        value: null,
-                                        text: 'Elige un Cliente'
-                                    }));
-                                    for (let index = 0; index < response.length; index++) {
-                                        $('#s').append($('<option>', {
-                                            value: response[index].id,
-                                            text: response[index].first_name +" "+ response[index].last_name  +" "+ response[index].ci_nit
-                                        }));
-                                    }
-                                }
-                            });
+                        // case 'cliente_id':
+                        //     $('#s').find('option').remove().end();
+                        //     $.ajax({
+                        //         url: "https://pos.loginweb.dev/api/pos/clientes",
+                        //         dataType: "json",
+                        //         success: function (response) {
+                        //             $('#s').append($('<option>', {
+                        //                 value: null,
+                        //                 text: 'Elige un Cliente'
+                        //             }));
+                        //             for (let index = 0; index < response.length; index++) {
+                        //                 $('#s').append($('<option>', {
+                        //                     value: response[index].id,
+                        //                     text: response[index].first_name +" "+ response[index].last_name  +" "+ response[index].ci_nit
+                        //                 }));
+                        //             }
+                        //         }
+                        //     });
 
-                            break;
+                        //     break;
                         case 'status_id':
                             $('#s').find('option').remove().end();
                             $.ajax({
