@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,19 +6,19 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Tickets</title>
+
     <!-- Favicon -->
     <?php $admin_favicon = Voyager::setting('admin.icon_image', ''); ?>
-    @if($admin_favicon == '')
-        <link rel="shortcut icon" href="{{ voyager_asset('images/logo-icon.png') }}" type="image/png">
-    @else
-        <link rel="shortcut icon" href="{{ Voyager::image($admin_favicon) }}" type="image/png">
-    @endif
+    <link rel="shortcut icon" href="{{ Voyager::image($admin_favicon) }}" type="image/png">
+ 
+
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
     <style>
         body {
             font-family: 'Noto Sans', sans-serif;
-            background: url("{{ url('storage/'.setting('admin.encola')) }}") no-repeat center center fixed;
+            background: url("{{ url('storage/'.setting('ventas.encola')) }}") no-repeat center center fixed;
             -webkit-background-size: cover;
             -moz-background-size: cover;
             -o-background-size: cover;
@@ -47,63 +46,62 @@
         iframe{
             background-color: white
         }
-        table th td{
-        color:white;
+    </style>
+    <style>
+        .card{
+            background-color:rgba(0, 0, 0, 0.7);
+            color:white;
+            border: 10px solid rgba(0, 0, 0, 0.7);
+        }
+        .ticket-active{
+            animation: colorchange 3s infinite; /* animation-name followed by duration in seconds*/
+             /* you could also use milliseconds (ms) or something like 2.5s */
+            -webkit-animation: colorchange 3s infinite; /* Chrome and Safari */
+        }
+        @keyframes colorchange
+        {
+            0%  {border: 10px solid rgba(0, 0, 0, 0.7);}
+            20%   {border: 10px solid #FB3532;}
+            80%  {border: 10px solid rgba(0, 0, 0, 0.7);}
+        }
+    
+        @-webkit-keyframes colorchange /* Safari and Chrome - necessary duplicate */
+        {
+            0%  {border: 10px solid rgba(0, 0, 0, 0.7);}
+            25%   {border: 10px solid #FB3532;}
+            75%  {border: 10px solid rgba(0, 0, 0, 0.7);}
         }
     </style>
 </head>
 <body>
-    
+    @php
+        $ventas = App\Venta::where('caja_status', false )->orderby('id', 'desc')->get();
+        $venta = App\Venta::find(60);
+    @endphp    
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-8">
-                <div class="col-md-12" id="data" style="margin-top:20px;overflow-y:hidden"></div>
-                    @php
-                        $ventas = App\Venta::where('caja_status', false )->orderby('id', 'desc')->get();
-                    @endphp       
-                    <div class="table-responsive">
-                        <table id="dataTable" class="table table-hover">
-                            <thead style="color: white; height: 30px;">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Pedido</th>
-                                    <th>Cliente</th>
-                                </tr>
-                            </thead>
-                            <tbody style="color: white;">
-                                @foreach ($ventas as $item)
-                                    <tr>
-                                        <td>
-                                            ID# {{ $item->id }}
-                                            <br>
-                                            Ticket: {{ $item->ticket }}
-                                        </td>
-                                        <td>
-                                            @php
-                                                $detalle = App\DetalleVenta::where('venta_id', $item->id )->get();
-                                            @endphp
-                                            @foreach($detalle as $d)
-                                                @php
-                                                    $producto = App\Producto::find( $d->producto_id );
-                                                @endphp
-                                                Producto: {{ $producto->name }} Cant: {{ $d->cantidad }} <br>
-                                                Detalle: {{ $d->description }}
-                                            @endforeach
-                                        </td>
-                                        <td>
-                                            @php
-                                                $cliente = App\Cliente::find($item->cliente_id );
-                                            @endphp
-                                            {{ $cliente->display }}
-                                        </td>                                        
-                                    </tr>
-                                @endforeach                                                   
-                            </tbody>                       
-                        </table>
+            <div class="col-md-8">
+                <div class="" style="margin-top:20px;overflow-y:hidden">
+                    <div class="card mb-3 ticket-active">
+                        <h1 class="text-center" style="font-size:250px">T-{{ $venta->id }}</h1>
                     </div>
+                </div>
+                <div class="row">
+                    @foreach ($ventas as $item)
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <p class="card-text" style="margin:10px;font-size:30px;white-space: nowrap;"><small>T-{{ $item->id }}</small></p>
+                                <p class="card-text text-right" style="margin:10px;font-size:25px"><small>{{ \Carbon\Carbon::parse($item->created_at)->diffForHumans() }}</small></p>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
             </div>
-            <div class="col-sm-4">               
-                <h1 class="title">{{ setting('empresa.title') }} <img src="{{ url('storage').'/'.setting('empresa.logo') }}" width="100px" alt=""></h1>
+            <div class="col-md-4 text-right">
+                <div class="row">
+                    <h1 class="title">{{ setting('empresa.title') }} <img src="{{ url('storage').'/'.setting('empresa.logo') }}" width="100px" alt=""></h1>
+                </div>
+              
                 <audio id="audio">
                     <source type="audio/mp3" src="iphone-notificacion.mp3">
                 </audio>
@@ -115,19 +113,19 @@
             </div>
         </div>
     </div>
- 
+    
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
     <script src="https://socket.loginweb.dev/socket.io/socket.io.js"></script>
     <script>
         document.getElementById("audio").play();
         const socket = io('https://socket.loginweb.dev')
-        socket.on('ventas', (msg) =>{
+        socket.on("{{ setting('notificaciones.socket') }}", (msg) =>{
             location.reload();
         })
     </script>
-
 </body>
 </html>

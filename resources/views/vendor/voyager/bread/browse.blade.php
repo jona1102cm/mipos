@@ -56,9 +56,9 @@
                     </a>
                 @break
             @case('ventas')
-                {{-- <a href="{{ url('admin/productos') }}" class="btn btn-default btn-add-new" title="">
+                <a href="{{ url('admin/productos') }}" class="btn btn-default btn-add-new" title="">
                     <i class="voyager-helm"></i> <span>Productos</span>
-                </a> --}}
+                </a>
                 {{-- <a href="{{ url('admin/cajas') }}" class="btn btn-default btn-add-new" title="">
                     <i class="voyager-helm"></i> <span>Cajas</span>
                 </a> --}}

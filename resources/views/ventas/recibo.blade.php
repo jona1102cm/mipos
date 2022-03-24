@@ -5,7 +5,6 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        {{-- <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet"> --}}
         <title>Recibo de venta</title>
         <style>
             .btn-print{
@@ -51,10 +50,6 @@
 		</style>
     </head>
     <body>
-        {{-- <div style="text-align:right" id="print">
-            <button onclick="javascript:window.print()" class="btn-print">Imprimir</button>
-        </div> --}}
-
         <table width="300px">
             <tr>
                 <td colspan="2" align="center" style="font-size:10px">
@@ -215,10 +210,12 @@
             
         @endif
         <script>
-            window.print();
-            setTimeout(function(){
-                window.close();
-            }, 10000);
+            try {
+                this.print();
+            }
+            catch(e) {
+                window.onload = window.print;
+            }
         </script>
     </body>
 </html>

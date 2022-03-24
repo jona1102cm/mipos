@@ -1143,83 +1143,7 @@
                     }else{
                         $("#micaja").modal();
                     }
-
-                    //CARGANDO ASENTOS 
-                    // $("#asiento_list tbody tr").remove();
-                    // var mitable = "";
-                    // var editor = '{{ Auth::user()->id; }}';
-                    // var micaja = JSON.parse(localStorage.getItem('micaja'));
-                    // var midata = JSON.stringify({caja_id: micaja.caja_id, editor_id: editor});
-                    // var urli = "{{ setting('admin.url') }}api/pos/asientos/caja/editor/"+midata;
-                    // // console.log(urli);
-                    // $.ajax({
-                    //     url: urli,
-                    //     dataType: "json",
-                    //     success: function (response) {
-                    //         if (response.length == 0 ) {
-                    //             toastr.success('Sin Resultados.');
-                    //         } else {
-                    //             for (let index = 0; index < response.length; index++) {                                    
-                    //                 mitable = mitable + "<tr><td>"+response[index].id+"</td><td>"+response[index].type+"</td><td>"+response[index].monto+"</td><td>"+response[index].concepto+"</td><td>"+response[index].created_at+"</td></tr>";
-                    //             }
-                    //             $('#asiento_list').append(mitable);
-                    //         }
-                    //     }
-                    // });
-                   // MIXTA 1 y 2 
-                    // $.ajax({
-                    //     url: "{{ setting('admin.url') }}api/pos/producto/mixto/0",
-                    //     dataType: "json",
-                    //     success: function (response) {
-                    //         $('#mixta1').append($('<option>', {
-                    //             value: null,
-                    //             text: 'Elige un Mitad'
-                    //         }));
-                    //         for (let index = 0; index < response.length; index++) {
-
-                    //             $.ajax({
-                    //                 url: "{{ setting('admin.url') }}api/pos/category/"+response[index].categoria_id,
-                    //                 dataType: "json",
-                    //                 success: function (midata) {
-                    //                     $('#mixta1').append($('<option>', {
-                    //                         value: response[index].id,
-                    //                         //text: midata.abreviatura + ' - ' + response[index].name + ' - ' + response[index].precio+' Bs.'
-                    //                         text:response[index].name + ' - ' + response[index].precio+' Bs.'
-
-                    //                     }));
-                    //                 }
-                    //             });
-
-                    //         }
-                    //     }
-                    // });
-                    // $.ajax({
-                    //     url: "{{ setting('admin.url') }}api/pos/producto/mixto/0",
-                    //     dataType: "json",
-                    //     success: function (response) {
-                    //         $('#mixta2').append($('<option>', {
-                    //             value: null,
-                    //             text: 'Elige una Mitad'
-                    //         }));
-                    //         for (let index = 0; index < response.length; index++) {
-
-                    //             $.ajax({
-                    //                 url: "{{ setting('admin.url') }}api/pos/category/"+response[index].categoria_id,
-                    //                 dataType: "json",
-                    //                 success: function (midata) {
-                    //                     $('#mixta2').append($('<option>', {
-                    //                         value: response[index].id,
-                    //                         //text: midata.abreviatura + ' - ' + response[index].name + ' - ' + response[index].precio+' Bs.'
-                    //                         text:response[index].name + ' - ' + response[index].precio+' Bs.'
-
-                    //                     }));
-                    //                 }
-                    //             });
-
-                    //         }
-                    //     }
-                    // });
-
+             
                     // TODOS LOS CATEGORIAS 
                     $.ajax({
                         url: "{{ setting('admin.url') }}api/pos/categorias",
@@ -1238,34 +1162,6 @@
                             }
                         }
                     });
-                
-                    //TODOS LOS PRODUCTOS 
-                    // $.ajax({
-                    //     url: "{{ setting('admin.url') }}api/pos/productos",
-                    //     dataType: "json",
-                    //     success: function (response) {
-                    //         $('#s').append($('<option>', {
-                    //             value: null,
-                    //             text: 'Elige un Producto'
-                    //         }));
-                    //         for (let index = 0; index < response.length; index++) {
-
-                    //             $.ajax({
-                    //                 url: "{{ setting('admin.url') }}api/pos/category/"+response[index].categoria_id,
-                    //                 dataType: "json",
-                    //                 success: function (midata) {
-                    //                     $('#s').append($('<option>', {
-                    //                         value: response[index].id,
-                    //                         //text: midata.abreviatura + ' - ' + response[index].name + ' - ' + response[index].precio+' Bs.'
-                    //                         text:response[index].name + ' - ' + response[index].precio+' Bs.'
-
-                    //                     }));
-                    //                 }
-                    //             });
-
-                    //         }
-                    //     }
-                    // });
 
                     // get Deliverys
                     $.ajax({
@@ -1411,10 +1307,9 @@
                         localStorage.setItem('micart', JSON.stringify([]));
                     }
 
-
-                
                 });
 
+                //Asignacion de Cortes
                 $('.input-corte').keyup(function(){
                     let corte = $(this).data('value');
                     let cantidad = $(this).val() ? $(this).val() : 0;
@@ -1544,10 +1439,90 @@
                     var id = $('#s').val();
                     var mixta1 = $('#mixta1').val(); 
                     var mixta2 = $('#mixta2').val();
-                    // console.log({product: product, mixta1: mixta1, mixta2: mixta2});
-                    var micart = JSON.parse(localStorage.getItem('micart'));
-                    var description = $('#mixta1 :selected').text() + ' - ' + $('#mixta2 :selected').text();
-                    $.ajax({
+
+                    var cant_actual1 = 0;
+                    var cant_actual2 = 0;
+                    var cant_i1=false;
+                    var cant_i2=false;
+                    var prod1= "";
+                    var prod2= "";
+                    
+                    var inventario = false;
+
+                    if('{{setting('ventas.stock')}}'){
+                        $.ajax({
+                            url: "{{ setting('admin.url') }}api/pos/producto/"+mixta1,
+                            dataType: "json",
+                            success: function (response) {
+                                prod1= response.name;
+                                cant_actual1 = response.stock;
+                                inventario = true;
+                                if(cant_actual1>1){
+                                    cant_i1=true;
+                                }
+                                else{
+                                    cant_i1=false;
+                                }
+                            }
+                        });
+                    }
+                    
+                    if('{{setting('ventas.stock')}}'){
+                        $.ajax({
+                            url: "{{ setting('admin.url') }}api/pos/producto/"+mixta2,
+                            dataType: "json",
+                            success: function (response) {
+                                prod2=response.name;
+                                cant_actual2 = response.stock;
+                                if(cant_actual2>1){
+                                    cant_i2=true;
+                                }
+                                else{
+                                    cant_i2=false;
+                                }
+                                
+                            }
+                        });
+                    }
+                    if(inventario){
+
+                        if(cant_i1){
+                            if(cant_i2){
+                                var micart = JSON.parse(localStorage.getItem('micart'));
+                                var description = $('#mixta1 :selected').text() + ' - ' + $('#mixta2 :selected').text();
+                                $.ajax({
+                                url: "{{ setting('admin.url') }}api/pos/producto/"+id,
+                                dataType: "json",
+                                success: function (response) {
+
+                                    $('#mixtos').attr("hidden", true);
+                                    $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                                    
+                                    var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': description};
+                                    micart.push(temp);
+                                    localStorage.setItem('micart', JSON.stringify(micart));
+
+                                    mitotal();
+                                    toastr.success(response.name+" - REGISTRADO");
+
+                                    }
+                                });
+
+                            }else{
+                                toastr.error("No existe en Stock: "+prod2);
+                            }
+
+                        }else{
+                            toastr.error("No existe en Stock: "+prod1);
+
+                        }
+
+                    }
+                    else{
+
+                        var micart = JSON.parse(localStorage.getItem('micart'));
+                        var description = $('#mixta1 :selected').text() + ' - ' + $('#mixta2 :selected').text();
+                        $.ajax({
                         url: "{{ setting('admin.url') }}api/pos/producto/"+id,
                         dataType: "json",
                         success: function (response) {
@@ -1562,8 +1537,13 @@
                             mitotal();
                             toastr.success(response.name+" - REGISTRADO");
 
-                        }
-                    });
+                            }
+                        });
+
+                    }
+                    
+                    // console.log({product: product, mixta1: mixta1, mixta2: mixta2});
+                    
 
                 }
 
@@ -1589,16 +1569,11 @@
                             $('#venta_qr').val(response.total_qr);
                             $('#venta_tigomoney').val(response.total_tigomoney);
 
-
                             $('#cantidad_efectivo').val(response.cantidad_efectivo);
                             $('#cantidad_tarjeta').val(response.cantidad_tarjeta);
                             $('#cantidad_transferencia').val(response.cantidad_transferencia);
                             $('#cantidad_qr').val(response.cantidad_qr);
                             $('#cantidad_tigomoney').val(response.cantidad_tigomoney);
-
-
-
-
 
                             var total = (response.total + parseFloat(micaja.importe) + response.ingresos) - response.egresos;
                             $('#_total').val(total);
@@ -1656,6 +1631,7 @@
                     });
                   
                 }
+                
                 // ADD DISPLAY
                 $('#first_name').keyup(function (e) { 
                     e.preventDefault();
@@ -1831,7 +1807,8 @@
                                         if ($("input[name='season']:checked").val() == 'imprimir') {
                                             $("input[name='descuento']").val(0)
                                             localStorage.setItem('micart', JSON.stringify([]));
-                                            location.href = "{{ setting('admin.url') }}admin/ventas/imprimir/"+response.id;
+                                            // location.href = "{{ setting('admin.url') }}admin/ventas/imprimir/"+response.id;
+                                            window.open( "{{ setting('admin.url') }}admin/ventas/imprimir/"+response.id, "Recibo", "width=500,height=700");
                                         }else{       
                                             localStorage.setItem('micart', JSON.stringify([]));                                 
                                             toastr.success('Venta Realizada');
@@ -1862,6 +1839,7 @@
 
                 $('#category').on('change', function() {
                     if (+this.value == 0) {
+                        
                         $.ajax({
                             url: "{{ setting('admin.url') }}api/pos/productos/",
                             dataType: "json",
@@ -1875,7 +1853,7 @@
                                     // const element = response[index];
                                     $('#s').append($('<option>', {
                                         value: response[index].id,
-                                        text: response[index].abreviatura+' '+response[index].name + ' '+ response[index].precio + ' Bs.'
+                                        text: response[index].abreviatura+'-'+response[index].name+'-'+response[index].precio+'-'+response[index].stock 
                                     }));
                                 }
                             }
@@ -1895,7 +1873,7 @@
                                     const element = response[index];
                                     $('#s').append($('<option>', {
                                         value: response[index].id,
-                                        text: response[index].categoria.abreviatura+' - '+response[index].name + ' '+ response[index].precio + ' Bs.'
+                                        text: response[index].categoria.abreviatura+'-'+response[index].name+'-'+response[index].precio+'-'+response[index].stock
                                     }));
                                 }
                             }
@@ -1943,8 +1921,73 @@
                             url: "{{ setting('admin.url') }}api/pos/producto/"+id,
                             dataType: "json",
                             success: function (response) {
+                                var producto_aux=response;
+                                if('{{setting('ventas.stock')}}'){
 
-                                if (response.mixta == 1 ) {
+                                   
+                                        if (response.mixta == 1 ) {
+                                        $('#mixtos').attr("hidden",false);
+                                        var micategory = $('#category').val();
+                                        // console.log(micategory);
+                                        $.ajax({
+                                            url: "{{ setting('admin.url') }}api/pos/producto/mixto/0/"+micategory,
+                                            dataType: "json",
+                                            success: function (response) {
+
+                                                $('#mixta1').append($('<option>', {
+                                                    value: null,
+                                                    text: 'Elige un Mitad'
+                                                }));
+                                                for (let index = 0; index < response.length; index++) {    
+                                                    $('#mixta1').append($('<option>', {
+                                                        value: response[index].id,
+                                                        text: response[index].name + ' '+ response[index].precio + ' Bs.'
+                                                    }));                                   
+                                                }
+
+                                                $('#mixta2').append($('<option>', {
+                                                    value: null,
+                                                    text: 'Elige un Mitad'
+                                                }));
+                                                for (let index = 0; index < response.length; index++) {                                         
+                                                    $('#mixta2').append($('<option>', {
+                                                        value: response[index].id,
+                                                        text: response[index].name+ ' '+ response[index].precio + ' Bs.'
+                                                    }));
+                                                }
+
+                                            }
+                                        });
+                                        } else {
+
+                                            $('#mixtos').attr("hidden",true);
+
+                                            if(response.stock >= 1){
+                                                if(response.stock <= '{{setting('ventas.minimo_stock')}}'){
+                                                    toastr.error("Solo quedan: "+response.stock+" "+response.name +" ");
+                                                }
+                                            
+                                                    $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"</td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                                    
+                                                    var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': null};
+                                                    micart.push(temp);
+                                                    localStorage.setItem('micart', JSON.stringify(micart));
+
+                                                    mitotal();
+                                                    toastr.success(response.name+" - REGISTRADO");
+
+                                            }
+                                            else{
+                                                toastr.error("No existe el producto: "+response.name +" en Stock");
+                                            }
+                                        }
+
+                                    
+                                }
+                                else{
+
+                                    
+                                    if (response.mixta == 1 ) {
                                     $('#mixtos').attr("hidden",false);
                                     var micategory = $('#category').val();
                                     // console.log(micategory);
@@ -1977,18 +2020,20 @@
 
                                         }
                                     });
-                                } else {
-                                    $('#mixtos').attr("hidden",true);
-                               
-                                    $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"</td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
-                                    
-                                    var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': null};
-                                    micart.push(temp);
-                                    localStorage.setItem('micart', JSON.stringify(micart));
+                                    } else {
+                                        $('#mixtos').attr("hidden",true);
+                                
+                                        $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"</td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                        
+                                        var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': null};
+                                        micart.push(temp);
+                                        localStorage.setItem('micart', JSON.stringify(micart));
 
-                                    mitotal();
-                                    toastr.success(response.name+" - REGISTRADO");
+                                        mitotal();
+                                        toastr.success(response.name+" - REGISTRADO");
+                                    }
                                 }
+                               
                             }
                         });
                     }
@@ -2014,6 +2059,22 @@
                 }
 
                 function updatecant(id) {
+                    
+                    //  GET GESTION INVENTARIO
+                    var cant_actual = 0;
+                    var inventario = false;
+                    if('{{setting('ventas.stock')}}'){
+                        $.ajax({
+                            url: "{{ setting('admin.url') }}api/pos/producto/"+id,
+                            dataType: "json",
+                            success: function (response) {
+                                cant_actual = response.stock;
+                                inventario = true;
+                            }
+                        });
+                    }
+
+
                     var total = parseFloat($("#precio_"+id).val()).toFixed(2) * parseInt($("#cant_"+id).val());
                     $("#total_"+id).val(parseFloat(total).toFixed(2));
 
@@ -2021,13 +2082,24 @@
                     var newlist = [];
                     for (let index = 0; index < milist.length; index++) {
                         if (milist[index].id == id) {
-                            var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'precio': milist[index].precio, 'cant': parseInt($("#cant_"+id).val()), 'total': milist[index].precio * parseInt($("#cant_"+id).val())};
-                            newlist.push(temp);
+                            if(inventario){
+                                if (milist[index].cant > cant_actual ) {
+                                    toastr.error('cantidad exedida')
+                                } else {
+                                    var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'precio': milist[index].precio, 'cant': parseInt($("#cant_"+id).val()), 'total': milist[index].precio * parseInt($("#cant_"+id).val())};
+                                    newlist.push(temp);
+                                }
+                            }else{
+                                var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'precio': milist[index].precio, 'cant': parseInt($("#cant_"+id).val()), 'total': milist[index].precio * parseInt($("#cant_"+id).val())};
+                                newlist.push(temp);
+                            }
                         }else{
                             var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'precio': milist[index].precio, 'cant': milist[index].cant, 'total': milist[index].precio, 'total':  milist[index].total};
                             newlist.push(temp);
                         }
                     }
+
+
                     localStorage.setItem('micart', JSON.stringify(newlist));
                     mitotal();
                 }
