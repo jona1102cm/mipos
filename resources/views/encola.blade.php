@@ -75,22 +75,22 @@
 </head>
 <body>
     @php
-        $ventas = App\Venta::where('caja_status', false )->orderby('id', 'desc')->get();
-        $venta = App\Venta::find(60);
+        $ventas = App\Venta::where('caja_status', false )->where('status_id', 3)->where('sucursal_id', 4)->orderby('id', 'desc')->get();
+        $venta = App\Venta::where('id', 1)->where('status_id', 3)->first();
     @endphp    
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8">
                 <div class="" style="margin-top:20px;overflow-y:hidden">
                     <div class="card mb-3 ticket-active">
-                        <h1 class="text-center" style="font-size:250px">T-{{ $venta->id }}</h1>
+                        <h1 class="text-center" style="font-size:250px">T-{{  $venta->id }}</h1>
                     </div>
                 </div>
                 <div class="row">
                     @foreach ($ventas as $item)
                         <div class="col-md-6">
                             <div class="card mb-3">
-                                <p class="card-text" style="margin:10px;font-size:30px;white-space: nowrap;"><small>T-{{ $item->id }}</small></p>
+                                <p class="card-text" style="margin:10px;font-size:90px;white-space: nowrap;"><small>T-{{ $item->id }}</small></p>
                                 <p class="card-text text-right" style="margin:10px;font-size:25px"><small>{{ \Carbon\Carbon::parse($item->created_at)->diffForHumans() }}</small></p>
                             </div>
                         </div>

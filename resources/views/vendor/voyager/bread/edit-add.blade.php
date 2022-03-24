@@ -715,20 +715,42 @@
                         <h4>Ventas de la Caja</h4>
                         </div>
                         <div class="modal-body">
-                            <table class="table table-striped table-inverse table-responsive" id="productos_caja">
-                                <thead class="thead-inverse">
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Tipo</th>
-                                        <th>Ticket</th>
-                                        
-                                        <th>Total</th>
-                                        <th>Control</th>
-                                        <th>Creado</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
+
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li role="presentation" class="active"><a href="#miventas" aria-controls="miventas" role="tab" data-toggle="tab">Mis Ventas</a></li>
+                                <li role="presentation"><a href="#deliverys" aria-controls="deliverys" role="tab" data-toggle="tab">Deliverys</a></li>
+                                
+                            </ul>
+
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane active" id="miventas">
+
+                                    <table class="table table-striped table-inverse table-responsive" id="productos_caja">
+                                        <thead class="thead-inverse">
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Cliente</th>
+                                                <th>Delivery</th>
+                                                <th>Tipo</th>
+                                                <th>Ticket</th>
+                                                
+                                                <th>Total</th>
+                                                <th>Control</th>
+                                                <th>Creado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+
+                                </div>
+
+                                <div role="tabpanel" class="tab-pane" id="deliverys">
+                                    <input id="venta_id" type="text" class="form-control" hidden>
+                                    <select id="mideliverys" class="form-control"></select>
+                                    <a href="#" class="btn btn-sm btn-primary" onclick="save_set_delivery()">Asignar</a>
+                                </div>
+                            </div>
+                          
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
@@ -747,7 +769,7 @@
                         <h4>¿Estás seguro de cerrar?</h4>
                         </div>
                         <div class="modal-body">
-                            <table class="table table-responsive">
+                            <table class="table table-responsive" hidden>
                             <thead>
                                 <tr>
                                     <th>INGRESOS</th>
@@ -764,7 +786,6 @@
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    
                                     <td>
                                         Importe Inicial Bs.
                                         <br>
@@ -773,7 +794,6 @@
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    
                                     <td>
                                         Asientos - Ingresos Bs.
                                         <br>
@@ -831,34 +851,27 @@
                                         Cantidad por TigoMoney
                                         <input type="number" class="form-control" id="cantidad_tigomoney" value="0" readonly>
                                     </td>
+                            
                                     <td>
-                                        Monto Entregado
-                                        <input type="number" class="form-control" id="efectivo_entregado" value="0" readonly>
+                                        <label for="">Total Caja Bs.</label>
+                                        <input type="number" class="form-control col-6" id="_total" value="0" readonly>
+                                </td>
+                                    <td>
+                                        CORTES
+                                        <input type="text" class="form-control" id="cortes" readonly>
                                     </td>
+                                        <td>
+                                        
+                                                <label for="">Cantidad de Ventas</label>
+                                                <input type="number" class="form-control" id="cant_ventas" value="0" readonly>
+                                        
+                                        </td>
                                 </tr>
+
                             </tbody>
                             </table>
                           
-                            <div class="row"> 
-                                {{-- <div class="col-sm-12 text-center">
-                                    <h4>RESUMEN</h4>
-                                </div> --}}
-                                <div class="col-sm-12">
-                                    <label for="">Observaciones</label>
-                                    <textarea name="" id="description" class="form-control"></textarea> 
-                                </div>
-                                <div class="col-sm-6">
-                                    <label for="">Total Caja Bs.</label>
-                                    <input type="number" class="form-control col-6" id="_total" value="0" readonly>
-                                </div>
-                                <div class="col-sm-6">
-                                    <label for="">Cantidad de Ventas</label>
-                                    <input type="number" class="form-control" id="cant_ventas" value="0" readonly>
-                                </div>
-                                
-                                
-                            </div>
-
+                           
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
@@ -870,6 +883,16 @@
                                 <tbody id="lista_cortes"></tbody>
                             </table>
                             
+                            <div class="row"> 
+                                <div class="col-sm-6">
+                                    <label for="">Observaciones</label>
+                                    <textarea name="" id="description" class="form-control"></textarea> 
+                                </div>
+                                <div class="col-sm-6">
+                                    Monto Entregado
+                                    <input type="number" class="form-control" id="efectivo_entregado" value="0" readonly>
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
@@ -894,30 +917,30 @@
                             </ul>
                             <div class="tab-content">
                                 <div role="tabpanel" class="tab-pane active" id="home">
-                                <div class="form-group col-sm-6">
-                                    <label for="">Nombres</label>
-                                    <input class="form-control" type="text" placeholder="Nombres" id="first_name">
-                                </div>
-                                <div class="form-group col-sm-6">
-                                    <label for="">Apellidos</label>
-                                    <input class="form-control" type="text" placeholder="Apellidos" id="last_name">
-                                </div>
-                                <div class="form-group col-sm-6">
-                                    <label for="">Telefono</label>
-                                    <input class="form-control" type="text" placeholder="Telefono" id="phone" value="0">
-                                </div>
-                                <div class="form-group col-sm-6">
-                                    <label for="">NIT</label>
-                                        <input class="form-control" type="text" placeholder="Carnet o NIT" id="nit" value="0">
-                                </div>
-                                <div class="form-group col-sm-6">
-                                    <label for="">Display</label>
-                                    <input class="form-control" type="text" placeholder="Display" id="display">
-                                </div>      
-                                <div class="form-group col-sm-6">
-                                    <label for="">Correo</label>
-                                    <input class="form-control" type="text" placeholder="Email" id="email">
-                                </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="">Nombres</label>
+                                        <input class="form-control" type="text" placeholder="Nombres" id="first_name">
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="">Apellidos</label>
+                                        <input class="form-control" type="text" placeholder="Apellidos" id="last_name">
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="">Telefono</label>
+                                        <input class="form-control" type="text" placeholder="Telefono" id="phone" value="0">
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="">NIT</label>
+                                            <input class="form-control" type="text" placeholder="Carnet o NIT" id="nit" value="0">
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="">Display</label>
+                                        <input class="form-control" type="text" placeholder="Display" id="display">
+                                    </div>      
+                                    <div class="form-group col-sm-6">
+                                        <label for="">Correo</label>
+                                        <input class="form-control" type="text" placeholder="Email" id="email">
+                                    </div>
                                 </div>
                                 <div role="tabpanel" class="tab-pane" id="profile">
                                     <input type="text" class="form-control" placeholder="Criterio de Busquedas.." id="cliente_busqueda">
@@ -1124,6 +1147,7 @@
         
     @case('ventas')
         @section('javascript')
+            <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
             <script src="https://socket.loginweb.dev/socket.io/socket.io.js"></script>
             <script>
                 const socket = io('https://socket.loginweb.dev')
@@ -1220,7 +1244,7 @@
                         }
                     });
 
-                    // get pasarela-----------------------------
+                    // get pasarela
                     $.ajax({
                         url: "{{ setting('admin.url') }}api/pos/pagos",
                         dataType: "json",
@@ -1243,7 +1267,7 @@
                         }
                     });
 
-                    // get estados-----------------------------
+                    // get estados
                     $.ajax({
                         url: "{{ setting('admin.url') }}api/pos/estados",
                         dataType: "json",
@@ -1306,10 +1330,19 @@
                     } else {
                         localStorage.setItem('micart', JSON.stringify([]));
                     }
-
+    
                 });
 
                 //Asignacion de Cortes
+                let cortes = new Array('0.5', '1', '2', '5', '10', '20', '50', '100', '200');
+                cortes.map(function(value){
+                $('#lista_cortes').append(`<tr>
+                                <td><h4><img src="{{url('billetes/${value}.jpg')}}" alt="${value} Bs." width="80px"> ${value} Bs. </h4></td>
+                                <td><input type="number" min="0" step="1" style="width:100px" data-value="${value}" class="form-control input-corte" value="0" required></td>
+                                <td><label id="label-${value.replace('.', '')}">0.00 Bs.</label><input type="hidden" class="input-subtotal" id="input-${value.replace('.', '')}"></td>
+                            </tr>`)
+                });
+
                 $('.input-corte').keyup(function(){
                     let corte = $(this).data('value');
                     let cantidad = $(this).val() ? $(this).val() : 0;
@@ -1320,32 +1353,53 @@
                     let cantidad = $(this).val() ? $(this).val() : 0;
                     calcular_subtottal(corte, cantidad);
                 });
-
+             
                 function calcular_subtottal(corte, cantidad){
                     let total = (parseFloat(corte)*parseFloat(cantidad)).toFixed(2);
                     $('#label-'+corte.toString().replace('.', '')).text(total+' Bs.');
                     $('#input-'+corte.toString().replace('.', '')).val(total);
-                    calcular_total();
+                    let total_corte = 0;
+                    $(".input-subtotal").each(function(){
+                        total_corte += $(this).val() ? parseFloat($(this).val()) : 0;
+                    });
+                    $('#efectivo_entregado').val(total_corte);
+
+                    var cortes = JSON.stringify({corte: '0.5', cantidad: 10, valor: 5});
+                    // $('#cortes').val(cortes);
                 }
 
-                function calcular_total(){
-                    let total = 0;
-                    $(".input-subtotal").each(function(){
-                        total += $(this).val() ? parseFloat($(this).val()) : 0;
+                //get totales
+                function get_total() {
+                    var micaja = JSON.parse(localStorage.getItem('micaja'));
+                    var editor_id = '{{ Auth::user()->id; }}';
+                    var midata = JSON.stringify({caja_id: micaja.caja_id, editor_id: editor_id});
+                    $.ajax({
+                        url: "{{ setting('admin.url') }}api/pos/caja/get_total/"+midata,
+                        dataType: "json",
+                        success: function (response) {
+                            // console.log(response);
+                            $('#cant_ventas').val(response.cantidad);
+                            $('#total_ventas').val(response.total);
+                            $('#importe_inicial').val(micaja.importe);
+                            $('#ingresos').val(response.ingresos);
+                            $('#egresos').val(response.egresos);
+                            
+                            $('#venta_efectivo').val(response.total_efectivo);
+                            $('#venta_tarjeta').val(response.total_tarjeta);
+                            $('#venta_transferencia').val(response.total_transferencia);
+                            $('#venta_qr').val(response.total_qr);
+                            $('#venta_tigomoney').val(response.total_tigomoney);
+
+                            $('#cantidad_efectivo').val(response.cantidad_efectivo);
+                            $('#cantidad_tarjeta').val(response.cantidad_tarjeta);
+                            $('#cantidad_transferencia').val(response.cantidad_transferencia);
+                            $('#cantidad_qr').val(response.cantidad_qr);
+                            $('#cantidad_tigomoney').val(response.cantidad_tigomoney);
+
+                            var total = (response.total + parseFloat(micaja.importe) + response.ingresos) - response.egresos;
+                            $('#_total').val(total);
+                        }
                     });
-                    $('#label-total').html('<b>'+(total).toFixed(2)+' Bs.</b>');
-                    $('#input-total').val(total);
-                    $('#label-faltante').html('<b>'+(monto_cierre-total).toFixed(2)+' Bs.</b>');
-                    $('#input-faltante').val(monto_cierre-total);
-
-                    if(monto_cierre-total>0){
-                        $('#label-faltante').css('color', 'red')
-                    }else if(monto_cierre-total==0){
-                        $('#label-faltante').css('color', 'green')
-                    }else{
-                        $('#label-faltante').css('color', 'blue')
-                    }
-
                 }
 
                 // cargar asientos
@@ -1435,7 +1489,7 @@
                 }
 
                 //ADD MIXTA 
-                function addmixta() {
+                async function addmixta() {
                     var id = $('#s').val();
                     var mixta1 = $('#mixta1').val(); 
                     var mixta2 = $('#mixta2').val();
@@ -1449,40 +1503,33 @@
                     
                     var inventario = false;
 
-                    if('{{setting('ventas.stock')}}'){
-                        $.ajax({
-                            url: "{{ setting('admin.url') }}api/pos/producto/"+mixta1,
-                            dataType: "json",
-                            success: function (response) {
-                                prod1= response.name;
-                                cant_actual1 = response.stock;
-                                inventario = true;
-                                if(cant_actual1>1){
-                                    cant_i1=true;
-                                }
-                                else{
-                                    cant_i1=false;
-                                }
-                            }
-                        });
+                    if("{{setting('ventas.stock')}}"){
+                        inventario = true;
+
+                        var miresponse1 = await axios.get("{{ setting('admin.url') }}api/pos/producto/"+mixta1);
+                        
+                        prod1=miresponse1.data.name;
+                        cant_actual1 = miresponse1.data.stock;
+                        if(cant_actual1>1){
+                            cant_i1=true;
+                        }
+                        else{
+                            cant_i1=false;
+                        }
                     }
-                    
-                    if('{{setting('ventas.stock')}}'){
-                        $.ajax({
-                            url: "{{ setting('admin.url') }}api/pos/producto/"+mixta2,
-                            dataType: "json",
-                            success: function (response) {
-                                prod2=response.name;
-                                cant_actual2 = response.stock;
-                                if(cant_actual2>1){
-                                    cant_i2=true;
-                                }
-                                else{
-                                    cant_i2=false;
-                                }
-                                
-                            }
-                        });
+                   
+                    if("{{setting('ventas.stock')}}"){
+                      
+                        var miresponse2 = await axios.get("{{ setting('admin.url') }}api/pos/producto/"+mixta2);
+                        
+                        prod2=miresponse2.data.name;
+                        cant_actual2 = miresponse2.data.stock;
+                        if(cant_actual2>1){
+                            cant_i2=true;
+                        }
+                        else{
+                            cant_i2=false;
+                        }
                     }
                     if(inventario){
 
@@ -1541,55 +1588,9 @@
                         });
 
                     }
-                    
-                    // console.log({product: product, mixta1: mixta1, mixta2: mixta2});
-                    
-
                 }
 
-                //get totales
-                function get_total() {
-                    var micaja = JSON.parse(localStorage.getItem('micaja'));
-                    var editor_id = '{{ Auth::user()->id; }}';
-                    var midata = JSON.stringify({caja_id: micaja.caja_id, editor_id: editor_id});
-                    $.ajax({
-                        url: "{{ setting('admin.url') }}api/pos/caja/get_total/"+midata,
-                        dataType: "json",
-                        success: function (response) {
-                            console.log(response);
-                            $('#cant_ventas').val(response.cantidad);
-                            $('#total_ventas').val(response.total);
-                            $('#importe_inicial').val(micaja.importe);
-                            $('#ingresos').val(response.ingresos);
-                            $('#egresos').val(response.egresos);
-                            
-                            $('#venta_efectivo').val(response.total_efectivo);
-                            $('#venta_tarjeta').val(response.total_tarjeta);
-                            $('#venta_transferencia').val(response.total_transferencia);
-                            $('#venta_qr').val(response.total_qr);
-                            $('#venta_tigomoney').val(response.total_tigomoney);
-
-                            $('#cantidad_efectivo').val(response.cantidad_efectivo);
-                            $('#cantidad_tarjeta').val(response.cantidad_tarjeta);
-                            $('#cantidad_transferencia').val(response.cantidad_transferencia);
-                            $('#cantidad_qr').val(response.cantidad_qr);
-                            $('#cantidad_tigomoney').val(response.cantidad_tigomoney);
-
-                            var total = (response.total + parseFloat(micaja.importe) + response.ingresos) - response.egresos;
-                            $('#_total').val(total);
-                        }
-                    });
-
-                    let cortes = new Array('0.5', '1', '2', '5', '10', '20', '50', '100', '200')
-                    cortes.map(function(value){
-                    $('#lista_cortes').append(`<tr>
-                                    <td><h4><img src="{{url('billetes/${value}.jpg')}}" alt="${value} Bs." width="80px"> ${value} Bs. </h4></td>
-                                    <td><input type="number" min="0" step="1" style="width:100px" data-value="${value}" class="form-control input-corte" value="0" required></td>
-                                    <td><label id="label-${value.replace('.', '')}">0.00 Bs.</label><input type="hidden" class="input-subtotal" id="input-${value.replace('.', '')}"></td>
-                                </tr>`)
-                    });
-                }
-
+              
                 //Busquedas de Clientes                 
                 $('#cliente_busqueda').keyup(function (e) { 
                     e.preventDefault();
@@ -1616,8 +1617,6 @@
 
                 // cliente_get
                 function cliente_get(id) {
-                    
-
                     $.ajax({
                         url: "{{ setting('admin.url') }}api/pos/cliente/"+id,
                         dataType: "json",
@@ -1631,7 +1630,7 @@
                     });
                   
                 }
-                
+
                 // ADD DISPLAY
                 $('#first_name').keyup(function (e) { 
                     e.preventDefault();
@@ -1655,12 +1654,24 @@
                     var description = $('#description').val();
                     var _total = $('#_total').val();
                     var cant_ventas = $('#cant_ventas').val();
+                    var venta_efectivo = $('#venta_efectivo').val();
+                    var venta_tarjeta = $('#venta_tarjeta').val();
+                    var venta_transferencia = $('#venta_transferencia').val();
+                    var venta_qr = $('#venta_qr').val();
+                    var venta_tigomoney = $('#venta_tigomoney').val();
+                    var cantidad_efectivo = $('#cantidad_efectivo').val();
+                    var cantidad_tarjeta = $('#cantidad_tarjeta').val();
+                    var cantidad_transferencia = $('#cantidad_transferencia').val();
+                    var cantidad_qr = $('#cantidad_qr').val();
+                    var cantidad_tigomoney = $('#cantidad_tigomoney').val();
+                    var efectivo_entregado = $('#efectivo_entregado').val();
+                    var cortes = $('#cortes').val();
                     var editor_id = '{{ Auth::user()->id }}';
                     var caja_id = micaja.caja_id;
                     var status = 'close';
 
-                    var midata = JSON.stringify({caja_id: caja_id, editor_id: editor_id, cant_ventas: cant_ventas, _total: _total, description: description, egresos: egresos, ingresos: ingresos, importe_inicial: importe_inicial, total_ventas: total_ventas, status: status});
-                    // console.log(midata);
+                    var midata = JSON.stringify({caja_id: caja_id, editor_id: editor_id, cant_ventas: cant_ventas, _total: _total, description: description, egresos: egresos, ingresos: ingresos, importe_inicial: importe_inicial, total_ventas: total_ventas, status: status, venta_efectivo: venta_efectivo, venta_tarjeta: venta_tarjeta, venta_transferencia: venta_transferencia, venta_qr: venta_qr, venta_tigomoney: venta_tigomoney, cantidad_efectivo: cantidad_efectivo, cantidad_tarjeta: cantidad_tarjeta, cantidad_transferencia: cantidad_transferencia, cantidad_qr: cantidad_qr, cantidad_tigomoney: cantidad_tigomoney, efectivo_entregado: efectivo_entregado, cortes: cortes });
+                    console.log(midata);
                     $.ajax({
                         url: "{{ setting('admin.url') }}api/pos/caja/detalle/save/"+midata,
                         success: function (){
@@ -1670,28 +1681,37 @@
                     });
                 }
 
-                function venta_caja() {
-                    // $('#venta_caja').modal();
+                async function venta_caja() {
                     $('#productos_caja tbody').empty();
-
-                    $.ajax({
-                        url: "{{ setting('admin.url') }}api/pos/ventas/caja/"+$("input[name='caja_id']").val(),
-                        dataType: "json",
-                        success: function (response) {
-                            for (let index = 0; index < response.length; index++) {
-                                
-                                if (response[index].register_id == '{{ Auth::user()->id }}') {
-                                    $("#productos_caja").append("<tr><td>"+response[index].id+"</td><td>"+response[index].factura+"</td><td>"+response[index].ticket+"</td><td>"+response[index].total+"</td><td>"+response[index].caja_status+"</td><td>"+response[index].created_at+"</td></tr>");
-                                } else {
-                                    
-                                }
-
-                                
-                            }
-                        }
-                    });
+                    var user_id = '{{ Auth::user()->id }}';
+                    var misventas = await axios("{{ setting('admin.url') }}api/pos/ventas/caja/"+$("input[name='caja_id']").val()+'/'+user_id);                    
+                    for (let index = 0; index < misventas.data.length; index++) {
+                        $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td><a href='#deliverys' aria-controls='deliverys' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' onclick='set_delivery("+misventas.data[index].id+")'>Delivery</a></td></tr>");
+                    }
                 }
         
+                async function set_delivery(id){
+                    var mideliverys = await axios("{{ setting('admin.url') }}api/pos/deliverys");               
+                    $('#mideliverys').append($('<option>', {
+                        value: null,
+                        text: 'Elige un Delivery'
+                    }));
+                    for (let index = 0; index < mideliverys.data.length; index++) {
+                        $('#mideliverys').append($('<option>', {
+                            value: mideliverys.data[index].id,
+                            text: mideliverys.data[index].name
+                        }));
+                    }
+                    $('#venta_id').val(id);
+                }
+                
+                async function save_set_delivery() {
+                    var delivery_id =  $('#mideliverys').val();
+                    var venta_id =  $('#venta_id').val();
+                    var save = await axios("{{ setting('admin.url') }}api/pos/delivery/set/"+venta_id+"/"+delivery_id);
+                    toastr.success('Delivery Asignado');
+                    $('#venta_caja').modal('hide');
+                }
                 function abrir_caja(id, title, sucursal, sucursal_id) {
                     $.ajax({
                         url: "{{ setting('admin.url') }}api/pos/caja/state/open/"+id,

@@ -331,7 +331,9 @@
                                                                 {{ $item->created_at }}
                                                             </td>
                                                             <td>
-                                                                <a href="#" onclick="cocina({{ $item->id }})" class="btn btn-primary">Enviar</a>
+                                                                <a href="#" onclick="cocina({{ $item->id }})" class="btn btn-success">Confirmar</a>
+                                                                <a href="#" onclick="cocina({{ $item->id }})" class="btn btn-primary">Realizado</a>
+                                                                
                                                             </td>
                                                         </tr>
                                                     @endforeach                                                   

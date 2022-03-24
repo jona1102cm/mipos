@@ -80,7 +80,7 @@ Route::get('pos/asientos/caja/editor/{midata}', function ($midata) {
 //update cocina
 Route::get('pos/cocina/{id}', function ($id) {
     $venta = Venta::find($id);
-    $venta->status_id = 2;
+    $venta->status_id = 3;
     $venta->save();
     return true;
 });
@@ -135,7 +135,20 @@ Route::get('pos/caja/detalle/save/{midata}', function ($midata) {
         'egresos' => $midata2->egresos,
         'caja_id' => $midata2->caja_id,
         'editor_id' => $midata2->editor_id,
-        'description' => $midata2->description
+        'description' => $midata2->description,
+        'venta_efectivo'=> $midata2->venta_efectivo,
+		'venta_tarjeta'=> $midata2->venta_tarjeta,
+		'venta_transferencia'=> $midata2->venta_transferencia,
+		'venta_qr'=> $midata2->venta_qr,
+		'venta_tigomoney'=> $midata2->venta_tigomoney,
+		'cantidad_efectivo'=> $midata2->cantidad_efectivo,
+		'cantidad_tarjeta'=> $midata2->cantidad_tarjeta,
+		'cantidad_transferencia'=> $midata2->cantidad_transferencia,
+		'cantidad_qr'=> $midata2->cantidad_qr,
+		'cantidad_tigomoney'=> $midata2->cantidad_tigomoney,
+		'efectivo_entregado'=> $midata2->efectivo_entregado,
+		'cortes'=> $midata2->cortes,
+
     ]);
 
     $caja = Caja::find($midata2->caja_id);
@@ -324,15 +337,15 @@ Route::get('pos/productos/category/{id}', function ($id) {
 
 // TODAS LAS VENTAS y By ID
 Route::get('pos/ventas', function () {
-    return  Venta::all();
+    return  Venta::with('cliente')->get();
 });
 Route::get('pos/venta/{id}', function ($id) {
     return  Venta::find($id);
 });
 
 // TODAS LAS VENTAS POR CAJA
-Route::get('pos/ventas/caja/{caja_id}', function ($caja_id) {
-    return  Venta::where('caja_id', $caja_id)->where('caja_status', false)->get();
+Route::get('pos/ventas/caja/{caja_id}/{user_id}', function ($caja_id, $user_id) {
+    return  Venta::where('register_id', $user_id)->where('caja_id', $caja_id)->where('caja_status', false)->with('cliente', 'delivery')->get();
 });
 
 // VENTA POR ID
@@ -396,6 +409,15 @@ Route::get('pos/estados', function () {
 // TODAS LOS DELIVERYS
 Route::get('pos/deliverys', function () {
     return  Mensajero::all();
+});
+
+//asignacion Delivery
+Route::get('pos/delivery/set/{venta_id}/{delivery_id}', function ($id, $delivery_id) {
+
+    $venta = Venta::find($id);
+    $venta->delivery_id = $delivery_id;
+    $venta->save();
+    return  true;
 });
 
 
