@@ -2005,7 +2005,7 @@
                                                     toastr.error("Solo quedan: "+response.stock+" "+response.name +" ");
                                                 }
                                             
-                                                    $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"</td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                                    $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"</td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
                                                     
                                                     var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': null};
                                                     micart.push(temp);
@@ -2096,20 +2096,24 @@
                     
                 }
 
-                function updatecant(id) {
+                async function updatecant(id) {
                     
                     //  GET GESTION INVENTARIO
                     var cant_actual = 0;
                     var inventario = false;
                     if('{{setting('ventas.stock')}}'){
-                        $.ajax({
-                            url: "{{ setting('admin.url') }}api/pos/producto/"+id,
-                            dataType: "json",
-                            success: function (response) {
-                                cant_actual = response.stock;
-                                inventario = true;
-                            }
-                        });
+                        // $.ajax({
+                        //     url: "{{ setting('admin.url') }}api/pos/producto/"+id,
+                        //     dataType: "json",
+                        //     success: function (response) {
+                        //         cant_actual = response.stock;
+                        //         inventario = true;
+                        //     }
+                        // });
+                        var response = await axios("{{ setting('admin.url') }}api/pos/producto/"+id);
+                        cant_actual = response.data.stock;
+                        inventario = true;
+
                     }
 
 
@@ -2122,7 +2126,7 @@
                         if (milist[index].id == id) {
                             if(inventario){
                                 if (milist[index].cant > cant_actual ) {
-                                    toastr.error('cantidad exedida')
+                                    toastr.error('Cantidad Excedida')
                                 } else {
                                     var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'precio': milist[index].precio, 'cant': parseInt($("#cant_"+id).val()), 'total': milist[index].precio * parseInt($("#cant_"+id).val())};
                                     newlist.push(temp);
