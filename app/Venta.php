@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
+use TCG\Voyager\Models\User;
 
 class Venta extends Model
 {
@@ -24,6 +25,7 @@ class Venta extends Model
 		'caja_id',
 		'caja_status',
 		'delivery_id',
+		'chofer_id',
 		'sucursal_id',
 		'subtotal',
 		'ticket',
@@ -46,5 +48,9 @@ class Venta extends Model
 	public function delivery()
     {
         return $this->belongsTo(Mensajero::class, 'delivery_id');
+    }
+	public function chofer()
+    {
+        return $this->belongsTo(User::class, 'chofer_id');
     }
 }

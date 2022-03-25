@@ -345,7 +345,7 @@ Route::get('pos/venta/{id}', function ($id) {
 
 // TODAS LAS VENTAS POR CAJA
 Route::get('pos/ventas/caja/{caja_id}/{user_id}', function ($caja_id, $user_id) {
-    return  Venta::where('register_id', $user_id)->where('caja_id', $caja_id)->where('caja_status', false)->with('cliente', 'delivery')->get();
+    return  Venta::where('register_id', $user_id)->where('caja_id', $caja_id)->where('caja_status', false)->with('cliente', 'delivery','chofer')->get();
 });
 
 // VENTA POR ID
@@ -410,12 +410,16 @@ Route::get('pos/estados', function () {
 Route::get('pos/deliverys', function () {
     return  Mensajero::all();
 });
+//TODOS LOS CHOFERES
+Route::get('pos/chofer', function () {
+    return  User::find('role_id',8);
+});
 
 //asignacion Delivery
-Route::get('pos/delivery/set/{venta_id}/{delivery_id}', function ($id, $delivery_id) {
+Route::get('pos/chofer/set/{venta_id}/{chofer_id}', function ($id, $chofer_id) {
 
     $venta = Venta::find($id);
-    $venta->delivery_id = $delivery_id;
+    $venta->chofer_id = $chofer_id;
     $venta->save();
     return  true;
 });

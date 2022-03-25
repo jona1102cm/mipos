@@ -707,7 +707,7 @@
             </div>
 
             <div class="modal fade modal-primary" id="venta_caja">
-                <div class="modal-dialog">
+                <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"
@@ -731,12 +731,14 @@
                                                 <th>ID</th>
                                                 <th>Cliente</th>
                                                 <th>Delivery</th>
+                                                <th>Chofer</th>
                                                 <th>Tipo</th>
                                                 <th>Ticket</th>
                                                 
                                                 <th>Total</th>
                                                 <th>Control</th>
                                                 <th>Creado</th>
+                                                <th>Acción</th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
@@ -745,9 +747,9 @@
                                 </div>
 
                                 <div role="tabpanel" class="tab-pane" id="deliverys">
-                                    <input id="venta_id" type="text" class="form-control" hidden>
+                                    <input id="venta_id" type="hidden" class="form-control" hidden>
                                     <select id="mideliverys" class="form-control"></select>
-                                    <a href="#" class="btn btn-sm btn-primary" onclick="save_set_delivery()">Asignar</a>
+                                    <a href="#" class="btn btn-sm btn-primary" onclick="save_set_chofer()">Asignar</a>
                                 </div>
                             </div>
                           
@@ -1686,30 +1688,38 @@
                     var user_id = '{{ Auth::user()->id }}';
                     var misventas = await axios("{{ setting('admin.url') }}api/pos/ventas/caja/"+$("input[name='caja_id']").val()+'/'+user_id);                    
                     for (let index = 0; index < misventas.data.length; index++) {
-                        $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td><a href='#deliverys' aria-controls='deliverys' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' onclick='set_delivery("+misventas.data[index].id+")'>Delivery</a></td></tr>");
+                        if(misventas.data[index].option_id==3){
+                            $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td><a href='#deliverys' aria-controls='deliverys' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' onclick='set_chofer("+misventas.data[index].id+")'>Chofer</a></td></tr>");
+                        }
+                        else{
+                            $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td></td></tr>");
+                        }
                     }
                 }
         
-                async function set_delivery(id){
-                    var mideliverys = await axios("{{ setting('admin.url') }}api/pos/deliverys");               
+                async function set_chofer(id){
+                    $('#mideliverys').find('option').remove().end();
+                    var mideliverys = await axios("{{ setting('admin.url') }}api/pos/users");               
                     $('#mideliverys').append($('<option>', {
                         value: null,
-                        text: 'Elige un Delivery'
+                        text: 'Elige un Chofer'
                     }));
                     for (let index = 0; index < mideliverys.data.length; index++) {
-                        $('#mideliverys').append($('<option>', {
-                            value: mideliverys.data[index].id,
-                            text: mideliverys.data[index].name
-                        }));
+                        if(mideliverys.data[index].role_id==8){
+                            $('#mideliverys').append($('<option>', {
+                                value: mideliverys.data[index].id,
+                                text: mideliverys.data[index].name
+                            }));
+                        }  
                     }
                     $('#venta_id').val(id);
                 }
                 
-                async function save_set_delivery() {
-                    var delivery_id =  $('#mideliverys').val();
+                async function save_set_chofer() {
+                    var chofer_id =  $('#mideliverys').val();
                     var venta_id =  $('#venta_id').val();
-                    var save = await axios("{{ setting('admin.url') }}api/pos/delivery/set/"+venta_id+"/"+delivery_id);
-                    toastr.success('Delivery Asignado');
+                    var save = await axios("{{ setting('admin.url') }}api/pos/chofer/set/"+venta_id+"/"+chofer_id);
+                    toastr.success('Chofer Asignado');
                     $('#venta_caja').modal('hide');
                 }
                 function abrir_caja(id, title, sucursal, sucursal_id) {
@@ -1907,18 +1917,26 @@
                     var milist = JSON.parse(localStorage.getItem('micart'));
                     var cant = milist.length;
                     var des = $("input[name='descuento']").val();
-                    var total = 0
+                    var total = 0;
+                    var adicional=parseFloat($("input[name='adicional']").val());
                     for (let index = 0; index < milist.length; index++) {
                         total = total + milist[index].total;
                     }
                     
                     $("input[name='subtotal']").val(parseFloat(total).toFixed(2));
-                    $("input[name='total']").val(parseFloat(total-des).toFixed(2));
+                    $("input[name='total']").val(parseFloat(total+adicional-des).toFixed(2));
                     $("input[name='cantidad']").val(cant);
                 }
 
                 $('#s').on('change', function() {
                     addproduct(this.value); 
+                });
+
+                $("input[name='adicional']").on('change', function() {
+                    mitotal(); 
+                });
+                $("input[name='adicional']").keyup(function(){
+                    mitotal(); 
                 });
 
                 function addproduct(id) {
