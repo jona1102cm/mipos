@@ -30,6 +30,10 @@ class DetalleCaja extends Model
 		'cantidad_qr',
 		'cantidad_tigomoney',
 		'efectivo_entregado',
-		'cortes'
+		'cortes',
+		'ingreso_efectivo',
+		'ingreso_linea',
+		'egreso_efectivo',
+		'egreso_linea'
 	];
 }

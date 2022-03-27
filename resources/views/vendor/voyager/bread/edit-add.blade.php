@@ -850,6 +850,26 @@
                                 </tr>
                                 <tr>
                                     <td>
+                                        Venta Efectivo
+                                        <input type="number" class="form-control" id="ingreso_efectivo" value="0" readonly>
+                                    </td>
+                                    <td>
+                                        Venta En Linea
+                                        <input type="number" class="form-control" id="ingreso_linea" value="0" readonly>
+                                    </td>
+                                    <td>
+                                        Egreso Efectivo
+                                        <input type="number" class="form-control" id="egreso_efectivo" value="0" readonly>
+                                    </td>
+                                    <td>
+                                        Egreso En Linea
+                                        <input type="number" class="form-control" id="egreso_linea" value="0" readonly>
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>
                                         Cantidad por TigoMoney
                                         <input type="number" class="form-control" id="cantidad_tigomoney" value="0" readonly>
                                     </td>
@@ -1398,6 +1418,12 @@
                             $('#cantidad_qr').val(response.cantidad_qr);
                             $('#cantidad_tigomoney').val(response.cantidad_tigomoney);
 
+                            $('#ingreso_efectivo').val(response.ingreso_efectivo);
+                            $('#ingreso_linea').val(response.ingreso_linea);
+                            $('#egreso_efectivo').val(response.egreso_efectivo);
+                            $('#egreso_linea').val(response.egreso_linea);
+
+
                             var total = (response.total + parseFloat(micaja.importe) + response.ingresos) - response.egresos;
                             $('#_total').val(total);
                         }
@@ -1451,7 +1477,7 @@
                     var concepto = $('#concepto').val();
                     var monto = $('#monto').val();
                     var type = $('#type option:selected').val();
-                    
+                    //var detalle_caja_id=0;
                     var caja_id = micaja.caja_id;
                     var editor_id = '{{ Auth::user()->id }}';
                     var midata = JSON.stringify({caja_id: caja_id, type: type, monto: monto, editor_id: editor_id, concepto: concepto, pago:pago});
@@ -1484,8 +1510,9 @@
                         $('#cambio').val(0);
                         var total = 0;
                         for (let index = 0; index < micart.length; index++) {
-                        total = total + micart[index].total;
-                        }
+                        total = total + micart[index].total;   
+                    }
+                    total=total+parseFloat($("input[name='adicional']").val());
                         $('#venta_total').val(total);
                     }
                 }
@@ -1668,11 +1695,16 @@
                     var cantidad_tigomoney = $('#cantidad_tigomoney').val();
                     var efectivo_entregado = $('#efectivo_entregado').val();
                     var cortes = $('#cortes').val();
+                    var ingreso_efectivo=$('#ingreso_efectivo').val();
+                    var ingreso_linea=$('#ingreso_linea').val();
+                    var egreso_efectivo=$('#egreso_efectivo').val();
+                    var egreso_linea=$('#egreso_linea').val();
+
                     var editor_id = '{{ Auth::user()->id }}';
                     var caja_id = micaja.caja_id;
                     var status = 'close';
 
-                    var midata = JSON.stringify({caja_id: caja_id, editor_id: editor_id, cant_ventas: cant_ventas, _total: _total, description: description, egresos: egresos, ingresos: ingresos, importe_inicial: importe_inicial, total_ventas: total_ventas, status: status, venta_efectivo: venta_efectivo, venta_tarjeta: venta_tarjeta, venta_transferencia: venta_transferencia, venta_qr: venta_qr, venta_tigomoney: venta_tigomoney, cantidad_efectivo: cantidad_efectivo, cantidad_tarjeta: cantidad_tarjeta, cantidad_transferencia: cantidad_transferencia, cantidad_qr: cantidad_qr, cantidad_tigomoney: cantidad_tigomoney, efectivo_entregado: efectivo_entregado, cortes: cortes });
+                    var midata = JSON.stringify({caja_id: caja_id, editor_id: editor_id, cant_ventas: cant_ventas, _total: _total, description: description, egresos: egresos, ingresos: ingresos, importe_inicial: importe_inicial, total_ventas: total_ventas, status: status, venta_efectivo: venta_efectivo, venta_tarjeta: venta_tarjeta, venta_transferencia: venta_transferencia, venta_qr: venta_qr, venta_tigomoney: venta_tigomoney, cantidad_efectivo: cantidad_efectivo, cantidad_tarjeta: cantidad_tarjeta, cantidad_transferencia: cantidad_transferencia, cantidad_qr: cantidad_qr, cantidad_tigomoney: cantidad_tigomoney, efectivo_entregado: efectivo_entregado, cortes: cortes, ingreso_efectivo: ingreso_efectivo, ingreso_linea: ingreso_linea, egreso_efectivo: egreso_efectivo, egreso_linea: egreso_linea});
                     console.log(midata);
                     $.ajax({
                         url: "{{ setting('admin.url') }}api/pos/caja/detalle/save/"+midata,
@@ -1813,9 +1845,10 @@
                     var subtotal = $("input[name='subtotal']").val();
                     var recibido = $("#recibido").val();
                     var cambio = $("#cambio").val();
+                    var chofer_id=$("input[name='chofer_id']").val();
                     var micart = JSON.parse(localStorage.getItem('micart'));
 
-                    var midata = JSON.stringify({'cliente_id': cliente_id, 'cupon_id': cupon_id, 'option_id': option_id, 'pago_id': pago_id, 'factura': factura, 'total': total, 'descuento': descuento, 'observacion': observacion, 'register_id': register_id, 'status_id': status_id, 'caja_id': caja_id, 'delivery_id': delivery_id, 'sucursal_id': sucursal_id, subtotal: subtotal, 'cantidad': micart.length, 'recibido': recibido, 'cambio': cambio });
+                    var midata = JSON.stringify({'cliente_id': cliente_id, 'cupon_id': cupon_id, 'option_id': option_id, 'pago_id': pago_id, 'factura': factura, 'total': total, 'descuento': descuento, 'observacion': observacion, 'register_id': register_id, 'status_id': status_id, 'caja_id': caja_id, 'delivery_id': delivery_id, 'sucursal_id': sucursal_id, subtotal: subtotal, 'cantidad': micart.length, 'recibido': recibido, 'cambio': cambio, chofer_id : chofer_id });
 
                     $('#modal_save_venta').modal('hide');
                     

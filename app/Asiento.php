@@ -15,6 +15,7 @@ class Asiento extends Model
 		'concepto',
 		'editor_id',
 		'caja_status',
-		'pago'
+		'pago',
+		'detalle_caja_id'
 	];
 }

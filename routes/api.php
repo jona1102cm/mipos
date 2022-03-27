@@ -148,6 +148,10 @@ Route::get('pos/caja/detalle/save/{midata}', function ($midata) {
 		'cantidad_tigomoney'=> $midata2->cantidad_tigomoney,
 		'efectivo_entregado'=> $midata2->efectivo_entregado,
 		'cortes'=> $midata2->cortes,
+        'ingreso_efectivo'=>$midata2->ingreso_efectivo,
+        'ingreso_linea'=>$midata2->ingreso_linea,
+        'egreso_efectivo'=>$midata2->egreso_efectivo,
+        'egreso_linea'=>$midata2->egreso_linea
 
     ]);
 
@@ -214,9 +218,31 @@ Route::get('pos/caja/get_total/{midata}', function ( $midata) {
         $total_tigomoney = $total_tigomoney + $item->total;
     }
 
+    $ie=Asiento::where('caja_id',$midata2->caja_id)->where('editor_id',$midata2->editor_id)->where('caja_status',false)->where('type',"Ingresos")->where('pago',1)->get();
+    $ingreso_efectivo=0;
+    foreach($ie as $item){
+        $ingreso_efectivo+= $item->monto;
+    }
 
+    $il=Asiento::where('caja_id',$midata2->caja_id)->where('editor_id',$midata2->editor_id)->where('caja_status',false)->where('type',"Ingresos")->where('pago',0)->get();
+    $ingreso_linea=0;
+    foreach($il as $item){
+        $ingreso_linea+= $item->monto;
+    }
 
-    return  response()->json(array('total' => $total, 'cantidad' => $cantidad, 'ingresos' => $ti, 'egresos'=> $te, 'total_efectivo'=> $total_efectivo, 'cantidad_efectivo'=> $cantidad_efectivo,'total_tarjeta'=> $total_tarjeta,'cantidad_tarjeta'=>$cantidad_tarjeta,'total_transferencia'=> $total_transferencia,'cantidad_transferencia'=>$cantidad_transferencia, 'total_qr'=>$total_qr,'cantidad_qr'=>$cantidad_qr,'total_tigomoney'=>$total_tigomoney,'cantidad_tigomoney'=>$cantidad_tigomoney));
+    $ee=Asiento::where('caja_id',$midata2->caja_id)->where('editor_id',$midata2->editor_id)->where('caja_status',false)->where('type',"Egresos")->where('pago',1)->get();
+    $egreso_efectivo=0;
+    foreach($ee as $item){
+        $egreso_efectivo+= $item->monto;
+    }
+
+    $el=Asiento::where('caja_id',$midata2->caja_id)->where('editor_id',$midata2->editor_id)->where('caja_status',false)->where('type',"Egresos")->where('pago',0)->get();
+    $egreso_linea=0;
+    foreach($el as $item){
+        $egreso_linea+= $item->monto;
+    }
+
+    return  response()->json(array('total' => $total, 'cantidad' => $cantidad, 'ingresos' => $ti, 'egresos'=> $te, 'total_efectivo'=> $total_efectivo, 'cantidad_efectivo'=> $cantidad_efectivo,'total_tarjeta'=> $total_tarjeta,'cantidad_tarjeta'=>$cantidad_tarjeta,'total_transferencia'=> $total_transferencia,'cantidad_transferencia'=>$cantidad_transferencia, 'total_qr'=>$total_qr,'cantidad_qr'=>$cantidad_qr,'total_tigomoney'=>$total_tigomoney,'cantidad_tigomoney'=>$cantidad_tigomoney, 'ingreso_efectivo'=>$ingreso_efectivo, 'ingreso_linea'=>$ingreso_linea, 'egreso_efectivo'=>$egreso_efectivo, 'egreso_linea'=>$egreso_linea));
 });
 
 Route::get('pos/ventas/save/{midata}', function($midata) {
@@ -241,7 +267,8 @@ Route::get('pos/ventas/save/{midata}', function($midata) {
         'ticket' => $ticket + 1,
         'cantidad' => $midata2->cantidad,
         'recibido' => $midata2->recibido,
-        'cambio' => $midata2->cambio
+        'cambio' => $midata2->cambio,
+        'chofer_id'=>$midata2->chofer_id
     ]);
 
 
