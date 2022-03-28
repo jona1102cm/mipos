@@ -127,7 +127,7 @@ Route::get('pos/caja/detalle/save/{midata}', function ($midata) {
         $asiento->save();
     }
 
-    DetalleCaja::create([
+    $detalla_caja = DetalleCaja::create([
         'cantidad_ventas' => $midata2->cant_ventas,
         'importe_inicial' => $midata2->importe_inicial,
         'total_ventas' => $midata2->_total,
@@ -159,7 +159,7 @@ Route::get('pos/caja/detalle/save/{midata}', function ($midata) {
     $caja->estado = $midata2->status;
     $caja->save();
 
-    return  true;
+    return  $detalla_caja;
 });
 
 Route::get('pos/caja/get_total/{midata}', function ( $midata) {
@@ -268,7 +268,8 @@ Route::get('pos/ventas/save/{midata}', function($midata) {
         'cantidad' => $midata2->cantidad,
         'recibido' => $midata2->recibido,
         'cambio' => $midata2->cambio,
-        'chofer_id'=>$midata2->chofer_id
+        'chofer_id'=>$midata2->chofer_id,
+        'adicional'=>$midata2->adicional
     ]);
 
 

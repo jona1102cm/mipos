@@ -59,9 +59,9 @@
                 <a href="{{ url('admin/productos') }}" class="btn btn-default btn-add-new" title="">
                     <i class="voyager-helm"></i> <span>Productos</span>
                 </a>
-                {{-- <a href="{{ url('admin/cajas') }}" class="btn btn-default btn-add-new" title="">
+                <a href="{{ url('admin/cajas') }}" class="btn btn-default btn-add-new" title="">
                     <i class="voyager-helm"></i> <span>Cajas</span>
-                </a> --}}
+                </a>
                 {{-- <a href="{{ url('admin/clientes') }}" class="btn btn-default btn-add-new" title="">
                     <i class="voyager-people"></i> <span>Clientes</span>
                 </a> --}}
@@ -183,14 +183,13 @@
                                     <form method="get" class="form-search">
                                         <div id="search-input">
                                             <div class="col-4">
-                                                <select id="search_key" name="key" style="width: 200px" class="js-example-basic-single">
+                                                <select id="search_key" name="key" style="width: 250px" class="js-example-basic-single">
                                                         <option value=""> ---- Elige un Filtro ----</option>
                                                         <option value="cliente_id"> Cliente </option>
-                                                        <option value="status_id"> Estado</option>
-                                                        <option value="pago_id"> Pago </option>
-                                                        <option value="register_id"> Cajero </option>
-                                                        <option value="cupon_id"> Cupón </option>
-                                                        <option value="option_id"> Tipo Entrega </option>
+                                                        <option value="cliente_id"> Sucursal </option>
+                                                        <option value="status_id"> Delivery</option>
+                                                        <option value="pago_id"> Chofer </option>
+                                                        <option value="register_id"> Editor </option>
                                                 </select>
                                             </div>
                                             <div class="col-6">
@@ -230,6 +229,11 @@
                                   
                                     
                                     @break
+                                @case('detalle-cajas')
+                                  
+                                    
+                                    @break
+                                    
                                 @case('productos')
                                     <form method="get" class="form-search">
                                         <div id="search-input">
@@ -352,6 +356,7 @@
                                                         <input type="checkbox" class="select_all">
                                                     </th>
                                                 @endif
+                                                <th class="actions text-right dt-not-orderable">{{ __('voyager::generic.actions') }}</th>
                                                 @foreach($dataType->browseRows as $row)
                                                     <th>
                                                         @if ($isServerSide && in_array($row->field, $sortableColumns))
@@ -370,7 +375,7 @@
                                                         @endif
                                                     </th>
                                                 @endforeach
-                                                <th class="actions text-right dt-not-orderable">{{ __('voyager::generic.actions') }}</th>
+                                               
                                             </tr>                                   
                                         </thead>
                                         <tbody>                                 
@@ -382,6 +387,14 @@
                                                                 <input type="checkbox" name="row_id" id="checkbox_{{ $data->getKey() }}" value="{{ $data->getKey() }}">
                                                             </td>
                                                         @endif
+
+                                                        <td class="no-sort no-click bread-actions">
+                                                            @foreach($actions as $action)
+                                                                @if (!method_exists($action, 'massAction'))
+                                                                    @include('voyager::bread.partials.actions', ['action' => $action])
+                                                                @endif
+                                                            @endforeach
+                                                        </td>
 
                                                         @foreach($dataType->browseRows as $row)
 
@@ -583,7 +596,12 @@
                                                                                 @endphp
                                                                                 <span>{{ $sucursal ? $sucursal->name : null }}</span>
                                                                                 @break
-
+                                                                            @case('chofer_id')
+                                                                                @php
+                                                                                    $chofer =  TCG\Voyager\Models\User::find($data->{$row->field});
+                                                                                @endphp
+                                                                                <span>{{ $chofer ? $chofer->name : null }}</span>
+                                                                                @break
                                                                             @default
                                                                                 @include('voyager::multilingual.input-hidden-bread-browse')
                                                                                 <span>{{ $data->{$row->field} }}</span>
@@ -594,10 +612,15 @@
 
                                                         
                                                         @endforeach
-
-
-
-
+                                                       
+                                                    </tr>                                    
+                                                @elseif(Auth::user()->id == 1 OR Auth::user()->role_id == 5 )
+                                                    <tr>
+                                                        @if($showCheckboxColumn)
+                                                            <td>
+                                                                <input type="checkbox" name="row_id" id="checkbox_{{ $data->getKey() }}" value="{{ $data->getKey() }}">
+                                                            </td>
+                                                        @endif
                                                         <td class="no-sort no-click bread-actions">
                                                             @foreach($actions as $action)
                                                                 @if (!method_exists($action, 'massAction'))
@@ -605,15 +628,6 @@
                                                                 @endif
                                                             @endforeach
                                                         </td>
-                                                    </tr>                                    
-                                                @elseif(Auth::user()->id == 1)
-                                                    <tr>
-                                                        @if($showCheckboxColumn)
-                                                            <td>
-                                                                <input type="checkbox" name="row_id" id="checkbox_{{ $data->getKey() }}" value="{{ $data->getKey() }}">
-                                                            </td>
-                                                        @endif
-
                                                         @foreach($dataType->browseRows as $row)
 
 
@@ -813,6 +827,12 @@
                                                                                 @endphp
                                                                                 <span>{{ $delivery ? $delivery->name : null }}</span>
                                                                                 @break
+                                                                            @case('chofer_id')
+                                                                                @php
+                                                                                    $chofer =  TCG\Voyager\Models\User::find($data->{$row->field});
+                                                                                @endphp
+                                                                                <span>{{ $chofer ? $chofer->name : null }}</span>
+                                                                                @break
                                                                             @default
                                                                                 @include('voyager::multilingual.input-hidden-bread-browse')
                                                                                 <span>{{ $data->{$row->field} }}</span>
@@ -821,13 +841,7 @@
                                                                     @endif
                                                                 </td>
                                                         @endforeach
-                                                        <td class="no-sort no-click bread-actions">
-                                                            @foreach($actions as $action)
-                                                                @if (!method_exists($action, 'massAction'))
-                                                                    @include('voyager::bread.partials.actions', ['action' => $action])
-                                                                @endif
-                                                            @endforeach
-                                                        </td>
+                                                     
                                                     </tr>                                    
                                                 @endif
                                             @endforeach

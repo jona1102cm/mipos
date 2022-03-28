@@ -116,11 +116,11 @@
                         </tr>
                         <tr>
                             <td><b>Fecha Apertura</b></td>
-                            <td>: {{$detalle_caja->created_at}}</td>
+                            <td>: </td>
                         </tr>
                         <tr>
                             <td><b>Fecha Cierre</b></td>
-                            <td>: {{$detalle_caja->fecha_cierre}}</td>
+                            <td>: {{$detalle_caja->created_at}}</td>
                         </tr>
 
                     </table>

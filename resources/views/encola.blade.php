@@ -90,7 +90,7 @@
                     @foreach ($ventas as $item)
                         <div class="col-md-6">
                             <div class="card mb-3">
-                                <p class="card-text" style="margin:10px;font-size:90px;white-space: nowrap;"><small>T-{{ $item->id }}</small></p>
+                                <p class="card-text" style="margin:10px;font-size:90px;white-space: nowrap;"><small>T-{{ $item->id ? $item->id : null }}</small></p>
                                 <p class="card-text text-right" style="margin:10px;font-size:25px"><small>{{ \Carbon\Carbon::parse($item->created_at)->diffForHumans() }}</small></p>
                             </div>
                         </div>

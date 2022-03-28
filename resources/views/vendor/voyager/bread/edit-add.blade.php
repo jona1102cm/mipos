@@ -1179,7 +1179,8 @@
             <script>
                 const socket = io('https://socket.loginweb.dev')
                 const name_socket = "{{ setting('notificaciones.socket') }}";
-                socket.on(name_socket, (msg) =>{
+                const socket_cocina = "{{ setting('notificaciones.socket_cocina') }}";
+                socket.on(socket_cocina, (msg) =>{
                     toastr.success('La Cocina Libero el Pedido: '+msg);
                 })
 
@@ -1191,7 +1192,7 @@
                         var micaja = JSON.parse(localStorage.getItem('micaja'));
                         $("input[name='caja_id']").val(micaja.caja_id);
                         $('input[name="sucursal_id"]').val(micaja.sucursal_id);
-                        $("#info_caja").html('<h4>'+micaja.title+" - "+micaja.sucursal+" - "+micaja.importe+' Bs.</h4>');
+                        $("#info_caja").html("<h4>"+micaja.title+" - "+micaja.sucursal+" - "+micaja.importe+" Bs. - <a href='#' onclick='reset()'>Reset</a></h4>");
                     }else{
                         $("#micaja").modal();
                     }
@@ -1361,6 +1362,11 @@
     
                 });
 
+                //reset session
+                function reset() {
+                    localStorage.removeItem('micaja');
+                    location.reload();
+                }
                 //Asignacion de Cortes
                 let cortes = new Array('0.5', '1', '2', '5', '10', '20', '50', '100', '200');
                 cortes.map(function(value){
@@ -1711,11 +1717,13 @@
                     var status = 'close';
 
                     var midata = JSON.stringify({caja_id: caja_id, editor_id: editor_id, cant_ventas: cant_ventas, _total: _total, description: description, egresos: egresos, ingresos: ingresos, importe_inicial: importe_inicial, total_ventas: total_ventas, status: status, venta_efectivo: venta_efectivo, venta_tarjeta: venta_tarjeta, venta_transferencia: venta_transferencia, venta_qr: venta_qr, venta_tigomoney: venta_tigomoney, cantidad_efectivo: cantidad_efectivo, cantidad_tarjeta: cantidad_tarjeta, cantidad_transferencia: cantidad_transferencia, cantidad_qr: cantidad_qr, cantidad_tigomoney: cantidad_tigomoney, efectivo_entregado: efectivo_entregado, cortes: cortes, ingreso_efectivo: ingreso_efectivo, ingreso_linea: ingreso_linea, egreso_efectivo: egreso_efectivo, egreso_linea: egreso_linea});
-                    console.log(midata);
+                    // console.log(midata);
                     $.ajax({
                         url: "{{ setting('admin.url') }}api/pos/caja/detalle/save/"+midata,
-                        success: function (){
+                        success: function (response){
+
                             localStorage.removeItem('micaja');
+                            window.open( "{{ setting('admin.url') }}admin/detalle_cajas/imprimir/"+response.id, "Recibo", "width=500,height=700");
                             location.href = '/admin/profile';
                         }
                     });
@@ -1743,7 +1751,7 @@
                         text: 'Elige un Chofer'
                     }));
                     for (let index = 0; index < mideliverys.data.length; index++) {
-                        if(mideliverys.data[index].role_id==8){
+                        if(mideliverys.data[index].role_id=="{{setting('ventas.role_id_chofer')}}"){
                             $('#mideliverys').append($('<option>', {
                                 value: mideliverys.data[index].id,
                                 text: mideliverys.data[index].name
@@ -1770,7 +1778,7 @@
                             $("input[name='caja_id']").val(micaja.caja_id);
                             $("input[name='sucursal_id']").val(micaja.sucursal_id);
                             
-                            $("#info_caja").html('<h4>'+micaja.title+" - "+micaja.sucursal+" - "+micaja.importe+' Bs.</h4>');
+                            $("#info_caja").html("<h4>"+micaja.title+" - "+micaja.sucursal+" - "+micaja.importe+" Bs. - <a href='#' onclick='reset()'>Reset</a></h4>");
                             toastr.success('Caja Abierta Correctamente.');
                             $('#micaja').modal('hide');
 
@@ -1852,9 +1860,11 @@
                     var recibido = $("#recibido").val();
                     var cambio = $("#cambio").val();
                     var chofer_id=$("input[name='chofer_id']").val();
+                    var adicional=$("input[name='adicional']").val();
+                    
                     var micart = JSON.parse(localStorage.getItem('micart'));
 
-                    var midata = JSON.stringify({'cliente_id': cliente_id, 'cupon_id': cupon_id, 'option_id': option_id, 'pago_id': pago_id, 'factura': factura, 'total': total, 'descuento': descuento, 'observacion': observacion, 'register_id': register_id, 'status_id': status_id, 'caja_id': caja_id, 'delivery_id': delivery_id, 'sucursal_id': sucursal_id, subtotal: subtotal, 'cantidad': micart.length, 'recibido': recibido, 'cambio': cambio, chofer_id : chofer_id });
+                    var midata = JSON.stringify({'cliente_id': cliente_id, 'cupon_id': cupon_id, 'option_id': option_id, 'pago_id': pago_id, 'factura': factura, 'total': total, 'descuento': descuento, 'observacion': observacion, 'register_id': register_id, 'status_id': status_id, 'caja_id': caja_id, 'delivery_id': delivery_id, 'sucursal_id': sucursal_id, subtotal: subtotal, 'cantidad': micart.length, 'recibido': recibido, 'cambio': cambio, chofer_id : chofer_id, adicional:adicional });
 
                     $('#modal_save_venta').modal('hide');
                     

@@ -118,6 +118,10 @@
                             <td align="right"><b>{{number_format($ventas->subtotal, 2, ',', '.')}}</b></td>
                         </tr>
                         <tr>
+                            <td colspan="3" align="right"><b>ADICIONAL Bs.</b></td>
+                            <td align="right"><b>{{number_format($ventas->adicional, 2, ',', '.')}}</b></td>
+                        </tr>
+                        <tr>
                             <td colspan="3" align="right"><b>DESCUENTO Bs.</b></td>
                             <td align="right"><b>{{number_format($ventas->descuento, 2, ',', '.')}}</b></td>
                         </tr>
@@ -188,6 +192,10 @@
                             <tr>
                                 <td colspan="3" align="right"><b>SUB TOTAL Bs.</b></td>
                                 <td align="right"><b>{{number_format($ventas->subtotal, 2, ',', '.')}}</b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" align="right"><b>ADICIONAL Bs.</b></td>
+                                <td align="right"><b>{{number_format($ventas->adicional, 2, ',', '.')}}</b></td>
                             </tr>
                             <tr>
                                 <td colspan="3" align="right"><b>DESCUENTO Bs.</b></td>
