@@ -17,7 +17,7 @@ use App\Estado;
 use App\Cliente;
 use App\Asiento;
 use App\DetalleCaja;
-
+use App\Sucursale;
 use App\Insumo;
 use App\Unidade;
 use App\Option;
@@ -161,7 +161,6 @@ Route::get('pos/caja/detalle/save/{midata}', function ($midata) {
 
     return  $detalla_caja;
 });
-
 Route::get('pos/caja/get_total/{midata}', function ( $midata) {
     $midata2 = json_decode($midata);
 
@@ -244,10 +243,13 @@ Route::get('pos/caja/get_total/{midata}', function ( $midata) {
 
     return  response()->json(array('total' => $total, 'cantidad' => $cantidad, 'ingresos' => $ti, 'egresos'=> $te, 'total_efectivo'=> $total_efectivo, 'cantidad_efectivo'=> $cantidad_efectivo,'total_tarjeta'=> $total_tarjeta,'cantidad_tarjeta'=>$cantidad_tarjeta,'total_transferencia'=> $total_transferencia,'cantidad_transferencia'=>$cantidad_transferencia, 'total_qr'=>$total_qr,'cantidad_qr'=>$cantidad_qr,'total_tigomoney'=>$total_tigomoney,'cantidad_tigomoney'=>$cantidad_tigomoney, 'ingreso_efectivo'=>$ingreso_efectivo, 'ingreso_linea'=>$ingreso_linea, 'egreso_efectivo'=>$egreso_efectivo, 'egreso_linea'=>$egreso_linea));
 });
-
+Route::get('pos/cajas', function(){
+    return Caja::with('sucursal')->get();
+});
+//ventas
 Route::get('pos/ventas/save/{midata}', function($midata) {
     $midata2 = json_decode($midata);
-    $ticket = count(Venta::where('caja_id', $midata2->caja_id)->where('caja_status', false)->get());
+    $ticket = count(Venta::where('sucursal_id', $midata2->sucursal_id)->where('caja_status', false)->get());
     $venta = Venta::create([
         'cliente_id' => $midata2->cliente_id,
         'cupon_id' => $midata2->cupon_id,
@@ -332,6 +334,26 @@ Route::get('pos/savacliente/{midata}', function ($midata) {
 Route::get('pos/clientes/search/{criterio}', function ($criterio) {
     $clientes = Cliente::where('display', 'like', '%'.$criterio.'%')->get();
     return $clientes;
+});
+
+//Sucursales
+Route::get('pos/sucursales', function(){
+    return Sucursale::all();
+});
+
+//Deliverys
+Route::get('pos/deliverys', function(){
+    return Mensajero::all();
+});
+
+//Choferes
+Route::get('pos/choferes', function(){
+    $chofer= User::where('role_id', setting('ventas.role_id_chofer'))->get();
+    return $chofer;
+});
+Route::get('pos/choferes/deudas/{chofer_id}/{caja_id}', function($chofer_id, $caja_id){
+    $ventas= Venta::where('chofer_id', $chofer_id)->where('caja_id', $caja_id)->where('caja_status', false)->get();
+    return $ventas;
 });
 
 // TODOS LOS PRODUCTOS

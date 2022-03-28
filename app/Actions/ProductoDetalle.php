@@ -18,7 +18,7 @@ class ProductoDetalle extends AbstractAction
 
     public function getPolicy()
     {
-        return 'add';
+        return 'browse';
     }
 
     public function getAttributes()

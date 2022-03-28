@@ -186,10 +186,11 @@
                                                 <select id="search_key" name="key" style="width: 250px" class="js-example-basic-single">
                                                         <option value=""> ---- Elige un Filtro ----</option>
                                                         <option value="cliente_id"> Cliente </option>
-                                                        <option value="cliente_id"> Sucursal </option>
-                                                        <option value="status_id"> Delivery</option>
-                                                        <option value="pago_id"> Chofer </option>
+                                                        <option value="sucursal_id"> Sucursal </option>
+                                                        <option value="delivery_id"> Delivery</option>
+                                                        <option value="chofer_id"> Chofer </option>
                                                         <option value="register_id"> Editor </option>
+                                                        <option value="chofer_deudas"> Chofer Deudas </option>
                                                 </select>
                                             </div>
                                             <div class="col-6">
@@ -2579,6 +2580,210 @@
                                     </div>
                                 </div>
                                 @break
+                            @case('detalle-cajas')
+                                <div class="table-responsive">
+                                    <table id="dataTable" class="table table-hover">
+                                        <thead>                                  
+                                            <tr>
+                                                @if($showCheckboxColumn)
+                                                    <th class="dt-not-orderable">
+                                                        <input type="checkbox" class="select_all">
+                                                    </th>
+                                                @endif
+                                                <th class="actions text-right dt-not-orderable">{{ __('voyager::generic.actions') }}</th>
+                                                @foreach($dataType->browseRows as $row)
+                                                    <th>
+                                                        @if ($isServerSide && in_array($row->field, $sortableColumns))
+                                                            <a href="{{ $row->sortByUrl($orderBy, $sortOrder) }}">
+                                                        @endif
+                                                        {{ $row->getTranslatedAttribute('display_name') }}
+                                                        @if ($isServerSide)
+                                                            @if ($row->isCurrentSortField($orderBy))
+                                                                @if ($sortOrder == 'asc')
+                                                                    <i class="voyager-angle-up pull-right"></i>
+                                                                @else
+                                                                    <i class="voyager-angle-down pull-right"></i>
+                                                                @endif
+                                                            @endif
+                                                            </a>
+                                                        @endif
+                                                    </th>
+                                                @endforeach
+                                               
+                                            </tr>                                   
+                                        </thead>
+                                        <tbody>                                 
+                                            @foreach($dataTypeContent as $data)
+                                                <tr>
+                                                
+                                                    @if($showCheckboxColumn)
+                                                        <td>
+                                                            <input type="checkbox" name="row_id" id="checkbox_{{ $data->getKey() }}" value="{{ $data->getKey() }}">
+                                                        </td>
+                                                    @endif
+                                                    
+                                                    <td class="no-sort no-click bread-actions">
+                                                        @foreach($actions as $action)
+                                                            @if (!method_exists($action, 'massAction'))
+                                                                @include('voyager::bread.partials.actions', ['action' => $action])
+                                                            @endif
+                                                        @endforeach
+                                                    </td>
+                                                    @foreach($dataType->browseRows as $row)
+
+
+                                                        @php
+                                                        if ($data->{$row->field.'_browse'}) {
+                                                            $data->{$row->field} = $data->{$row->field.'_browse'};
+                                                        }
+                                                        @endphp
+                                                        
+                                                        <td>
+                                                            @if (isset($row->details->view))
+                                                                @include($row->details->view, ['row' => $row, 'dataType' => $dataType, 'dataTypeContent' => $dataTypeContent, 'content' => $data->{$row->field}, 'action' => 'browse', 'view' => 'browse', 'options' => $row->details])
+                                                            @elseif($row->type == 'image')
+                                                                <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:100px">
+                                                            @elseif($row->type == 'relationship')
+                                                                @include('voyager::formfields.relationship', ['view' => 'browse','options' => $row->details])
+                                                            
+                                                            @elseif($row->type == 'select_multiple')
+                                                                @if(property_exists($row->details, 'relationship'))
+
+                                                                    @foreach($data->{$row->field} as $item)
+                                                                        {{ $item->{$row->field} }}
+                                                                    @endforeach
+                                                                
+                                                                @elseif(property_exists($row->details, 'options'))
+                                                                    @if (!empty(json_decode($data->{$row->field})))
+                                                                        @foreach(json_decode($data->{$row->field}) as $item)
+                                                                            @if (@$row->details->options->{$item})
+                                                                                {{ $row->details->options->{$item} . (!$loop->last ? ', ' : '') }}
+                                                                            @endif
+                                                                        @endforeach
+                                                                    @else
+                                                                        {{ __('voyager::generic.none') }}
+                                                                    @endif
+                                                                @endif
+
+                                                                @elseif($row->type == 'multiple_checkbox' && property_exists($row->details, 'options'))
+                                                                    @if (@count(json_decode($data->{$row->field})) > 0)
+                                                                        @foreach(json_decode($data->{$row->field}) as $item)
+                                                                            @if (@$row->details->options->{$item})
+                                                                                {{ $row->details->options->{$item} . (!$loop->last ? ', ' : '') }}
+                                                                            @endif
+                                                                        @endforeach
+                                                                    @else
+                                                                        {{ __('voyager::generic.none') }}
+                                                                    @endif
+
+                                                            @elseif(($row->type == 'select_dropdown' || $row->type == 'radio_btn') && property_exists($row->details, 'options'))
+
+                                                                {!! $row->details->options->{$data->{$row->field}} ?? '' !!}
+
+                                                            @elseif($row->type == 'date' || $row->type == 'timestamp')
+                                                                @if ( property_exists($row->details, 'format') && !is_null($data->{$row->field}) )
+                                                                    {{ \Carbon\Carbon::parse($data->{$row->field})->formatLocalized($row->details->format) }}
+                                                                @else
+                                                                    {{ $data->{$row->field} }}
+                                                                @endif
+                                                            @elseif($row->type == 'checkbox')
+                                                                @if(property_exists($row->details, 'on') && property_exists($row->details, 'off'))
+                                                                    @if($data->{$row->field})
+                                                                        <span class="label label-info">{{ $row->details->on }}</span>
+                                                                    @else
+                                                                        <span class="label label-primary">{{ $row->details->off }}</span>
+                                                                    @endif
+                                                                @else
+                                                                {{ $data->{$row->field} }}
+                                                                @endif
+                                                            @elseif($row->type == 'color')
+                                                                <span class="badge badge-lg" style="background-color: {{ $data->{$row->field} }}">{{ $data->{$row->field} }}</span>
+                                                            @elseif($row->type == 'text')
+
+
+                                                                @include('voyager::multilingual.input-hidden-bread-browse')
+                                                                <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
+                                                                
+                                                                
+                                                            @elseif($row->type == 'text_area')
+                                                                @include('voyager::multilingual.input-hidden-bread-browse')
+                                                                <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
+                                                            @elseif($row->type == 'file' && !empty($data->{$row->field}) )
+                                                                @include('voyager::multilingual.input-hidden-bread-browse')
+                                                                @if(json_decode($data->{$row->field}) !== null)
+                                                                    @foreach(json_decode($data->{$row->field}) as $file)
+                                                                        <a href="{{ Storage::disk(config('voyager.storage.disk'))->url($file->download_link) ?: '' }}" target="_blank">
+                                                                            {{ $file->original_name ?: '' }}
+                                                                        </a>
+                                                                        <br/>
+                                                                    @endforeach
+                                                                @else
+                                                                    <a href="{{ Storage::disk(config('voyager.storage.disk'))->url($data->{$row->field}) }}" target="_blank">
+                                                                        Download
+                                                                    </a>
+                                                                @endif
+                                                            @elseif($row->type == 'rich_text_box')
+                                                                @include('voyager::multilingual.input-hidden-bread-browse')
+                                                                <div>{{ mb_strlen( strip_tags($data->{$row->field}, '<b><i><u>') ) > 200 ? mb_substr(strip_tags($data->{$row->field}, '<b><i><u>'), 0, 200) . ' ...' : strip_tags($data->{$row->field}, '<b><i><u>') }}</div>
+                                                            @elseif($row->type == 'coordinates')
+                                                                @include('voyager::partials.coordinates-static-image')
+                                                            @elseif($row->type == 'multiple_images')
+                                                                @php $images = json_decode($data->{$row->field}); @endphp
+                                                                @if($images)
+                                                                    @php $images = array_slice($images, 0, 3); @endphp
+                                                                    @foreach($images as $image)
+                                                                        <img src="@if( !filter_var($image, FILTER_VALIDATE_URL)){{ Voyager::image( $image ) }}@else{{ $image }}@endif" style="width:50px">
+                                                                    @endforeach
+                                                                @endif
+                                                            @elseif($row->type == 'media_picker')
+                                                                @php
+                                                                    if (is_array($data->{$row->field})) {
+                                                                        $files = $data->{$row->field};
+                                                                    } else {
+                                                                        $files = json_decode($data->{$row->field});
+                                                                    }
+                                                                @endphp
+                                                                @if ($files)
+                                                                    @if (property_exists($row->details, 'show_as_images') && $row->details->show_as_images)
+                                                                        @foreach (array_slice($files, 0, 3) as $file)
+                                                                        <img src="@if( !filter_var($file, FILTER_VALIDATE_URL)){{ Voyager::image( $file ) }}@else{{ $file }}@endif" style="width:50px">
+                                                                        @endforeach
+                                                                    @else
+                                                                        <ul>
+                                                                        @foreach (array_slice($files, 0, 3) as $file)
+                                                                            <li>{{ $file }}</li>
+                                                                        @endforeach
+                                                                        </ul>
+                                                                    @endif
+                                                                    @if (count($files) > 3)
+                                                                        {{ __('voyager::media.files_more', ['count' => (count($files) - 3)]) }}
+                                                                    @endif
+                                                                @elseif (is_array($files) && count($files) == 0)
+                                                                    {{ trans_choice('voyager::media.files', 0) }}
+                                                                @elseif ($data->{$row->field} != '')
+                                                                    @if (property_exists($row->details, 'show_as_images') && $row->details->show_as_images)
+                                                                        <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:50px">
+                                                                    @else
+                                                                        {{ $data->{$row->field} }}
+                                                                    
+                                                                    @endif
+                                                                @else
+                                                                    {{ trans_choice('voyager::media.files', 0) }}
+                                                                @endif
+                                                            @else
+                                                            
+                                                                @include('voyager::multilingual.input-hidden-bread-browse')
+                                                                <span>{{ $data->{$row->field} }}</span>
+                                                            @endif
+                                                        </td>
+                                                    @endforeach
+
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                                @break
                             @default
                                 <div class="table-responsive">
                                     <table id="dataTable" class="table table-hover">
@@ -2788,6 +2993,10 @@
                                 @case('cocinas')
 
                                     @break
+
+                                {{-- @case('detalle-cajas')
+
+                                    @break --}}
                                 @default
                                 <div class="pull-left">
                                     <div role="status" class="show-res" aria-live="polite">{{ trans_choice(
@@ -2837,6 +3046,51 @@
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
    
+        <div class="modal modal-primary fade" tabindex="-1" id="modal_deudas" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                       <h4>Formulario para Cosulta</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+
+                        
+                            <div class="col-sm-6">
+                                <label for="">ELija una Caja</label>
+                                <select name="" id="micajas" class="form-control"></select>
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="">ELija una Chofer</label>
+                                <select name="" id="michoferes" class="form-control"></select>
+                            </div>
+                            <div class="col-sm-7"> 
+                                <button type="button" class="btn btn-primary pull-right" onclick="filtro1()">Consultar</button>
+                            </div>
+                            <div class="col-sm-12">
+                                <table class="table" id="table_deudas">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Cliente</th>
+                                            <th>Creado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        {{-- <button type="submit" class="btn btn-primary pull-right" data-dismiss="modal">Consultar</button> --}}
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
 @stop
 
 
@@ -2961,26 +3215,93 @@
             @case('ventas')
                 $('#search_key').on('change', function() {
                     switch (this.value) {
-                        // case 'cliente_id':
-                        //     $('#s').find('option').remove().end();
-                        //     $.ajax({
-                        //         url: "https://pos.loginweb.dev/api/pos/clientes",
-                        //         dataType: "json",
-                        //         success: function (response) {
-                        //             $('#s').append($('<option>', {
-                        //                 value: null,
-                        //                 text: 'Elige un Cliente'
-                        //             }));
-                        //             for (let index = 0; index < response.length; index++) {
-                        //                 $('#s').append($('<option>', {
-                        //                     value: response[index].id,
-                        //                     text: response[index].first_name +" "+ response[index].last_name  +" "+ response[index].ci_nit
-                        //                 }));
-                        //             }
-                        //         }
-                        //     });
+                        case 'cliente_id':
+                            $('#s').find('option').remove().end();
+                            $.ajax({
+                                url: "{{ setting('admin.url') }}api/pos/clientes",
+                                dataType: "json",
+                                success: function (response) {
+                                    $('#s').append($('<option>', {
+                                        value: null,
+                                        text: 'Elige un Cliente'
+                                    }));
+                                    for (let index = 0; index < response.length; index++) {
+                                        $('#s').append($('<option>', {
+                                            value: response[index].id,
+                                            text: response[index].first_name +" "+ response[index].last_name  +" "+ response[index].ci_nit
+                                        }));
+                                    }
+                                }
+                            });
 
-                        //     break;
+                            break;
+
+                        case 'sucursal_id':
+                            $('#s').find('option').remove().end();
+                            $.ajax({
+                                url: "{{ setting('admin.url') }}api/pos/sucursales",
+                                dataType: "json",
+                                success: function (response) {
+                                    $('#s').append($('<option>', {
+                                        value: null,
+                                        text: 'Elige una Sucursal'
+                                    }));
+                                    for (let index = 0; index < response.length; index++) {
+                                        $('#s').append($('<option>', {
+                                            value: response[index].id,
+                                            text: response[index].name
+                                        }));
+                                    }
+                                }
+                            });
+
+                            break
+                            
+                            case 'delivery_id':
+                            $('#s').find('option').remove().end();
+                            $.ajax({
+                                url: "{{ setting('admin.url') }}api/pos/deliverys",
+                                dataType: "json",
+                                success: function (response) {
+                                    $('#s').append($('<option>', {
+                                        value: null,
+                                        text: 'Elige un Delivery'
+                                    }));
+                                    for (let index = 0; index < response.length; index++) {
+                                        $('#s').append($('<option>', {
+                                            value: response[index].id,
+                                            text: response[index].name
+                                        }));
+                                    }
+                                }
+                            });
+
+                            break
+
+                            case 'chofer_id':
+                            $('#s').find('option').remove().end();
+                            const queryString = window.location.search;
+                            const urlParams = new URLSearchParams(queryString);
+                            // location.href = 'https://pos.loginweb.dev/admin/afiliados/recepciones/imprimir?key='+urlParams.get('key')+'&s='+urlParams.get('s');
+                            $.ajax({
+                                url: "{{ setting('admin.url') }}api/pos/choferes/",
+                                dataType: "json",
+                                success: function (response) {
+                                    $('#s').append($('<option>', {
+                                        value: null,
+                                        text: 'Elige un Chofer'
+                                    }));
+                                    for (let index = 0; index < response.length; index++) {
+                                        $('#s').append($('<option>', {
+                                            value: response[index].id,
+                                            text: response[index].name
+                                        }));
+                                    }
+                                }
+                            });
+
+                            break
+
                         case 'status_id':
                             $('#s').find('option').remove().end();
                             $.ajax({
@@ -3083,11 +3404,70 @@
 
 
                             break
+
+                        case 'chofer_deudas':
+                                $('#modal_deudas').modal();
+                                $.ajax({
+                                    url: "{{ setting('admin.url') }}api/pos/cajas",
+                                    dataType: "json",
+                                    success: function (response) {
+                                        $('#micajas').append($('<option>', {
+                                            value: null,
+                                            text: 'Elige una Caja'
+                                        }));
+                                        for (let index = 0; index < response.length; index++) {
+                                            // const element = response[index];
+                                            $('#micajas').append($('<option>', {
+                                                value: response[index].id,
+                                                text: response[index].id + ' - '+ response[index].title +' - '+ response[index].sucursal.name
+                                            }));
+                                        }
+                                    }
+                                });
+                                $.ajax({
+                                    url: "{{ setting('admin.url') }}api/pos/choferes/",
+                                    dataType: "json",
+                                    success: function (response) {
+                                        $('#michoferes').append($('<option>', {
+                                            value: null,
+                                            text: 'Elige un Chofer'
+                                        }));
+                                        for (let index = 0; index < response.length; index++) {
+                                            $('#michoferes').append($('<option>', {
+                                                value: response[index].id,
+                                                text: response[index].name
+                                            }));
+                                        }
+                                    }
+                                });
+
+                            break
                         default:
                             //Declaraciones ejecutadas cuando ninguno de los valores coincide con el valor de la expresión
                             break
                     }
                 });
+
+                function filtro1() {
+                    var urli = "{{ setting('admin.url') }}api/pos/choferes/deudas/"+$("#michoferes").val()+"/"+$("#micajas").val();
+                    console.log(urli);
+                    var mitable = "";
+                    $.ajax({
+                        url: urli,
+                        dataType: "json",
+                        success: function (response) {
+                            if (response.length == 0 ) {
+                                toastr.error('Sin Resultados.');
+                            } else {
+                                
+                                for (let index = 0; index < response.length; index++) { 
+                                    mitable = mitable + "<tr><td>"+response[index].id+"</td><td>"+response[index].cliente_id+"</td><td>"+response[index].published+"</td></tr>";
+                                }
+                                $('#table_deudas').append(mitable);
+                            }
+                        }
+                    });
+                }
                 function imprimir(){
                     const queryString = window.location.search;
                     const urlParams = new URLSearchParams(queryString);

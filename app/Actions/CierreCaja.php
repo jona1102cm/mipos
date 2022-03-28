@@ -24,7 +24,7 @@ class CierreCaja extends AbstractAction
     public function getAttributes()
     {
         return [
-            'class' => 'btn btn-sm btn-primary pull-right',
+            'class' => 'btn btn-sm btn-success pull-right',
         ];
     }
 

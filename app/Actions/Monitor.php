@@ -4,11 +4,11 @@ namespace App\Actions;
 
 use TCG\Voyager\Actions\AbstractAction;
 
-class VentaRecibo extends AbstractAction
+class Monitor extends AbstractAction
 {
     public function getTitle()
     {
-        return 'Imprimir';
+        return 'Abrir';
     }
 
     public function getIcon()
@@ -24,17 +24,17 @@ class VentaRecibo extends AbstractAction
     public function getAttributes()
     {
         return [
-            'class' => 'btn btn-sm btn-primary pull-right',
+            'class' => 'btn btn-sm btn-success pull-right',
         ];
     }
 
     public function getDefaultRoute()
     {
-        return route('venta.imprimir', ['id' =>  $this->data->{$this->data->getKeyName()} ]);
+        return route('monitor', ['id' =>  $this->data->{$this->data->getKeyName()} ]);
     }
 
     public function shouldActionDisplayOnDataType()
     {
-        return $this->dataType->slug == 'ventas';
+        return $this->dataType->slug == 'monitores';
     }
 }

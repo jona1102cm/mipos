@@ -75,9 +75,27 @@
 </head>
 <body>
     @php
-        $ventas = App\Venta::where('caja_status', false )->where('status_id', 3)->where('sucursal_id', 4)->orderby('id', 'desc')->get();
-        $venta = App\Venta::where('caja_status', false )->where('status_id', 3)->where('sucursal_id', 4)->orderby('id', 'desc')->first();
-    @endphp    
+        $ventas = App\Venta::where('caja_status', false )->where('status_id', 3)->where('sucursal_id', $monitor->sucursal_id)->orderby('id', 'desc')->get();
+        $venta = App\Venta::where('caja_status', false )->where('status_id', 3)->where('sucursal_id', $monitor->sucursal_id)->orderby('id', 'desc')->first();
+    @endphp
+
+    @if(count($ventas) <= 0 )
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-8">
+                <h1 style="color:white;">Sin Pedidos</h1>
+                <code>
+                    {{ $monitor }}
+                </code>
+            </div>
+            <div class="col-md-4 text-right">
+                <div class="row">
+                    <h1 class="title">{{ setting('empresa.title') }} <img src="{{ url('storage').'/'.setting('empresa.logo') }}" width="100px" alt=""></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    @else
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8">
@@ -114,6 +132,7 @@
         </div>
     </div>
     
+    @endif
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>

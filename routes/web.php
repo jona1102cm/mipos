@@ -21,9 +21,11 @@ Route::get('/', function () {
 
 Route::get('venta/{id}', 'App\Http\Controllers\PosController@venta_public')->name('venta.public');
 
-Route::get('/encola', function () {
-    return view('encola');
-});
+Route::get('/encola/{id}', function ($id) {
+    $monitor = App\Monitore::find($id);
+    // return $monitor;
+    return view('encola')->with('monitor', $monitor);
+})->name('monitor');
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();

@@ -38,5 +38,9 @@ class AppServiceProvider extends ServiceProvider
 
         Voyager::addAction(\App\Actions\CajaDetalle::class);
 
+        // Voyager::addAction(\App\Actions\DetalleCaja::class);
+
+        Voyager::addAction(\App\Actions\Monitor::class);
+
     }
 }

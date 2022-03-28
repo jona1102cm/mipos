@@ -4,16 +4,16 @@ namespace App\Actions;
 
 use TCG\Voyager\Actions\AbstractAction;
 
-class VentaRecibo extends AbstractAction
+class DetalleCaja extends AbstractAction
 {
     public function getTitle()
     {
-        return 'Imprimir';
+        return 'Detalle';
     }
 
     public function getIcon()
     {
-        return 'voyager-photos';
+        return 'voyager-helm';
     }
 
     public function getPolicy()
@@ -24,17 +24,17 @@ class VentaRecibo extends AbstractAction
     public function getAttributes()
     {
         return [
-            'class' => 'btn btn-sm btn-primary pull-right',
+            'class' => 'btn btn-sm btn-warning pull-right',
         ];
     }
 
     public function getDefaultRoute()
     {
-        return route('venta.imprimir', ['id' =>  $this->data->{$this->data->getKeyName()} ]);
+        return route('cajas.cierre_caja', ['id' =>  $this->data->{$this->data->getKeyName()} ]);
     }
 
     public function shouldActionDisplayOnDataType()
     {
-        return $this->dataType->slug == 'ventas';
+        return $this->dataType->slug == 'detalle-cajas';
     }
 }
