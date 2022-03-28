@@ -331,7 +331,7 @@
                                                                 {{ $item->created_at }}
                                                             </td>
                                                             <td>
-                                                                <a href="#" onclick="cocina({{ $item->id }})" class="btn btn-success">Confirmar</a>
+                                                                {{-- <a href="#" onclick="confirmar({{ $item->id }})" class="btn btn-success">Confirmar</a> --}}
                                                                 <a href="#" onclick="cocina({{ $item->id }})" class="btn btn-primary">Realizado</a>
                                                                 
                                                             </td>
@@ -2930,7 +2930,7 @@
 
         @switch($mislug)
             @case('cocinas')
-                socket.on('ventas', (msg) =>{
+                socket.on("{{ setting('notificaciones.socket') }}", (msg) =>{
                     location.reload();
                 })
                 function cocina(id) {
@@ -2941,7 +2941,7 @@
                             location.reload();
                         }
                     });
-                    socket.emit('chat', id);
+                    socket.emit("{{ setting('notificaciones.socket_cocina') }}", id);
                 }
                 @break
             @case('ventas')
@@ -3079,9 +3079,6 @@
                     const urlParams = new URLSearchParams(queryString);
                     location.href = 'https://pos.loginweb.dev/admin/afiliados/recepciones/imprimir?key='+urlParams.get('key')+'&s='+urlParams.get('s');
                 }
-                socket.on('chat', (msg) =>{
-                    location.reload();
-                })
                 @break
             @case('productos')
                 $('#search_key').on('change', function() {

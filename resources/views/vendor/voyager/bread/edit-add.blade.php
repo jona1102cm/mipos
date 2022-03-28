@@ -1159,10 +1159,15 @@
 @switch($dataType->getTranslatedAttribute('slug'))
     @case('cocinas')
         @section('javascript')
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="https://socket.loginweb.dev/socket.io/socket.io.js"></script>
             <script>
-                socket.on('chat', (msg) =>{
-                    console.log(msg);
-                })
+                const socket = io('https://socket.loginweb.dev')
+                const socket_ventas = "{{ setting('notificaciones.socket') }}";
+                const socket_cocina = "{{ setting('notificaciones.socket_cocina') }}";
+                // socket.on(socket_ventas, (msg) =>{
+                //     toastr.success('La Cocina Libero el Pedido: '+msg);
+                // })
             </script>
         @stop
         @break
@@ -1173,7 +1178,8 @@
             <script src="https://socket.loginweb.dev/socket.io/socket.io.js"></script>
             <script>
                 const socket = io('https://socket.loginweb.dev')
-                socket.on('chat', (msg) =>{
+                const name_socket = "{{ setting('notificaciones.socket') }}";
+                socket.on(name_socket, (msg) =>{
                     toastr.success('La Cocina Libero el Pedido: '+msg);
                 })
 
@@ -1885,7 +1891,7 @@
                             
                             // enviado notification 
                             
-                            socket.emit('ventas', 'VENTA REALIZADA: '+response.id)
+                            socket.emit(name_socket, 'VENTA REALIZADA: '+response.id)
 
                             // var phone = $('#phone_client').val();
                             // $.ajax({

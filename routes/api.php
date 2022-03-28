@@ -372,7 +372,7 @@ Route::get('pos/venta/{id}', function ($id) {
 
 // TODAS LAS VENTAS POR CAJA
 Route::get('pos/ventas/caja/{caja_id}/{user_id}', function ($caja_id, $user_id) {
-    return  Venta::where('register_id', $user_id)->where('caja_id', $caja_id)->where('caja_status', false)->with('cliente', 'delivery','chofer')->get();
+    return  Venta::where('register_id', $user_id)->where('caja_id', $caja_id)->where('caja_status', false)->with('cliente', 'delivery','chofer')->orderBy('created_at','desc')->get();
 });
 
 // VENTA POR ID

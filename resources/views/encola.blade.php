@@ -76,7 +76,7 @@
 <body>
     @php
         $ventas = App\Venta::where('caja_status', false )->where('status_id', 3)->where('sucursal_id', 4)->orderby('id', 'desc')->get();
-        $venta = App\Venta::where('id', 1)->where('status_id', 3)->first();
+        $venta = App\Venta::where('caja_status', false )->where('status_id', 3)->where('sucursal_id', 4)->orderby('id', 'desc')->first();
     @endphp    
     <div class="container-fluid">
         <div class="row">
@@ -123,7 +123,7 @@
     <script>
         document.getElementById("audio").play();
         const socket = io('https://socket.loginweb.dev')
-        socket.on("{{ setting('notificaciones.socket') }}", (msg) =>{
+        socket.on("{{ setting('notificaciones.socket_cocina') }}", (msg) =>{
             location.reload();
         })
     </script>
