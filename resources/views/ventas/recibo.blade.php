@@ -6,51 +6,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>Recibo de venta</title>
-        <style>
-            .btn-print{
-                background-color: #fa2a00;
-                color:white;
-                border: 1px solid #fa2a00;
-                padding: 5px 8px;
-                border-radius:5px
-            }
-            @media print {
-                #print{
-                    display: none;
-                }
-            }
-            body{
-                font-size: 11px;
-                font-family: 'Noto Sans', sans-serif;
-                /* border: 1px solid black;
-                border-radius: 1px; */
-                padding: 5px 10px;
-                margin: 0px
-            }
-
-			@media all {
-			   div.saltopagina{
-			      display: none;
-			   }
-			}
-
-			@media print{
-			   div.saltopagina{
-			      display:block;
-			      page-break-before:always;
-			   }
-			}
-            .badge{
-                padding:2px 20px;
-                background-color:black;
-                color:white;
-                font-size: 12px;
-                font-weight:bold;
-            }
-		</style>
+        
     </head>
     <body>
-        <table width="300px">
+        <table width="270px" height="0px">
             <tr>
                 <td colspan="2" align="center" style="font-size:10px">
                     <img src="{{ url('storage').'/'.setting('empresa.logo') }}" alt="loginweb" width="100px"><br>
@@ -89,7 +48,7 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <table width="100%">
+                    <table>
                         <tr>
                             <th>CANTIDAD</th>
                             <th>DETALLE</th>
@@ -152,10 +111,21 @@
             </tr>
         </table>
         <div class="saltopagina"></div>
-
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
         @if(setting('ventas.cocina'))
         
-            <table width="300px">
+            <table width="370px">
                     <td colspan="2" align="center">
                         <h3>
                             ORDEN #{{$ventas->ticket}}<br>
@@ -166,13 +136,13 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2">
-                        <table width="100%">
+                    {{-- <td colspan="2">
+                        <table width="100%"> --}}
                             <tr>
-                            <th>CANTIDAD</th>
-                            <th>DETALLE</th>
-                            <th>PRECIO UNIT.</th>
-                            <th align="right">TOTAL UNIT.</th>
+                                <th>CANTIDAD</th>
+                                <th>DETALLE</th>
+                                <th>PRECIO UNIT.</th>
+                                <th align="right">TOTAL UNIT.</th>
 
                             </tr>
 
@@ -188,7 +158,7 @@
                                     <td align="center"><b>{{ $totalunit }}</b></td>
                                 </tr>
                             @endforeach
-                            <br>
+                            {{-- <br> --}}
                             <tr>
                                 <td colspan="3" align="right"><b>SUB TOTAL Bs.</b></td>
                                 <td align="right"><b>{{number_format($ventas->subtotal, 2, ',', '.')}}</b></td>
@@ -205,8 +175,8 @@
                                 <td colspan="3" align="right"><b>TOTAL Bs.</b></td>
                                 <td align="right"><b>{{number_format($ventas->total, 2, ',', '.')}}</b></td>
                             </tr>
-                        </table>
-                    </td>
+                        {{-- </table> --}}
+                    {{-- </td> --}}
                 </tr>
                 <tr>
                     <td colspan="2"><hr></td>

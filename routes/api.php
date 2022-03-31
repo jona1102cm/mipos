@@ -27,7 +27,7 @@ use App\Production;
 use App\ProductionInsumo;
 use App\Proveedore;
 use App\DetalleProductionSemi;
-
+use App\TypeProducto;
 
 use Illuminate\Support\Facades\DB;
 /*
@@ -164,7 +164,7 @@ Route::get('pos/caja/detalle/save/{midata}', function ($midata) {
 Route::get('pos/caja/get_total/{midata}', function ( $midata) {
     $midata2 = json_decode($midata);
 
-    $ventas = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->get();
+    $ventas = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->get();
     $cantidad = count($ventas);
     $total = 0;
     foreach ($ventas as $item) {
@@ -182,35 +182,35 @@ Route::get('pos/caja/get_total/{midata}', function ( $midata) {
     }
 
     //desde aqui jchavez
-    $venta_efectivo = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('pago_id',1)->get();
+    $venta_efectivo = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pago_id',1)->get();
     $cantidad_efectivo = count($venta_efectivo);
     $total_efectivo = 0;
     foreach ($venta_efectivo as $item) {
         $total_efectivo = $total_efectivo + $item->total;
     }
 
-    $venta_tarjeta = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('pago_id',2)->get();
+    $venta_tarjeta = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pago_id',2)->get();
     $cantidad_tarjeta = count($venta_tarjeta);
     $total_tarjeta = 0;
     foreach ($venta_tarjeta as $item) {
         $total_tarjeta = $total_tarjeta + $item->total;
     }
 
-    $venta_transferencia = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('pago_id',3)->get();
+    $venta_transferencia = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pago_id',3)->get();
     $cantidad_transferencia = count($venta_transferencia);
     $total_transferencia = 0;
     foreach ($venta_transferencia as $item) {
         $total_transferencia = $total_transferencia + $item->total;
     }
 
-    $venta_qr = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('pago_id',4)->get();
+    $venta_qr = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pago_id',4)->get();
     $cantidad_qr = count($venta_qr);
     $total_qr = 0;
     foreach ($venta_qr as $item) {
         $total_qr = $total_qr + $item->total;
     }
 
-    $venta_tigomoney = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('pago_id',5)->get();
+    $venta_tigomoney = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pago_id',5)->get();
     $cantidad_tigomoney = count($venta_tigomoney);
     $total_tigomoney = 0;
     foreach ($venta_tigomoney as $item) {
@@ -256,6 +256,7 @@ Route::get('pos/ventas/save/{midata}', function($midata) {
         'option_id' => $midata2->option_id,
         'pago_id' => $midata2->pago_id,
         'factura' => $midata2->factura ? $midata2->factura : null,
+        'credito'=> $midata2->credito,
         'total' => $midata2->total,
         'descuento' => $midata2->descuento,
         'observacion' => $midata2->observacion,
@@ -297,7 +298,7 @@ Route::get('pos/ventas/save/detalle/{micart}', function($micart) {
             'total' => $micart2->total,
             'foto' => $miproducto->image ? $miproducto->image : null,
             'name' => $miproducto->name,
-            // 'description' => $micart2->description ? $micart2->description : null
+            'description' => $micart2->description ? $micart2->description : null
         ]);
 
     } else {
@@ -309,7 +310,7 @@ Route::get('pos/ventas/save/detalle/{micart}', function($micart) {
             'total' => $micart2->total,
             'foto' => $miproducto->image ? $miproducto->image : null,
             'name' => $miproducto->name,
-            // 'description' => $micart2->description ? $micart2->description : null
+            'description' => $micart2->description ? $micart2->description : null
         ]);
     }
     
@@ -373,7 +374,21 @@ Route::get('pos/producto/mixto/{id}/{category}', function ($id, $category) {
 
 //--  TODAS LAS CATEGORY PRODUCTOS
 Route::get('pos/categorias', function () {
+    return  Categoria::where('id', '!=', 7)->where('id','!=', 16)->orderBy('order', 'asc')->get();
+});
+Route::get('pos/categorias_all', function () {
     return  Categoria::orderBy('order', 'asc')->get();
+});
+
+// Productos de categoria Extra Grande y Mediana
+Route::get('pos/producto/extra/{categoria_id}',function($categoria_id){
+    return Producto::where('categoria_id', $categoria_id)->get();
+});
+
+//--  Tipos PRODUCTOS
+Route::get('pos/typeproductos', function () {
+    //return  Categoria::orderBy('order', 'asc')->get();
+    return TypeProducto::all();
 });
 
 Route::get('pos/category/{id}', function ($id) {

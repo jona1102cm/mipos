@@ -36,8 +36,10 @@
                                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#venta_caja" onclick="venta_caja()">Ventas</button>
                                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal_cliente">Cliente</button>
                                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal_asientos" onclick="cargar_asientos()">Asientos</button>        
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal_save_venta" onclick="get_cambio()">Guardar</button>                            
-                            </div>                        
+                                {{-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal_save_venta" onclick="get_cambio()">Vender</button> --}}
+                                <button type="button" class="btn btn-primary"  onclick="saveventas()">Vender</button>                            
+                             
+                            </div>                   
                     </div>
                     <div class="col-sm-4">
                         <div id="info_caja"></div>
@@ -85,7 +87,6 @@
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal_save_prod">Guardar</button>
                             </div>
-                        
                     </div>
                     
                 </div>
@@ -145,10 +146,45 @@
                                 @php
                                     $miuser = TCG\Voyager\Models\User::find(Auth::user()->id);
                                     $micajas = App\Caja::all();
+                                    $categorias = App\Categoria::where('id', '!=', 7 )->where('id', '!=', 16 )->orderBy('order', 'asc')->get();
                                 @endphp
                             
                                     <div class="form-group col-md-8">
-                                        <strong>Carrito</strong>
+
+                                        <div>
+                                            <!-- Nav tabs -->
+                                            <ul class="nav nav-tabs" role="tablist">
+                                                @foreach($categorias as $item)
+                                                    <li role="presentation"><a href="#{{ $item->id }}" aria-controls="home" role="tab" data-toggle="tab">{{ $item->name}}</a></li>
+                                                    
+                                                @endforeach
+                                                <li role="presentation"><a href="#vacio" aria-controls="home" role="tab" data-toggle="tab">Vacio</a></li>
+                                            </ul>
+                                            
+                                            <!-- Tab panes -->
+                                            <div class="tab-content">
+                                                @foreach($categorias as $item)
+                                                    <div role="tabpanel" class="tab-pane" id="{{ $item->id }}">
+                                                        @php
+                                                            $products = App\Producto::where('categoria_id', $item->id )->get();
+                                                        @endphp
+                                                         <div class="row">
+                                                            @foreach($products as $item)                                                            
+                                                                <div class="col-xs-3">
+                                                                    <a href="#" onclick="addproduct('{{$item->id}}')" class="thumbnail">
+                                                                        <img src="https://pos.loginweb.dev/storage/{{ $item->image }}">
+                                                                    </a>
+                                                                    <small>{{ $item->name }}</small> 
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                   
+                                                @endforeach
+                                                <div role="tabpanel" class="tab-pane" id="vacio">
+                                                </div>
+                                            </div>                                            
+                                        </div>
                                         <div id="search-input">
                                             <div class="input-group col-sm-6">
                                                 <select class="form-control js-example-basic-single" id="category"></select>
@@ -168,6 +204,8 @@
                                                     <th>#</th>
                                                     <th>Image</th>
                                                     <th>Producto</th>
+                                                    <th>Observación</th>
+                                                    <th>Extra</th>
                                                     <th>Precio</th>
                                                     <th>Cantidad</th>
                                                     <th>Total</th>
@@ -190,8 +228,9 @@
                                         </audio>
                                         <div class="form-group col-md-12">
                                             <strong>Cliente</strong>
-                                            <input type="text" id="micliente" class="form-control">
-                                            <input type="hidden" id="phone_client" class="form-control">
+                                            {{-- <input type="text" id="micliente" class="form-control">
+                                            <input type="hidden" id="phone_client" class="form-control"> --}}
+                                            <select class="form-control js-example-basic-single" id="micliente"> </select>
                                         </div>
                                         <div class="form-group col-md-12">
                                             <strong>Pasarela</strong>
@@ -213,7 +252,14 @@
                                             <select class="form-control js-example-basic-single" id="midelivery"> </select>
                                         </div>
                                 
+                                        AKI OPTION A
 
+                                        <div class="form-group text-center">                               
+                                            <form class="form-horizontal" role="form">
+                                                <label class="radio-inline"> <input type="radio" name="season" id="" value="imprimir" checked> Imprimir </label>
+                                                <label class="radio-inline"> <input type="radio" name="season" id="" value="seguir"> Seguir </label>
+                                            </form>
+                                        </div>
                                         @foreach($dataTypeRows as $row)
                                             <!-- GET THE DISPLAY OPTIONS -->
                                             @php
@@ -249,6 +295,7 @@
                                                 @endif
                                             </div>
                                         @endforeach
+                                        AKI OPTION B
                                     </div>
                                 @break
                         
@@ -454,6 +501,10 @@
                                 <div class="form-group col-md-6">
                                     <strong>Categoria</strong>
                                     <select class="form-control js-example-basic-single" name="micategory" id="micategory"></select>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <strong>Tipo Producto</strong>
+                                    <select class="form-control js-example-basic-single" name="type_producto" id="type_producto"></select>
                                 </div>
                                 @foreach($dataTypeRows as $row)
                                     <!-- GET THE DISPLAY OPTIONS -->
@@ -924,6 +975,50 @@
                 </div>
             </div>
 
+
+
+            <div class="modal modal-primary fade" tabindex="-1" id="modal-lista_extras" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title"><i class="voyager-list-add"></i> Lista de extras</h4>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" name="id">
+                            <table class="table table-bordered table-hover" id="table-extras"> 
+                                <thead>
+                                    <tr>
+                                        <th>Imagen</th>
+                                        <th>Extra</th>
+                                        <th>Precio</th>
+                                        <th>Cantidad</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{-- @php
+                                    // $categoria_grande = App\Categoria::where('id', 7 )->get();
+                                    // $categoria_mediana = App\Categoria::where('id', 16 )->get();
+                                    $extra_grande = App\Producto::where('categoria_id',7)->get();
+                                    $extra_mediano = App\Producto::where('categoria_id', 16)->get();
+                                    $producto_familiar=0;
+                                    @endphp
+
+                                    @if($producto_familiar)
+                                    @foreach ($extra_grande as $item)
+
+                                    @endforeach
+                                    @endif --}}
+                                   
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="modal fade modal-primary" id="modal_cliente">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -999,13 +1094,13 @@
                             <h4 class="modal-title"><i class="voyager-warning"></i> {{ __('voyager::generic.are_you_sure') }}</h4>
                         </div>        
                         <div class="modal-body">
-                            <div class="form-group text-center">                               
+                            {{-- <div class="form-group text-center" hidden>                               
                                 <form class="form-horizontal" role="form">
                                     <label class="radio-inline"> <input type="radio" name="season" id="" value="imprimir" checked> Imprimir </label>
                                     <label class="radio-inline"> <input type="radio" name="season" id="" value="seguir"> Seguir </label>
                                 </form>
-                            </div>
-                            <table class="table">                                                               
+                            </div> --}}
+                            {{-- <table class="table" hidden>                                                               
                                     <tr>
                                         <td>Importe: </td>
                                         <td>
@@ -1024,13 +1119,13 @@
                                             <input type="number" class="form-control" id="cambio" readonly>
                                         </td>
                                     </tr>                               
-                            </table>
+                            </table> --}}
                         </div>
         
-                        <div class="modal-footer">
+                        {{-- <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">NO</button>
                             <button type="button" class="btn btn-primary" onclick="saveventas()">SI</button>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>
@@ -1161,6 +1256,7 @@
         @section('javascript')
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <script src="https://socket.loginweb.dev/socket.io/socket.io.js"></script>
+        <script src="{{url('js/ventas.js')}}"></script>
             <script>
                 const socket = io('https://socket.loginweb.dev')
                 const socket_ventas = "{{ setting('notificaciones.socket') }}";
@@ -1239,16 +1335,52 @@
                         }
                     });
 
-                    // get cliente default
+                    //get cliente default
                     $.ajax({
                         url: "{{ setting('admin.url') }}api/pos/cliente/default/get",
                         dataType: "json",
                         success: function (response) {
                             $("input[name='cliente_id']").val(response.id);
-                            $('#micliente').val(response.display+' - '+response.ci_nit)
-                            $('#phone_client').val(response.phone)
+                            $('#micliente').append($('<option>', {
+                                    value: response.id,
+                                    text: response.display+' - '+response.ci_nit
+                                }));
                         }
                     });
+                    $.ajax({
+                        url: "{{ setting('admin.url') }}api/pos/clientes",
+                        dataType: "json",
+                        success: function (response) {
+                            for (let index = 0; index < response.length; index++) {
+                                    $('#micliente').append($('<option>', {
+                                    value: response[index].id,
+                                    text: response[index].display
+                                 }));
+                                // $("input[name='cliente_id']").val(response[index].id);
+                                // if (response[index].id == 1) {
+                                //     $("input[name='cliente_id']").val(response[index].id);
+                                //     $('#micliente').append($('<option>', {
+                                //     selected: true,
+                                //     value: response[index].id,
+                                //     text: response[index].display
+                                // }));
+                                // $("input[name='cliente_id']").val(response[index].id);
+                                // } else {
+                                //     $('#micliente').append($('<option>', {
+                                //     value: response[index].id,
+                                //     text: response[index].display
+                                // }));
+                                // }
+                            }
+                        }
+                    });
+
+                        $('#micliente').on('change', function() {
+
+                            var category = $('#micliente').val();
+                            $('input[name="cliente_id"]').val(category);
+
+                        });
 
                     // get cup[ones]
                     $.ajax({
@@ -1350,8 +1482,12 @@
                             $("#micart").append("<tr id=0><td colspan='4'> <img class='img-responsive img-sm' src={{ setting('admin.url') }}storage/231-2317260_an-empty-shopping-cart-viewed-from-the-side.png></td></tr>");
                         }else{
                             for (let index = 0; index < milist.length; index++) {
-
-                                $("#micart").append("<tr id="+milist[index].id+"><td>"+milist[index].id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+milist[index].image+"></td><td>"+milist[index].name+"<br>"+milist[index].description+"</td><td><input class='form-control' type='number' value='"+milist[index].precio+"' id='precio_"+milist[index].id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+milist[index].id+")' value='"+milist[index].cant+"' id='cant_"+milist[index].id+"'></td><td><input class='form-control' type='number' value='"+milist[index].total+"' id='total_"+milist[index].id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+milist[index].id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                if(milist[index].extra){
+                                    $("#micart").append("<tr id="+milist[index].id+"><td>"+milist[index].id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+milist[index].image+"></td><td>"+milist[index].name+"<br>"+milist[index].description+"</td><td><input class='form-control' type='text' id='observacion_"+milist[index].id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+milist[index].extras+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+milist[index].precio+"' id='precio_"+milist[index].id+"' onkeypress='updateprice("+milist[index].id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+milist[index].id+")' value='"+milist[index].cant+"' id='cant_"+milist[index].id+"'></td><td><input class='form-control' type='number' value='"+milist[index].total+"' id='total_"+milist[index].id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+milist[index].id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                }
+                                else{
+                                    $("#micart").append("<tr id="+milist[index].id+"><td>"+milist[index].id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+milist[index].image+"></td><td>"+milist[index].name+"<br>"+milist[index].description+"</td><td><input class='form-control' type='text' id='observacion_"+milist[index].id+"'></td><td></td><td><input class='form-control' type='number' value='"+milist[index].precio+"' id='precio_"+milist[index].id+"' onkeypress='updateprice("+milist[index].id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+milist[index].id+")' value='"+milist[index].cant+"' id='cant_"+milist[index].id+"'></td><td><input class='form-control' type='number' value='"+milist[index].total+"' id='total_"+milist[index].id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+milist[index].id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                }
                             }
                             mitotal();
                         }
@@ -1361,6 +1497,37 @@
                     }
     
                 });
+
+                async function addextra(extras) {
+                    $("#table-extras tbody tr").remove();
+                    var mitable="";
+                    var extrasp=  await axios.get("{{ setting('admin.url') }}api/pos/producto/extra/"+extras);
+                    //console.log(extrasp.data);
+                    for(let index=0; index < extrasp.data.length; index++){
+                        mitable = mitable + "<tr><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+extrasp.data[index].image+"></td><td>"+extrasp.data[index].name+"</td><td>"+extrasp.data[index].precio+" Bs."+"</td><td><input class='form-control' type='number' min='0' value='0'  onclick='updatecantextra("+extrasp.data[index].id+")' id='extra_"+extrasp.data[index].id+"'></td></tr>";
+                    }
+                    $('#table-extras').append(mitable);
+
+                }
+
+                async function updatecantextra(id){
+
+                    var milist = JSON.parse(localStorage.getItem('micart'));
+                    var newlist = [];
+                    for (let index = 0; index < milist.length; index++) {
+                        if (milist[index].id == id) {
+                                var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'description': milist[index].description ,'precio': milist[index].precio, 'cant': parseInt($("#cant_"+id).val()), 'total': milist[index].precio * parseInt($("#cant_"+id).val())};
+                                newlist.push(temp);
+                            
+                        }else{
+                            var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'description': milist[index].description ,'precio': milist[index].precio, 'cant': milist[index].cant, 'total': milist[index].precio, 'total':  milist[index].total};
+                            newlist.push(temp);
+                        }
+                    }
+                    localStorage.setItem('micart', JSON.stringify(newlist));
+                    mitotal();
+                }
+
 
                 //reset session
                 function reset() {
@@ -1441,6 +1608,8 @@
                         }
                     });
                 }
+               
+                
 
                 // cargar asientos
                 function cargar_asientos() {
@@ -1505,27 +1674,50 @@
                     });
                 }
                 // GET CAMBIO 
-                $('#recibido').keyup(function (e) { 
+                // $('#recibido').keyup(function (e) { 
+                //     e.preventDefault();
+                //     var cambio = $('#recibido').val() - $('#venta_total').val();
+                //     $('#cambio').val(cambio);
+                // });
+
+                // GET CAMBIO 
+                $("input[name='recibido']").keyup(function (e) { 
                     e.preventDefault();
-                    var cambio = $('#recibido').val() - $('#venta_total').val();
-                    $('#cambio').val(cambio);
+                    var cambio = $("input[name='recibido']").val() - $("input[name='total']").val();
+                    $("input[name='cambio']").val(cambio);
                 });
 
                 // CAMBIO TPV
-                function get_cambio() {
+                // function get_cambio() {
+                //     var micart = JSON.parse(localStorage.getItem('micart'));
+                //     if (micart.length == 0 ) {
+                //         toastr.error('Tu Carrito esta Vacio');
+                //         $('#modal_save_venta').modal('hide');
+                //     } else {                                       
+                //         $('#recibido').val(0);
+                //         $('#cambio').val(0);
+                //         var total = 0;
+                //         for (let index = 0; index < micart.length; index++) {
+                //         total = total + micart[index].total;   
+                //     }
+                //     total=total+parseFloat($("input[name='adicional']").val());
+                //         $('#venta_total').val(total);
+                //     }
+                // }
+
+                 // CAMBIO TPV
+                 function get_cambio() {
                     var micart = JSON.parse(localStorage.getItem('micart'));
                     if (micart.length == 0 ) {
                         toastr.error('Tu Carrito esta Vacio');
-                        $('#modal_save_venta').modal('hide');
+                        // $('#modal_save_venta').modal('hide');
                     } else {                                       
-                        $('#recibido').val(0);
-                        $('#cambio').val(0);
+                       $("input[name='recibido']").val(0);
+                       $("input[name='cambio']").val(0);
                         var total = 0;
                         for (let index = 0; index < micart.length; index++) {
                         total = total + micart[index].total;   
                     }
-                    total=total+parseFloat($("input[name='adicional']").val());
-                        $('#venta_total').val(total);
                     }
                 }
 
@@ -1584,9 +1776,9 @@
                                 success: function (response) {
 
                                     $('#mixtos').attr("hidden", true);
-                                    $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                    $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onkeypress='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
                                                     
-                                    var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': description};
+                                    var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': description, 'extra': response.extra, 'extras':response.extras };
                                     micart.push(temp);
                                     localStorage.setItem('micart', JSON.stringify(micart));
 
@@ -1616,9 +1808,9 @@
                         success: function (response) {
 
                             $('#mixtos').attr("hidden", true);
-                            $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                            $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras'onclick='addextra("+response.extras+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
                                             
-                            var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': description};
+                            var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': description, 'extra': response.extra, 'extras':response.extras};
                             micart.push(temp);
                             localStorage.setItem('micart', JSON.stringify(micart));
 
@@ -1843,77 +2035,87 @@
 
                 function saveventas() {
 
-                    var cliente_id = $("input[name='cliente_id']").val();
-                    var cupon_id = $("input[name='cupon_id']").val();
-                    var pago_id = $("input[name='pago_id']").val();
-                    var status_id = $("input[name='status_id']").val();
-                    var option_id = $("input[name='option_id']").val();
-                    var factura = $("input[name='factura']:checked").val();
-                    var total = $("input[name='total']").val();
-                    var descuento = $("input[name='descuento']").val();
-                    var observacion = $("input[name='observacion']").val();
-                    var register_id = $("input[name='register_id']").val();
-                    var caja_id = $("input[name='caja_id']").val();
-                    var delivery_id = $("input[name='delivery_id']").val();
-                    var sucursal_id = $("input[name='sucursal_id']").val();
-                    var subtotal = $("input[name='subtotal']").val();
-                    var recibido = $("#recibido").val();
-                    var cambio = $("#cambio").val();
-                    var chofer_id=$("input[name='chofer_id']").val();
-                    var adicional=$("input[name='adicional']").val();
-                    
                     var micart = JSON.parse(localStorage.getItem('micart'));
+                    if (micart.length == 0 ) {
+                        toastr.error('Tu Carrito esta Vacio');
+                    }
+                    else{
 
-                    var midata = JSON.stringify({'cliente_id': cliente_id, 'cupon_id': cupon_id, 'option_id': option_id, 'pago_id': pago_id, 'factura': factura, 'total': total, 'descuento': descuento, 'observacion': observacion, 'register_id': register_id, 'status_id': status_id, 'caja_id': caja_id, 'delivery_id': delivery_id, 'sucursal_id': sucursal_id, subtotal: subtotal, 'cantidad': micart.length, 'recibido': recibido, 'cambio': cambio, chofer_id : chofer_id, adicional:adicional });
-
-                    $('#modal_save_venta').modal('hide');
-                    
-                    $.ajax({
-                        url: "{{ setting('admin.url') }}api/pos/ventas/save/"+midata,
-                        success: function (response) {
+                            var cliente_id = $("input[name='cliente_id']").val();
+                            var cupon_id = $("input[name='cupon_id']").val();
+                            var pago_id = $("input[name='pago_id']").val();
+                            var status_id = $("input[name='status_id']").val();
+                            var option_id = $("input[name='option_id']").val();
+                            var factura = $("input[name='factura']:checked").val();
+                            var credito = $("input[name='credito']:checked").val();
+                            var total = $("input[name='total']").val();
+                            var descuento = $("input[name='descuento']").val();
+                            var observacion = $("input[name='observacion']").val();
+                            var register_id = $("input[name='register_id']").val();
+                            var caja_id = $("input[name='caja_id']").val();
+                            var delivery_id = $("input[name='delivery_id']").val();
+                            var sucursal_id = $("input[name='sucursal_id']").val();
+                            var subtotal = $("input[name='subtotal']").val();
+                            var recibido = $("input[name='recibido']").val();
+                            var cambio = $("input[name='cambio']").val();
+                            var chofer_id=$("input[name='chofer_id']").val();
+                            var adicional=$("input[name='adicional']").val();
                             
-                            // enviando detalle de venta
                             var micart = JSON.parse(localStorage.getItem('micart'));
-                            for (let index = 0; index < micart.length; index++) {
-                                var midata = JSON.stringify({'producto_id': micart[index].id, 'venta_id': response.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'description': micart[index].description});
-                                var urli = "{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata;
-                                $.ajax({
-                                    url: urli,
-                                    success: function (midata) {
-                                    if ((response.cantidad - 1) == index) {
-                                        document.getElementById("audio").play();
 
-                                        if ($("input[name='season']:checked").val() == 'imprimir') {
-                                            $("input[name='descuento']").val(0)
-                                            localStorage.setItem('micart', JSON.stringify([]));
-                                            // location.href = "{{ setting('admin.url') }}admin/ventas/imprimir/"+response.id;
-                                            window.open( "{{ setting('admin.url') }}admin/ventas/imprimir/"+response.id, "Recibo", "width=500,height=700");
-                                        }else{       
-                                            localStorage.setItem('micart', JSON.stringify([]));                                 
-                                            toastr.success('Venta Realizada');
-                                        }
-                                    }
-                                    $("#micart tr#"+micart[index].id).remove();
-                                    mitotal(); 
-                                    }
-                                });
-                            }
+                            var midata = JSON.stringify({'cliente_id': cliente_id, 'cupon_id': cupon_id, 'option_id': option_id, 'pago_id': pago_id, 'factura': factura, 'credito': credito ,'total': total, 'descuento': descuento, 'observacion': observacion, 'register_id': register_id, 'status_id': status_id, 'caja_id': caja_id, 'delivery_id': delivery_id, 'sucursal_id': sucursal_id, subtotal: subtotal, 'cantidad': micart.length, 'recibido': recibido, 'cambio': cambio, chofer_id : chofer_id, adicional:adicional });
+
+                            $('#modal_save_venta').modal('hide');
                             
-                            // enviado notification 
-                            
-                            socket.emit(name_socket, 'VENTA REALIZADA: '+response.id)
+                            $.ajax({
+                                url: "{{ setting('admin.url') }}api/pos/ventas/save/"+midata,
+                                success: function (response) {
+                                    
+                                    // enviando detalle de venta
+                                    var micart = JSON.parse(localStorage.getItem('micart'));
+                                    for (let index = 0; index < micart.length; index++) {
+                                        var midata = JSON.stringify({'producto_id': micart[index].id, 'venta_id': response.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'description': micart[index].description});
+                                        var urli = "{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata;
+                                        $.ajax({
+                                            url: urli,
+                                            success: function (midata) {
+                                            if ((response.cantidad - 1) == index) {
+                                                document.getElementById("audio").play();
 
-                            // var phone = $('#phone_client').val();
-                            // $.ajax({
-                            //     url: "{{ setting('admin.chatbot') }}?type=pedido&phone="+phone+"&message="+response,
-                            //     success: function () {
-                                  
-                                   
-                            //     }
-                            // });
+                                                if ($("input[name='season']:checked").val() == 'imprimir') {
+                                                    $("input[name='descuento']").val(0)
+                                                    localStorage.setItem('micart', JSON.stringify([]));
+                                                    // location.href = "{{ setting('admin.url') }}admin/ventas/imprimir/"+response.id;
+                                                    window.open( "{{ setting('admin.url') }}admin/ventas/imprimir/"+response.id, "Recibo", "width=500,height=700");
+                                                }else{       
+                                                    localStorage.setItem('micart', JSON.stringify([]));                                 
+                                                    toastr.success('Venta Realizada');
+                                                }
+                                            }
+                                            $("#micart tr#"+micart[index].id).remove();
+                                            mitotal(); 
+                                            }
+                                        });
+                                    }
+                                    
+                                    // enviado notification 
+                                    
+                                    socket.emit(name_socket, 'VENTA REALIZADA: '+response.id)
 
-                        }
-                    });
+                                    // var phone = $('#phone_client').val();
+                                    // $.ajax({
+                                    //     url: "{{ setting('admin.chatbot') }}?type=pedido&phone="+phone+"&message="+response,
+                                    //     success: function () {
+                                        
+                                        
+                                    //     }
+                                    // });
+
+                                }
+                            });
+
+                    }
+                    
                 }
 
                 $('#category').on('change', function() {
@@ -2012,7 +2214,7 @@
                                 if('{{setting('ventas.stock')}}'){
 
                                    
-                                        if (response.mixta == 1 ) {
+                                    if (response.mixta == 1 ) {
                                         $('#mixtos').attr("hidden",false);
                                         var micategory = $('#category').val();
                                         // console.log(micategory);
@@ -2045,77 +2247,74 @@
 
                                             }
                                         });
-                                        } else {
-
-                                            $('#mixtos').attr("hidden",true);
-
-                                            if(response.stock >= 1){
-                                                if(response.stock <= '{{setting('ventas.minimo_stock')}}'){
-                                                    toastr.error("Solo quedan: "+response.stock+" "+response.name +" ");
-                                                }
-                                            
-                                                    $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"</td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
-                                                    
-                                                    var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': null};
-                                                    micart.push(temp);
-                                                    localStorage.setItem('micart', JSON.stringify(micart));
-
-                                                    mitotal();
-                                                    toastr.success(response.name+" - REGISTRADO");
+                                    } else {
+                                        $('#mixtos').attr("hidden",true);
+                                        if(response.stock >= 1){
+                                            if(response.stock <= '{{setting('ventas.minimo_stock')}}')
+                                            {
+                                                toastr.error("Solo quedan: "+response.stock+" "+response.name +" ");
+                                            }   
+                                            var description=null;
+                                            if(response.extra){
+                                                $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onkeypress='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
 
                                             }
                                             else{
-                                                toastr.error("No existe el producto: "+response.name +" en Stock");
+                                                $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onkeypress='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
                                             }
+                                            var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': null, 'extra':response.extra, 'extras':response.extras};
+                                            micart.push(temp);
+                                            localStorage.setItem('micart', JSON.stringify(micart));
+                                            mitotal();
+                                            toastr.success(response.name+" - REGISTRADO");
+
                                         }
-
-                                    
-                                }
-                                else{
-
-                                    
+                                        else{
+                                            toastr.error("No existe el producto: "+response.name +" en Stock");
+                                        }
+                                    }                                    
+                                } else {
                                     if (response.mixta == 1 ) {
-                                    $('#mixtos').attr("hidden",false);
-                                    var micategory = $('#category').val();
-                                    // console.log(micategory);
-                                    $.ajax({
-                                        url: "{{ setting('admin.url') }}api/pos/producto/mixto/0/"+micategory,
-                                        dataType: "json",
-                                        success: function (response) {
-
-                                            $('#mixta1').append($('<option>', {
-                                                value: null,
-                                                text: 'Elige un Mitad'
-                                            }));
-                                            for (let index = 0; index < response.length; index++) {                                         
+                                        $('#mixtos').attr("hidden",false);
+                                        var micategory = $('#category').val();
+                                        $.ajax({
+                                            url: "{{ setting('admin.url') }}api/pos/producto/mixto/0/"+micategory,
+                                            dataType: "json",
+                                            success: function (response) {
                                                 $('#mixta1').append($('<option>', {
-                                                    value: response[index].id,
-                                                    text: response[index].name + ' '+ response[index].precio + ' Bs.'
-                                                }));                                                        
-                                            }
-
-                                            $('#mixta2').append($('<option>', {
-                                                value: null,
-                                                text: 'Elige un Mitad'
-                                            }));
-                                            for (let index = 0; index < response.length; index++) {                                         
+                                                    value: null,
+                                                    text: 'Elige un Mitad'
+                                                }));
+                                                for (let index = 0; index < response.length; index++) {                                         
+                                                    $('#mixta1').append($('<option>', {
+                                                        value: response[index].id,
+                                                        text: response[index].name + ' '+ response[index].precio + ' Bs.'
+                                                    }));                                                        
+                                                }
                                                 $('#mixta2').append($('<option>', {
-                                                    value: response[index].id,
-                                                    text: response[index].name+ ' '+ response[index].precio + ' Bs.'
-                                                }));                                                        
+                                                    value: null,
+                                                    text: 'Elige un Mitad'
+                                                }));
+                                                for (let index = 0; index < response.length; index++) {                                         
+                                                    $('#mixta2').append($('<option>', {
+                                                        value: response[index].id,
+                                                        text: response[index].name+ ' '+ response[index].precio + ' Bs.'
+                                                    }));                                                        
+                                                }
                                             }
-
-                                        }
-                                    });
+                                        });
                                     } else {
                                         $('#mixtos').attr("hidden",true);
-                                
-                                        $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"</td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
-                                        
-                                        var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': null};
+                                        var description=null;                                              
+                                        if(response.extra){
+                                            $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onkeypress='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+
+                                        }else{
+                                            $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onkeypress='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                        }
+                                        var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': null, 'extra':response.extra, 'extras':response.extras};
                                         micart.push(temp);
                                         localStorage.setItem('micart', JSON.stringify(micart));
-
                                         mitotal();
                                         toastr.success(response.name+" - REGISTRADO");
                                     }
@@ -2124,7 +2323,6 @@
                             }
                         });
                     }
-            
                 }
 
                 function midelete(id) {
@@ -2151,21 +2349,10 @@
                     var cant_actual = 0;
                     var inventario = false;
                     if('{{setting('ventas.stock')}}'){
-                        // $.ajax({
-                        //     url: "{{ setting('admin.url') }}api/pos/producto/"+id,
-                        //     dataType: "json",
-                        //     success: function (response) {
-                        //         cant_actual = response.stock;
-                        //         inventario = true;
-                        //     }
-                        // });
                         var response = await axios("{{ setting('admin.url') }}api/pos/producto/"+id);
                         cant_actual = response.data.stock;
                         inventario = true;
-
                     }
-
-
                     var total = parseFloat($("#precio_"+id).val()).toFixed(2) * parseInt($("#cant_"+id).val());
                     $("#total_"+id).val(parseFloat(total).toFixed(2));
 
@@ -2177,21 +2364,45 @@
                                 if (milist[index].cant > cant_actual ) {
                                     toastr.error('Cantidad Excedida')
                                 } else {
-                                    var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'precio': milist[index].precio, 'cant': parseInt($("#cant_"+id).val()), 'total': milist[index].precio * parseInt($("#cant_"+id).val())};
+                                    var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'description': milist[index].description , 'precio': milist[index].precio, 'cant': parseInt($("#cant_"+id).val()), 'total': milist[index].precio * parseInt($("#cant_"+id).val())};
                                     newlist.push(temp);
                                 }
                             }else{
-                                var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'precio': milist[index].precio, 'cant': parseInt($("#cant_"+id).val()), 'total': milist[index].precio * parseInt($("#cant_"+id).val())};
+                                var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'description': milist[index].description ,'precio': milist[index].precio, 'cant': parseInt($("#cant_"+id).val()), 'total': milist[index].precio * parseInt($("#cant_"+id).val())};
                                 newlist.push(temp);
                             }
                         }else{
-                            var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'precio': milist[index].precio, 'cant': milist[index].cant, 'total': milist[index].precio, 'total':  milist[index].total};
+                            var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'description': milist[index].description ,'precio': milist[index].precio, 'cant': milist[index].cant, 'total': milist[index].precio, 'total':  milist[index].total};
                             newlist.push(temp);
                         }
                     }
-
-
                     localStorage.setItem('micart', JSON.stringify(newlist));
+                    mitotal();
+                }
+
+                async function updateprice(id) {
+            
+                    
+                    updatecant(id);
+                    // var milist = JSON.parse(localStorage.getItem('micart'));
+                    // var newlist = [];
+                    // for (let index = 0; index < milist.length; index++) {
+                    //     if (milist[index].id == id) {
+                           
+                    //         var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'description': milist[index].description ,'precio': parseInt($("#precio_"+id).val()), 'cant': milist[index].cant, 'total': milist[index].precio * milist[index].cant};
+                    //         newlist.push(temp);
+                          
+                    //     }else{
+                    //         var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'description': milist[index].description , 'precio': milist[index].precio, 'cant': milist[index].cant, 'total': milist[index].precio, 'total':  milist[index].total};
+                    //         newlist.push(temp);
+                    //     }
+                    // }
+                   
+
+                    // localStorage.setItem('micart', JSON.stringify(newlist));
+                    // var milist = JSON.parse(localStorage.getItem('micart'));
+                    // var total = parseFloat(milist[id].precio).toFixed(2) * parseInt(milist[id].cant);
+                    // $("#total_"+id).val(parseFloat(total).toFixed(2));
                     mitotal();
                 }
 
@@ -2937,11 +3148,7 @@
                             location.href='{{ setting('admin.url') }}admin/production-semis';
                         }
                     });
-
-
                 }
-
-
 
             </script>
         @stop
@@ -2953,8 +3160,8 @@
             $('document').ready(function () {
 
 
-                $.ajax({
-                        url: "{{ setting('admin.url') }}api/pos/categorias",
+                    $.ajax({
+                        url: "{{ setting('admin.url') }}api/pos/categorias_all",
                         dataType: "json",
                         success: function (response) {
                             $('#micategory').append($('<option>', {
@@ -2971,7 +3178,23 @@
                         }
                     });
 
-
+                    $.ajax({
+                        url: "{{ setting('admin.url') }}api/pos/typeproductos",
+                        dataType: "json",
+                        success: function (response) {
+                            $('#type_producto').append($('<option>', {
+                                value: null,
+                                text: 'Elige un Tipo de Producto'
+                            }));
+                            for (let index = 0; index < response.length; index++) {
+                                const element = response[index];
+                                $('#type_producto').append($('<option>', {
+                                    value: response[index].id,
+                                    text: response[index].name
+                                }));
+                            }
+                        }
+                    });
 
 
             });
@@ -2983,6 +3206,13 @@
 
             });
 
+
+            $('#type_producto').on('change', function() {
+
+                var type_producto_id = $('#type_producto').val();
+                $('input[name="type_producto_id"]').val(type_producto_id);
+
+            });
 
             var params = {};
             var $file;

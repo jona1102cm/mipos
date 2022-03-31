@@ -1041,6 +1041,13 @@
                                                                     <span>{{ $categoria ? $categoria->name : null }}</span>
                                                                     @break
 
+                                                                    @case('type_producto_id')
+                                                                    @php
+                                                                        $type_producto = App\TypeProducto::find($data->{$row->field});
+                                                                    @endphp
+                                                                    <span>{{ $type_producto ? $type_producto->name : null }}</span>
+                                                                    @break
+
                                                                     @default
                                                                     @include('voyager::multilingual.input-hidden-bread-browse')
                                                                     <span>{{ $data->{$row->field} }}</span>
@@ -3481,7 +3488,7 @@
                         case ('categoria_id'):
                             $('#s').find('option').remove().end();
                             $.ajax({
-                                url: "{{ setting('admin.url') }}api/pos/categorias",
+                                url: "{{ setting('admin.url') }}api/pos/categorias_all",
                                 dataType: "json",
                                 success: function (response) {
                                     $('#s').append($('<option>', {
