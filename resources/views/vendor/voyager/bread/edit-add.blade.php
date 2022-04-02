@@ -252,7 +252,7 @@
                                             <select class="form-control js-example-basic-single" id="midelivery"> </select>
                                         </div>
                                 
-                                        AKI OPTION A
+                                        
 
                                         <div class="form-group text-center">                               
                                             <form class="form-horizontal" role="form">
@@ -295,7 +295,9 @@
                                                 @endif
                                             </div>
                                         @endforeach
-                                        AKI OPTION B
+                                        
+                                        <hr>
+                                        <a href="https://banipay.me/super/payment?b=86587e62-ffde-4ded-9327-f1fd7a98fba6" class="myButton">PAGA</a>
                                     </div>
                                 @break
                         
@@ -984,7 +986,7 @@
                             <h4 class="modal-title"><i class="voyager-list-add"></i> Lista de extras</h4>
                         </div>
                         <div class="modal-body">
-                            <input type="hidden" name="id">
+                            <input type="text" name="producto_extra_id" id="producto_extra_id">
                             <table class="table table-bordered table-hover" id="table-extras"> 
                                 <thead>
                                     <tr>
@@ -1476,21 +1478,7 @@
 
                     //-----------------------
                     if (localStorage.getItem('micart')) {
-                        var milist = JSON.parse(localStorage.getItem('micart'));
-                        // console.log(milist.length);
-                        if(milist.length == 0){
-                            $("#micart").append("<tr id=0><td colspan='4'> <img class='img-responsive img-sm' src={{ setting('admin.url') }}storage/231-2317260_an-empty-shopping-cart-viewed-from-the-side.png></td></tr>");
-                        }else{
-                            for (let index = 0; index < milist.length; index++) {
-                                if(milist[index].extra){
-                                    $("#micart").append("<tr id="+milist[index].id+"><td>"+milist[index].id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+milist[index].image+"></td><td>"+milist[index].name+"<br>"+milist[index].description+"</td><td><input class='form-control' type='text' id='observacion_"+milist[index].id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+milist[index].extras+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+milist[index].precio+"' id='precio_"+milist[index].id+"' onkeypress='updateprice("+milist[index].id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+milist[index].id+")' value='"+milist[index].cant+"' id='cant_"+milist[index].id+"'></td><td><input class='form-control' type='number' value='"+milist[index].total+"' id='total_"+milist[index].id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+milist[index].id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
-                                }
-                                else{
-                                    $("#micart").append("<tr id="+milist[index].id+"><td>"+milist[index].id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+milist[index].image+"></td><td>"+milist[index].name+"<br>"+milist[index].description+"</td><td><input class='form-control' type='text' id='observacion_"+milist[index].id+"'></td><td></td><td><input class='form-control' type='number' value='"+milist[index].precio+"' id='precio_"+milist[index].id+"' onkeypress='updateprice("+milist[index].id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+milist[index].id+")' value='"+milist[index].cant+"' id='cant_"+milist[index].id+"'></td><td><input class='form-control' type='number' value='"+milist[index].total+"' id='total_"+milist[index].id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+milist[index].id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
-                                }
-                            }
-                            mitotal();
-                        }
+                        micart();
 
                     } else {
                         localStorage.setItem('micart', JSON.stringify([]));
@@ -1498,34 +1486,47 @@
     
                 });
 
-                async function addextra(extras) {
+                async function addextra(extras , producto_id) {
                     $("#table-extras tbody tr").remove();
+                    $("#producto_extra_id").val(producto_id);
                     var mitable="";
                     var extrasp=  await axios.get("{{ setting('admin.url') }}api/pos/producto/extra/"+extras);
                     //console.log(extrasp.data);
                     for(let index=0; index < extrasp.data.length; index++){
-                        mitable = mitable + "<tr><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+extrasp.data[index].image+"></td><td>"+extrasp.data[index].name+"</td><td>"+extrasp.data[index].precio+" Bs."+"</td><td><input class='form-control' type='number' min='0' value='0'  onclick='updatecantextra("+extrasp.data[index].id+")' id='extra_"+extrasp.data[index].id+"'></td></tr>";
+                        mitable = mitable + "<tr><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+extrasp.data[index].image+"></td><td>"+extrasp.data[index].id+"</td><td>"+extrasp.data[index].name+"</td><td>"+extrasp.data[index].precio+" Bs."+"</td><td><input class='form-control' type='number' min='0' value='0'  onclick='updatecantextra("+extrasp.data[index].id+","+producto_id+")' id='extra_"+extrasp.data[index].id+"'></td></tr>";
                     }
                     $('#table-extras').append(mitable);
 
                 }
 
-                async function updatecantextra(id){
+                async function updatecantextra(extra_id, producto_id){
+
+                    var prod_extra=  await axios.get("{{ setting('admin.url') }}api/pos/producto/"+extra_id);
+                    var prod_pizza=  await axios.get("{{ setting('admin.url') }}api/pos/producto/"+producto_id);
+
+                    var precio_extra=prod_extra.data.precio;
+                    var miprice = $("#precio_"+producto_id).val()
+                    var nuevoprecio = parseFloat(precio_extra)+ parseFloat(miprice)
+                    var nuevototal = parseFloat(nuevoprecio).toFixed(2)*parseFloat($("#cant_"+producto_id).val());
+                    var name_extra=prod_extra.data.name;
 
                     var milist = JSON.parse(localStorage.getItem('micart'));
                     var newlist = [];
                     for (let index = 0; index < milist.length; index++) {
-                        if (milist[index].id == id) {
-                                var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'description': milist[index].description ,'precio': milist[index].precio, 'cant': parseInt($("#cant_"+id).val()), 'total': milist[index].precio * parseInt($("#cant_"+id).val())};
+                        if (milist[index].id == producto_id) {
+                                var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'description': milist[index].description , 'precio': nuevoprecio ,'precio_anterior': milist[index].precio, 'cant': milist[index].cant, 'total':nuevototal, 'extra':milist[index].extra, 'extras':milist[index].extras, 'extra_name': name_extra, 'observacion':milist[index].observacion};
                                 newlist.push(temp);
-                            
-                        }else{
-                            var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'description': milist[index].description ,'precio': milist[index].precio, 'cant': milist[index].cant, 'total': milist[index].precio, 'total':  milist[index].total};
-                            newlist.push(temp);
                         }
+                        else{
+
+                                var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'description': milist[index].description , 'precio': milist[index].precio , 'cant': milist[index].cant, 'total': milist[index].total, 'extra':milist[index].extra, 'extras':milist[index].extras, 'extra_name':milist[index].extra_name, 'observacion':milist[index].observacion};
+                                newlist.push(temp);
+                        }
+                        
                     }
-                    localStorage.setItem('micart', JSON.stringify(newlist));
-                    mitotal();
+                    localStorage.setItem('micart', JSON.stringify(newlist));                    
+                    micart();
+
                 }
 
 
@@ -1778,7 +1779,7 @@
                                     $('#mixtos').attr("hidden", true);
                                     $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onkeypress='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
                                                     
-                                    var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': description, 'extra': response.extra, 'extras':response.extras };
+                                    var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': description, 'extra': response.extra, 'extras':response.extras, 'extra_name':'', 'observacion':'' };
                                     micart.push(temp);
                                     localStorage.setItem('micart', JSON.stringify(micart));
 
@@ -1810,7 +1811,7 @@
                             $('#mixtos').attr("hidden", true);
                             $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras'onclick='addextra("+response.extras+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
                                             
-                            var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': description, 'extra': response.extra, 'extras':response.extras};
+                            var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': description, 'extra': response.extra, 'extras':response.extras, 'extra_name':'', 'observacion':''};
                             micart.push(temp);
                             localStorage.setItem('micart', JSON.stringify(micart));
 
@@ -2194,7 +2195,7 @@
                     var total = 0;
                     var micart = JSON.parse(localStorage.getItem('micart'));
                     $("#micart tr#0").remove();
-
+                    //$("#producto_id").val();
                     var mirep = false;
                     for (let index = 0; index < micart.length; index++) {
                         if(micart[index].id == id){
@@ -2256,13 +2257,13 @@
                                             }   
                                             var description=null;
                                             if(response.extra){
-                                                $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onkeypress='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                                $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onkeypress='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
 
                                             }
                                             else{
-                                                $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onkeypress='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                                $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onkeypress='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
                                             }
-                                            var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': null, 'extra':response.extra, 'extras':response.extras};
+                                            var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': '', 'extra':response.extra, 'extras':response.extras, 'extra_name':'', 'observacion':''};
                                             micart.push(temp);
                                             localStorage.setItem('micart', JSON.stringify(micart));
                                             mitotal();
@@ -2307,12 +2308,12 @@
                                         $('#mixtos').attr("hidden",true);
                                         var description=null;                                              
                                         if(response.extra){
-                                            $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onkeypress='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                            $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+","+response.id+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onkeypress='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
 
                                         }else{
-                                            $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onkeypress='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                            $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onkeypress='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
                                         }
-                                        var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': null, 'extra':response.extra, 'extras':response.extras};
+                                        var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'cant': 1, 'total': response.precio, 'description': '', 'extra':response.extra, 'extras':response.extras, 'extra_name':'', 'observacion':''};
                                         micart.push(temp);
                                         localStorage.setItem('micart', JSON.stringify(micart));
                                         mitotal();
@@ -2364,15 +2365,15 @@
                                 if (milist[index].cant > cant_actual ) {
                                     toastr.error('Cantidad Excedida')
                                 } else {
-                                    var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'description': milist[index].description , 'precio': milist[index].precio, 'cant': parseInt($("#cant_"+id).val()), 'total': milist[index].precio * parseInt($("#cant_"+id).val())};
+                                    var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'description': milist[index].description , 'precio': milist[index].precio, 'cant': parseInt($("#cant_"+id).val()), 'total': milist[index].precio * parseInt($("#cant_"+id).val()), 'extra':milist[index].extra, 'extras':milist[index].extras, 'extra_name':milist[index].extra_name, 'observacion':milist[index].observacion};
                                     newlist.push(temp);
                                 }
                             }else{
-                                var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'description': milist[index].description ,'precio': milist[index].precio, 'cant': parseInt($("#cant_"+id).val()), 'total': milist[index].precio * parseInt($("#cant_"+id).val())};
+                                var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'description': milist[index].description ,'precio': milist[index].precio, 'cant': parseInt($("#cant_"+id).val()), 'total': milist[index].precio * parseInt($("#cant_"+id).val()), 'extra':milist[index].extra, 'extras':milist[index].extras, 'extra_name':milist[index].extra_name, 'observacion':milist[index].observacion};
                                 newlist.push(temp);
                             }
                         }else{
-                            var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'description': milist[index].description ,'precio': milist[index].precio, 'cant': milist[index].cant, 'total': milist[index].precio, 'total':  milist[index].total};
+                            var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'description': milist[index].description ,'precio': milist[index].precio, 'cant': milist[index].cant, 'total': milist[index].total,  'extra':milist[index].extra, 'extras':milist[index].extras, 'extra_name':milist[index].extra_name, 'observacion':milist[index].observacion};
                             newlist.push(temp);
                         }
                     }
@@ -2406,6 +2407,24 @@
                     mitotal();
                 }
 
+
+                function micart(){
+                    $("#micart tbody tr").remove();
+                    var milist = JSON.parse(localStorage.getItem('micart'));
+                        if(milist.length == 0){
+                            $("#micart").append("<tr id=0><td colspan='4'> <img class='img-responsive img-sm' src={{ setting('admin.url') }}storage/231-2317260_an-empty-shopping-cart-viewed-from-the-side.png></td></tr>");
+                        }else{
+                            for (let index = 0; index < milist.length; index++) {
+                                if(milist[index].extra){
+                                    $("#micart").append("<tr id="+milist[index].id+"><td>"+milist[index].id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+milist[index].image+"></td><td>"+milist[index].name+"<br>"+milist[index].description+"<br>"+milist[index].extra_name+"</td><td><input class='form-control' type='text' value='"+milist[index].observacion+"' id='observacion_"+milist[index].id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+milist[index].extras+", "+milist[index].id+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+milist[index].precio+"' id='precio_"+milist[index].id+"' onkeypress='updateprice("+milist[index].id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+milist[index].id+")' value='"+milist[index].cant+"' id='cant_"+milist[index].id+"'></td><td><input class='form-control' type='number' value='"+milist[index].total+"' id='total_"+milist[index].id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+milist[index].id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                }
+                                else{
+                                     $("#micart").append("<tr id="+milist[index].id+"><td>"+milist[index].id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+milist[index].image+"></td><td>"+milist[index].name+"<br>"+milist[index].description+"<br>"+milist[index].extra_name+"</td><td><input class='form-control' type='text' value='"+milist[index].observacion+"' id='observacion_"+milist[index].id+"'></td><td></td><td><input class='form-control' type='number' value='"+milist[index].precio+"' id='precio_"+milist[index].id+"' onkeypress='updateprice("+milist[index].id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+milist[index].id+")' value='"+milist[index].cant+"' id='cant_"+milist[index].id+"'></td><td><input class='form-control' type='number' value='"+milist[index].total+"' id='total_"+milist[index].id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+milist[index].id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                }
+                            }
+                            mitotal();
+                        }
+                }
             </script>
         @stop
     @break
