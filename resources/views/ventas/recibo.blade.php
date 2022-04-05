@@ -50,8 +50,9 @@
                 <td colspan="2">
                     <table>
                         <tr>
-                            <th>CANTIDAD</th>
                             <th>DETALLE</th>
+                            <th>EXTRAS</th>
+                            <th>OBSERVACION</th>
                             <th>PRECIO UNIT.</th>
                             <th align="right">TOTAL UNIT.</th>
  
@@ -63,8 +64,9 @@
                                  $totalunit=($item->cantidad)*($item->precio);
                              @endphp
                              <tr>
-                                 <td align="center"><b>{{ $item->cantidad }}</b></td>
-                                 <td align="center"><b>{{ $miproduct->name }}</b></td>
+                                 <td align="center"><b>{{ $item->cantidad }} {{ $miproduct->name }} {{$item->description}}</b></td>
+                                 <td align="center"><b>{{$item->extra_name}}</b></td>
+                                 <td align="center"><b>{{ $item->observacion }}</b></td>
                                  <td align="center"><b>{{ $item->precio }}</b></td>
                                  <td align="center"><b>{{ $totalunit }}</b></td>
                                  
@@ -139,8 +141,9 @@
                     {{-- <td colspan="2">
                         <table width="100%"> --}}
                             <tr>
-                                <th>CANTIDAD</th>
                                 <th>DETALLE</th>
+                                <th>EXTRAS</th>
+                                <th>OBSERVACION</th>
                                 <th>PRECIO UNIT.</th>
                                 <th align="right">TOTAL UNIT.</th>
 
@@ -152,8 +155,9 @@
                                     $totalunit=($item->cantidad)*($item->precio);
                                 @endphp
                                 <tr>
-                                    <td align="center"><b>{{ $item->cantidad }}</b></td>
-                                    <td align="center"><b>{{ $miproduct->name }}</b></td>
+                                    <td align="center"><b>{{ $item->cantidad }} {{ $miproduct->name }} {{$item->description}}</b></td>
+                                    <td align="center"><b>{{$item->extra_name}}</b></td>
+                                    <td align="center"><b>{{ $item->observacion }}</b></td>
                                     <td align="center"><b>{{ $item->precio }}</b></td>
                                     <td align="center"><b>{{ $totalunit }}</b></td>
                                 </tr>

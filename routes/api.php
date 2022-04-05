@@ -298,7 +298,9 @@ Route::get('pos/ventas/save/detalle/{micart}', function($micart) {
             'total' => $micart2->total,
             'foto' => $miproducto->image ? $miproducto->image : null,
             'name' => $miproducto->name,
-            'description' => $micart2->description ? $micart2->description : null
+            'description' => $micart2->description,
+            'extra_name'=>$micart2->extra_name,
+            'observacion'=>$micart2->observacion
         ]);
 
     } else {
@@ -310,7 +312,9 @@ Route::get('pos/ventas/save/detalle/{micart}', function($micart) {
             'total' => $micart2->total,
             'foto' => $miproducto->image ? $miproducto->image : null,
             'name' => $miproducto->name,
-            'description' => $micart2->description ? $micart2->description : null
+            'description' => $micart2->description,
+            'extra_name'=>$micart2->extra_name,
+            'observacion'=>$micart2->observacion
         ]);
     }
     

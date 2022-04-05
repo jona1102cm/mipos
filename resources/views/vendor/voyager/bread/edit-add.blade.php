@@ -1066,6 +1066,16 @@
                                         <label for="">Correo</label>
                                         <input class="form-control" type="text" placeholder="Email" id="email">
                                     </div>
+                                    <div class="form-group col-sm-6">
+
+                                    </div>
+                                    <div class="form-group col-sm-3">
+                                        <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
+                                    </div>
+                                    <div class="form-group col-sm-3">
+                                        <button type="button" class="btn btn-sm btn-primary" onclick="savecliente()" >Agregar</button>
+                                    </div>
+
                                 </div>
                                 <div role="tabpanel" class="tab-pane" id="profile">
                                     <input type="text" class="form-control" placeholder="Criterio de Busquedas.." id="cliente_busqueda">
@@ -1085,8 +1095,6 @@
                     
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
-                            <button type="button" class="btn btn-sm btn-primary" onclick="savecliente()" >Enviar</button>
                         </div>
 
                     </div>
@@ -1174,6 +1182,15 @@
                                         <label for="">Concepto</label>
                                         <textarea class="form-control" name="" id="concepto"></textarea>
                                     </div>
+                                    <div class="form-group col-sm-6">
+
+                                    </div>
+                                    <div class="form-group col-sm-3">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
+                                    </div>
+                                    <div class="form-group col-sm-3">
+                                        <button type="button" class="btn btn-primary" onclick="save_asiento()">Enviar</button>
+                                    </div>
                                 </div>
                                 <div role="tabpanel" class="tab-pane" id="profile1">
                                
@@ -1193,8 +1210,6 @@
                             </div>  
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
-                            <button type="button" class="btn btn-primary" onclick="save_asiento()">Enviar</button>
                             
                         </div>
                     </div>
@@ -1921,7 +1936,7 @@
                         success: function (response) {
 
                             $('#mixtos').attr("hidden", true);
-                            $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras'onclick='addextra("+response.extras+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                            $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras'onclick='addextra("+response.extras+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' readonly></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
                                             
                             var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'precio_inicial':response.precio, 'cant': 1, 'total': response.precio, 'description': description, 'extra': response.extra, 'extras':response.extras, 'extra_name':'', 'observacion':''};
                             micart.push(temp);
@@ -2187,7 +2202,7 @@
                                     // enviando detalle de venta
                                     var micart = JSON.parse(localStorage.getItem('micart'));
                                     for (let index = 0; index < micart.length; index++) {
-                                        var midata = JSON.stringify({'producto_id': micart[index].id, 'venta_id': response.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'description': micart[index].description});
+                                        var midata = JSON.stringify({'producto_id': micart[index].id, 'venta_id': response.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'name':micart[index].name, 'foto':micart[index].foto, 'description': micart[index].description, 'extra_name':micart[index].extra_name, 'observacion':micart[index].observacion});
                                         var urli = "{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata;
                                         $.ajax({
                                             url: urli,
@@ -2343,7 +2358,9 @@
                                                 for (let index = 0; index < response.length; index++) {    
                                                     $('#mixta1').append($('<option>', {
                                                         value: response[index].id,
-                                                        text: response[index].name + ' '+ response[index].precio + ' Bs.'
+                                                        //text: response[index].name + ' '+ response[index].precio + ' Bs.'
+                                                        text: response[index].name
+
                                                     }));                                   
                                                 }
 
@@ -2354,7 +2371,8 @@
                                                 for (let index = 0; index < response.length; index++) {                                         
                                                     $('#mixta2').append($('<option>', {
                                                         value: response[index].id,
-                                                        text: response[index].name+ ' '+ response[index].precio + ' Bs.'
+                                                         //text: response[index].name + ' '+ response[index].precio + ' Bs.'
+                                                         text: response[index].name
                                                     }));
                                                 }
 
@@ -2401,7 +2419,8 @@
                                                 for (let index = 0; index < response.length; index++) {                                         
                                                     $('#mixta1').append($('<option>', {
                                                         value: response[index].id,
-                                                        text: response[index].name + ' '+ response[index].precio + ' Bs.'
+                                                         //text: response[index].name + ' '+ response[index].precio + ' Bs.'
+                                                         text: response[index].name
                                                     }));                                                        
                                                 }
                                                 $('#mixta2').append($('<option>', {
@@ -2411,7 +2430,8 @@
                                                 for (let index = 0; index < response.length; index++) {                                         
                                                     $('#mixta2').append($('<option>', {
                                                         value: response[index].id,
-                                                        text: response[index].name+ ' '+ response[index].precio + ' Bs.'
+                                                         //text: response[index].name + ' '+ response[index].precio + ' Bs.'
+                                                         text: response[index].name
                                                     }));                                                        
                                                 }
                                             }

@@ -15,7 +15,9 @@ class DetalleVenta extends Model
 		'total',
 		'name',
 		'foto',
-		'description'
+		'description',
+		'extra_name',
+		'observacion'
 	];
 
 }
