@@ -175,7 +175,7 @@
                                                                         @php
                                                                         $miimage =$item->image ? $item->image :  setting('productos.imagen_default') ;
                                                                         @endphp
-                                                                        <img src="https://pos.loginweb.dev/storage/{{ $miimage }}">
+                                                                        <img src="{{setting('admin.url')}}storage/{{ $miimage }}">
                                                                     </a>
                                                                     <small>{{ $item->name }}</small> 
                                                                 </div>
