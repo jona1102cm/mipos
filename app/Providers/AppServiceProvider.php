@@ -23,6 +23,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Voyager::addAction(\App\Actions\CatalogoManual::class);
+
         Voyager::addAction(\App\Actions\CierreCaja::class);
         //
         Voyager::addAction(\App\Actions\VentaDetalle::class);
@@ -41,6 +43,8 @@ class AppServiceProvider extends ServiceProvider
         // Voyager::addAction(\App\Actions\DetalleCaja::class);
 
         Voyager::addAction(\App\Actions\Monitor::class);
+
+        Voyager::addAction(\App\Actions\Kardex::class);
 
     }
 }

@@ -165,7 +165,7 @@
                             <th></th>
                             <th align="right">{{$detalle_caja->venta_efectivo}}</th>
                         </tr>
-                        <tr>
+                        {{-- <tr>
                             <th>{{$detalle_caja->cantidad_tarjeta}}</th>
                             <th>Ventas con Tarjeta</th>
                             <th></th>
@@ -188,7 +188,7 @@
                             <th>Ventas por TigoMoney</th>
                             <th></th>
                             <th align="right">{{$detalle_caja->venta_tigomoney}}</th>
-                        </tr><br><br>
+                        </tr><br><br> --}}<br><br>
                         <tr>
                             <td colspan="3" align="right"><b>TOTAL EFECTIVO VENTAS Bs.</b></td>
                             <td align="right"><b>{{$detalle_caja->venta_efectivo}}</b></td>
@@ -315,7 +315,7 @@
                         <tr>
                             <th style="font-size:15px" align="left">DETALLE EN LÍNEA</th>
                         </tr><br>
-                        <tr>
+                        {{-- <tr>
                             <th>VENTAS CON TARJETA</th>
                             <th>{{$detalle_caja->venta_tarjeta}}</th>
                         </tr>
@@ -330,7 +330,7 @@
                         <tr>
                             <th>VENTAS POR TIGOMONEY</th>
                             <th>{{$detalle_caja->venta_tigomoney}}</th>
-                        </tr>
+                        </tr> --}}
                         <tr>
                             <th>INGRESOS EN LÍNEA</th>
                             <th>{{$detalle_caja->ingreso_linea}}</th>
@@ -343,9 +343,13 @@
                             <th></th>
                             <th><hr></th>
                         </tr>
-                        <tr>
+                        {{-- <tr>
                             <th>TOTAL EN LÍNEA</th>
                             <th>{{$detalle_caja->venta_tarjeta+$detalle_caja->venta_transferencia+$detalle_caja->venta_qr+$detalle_caja->venta_tigomoney+$detalle_caja->ingreso_linea-$detalle_caja->egreso_linea}}</th>
+                        </tr> --}}
+                        <tr>
+                            <th>TOTAL EN LÍNEA</th>
+                            <th>{{$detalle_caja->ingreso_linea-$detalle_caja->egreso_linea}}</th>
                         </tr>
 
                     </table>

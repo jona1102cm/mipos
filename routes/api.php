@@ -189,33 +189,33 @@ Route::get('pos/caja/get_total/{midata}', function ( $midata) {
         $total_efectivo = $total_efectivo + $item->total;
     }
 
-    $venta_tarjeta = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pago_id',2)->get();
-    $cantidad_tarjeta = count($venta_tarjeta);
-    $total_tarjeta = 0;
-    foreach ($venta_tarjeta as $item) {
-        $total_tarjeta = $total_tarjeta + $item->total;
-    }
+    // $venta_tarjeta = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pago_id',2)->get();
+    // $cantidad_tarjeta = count($venta_tarjeta);
+    // $total_tarjeta = 0;
+    // foreach ($venta_tarjeta as $item) {
+    //     $total_tarjeta = $total_tarjeta + $item->total;
+    // }
 
-    $venta_transferencia = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pago_id',3)->get();
-    $cantidad_transferencia = count($venta_transferencia);
-    $total_transferencia = 0;
-    foreach ($venta_transferencia as $item) {
-        $total_transferencia = $total_transferencia + $item->total;
-    }
+    // $venta_transferencia = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pago_id',3)->get();
+    // $cantidad_transferencia = count($venta_transferencia);
+    // $total_transferencia = 0;
+    // foreach ($venta_transferencia as $item) {
+    //     $total_transferencia = $total_transferencia + $item->total;
+    // }
 
-    $venta_qr = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pago_id',4)->get();
-    $cantidad_qr = count($venta_qr);
-    $total_qr = 0;
-    foreach ($venta_qr as $item) {
-        $total_qr = $total_qr + $item->total;
-    }
+    // $venta_qr = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pago_id',4)->get();
+    // $cantidad_qr = count($venta_qr);
+    // $total_qr = 0;
+    // foreach ($venta_qr as $item) {
+    //     $total_qr = $total_qr + $item->total;
+    // }
 
-    $venta_tigomoney = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pago_id',5)->get();
-    $cantidad_tigomoney = count($venta_tigomoney);
-    $total_tigomoney = 0;
-    foreach ($venta_tigomoney as $item) {
-        $total_tigomoney = $total_tigomoney + $item->total;
-    }
+    // $venta_tigomoney = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pago_id',5)->get();
+    // $cantidad_tigomoney = count($venta_tigomoney);
+    // $total_tigomoney = 0;
+    // foreach ($venta_tigomoney as $item) {
+    //     $total_tigomoney = $total_tigomoney + $item->total;
+    // }
 
     $ie=Asiento::where('caja_id',$midata2->caja_id)->where('editor_id',$midata2->editor_id)->where('caja_status',false)->where('type',"Ingresos")->where('pago',1)->get();
     $ingreso_efectivo=0;
@@ -280,7 +280,6 @@ Route::get('pos/ventas/save/{midata}', function($midata) {
 });
 
 Route::get('pos/ventas/save/detalle/{micart}', function($micart) {
-    // return $micart;
     $micart2 = json_decode($micart);
     $miproducto = Producto::find($micart2->producto_id);
 
@@ -414,7 +413,7 @@ Route::get('pos/venta/{id}', function ($id) {
 
 // TODAS LAS VENTAS POR CAJA
 Route::get('pos/ventas/caja/{caja_id}/{user_id}', function ($caja_id, $user_id) {
-    return  Venta::where('register_id', $user_id)->where('caja_id', $caja_id)->where('caja_status', false)->with('cliente', 'delivery','chofer')->orderBy('created_at','desc')->get();
+    return  Venta::where('register_id', $user_id)->where('caja_id', $caja_id)->where('caja_status', false)->with('cliente', 'delivery','chofer', 'pasarela')->orderBy('created_at','desc')->get();
 });
 
 // VENTA POR ID

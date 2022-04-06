@@ -9,7 +9,7 @@
         
     </head>
     <body>
-        <table width="270px" height="0px">
+        <table width="370px" height="0px">
             <tr>
                 <td colspan="2" align="center" style="font-size:10px">
                     <img src="{{ url('storage').'/'.setting('empresa.logo') }}" alt="loginweb" width="100px"><br>
@@ -48,11 +48,11 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <table>
+                    <table width="370px">
                         <tr>
-                            <th>DETALLE</th>
+                            <th style="font-size:10px">DETALLE</th>
                             <th>EXTRAS</th>
-                            <th>OBSERVACION</th>
+                            {{-- <th>OBSERVACION</th> --}}
                             <th>PRECIO UNIT.</th>
                             <th align="right">TOTAL UNIT.</th>
  
@@ -64,10 +64,10 @@
                                  $totalunit=($item->cantidad)*($item->precio);
                              @endphp
                              <tr>
-                                 <td align="center"><b>{{ $item->cantidad }} {{ $miproduct->name }} {{$item->description}}</b></td>
+                                 <td style="font-size:10px"><b>{{ $item->cantidad }} {{ $miproduct->name }} {{$item->description}}</b></td>
                                  <td align="center"><b>{{$item->extra_name}}</b></td>
                                  <td align="center"><b>{{ $item->observacion }}</b></td>
-                                 <td align="center"><b>{{ $item->precio }}</b></td>
+                                 {{-- <td align="center"><b>{{ $item->precio }}</b></td> --}}
                                  <td align="center"><b>{{ $totalunit }}</b></td>
                                  
  

@@ -55,6 +55,9 @@ class PosController extends Controller
         return $pdf->stream();
     }
 
+    public function catalogo_enviar($id){
+        
+    }
 
 
     public function import_users(){
