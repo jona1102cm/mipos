@@ -853,30 +853,30 @@
                                         Venta en Efectivo
                                         <input type="number" class="form-control" id="venta_efectivo" value="0" readonly>
                                     </td>
-                                    <td>
+                                    {{-- <td>
                                         Venta con Tarjeta
                                         <input type="number" class="form-control" id="venta_tarjeta" value="0" readonly>
                                     </td>
                                     <td>
                                         Venta por Transferencia
                                         <input type="number" class="form-control" id="venta_transferencia" value="0" readonly>
-                                    </td>
+                                    </td> --}}
                                 </tr>
                                 <tr>
-                                    <td>
+                                    {{-- <td>
                                         Venta por QR
                                         <input type="number" class="form-control" id="venta_qr" value="0" readonly>
                                     </td>
                                     <td>
                                         Venta por TigoMoney
                                         <input type="number" class="form-control" id="venta_tigomoney" value="0" readonly>
-                                    </td>
+                                    </td> --}}
                                     <td>
                                         Cantidad en Efectivo
                                         <input type="number" class="form-control" id="cantidad_efectivo" value="0" readonly>
                                     </td>
                                 </tr>
-                                <tr>
+                                {{-- <tr>
                                     <td>
                                         Cantidad por Tarjeta
                                         <input type="number" class="form-control" id="cantidad_tarjeta" value="0" readonly>
@@ -889,7 +889,7 @@
                                         Cantidad por QR
                                         <input type="number" class="form-control" id="cantidad_qr" value="0" readonly>
                                     </td>
-                                </tr>
+                                </tr> --}}
                                 <tr>
                                     <td>
                                         Venta Efectivo
@@ -910,16 +910,29 @@
 
 
                                 </tr>
+
                                 <tr>
                                     <td>
+                                        Venta con BaniPay
+                                        <input type="number" class="form-control" id="venta_banipay" value="0" readonly>
+                                    </td>
+                                    <td>
+                                        Cantidad por BaniPay
+                                        <input type="number" class="form-control" id="cantidad_banipay" value="0" readonly>
+                                    </td>
+
+                                </tr>
+
+                                <tr>
+                                    {{-- <td>
                                         Cantidad por TigoMoney
                                         <input type="number" class="form-control" id="cantidad_tigomoney" value="0" readonly>
-                                    </td>
+                                    </td> --}}
                             
                                     <td>
                                         <label for="">Total Caja Bs.</label>
                                         <input type="number" class="form-control col-6" id="_total" value="0" readonly>
-                                </td>
+                                    </td>
                                     <td>
                                         CORTES
                                         <input type="text" class="form-control" id="cortes" readonly>
@@ -1146,7 +1159,7 @@
                                         </select>
                                     </div>
                                     <div class="form-group col-sm-4"><br>
-                                        <label class="radio-inline"> <input type="radio" name="pago" id="pago" value="0" checked> En Línea </label> <br>
+                                        <label class="radio-inline"> <input type="radio" name="pago" id="pago" value="0" checked> Bany Pay </label> <br>
                                         <label class="radio-inline"> <input type="radio" name="pago" id="pago" value="1"> En Efectivo </label>
                                     </div>
                                     <div class="form-group col-sm-4">
@@ -1628,15 +1641,18 @@
                             $('#ingresos').val(response.ingresos);
                             $('#egresos').val(response.egresos);
                             $('#venta_efectivo').val(response.total_efectivo);
-                            $('#venta_tarjeta').val(response.total_tarjeta);
-                            $('#venta_transferencia').val(response.total_transferencia);
-                            $('#venta_qr').val(response.total_qr);
-                            $('#venta_tigomoney').val(response.total_tigomoney);
+                            // $('#venta_tarjeta').val(response.total_tarjeta);                            $('#venta_efectivo').val(response.total_efectivo);
+
+                            // $('#venta_transferencia').val(response.total_transferencia);
+                            // $('#venta_qr').val(response.total_qr);
+                            // $('#venta_tigomoney').val(response.total_tigomoney);
+                            $('#venta_banipay').val(response.total_banipay);                            
                             $('#cantidad_efectivo').val(response.cantidad_efectivo);
-                            $('#cantidad_tarjeta').val(response.cantidad_tarjeta);
-                            $('#cantidad_transferencia').val(response.cantidad_transferencia);
-                            $('#cantidad_qr').val(response.cantidad_qr);
-                            $('#cantidad_tigomoney').val(response.cantidad_tigomoney);
+                            // $('#cantidad_tarjeta').val(response.cantidad_tarjeta);
+                            // $('#cantidad_transferencia').val(response.cantidad_transferencia);
+                            // $('#cantidad_qr').val(response.cantidad_qr);
+                            // $('#cantidad_tigomoney').val(response.cantidad_tigomoney);
+                            $('#cantidad_banipay').val(response.cantidad_banipay);
                             $('#ingreso_efectivo').val(response.ingreso_efectivo);
                             $('#ingreso_linea').val(response.ingreso_linea);
                             $('#egreso_efectivo').val(response.egreso_efectivo);
@@ -1884,15 +1900,17 @@
                     var _total = $('#_total').val();
                     var cant_ventas = $('#cant_ventas').val();
                     var venta_efectivo = $('#venta_efectivo').val();
-                    var venta_tarjeta = $('#venta_tarjeta').val();
-                    var venta_transferencia = $('#venta_transferencia').val();
-                    var venta_qr = $('#venta_qr').val();
-                    var venta_tigomoney = $('#venta_tigomoney').val();
+                    // var venta_tarjeta = $('#venta_tarjeta').val();
+                    // var venta_transferencia = $('#venta_transferencia').val();
+                    // var venta_qr = $('#venta_qr').val();
+                    // var venta_tigomoney = $('#venta_tigomoney').val();
+                    var venta_banipay = $('#venta_banipay').val();
                     var cantidad_efectivo = $('#cantidad_efectivo').val();
-                    var cantidad_tarjeta = $('#cantidad_tarjeta').val();
-                    var cantidad_transferencia = $('#cantidad_transferencia').val();
-                    var cantidad_qr = $('#cantidad_qr').val();
-                    var cantidad_tigomoney = $('#cantidad_tigomoney').val();
+                    // var cantidad_tarjeta = $('#cantidad_tarjeta').val();
+                    // var cantidad_transferencia = $('#cantidad_transferencia').val();
+                    // var cantidad_qr = $('#cantidad_qr').val();
+                    // var cantidad_tigomoney = $('#cantidad_tigomoney').val();
+                    var cantidad_banipay = $('#cantidad_banipay').val();
                     var efectivo_entregado = $('#efectivo_entregado').val();
                     var cortes = $('#cortes').val();
                     var ingreso_efectivo=$('#ingreso_efectivo').val();
@@ -1902,7 +1920,7 @@
                     var editor_id = '{{ Auth::user()->id }}';
                     var caja_id = micaja.caja_id;
                     var status = 'close';
-                    var midata = JSON.stringify({caja_id: caja_id, editor_id: editor_id, cant_ventas: cant_ventas, _total: _total, description: description, egresos: egresos, ingresos: ingresos, importe_inicial: importe_inicial, total_ventas: total_ventas, status: status, venta_efectivo: venta_efectivo, venta_tarjeta: venta_tarjeta, venta_transferencia: venta_transferencia, venta_qr: venta_qr, venta_tigomoney: venta_tigomoney, cantidad_efectivo: cantidad_efectivo, cantidad_tarjeta: cantidad_tarjeta, cantidad_transferencia: cantidad_transferencia, cantidad_qr: cantidad_qr, cantidad_tigomoney: cantidad_tigomoney, efectivo_entregado: efectivo_entregado, cortes: cortes, ingreso_efectivo: ingreso_efectivo, ingreso_linea: ingreso_linea, egreso_efectivo: egreso_efectivo, egreso_linea: egreso_linea});
+                    var midata = JSON.stringify({caja_id: caja_id, editor_id: editor_id, cant_ventas: cant_ventas, _total: _total, description: description, egresos: egresos, ingresos: ingresos, importe_inicial: importe_inicial, total_ventas: total_ventas, status: status, venta_efectivo: venta_efectivo, cantidad_efectivo: cantidad_efectivo, venta_banipay:venta_banipay, cantidad_banipay:cantidad_banipay , efectivo_entregado: efectivo_entregado, cortes: cortes, ingreso_efectivo: ingreso_efectivo, ingreso_linea: ingreso_linea, egreso_efectivo: egreso_efectivo, egreso_linea: egreso_linea});
                     $.ajax({
                         url: "{{ setting('admin.url') }}api/pos/caja/detalle/save/"+midata,
                         success: function (response){
@@ -1923,7 +1941,7 @@
                             $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"</td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td><a href='#deliverys' aria-controls='deliverys' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' onclick='set_chofer("+misventas.data[index].id+")'>Chofer</a></td></tr>");
                         }
                         else{
-                            $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"</td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td></td></tr>");
+                            $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"<br><a href='"+misventas.data[index].payment_link+"' target='_blank'>Link de Pago</a></td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td></td></tr>");
                         }
                     }
                 }

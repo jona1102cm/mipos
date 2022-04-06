@@ -137,15 +137,17 @@ Route::get('pos/caja/detalle/save/{midata}', function ($midata) {
         'editor_id' => $midata2->editor_id,
         'description' => $midata2->description,
         'venta_efectivo'=> $midata2->venta_efectivo,
-		'venta_tarjeta'=> $midata2->venta_tarjeta,
-		'venta_transferencia'=> $midata2->venta_transferencia,
-		'venta_qr'=> $midata2->venta_qr,
-		'venta_tigomoney'=> $midata2->venta_tigomoney,
+		// 'venta_tarjeta'=> $midata2->venta_tarjeta,
+		// 'venta_transferencia'=> $midata2->venta_transferencia,
+		// 'venta_qr'=> $midata2->venta_qr,
+		// 'venta_tigomoney'=> $midata2->venta_tigomoney,
+        'venta_banipay'=> $midata2->venta_banipay,
 		'cantidad_efectivo'=> $midata2->cantidad_efectivo,
-		'cantidad_tarjeta'=> $midata2->cantidad_tarjeta,
-		'cantidad_transferencia'=> $midata2->cantidad_transferencia,
-		'cantidad_qr'=> $midata2->cantidad_qr,
-		'cantidad_tigomoney'=> $midata2->cantidad_tigomoney,
+		// 'cantidad_tarjeta'=> $midata2->cantidad_tarjeta,
+		// 'cantidad_transferencia'=> $midata2->cantidad_transferencia,
+		// 'cantidad_qr'=> $midata2->cantidad_qr,
+		// 'cantidad_tigomoney'=> $midata2->cantidad_tigomoney,
+        'cantidad_banipay'=> $midata2->cantidad_banipay,
 		'efectivo_entregado'=> $midata2->efectivo_entregado,
 		'cortes'=> $midata2->cortes,
         'ingreso_efectivo'=>$midata2->ingreso_efectivo,
@@ -187,6 +189,13 @@ Route::get('pos/caja/get_total/{midata}', function ( $midata) {
     $total_efectivo = 0;
     foreach ($venta_efectivo as $item) {
         $total_efectivo = $total_efectivo + $item->total;
+    }
+
+    $venta_banipay = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pago_id',2)->get();
+    $cantidad_banipay = count($venta_banipay);
+    $total_banipay = 0;
+    foreach ($venta_banipay as $item) {
+        $total_banipay = $total_banipay + $item->total;
     }
 
     // $venta_tarjeta = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pago_id',2)->get();
@@ -241,11 +250,14 @@ Route::get('pos/caja/get_total/{midata}', function ( $midata) {
         $egreso_linea+= $item->monto;
     }
 
-    return  response()->json(array('total' => $total, 'cantidad' => $cantidad, 'ingresos' => $ti, 'egresos'=> $te, 'total_efectivo'=> $total_efectivo, 'cantidad_efectivo'=> $cantidad_efectivo,'total_tarjeta'=> $total_tarjeta,'cantidad_tarjeta'=>$cantidad_tarjeta,'total_transferencia'=> $total_transferencia,'cantidad_transferencia'=>$cantidad_transferencia, 'total_qr'=>$total_qr,'cantidad_qr'=>$cantidad_qr,'total_tigomoney'=>$total_tigomoney,'cantidad_tigomoney'=>$cantidad_tigomoney, 'ingreso_efectivo'=>$ingreso_efectivo, 'ingreso_linea'=>$ingreso_linea, 'egreso_efectivo'=>$egreso_efectivo, 'egreso_linea'=>$egreso_linea));
+    //return  response()->json(array('total' => $total, 'cantidad' => $cantidad, 'ingresos' => $ti, 'egresos'=> $te, 'total_efectivo'=> $total_efectivo, 'cantidad_efectivo'=> $cantidad_efectivo,'total_tarjeta'=> $total_tarjeta,'cantidad_tarjeta'=>$cantidad_tarjeta,'total_transferencia'=> $total_transferencia,'cantidad_transferencia'=>$cantidad_transferencia, 'total_qr'=>$total_qr,'cantidad_qr'=>$cantidad_qr,'total_tigomoney'=>$total_tigomoney,'cantidad_tigomoney'=>$cantidad_tigomoney, 'ingreso_efectivo'=>$ingreso_efectivo, 'ingreso_linea'=>$ingreso_linea, 'egreso_efectivo'=>$egreso_efectivo, 'egreso_linea'=>$egreso_linea));
+    return  response()->json(array('total' => $total, 'cantidad' => $cantidad, 'ingresos' => $ti, 'egresos'=> $te, 'total_efectivo'=> $total_efectivo, 'cantidad_efectivo'=> $cantidad_efectivo, 'total_banipay'=>$total_banipay, 'cantidad_banipay'=> $cantidad_banipay, 'ingreso_efectivo'=>$ingreso_efectivo, 'ingreso_linea'=>$ingreso_linea, 'egreso_efectivo'=>$egreso_efectivo, 'egreso_linea'=>$egreso_linea));
+
 });
 Route::get('pos/cajas', function(){
     return Caja::with('sucursal')->get();
 });
+
 //ventas
 Route::get('pos/ventas/save/{midata}', function($midata) {
     $midata2 = json_decode($midata);

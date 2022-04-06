@@ -165,6 +165,12 @@
                             <th></th>
                             <th align="right">{{$detalle_caja->venta_efectivo}}</th>
                         </tr>
+                        <tr>
+                            <th>{{$detalle_caja->cantidad_banipay}}</th>
+                            <th>Ventas con BANIPAY</th>
+                            <th></th>
+                            <th align="right">{{$detalle_caja->venta_banipay}}</th>
+                        </tr>
                         {{-- <tr>
                             <th>{{$detalle_caja->cantidad_tarjeta}}</th>
                             <th>Ventas con Tarjeta</th>
@@ -198,7 +204,7 @@
                             <td align="right"><b>{{$detalle_caja->ingreso_efectivo}}</b></td>
                         </tr>
                         <tr>
-                            <td colspan="3" align="right"><b>INGRESOS EN LÍNEA Bs.</b></td>
+                            <td colspan="3" align="right"><b>INGRESOS CON BANIPAY Bs.</b></td>
                             <td align="right"><b>{{$detalle_caja->ingreso_linea}}</b></td>
                         </tr>
                         <tr>
@@ -315,6 +321,10 @@
                         <tr>
                             <th style="font-size:15px" align="left">DETALLE EN LÍNEA</th>
                         </tr><br>
+                        <tr>
+                            <th>VENTAS CON BANIPAY</th>
+                            <th>{{$detalle_caja->venta_banipay}}</th>
+                        </tr>
                         {{-- <tr>
                             <th>VENTAS CON TARJETA</th>
                             <th>{{$detalle_caja->venta_tarjeta}}</th>
@@ -332,7 +342,7 @@
                             <th>{{$detalle_caja->venta_tigomoney}}</th>
                         </tr> --}}
                         <tr>
-                            <th>INGRESOS EN LÍNEA</th>
+                            <th>INGRESOS CON BANIPAY</th>
                             <th>{{$detalle_caja->ingreso_linea}}</th>
                         </tr>
                         <tr>
@@ -349,7 +359,7 @@
                         </tr> --}}
                         <tr>
                             <th>TOTAL EN LÍNEA</th>
-                            <th>{{$detalle_caja->ingreso_linea-$detalle_caja->egreso_linea}}</th>
+                            <th>{{$detalle_caja->venta_banipay+$detalle_caja->ingreso_linea-$detalle_caja->egreso_linea}}</th>
                         </tr>
 
                     </table>
