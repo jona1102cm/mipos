@@ -2785,9 +2785,32 @@
                             
                             @case('pensionado-detalles')
                                 <div class="col-sm-4">
-
+                                    @php
+                                        $pensionado =  App\Pensionado::find($_GET['s']);
+                                    @endphp
+                                    <h4>Kardex</h4>
+                                    <table class="table">
+                                    
+                                        <tbody>
+                                            <tr>
+                                                <td>Cliente</td>
+                                                <td>{{ $pensionado->id}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Plan</td>
+                                                <td>Plan</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Creado</td>
+                                                <td>Creado</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                                 <div class="col-sm-8">
+                                    <h4>Historial
+                                        <button>Nuevo Pedido</button>
+                                    </h4>
                                     <div class="table-responsive">
                                         <table id="dataTable" class="table table-hover">
                                             <thead>                                  

@@ -30,7 +30,7 @@ class Kardex extends AbstractAction
 
     public function getDefaultRoute()
     {
-        return route('catalogo.enviar', ['id' =>  $this->data->{$this->data->getKeyName()} ]);
+        return route('voyager.pensionado-detalles.index', ['key' => 'pensionado_id', 'filter' => 'equals', 's' => $this->data->{$this->data->getKeyName()} ]);
     }
 
     public function shouldActionDisplayOnDataType()
