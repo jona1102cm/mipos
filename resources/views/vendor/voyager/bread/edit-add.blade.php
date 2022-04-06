@@ -1296,7 +1296,7 @@
                 $('document').ready(function () {
                     $('.js-example-basic-single').select2();
                     $('input[name="register_id"]').val('{{ Auth::user()->id }}');
-                    $('input[name="chofer_id"]').val("{{setting('ventas.chofer'}}");
+                    $('input[name="chofer_id"]').val("{{setting('ventas.chofer')}}");
 
                     
                     if (localStorage.getItem('micaja')) {
