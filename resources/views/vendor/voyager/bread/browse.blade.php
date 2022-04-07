@@ -137,7 +137,7 @@
                 <a href="{{ url('admin/proveedores') }}" class="btn btn-default btn-add-new" title="">
                     <i class="voyager-helm"></i> <span>Proveedores</span>
                 </a>
-                <h1>EN DESARROLLO</h1>
+                {{-- <h1>EN DESARROLLO</h1> --}}
                 @break
             @default
             @foreach($actions as $action)

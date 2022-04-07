@@ -38,7 +38,7 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('catalogos/enviar/{id}', function($id){
         $catalogo = App\Catalogo::find($id);
         $productos = App\RelCatalogoProducto::where('catalogo_id', $id)->get();
-        return redirect("https://api.whatsapp.com/send?&text= MENU DE DIA: %0A".$catalogo->title.'%0A'.$productos);
+        return redirect("https://api.whatsapp.com/send?&text= MENU DEL DIA: %0A".$catalogo->title.'%0A'.$productos);
     })->name('catalogo.enviar');
     
     Route::get('import/users', 'App\Http\Controllers\PosController@import_users')->name('import.users');

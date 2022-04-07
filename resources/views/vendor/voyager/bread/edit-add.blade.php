@@ -227,9 +227,7 @@
                                         </form>
                                     </div>
                                     <div class="form-group col-md-4">
-                                        <audio id="audio">
-                                            <source type="audio/mp3" src="iphone-notificacion.mp3">
-                                        </audio>
+                                     
                                         <div class="form-group col-md-12">
                                             <strong>Cliente</strong>
                                             <select class="form-control js-example-basic-single" id="micliente"> </select>
@@ -1086,7 +1084,6 @@
                         </div>
                         <div class="modal-footer">
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -1099,39 +1096,7 @@
                                     aria-hidden="true">&times;</button>
                             <h4 class="modal-title"><i class="voyager-warning"></i> {{ __('voyager::generic.are_you_sure') }}</h4>
                         </div>        
-                        <div class="modal-body">
-                            {{-- <div class="form-group text-center" hidden>                               
-                                <form class="form-horizontal" role="form">
-                                    <label class="radio-inline"> <input type="radio" name="season" id="" value="imprimir" checked> Imprimir </label>
-                                    <label class="radio-inline"> <input type="radio" name="season" id="" value="seguir"> Seguir </label>
-                                </form>
-                            </div> --}}
-                            {{-- <table class="table" hidden>                                                               
-                                    <tr>
-                                        <td>Importe: </td>
-                                        <td>
-                                            <input type="number" class="form-control" id="recibido">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Venta: </td>
-                                        <td>
-                                            <input type="number" class="form-control" id="venta_total" readonly>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Cambio: </td>
-                                        <td>
-                                            <input type="number" class="form-control" id="cambio" readonly>
-                                        </td>
-                                    </tr>                               
-                            </table> --}}
-                        </div>
-        
-                        {{-- <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">NO</button>
-                            <button type="button" class="btn btn-primary" onclick="saveventas()">SI</button>
-                        </div> --}}
+                        <div class="modal-body"></div>
                     </div>
                 </div>
             </div>
@@ -2064,89 +2029,77 @@
                     mitotal();
                 });
 
-                function saveventas() {
-
+                async function saveventas() {
                     var micart = JSON.parse(localStorage.getItem('micart'));
                     if (micart.length == 0 ) {
                         toastr.error('Tu Carrito esta Vacio');
                     }
                     else{
+                        var cliente_id = $("input[name='cliente_id']").val();
+                        var cupon_id = $("input[name='cupon_id']").val();
+                        var pago_id = $("input[name='pago_id']").val();
+                        var status_id = $("input[name='status_id']").val();
+                        var option_id = $("input[name='option_id']").val();
+                        var factura = $("input[name='factura']:checked").val();
+                        var credito = $("input[name='credito']:checked").val();
+                        var total = $("input[name='total']").val();
+                        var descuento = $("input[name='descuento']").val();
+                        var observacion = $("input[name='observacion']").val();
+                        var register_id = $("input[name='register_id']").val();
+                        var caja_id = $("input[name='caja_id']").val();
+                        var delivery_id = $("input[name='delivery_id']").val();
+                        var sucursal_id = $("input[name='sucursal_id']").val();
+                        var subtotal = $("input[name='subtotal']").val();
+                        var recibido = $("input[name='recibido']").val();
+                        var cambio = $("input[name='cambio']").val();
+                        var chofer_id=$("input[name='chofer_id']").val();
+                        var adicional=$("input[name='adicional']").val();                            
+                        var micart = JSON.parse(localStorage.getItem('micart'));
+                        var midata = JSON.stringify({'cliente_id': cliente_id, 'cupon_id': cupon_id, 'option_id': option_id, 'pago_id': pago_id, 'factura': factura, 'credito': credito ,'total': total, 'descuento': descuento, 'observacion': observacion, 'register_id': register_id, 'status_id': status_id, 'caja_id': caja_id, 'delivery_id': delivery_id, 'sucursal_id': sucursal_id, subtotal: subtotal, 'cantidad': micart.length, 'recibido': recibido, 'cambio': cambio, chofer_id : chofer_id, adicional:adicional });
+                        $('#modal_save_venta').modal('hide');         
+                        console.log(midata)
 
-                            var cliente_id = $("input[name='cliente_id']").val();
-                            var cupon_id = $("input[name='cupon_id']").val();
-                            var pago_id = $("input[name='pago_id']").val();
-                            var status_id = $("input[name='status_id']").val();
-                            var option_id = $("input[name='option_id']").val();
-                            var factura = $("input[name='factura']:checked").val();
-                            var credito = $("input[name='credito']:checked").val();
-                            var total = $("input[name='total']").val();
-                            var descuento = $("input[name='descuento']").val();
-                            var observacion = $("input[name='observacion']").val();
-                            var register_id = $("input[name='register_id']").val();
-                            var caja_id = $("input[name='caja_id']").val();
-                            var delivery_id = $("input[name='delivery_id']").val();
-                            var sucursal_id = $("input[name='sucursal_id']").val();
-                            var subtotal = $("input[name='subtotal']").val();
-                            var recibido = $("input[name='recibido']").val();
-                            var cambio = $("input[name='cambio']").val();
-                            var chofer_id=$("input[name='chofer_id']").val();
-                            var adicional=$("input[name='adicional']").val();
-                            
-                            var micart = JSON.parse(localStorage.getItem('micart'));
-
-                            var midata = JSON.stringify({'cliente_id': cliente_id, 'cupon_id': cupon_id, 'option_id': option_id, 'pago_id': pago_id, 'factura': factura, 'credito': credito ,'total': total, 'descuento': descuento, 'observacion': observacion, 'register_id': register_id, 'status_id': status_id, 'caja_id': caja_id, 'delivery_id': delivery_id, 'sucursal_id': sucursal_id, subtotal: subtotal, 'cantidad': micart.length, 'recibido': recibido, 'cambio': cambio, chofer_id : chofer_id, adicional:adicional });
-
-                            $('#modal_save_venta').modal('hide');
-                            
-                            $.ajax({
-                                url: "{{ setting('admin.url') }}api/pos/ventas/save/"+midata,
-                                success: function (response) {
-                                    
-                                    // enviando detalle de venta
-                                    var micart = JSON.parse(localStorage.getItem('micart'));
-                                    for (let index = 0; index < micart.length; index++) {
-                                        var midata = JSON.stringify({'producto_id': micart[index].id, 'venta_id': response.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'name':micart[index].name, 'foto':micart[index].foto, 'description': micart[index].description, 'extra_name':micart[index].extra_name, 'observacion':micart[index].observacion});
-                                        var urli = "{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata;
-                                        $.ajax({
-                                            url: urli,
-                                            success: function (midata) {
-                                            if ((response.cantidad - 1) == index) {
-                                                document.getElementById("audio").play();
-
-                                                if ($("input[name='season']:checked").val() == 'imprimir') {
-                                                    $("input[name='descuento']").val(0)
-                                                    localStorage.setItem('micart', JSON.stringify([]));
-                                                    // location.href = "{{ setting('admin.url') }}admin/ventas/imprimir/"+response.id;
-                                                    window.open( "{{ setting('admin.url') }}admin/ventas/imprimir/"+response.id, "Recibo", "width=500,height=700");
-                                                }else{       
-                                                    localStorage.setItem('micart', JSON.stringify([]));                                 
-                                                    toastr.success('Venta Realizada');
-                                                }
-                                            }
-                                            $("#micart tr#"+micart[index].id).remove();
-                                            mitotal(); 
-                                            }
-                                        });
-                                    }
-                                    
-                                    // enviado notification 
-                                    
-                                    socket.emit(name_socket, 'VENTA REALIZADA: '+response.id)
-
-                                    // var phone = $('#phone_client').val();
-                                    // $.ajax({
-                                    //     url: "{{ setting('admin.chatbot') }}?type=pedido&phone="+phone+"&message="+response,
-                                    //     success: function () {
-                                        
-                                        
-                                    //     }
-                                    // });
-
-                                }
-                            });
-
-                    }
-                    
+                        var miconfig = {"affiliateCode": "8671cfc1-5c48-4c9a-85da-0298315ac297",
+                            "notificationUrl": "https://loginweb.dev/",
+                            "withInvoice": false,
+                            "externalCode": "123-A",
+                            "paymentDescription": "Pago de NETFLIX SPOTIFY por un mes",
+                            "details": [ { "concept": "Compra de NETFLIX", "quantity": 1, "unitPrice": 5 }, { "concept": "Compra de SPOTIFY", "quantity": 1, "unitPrice": 5 }],
+                            "postalCode": "BOB"
+                            }
+                        var payment_link = await axios.post('https://banipay.me:8443/api/payments/transaction', miconfig)
+                        console.log(payment_link.data) 
+                        // $.ajax({
+                        //     url: "{{ setting('admin.url') }}api/pos/ventas/save/"+midata,
+                        //     success: function (response) {
+                        //         var micart = JSON.parse(localStorage.getItem('micart'));
+                        //         for (let index = 0; index < micart.length; index++) {
+                        //             var midata = JSON.stringify({'producto_id': micart[index].id, 'venta_id': response.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'name':micart[index].name, 'foto':micart[index].foto, 'description': micart[index].description, 'extra_name':micart[index].extra_name, 'observacion':micart[index].observacion});
+                        //             var urli = "{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata;
+                        //             $.ajax({
+                        //                 url: urli,
+                        //                 success: function (midata) {
+                        //                 if ((response.cantidad - 1) == index) {
+                        //                     document.getElementById("audio").play();
+                        //                     if ($("input[name='season']:checked").val() == 'imprimir') {
+                        //                         $("input[name='descuento']").val(0)
+                        //                         localStorage.setItem('micart', JSON.stringify([]));
+                        //                         window.open( "{{ setting('admin.url') }}admin/ventas/imprimir/"+response.id, "Recibo", "width=500,height=700");
+                        //                     }else{       
+                        //                         localStorage.setItem('micart', JSON.stringify([]));                                 
+                        //                         toastr.success('Venta Realizada');
+                        //                     }
+                        //                 }
+                        //                 $("#micart tr#"+micart[index].id).remove();
+                        //                 mitotal(); 
+                        //                 }
+                        //             });
+                        //         }                                    
+                        //         // enviado notification                             
+                        //         socket.emit(name_socket, 'VENTA REALIZADA: '+response.id)
+                        //     }
+                        // });
+                    }                    
                 }
 
                 $('#category').on('change', function() {
