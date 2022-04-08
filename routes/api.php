@@ -624,37 +624,30 @@ Route::get('pos/productions/save/{midataProduction}', function($midataProduction
 
 Route::get('pos/productions/save/detalle/{miproduction}', function($miproduction) {
     $miproduction2 = json_decode($miproduction);
-    $miinsumo= Insumo::find($miproduction2->insumo_id);
 
-    if (setting('ventas.stock')) {
-        $cant_a = $miinsumo->stock;
-        $cant_b = $miproduction2->cantidad;
-        $cant_c = $cant_a - $cant_b;
-        $miinsumo->stock = $cant_c;
-        $miinsumo->save();
+    $productionI= ProductionInsumo::create([
+        'type_insumo'=>$miproduction2->type,
+        'production_id'=>$miproduction2->production_id,
+        'insumo_id' => $miproduction2->insumo_id,
+        'proveedor_id'=> $miproduction2->proveedor_id,
+        'precio' => $miproduction2->precio,
+        'cantidad' => $miproduction2->cantidad,
+        'total' => $miproduction2->total
+    ]);
 
-        ProductionInsumo::create([
-            'type_insumo'=>$miproduction2->type,
-            'production_id'=>$miproduction2->production_id,
-            'insumo_id' => $miproduction2->insumo_id,
-            'proveedor_id'=> $miproduction2->proveedor_id,
-            'precio' => $miproduction2->precio,
-            'cantidad' => $miproduction2->cantidad,
-            'total' => $miproduction2->total
-        ]);
-    }else{
-        ProductionInsumo::create([
-            'type_insumo'=>$miproduction2->type,
-            'production_id'=>$miproduction2->production_id,
-            'insumo_id' => $miproduction2->insumo_id,
-            'proveedor_id'=> $miproduction2->proveedor_id,
-            'precio' => $miproduction2->precio,
-            'cantidad' => $miproduction2->cantidad,
-            'total' => $miproduction2->total
-        ]);
+    //Update Stock Insumo
+    $ins= Insumo::find($miproduction2->insumo_id);
+
+ 
+    $canta = $ins->stock;
+    $cantb = $miproduction2->cantidad;
+    $cantc = $canta - $cantb;
+    $ins->stock = $cantc;
+    $ins->save();
 
 
-    }
+    
+
     return true;
 });
 
@@ -676,33 +669,27 @@ Route::get('pos/productions/savesemi/{midataProduction}', function($midataProduc
 
 Route::get('pos/productions/savesemi/detalle/{miproduction}', function($miproduction) {
     $miproduction2 = json_decode($miproduction);
-    $miinsumo= Insumo::find($miproduction2->insumo_id);
+   
+        DetalleProductionSemi::create([
+            'production_semi_id'=>$miproduction2->production_semi_id,
+            'insumo_id' => $miproduction2->insumo_id,
+            'proveedor_id'=> $miproduction2->proveedor_id,
+            'precio' => $miproduction2->precio,
+            'cantidad' => $miproduction2->cantidad,
+            'total' => $miproduction2->total
+        ]);
+       
+        //Update Stock Insumo
+        $miinsumo= Insumo::find($miproduction2->insumo_id);
 
-    if (setting('ventas.stock')) {
         $cant_a = $miinsumo->stock;
         $cant_b = $miproduction2->cantidad;
         $cant_c = $cant_a - $cant_b;
         $miinsumo->stock = $cant_c;
         $miinsumo->save();
 
-        DetalleProductionSemi::create([
-            'production_semi_id'=>$miproduction2->production_semi_id,
-            'insumo_id' => $miproduction2->insumo_id,
-            'proveedor_id'=> $miproduction2->proveedor_id,
-            'precio' => $miproduction2->precio,
-            'cantidad' => $miproduction2->cantidad,
-            'total' => $miproduction2->total
-        ]);
-    }else{
-        DetalleProductionSemi::create([
-            'production_semi_id'=>$miproduction2->production_semi_id,
-            'insumo_id' => $miproduction2->insumo_id,
-            'proveedor_id'=> $miproduction2->proveedor_id,
-            'precio' => $miproduction2->precio,
-            'cantidad' => $miproduction2->cantidad,
-            'total' => $miproduction2->total
-        ]);
-    }
+    
+   
     return true;
 });
 

@@ -13,17 +13,17 @@ use App\Http\Controllers\PosController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', function () {
+Route::get('/', 'App\Http\Controllers\FrontEndController@default')->name('page_default');
+// Route::get('/', function () {
     // return view('welcome');
-    return redirect('/admin/profile');
-});
+    // return redirect('/admin/profile');
+// });
+
 
 Route::get('venta/{id}', 'App\Http\Controllers\PosController@venta_public')->name('venta.public');
 
 Route::get('/encola/{id}', function ($id) {
     $monitor = App\Monitore::find($id);
-    // return $monitor;
     return view('encola')->with('monitor', $monitor);
 })->name('monitor');
 
@@ -36,9 +36,17 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('catalogos/enviar/{id}', function($id){
         $catalogo = App\Catalogo::find($id);
         $productos = App\RelCatalogoProducto::where('catalogo_id', $id)->get();
-        $tabla=[];
         $index=0;
-        return redirect("https://api.whatsapp.com/send?&text= MENU DEL DIA: %0A".$catalogo->title.'%0A'.$productos);
+        $tabla=[];
+        $message="";
+        foreach ($productos as $item) {
+            $index+=1;
+            $prod= App\Producto::find($item->producto_id);
+            $message=$message.' '.$index.'.- '.$prod->name.' a '.$prod->precio.' Bs.'.'%0A';
+        }
+        $message=$message.'%0A Para realizar sus pedidos online, dirígase al siguiente link: https://pos.loginweb.dev/ ';
+       
+        return redirect("https://api.whatsapp.com/send?&text= MENU DEL DIA: %0A".$catalogo->title.'%0A'.$message);
     })->name('catalogo.enviar');
     
     Route::get('compras/insumos/{id}', function($id){
@@ -46,15 +54,26 @@ Route::group(['prefix' => 'admin'], function () {
 
         return redirect("admin/insumos/".$id);
     })->name('insumo.comprar');
-
     Route::get('import/users', 'App\Http\Controllers\PosController@import_users')->name('import.users');
     Route::get('import/clientes', 'App\Http\Controllers\PosController@import_clientes')->name('import.clientes');
-    // Route::get('producto/detalle', 'App\Http\Controllers\PosController@producto_detalle')->name('producto.detalle');
     Route::get('import/products', 'App\Http\Controllers\PosController@import_products')->name('import.products');
     Route::get('import/ventas', 'App\Http\Controllers\PosController@import_ventas')->name('import.ventas');
 
 
-    
+    //Pages
+    Route::get('{page_id}/edit', 'PageController@edit')->name('page_edit'); 
+    Route::post('/page/{page_id}/update', 'PageController@update')->name('page_update');
+    Route::get('/page/{page_id}/default', 'PageController@default')->name('page_default'); 
+
+    Route::get('{page_id}/index', 'App\Http\Controllers\BlockController@index')->name('block_index'); 
+    Route::post('/block/update/{block_id}', 'BlockController@update')->name('block_update');
+    Route::get('/block/delete/{block_id}', 'BlockController@delete')->name('block_delete');
+    Route::get('/block/order/{block_id}/{order}', 'BlockController@block_ordering');
+
+    Route::get('/block/move_up/{block_id}', 'BlockController@move_up')->name('block_move_up'); 
+    Route::get('/block/move_down/{block_id}', 'BlockController@move_down')->name('block_move_down');
+
+        
 });
 
 \PWA::routes();
