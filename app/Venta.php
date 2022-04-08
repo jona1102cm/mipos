@@ -57,4 +57,5 @@ class Venta extends Model
     {
         return $this->belongsTo(Pago::class, 'pago_id');
     }
+
 }

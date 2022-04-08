@@ -488,6 +488,81 @@
                                 </div>
 
                             @break
+                            @case('compras')
+
+                                {{-- <div class="form-group col-md-6">
+                                    <div id="search-input">
+
+                                        <div class="input-group col-md-4">
+                                            <select class="form-control js-example-basic-single" id="proveedores_compras"> </select>
+                                        </div>
+                                        <div class="input-group col-md-4">
+                                            <select class="form-control js-example-basic-single" id="unidades_compras"> </select>
+                                        </div>
+                                        <div class="input-group col-md-4">
+                                            <select class="form-control js-example-basic-single" id="insumos_compras"> </select>
+                                        </div>   
+
+
+                                    </div>
+
+                                </div> --}}
+
+                                <div class="form-group col-md-12">
+
+                                    <div id="search-input">
+
+                                        <div class="input-group col-md-4">
+                                            <select class="form-control js-example-basic-single" id="proveedores_compras"> </select>
+                                        </div>
+                                        <div class="input-group col-md-4">
+                                            <select class="form-control js-example-basic-single" id="unidades_compras"> </select>
+                                        </div>
+                                        <div class="input-group col-md-4">
+                                            <select class="form-control js-example-basic-single" id="insumos_compras"> </select>
+                                        </div>   
+
+
+                                    </div>
+
+                                
+                                    @foreach($dataTypeRows as $row)
+                                        <!-- GET THE DISPLAY OPTIONS -->
+                                        @php
+                                            $display_options = $row->details->display ?? NULL;
+                                            if ($dataTypeContent->{$row->field.'_'.($edit ? 'edit' : 'add')}) {
+                                                $dataTypeContent->{$row->field} = $dataTypeContent->{$row->field.'_'.($edit ? 'edit' : 'add')};
+                                            }
+                                        @endphp
+                                        @if (isset($row->details->legend) && isset($row->details->legend->text))
+                                            <legend class="text-{{ $row->details->legend->align ?? 'center' }}" style="background-color: {{ $row->details->legend->bgcolor ?? '#f0f0f0' }};padding: 5px;">{{ $row->details->legend->text }}</legend>
+                                        @endif
+
+                                        <div class="form-group @if($row->type == 'hidden') hidden @endif col-md-{{ $display_options->width ?? 12 }} {{ $errors->has($row->field) ? 'has-error' : '' }}" @if(isset($display_options->id)){{ "id=$display_options->id" }}@endif>
+                                            {{ $row->slugify }}
+                                            <label class="control-label" for="name">{{ $row->getTranslatedAttribute('display_name') }}</label>
+                                            @include('voyager::multilingual.input-hidden-bread-edit-add')
+                                            @if (isset($row->details->view))
+                                                @include($row->details->view, ['row' => $row, 'dataType' => $dataType, 'dataTypeContent' => $dataTypeContent, 'content' => $dataTypeContent->{$row->field}, 'action' => ($edit ? 'edit' : 'add'), 'view' => ($edit ? 'edit' : 'add'), 'options' => $row->details])
+                                            @elseif ($row->type == 'relationship')
+                                                @include('voyager::formfields.relationship', ['options' => $row->details])
+                                            @else
+                                                {!! app('voyager')->formField($row, $dataType, $dataTypeContent) !!}
+                                            @endif
+
+                                            @foreach (app('voyager')->afterFormFields($row, $dataType, $dataTypeContent) as $after)
+                                                {!! $after->handle($row, $dataType, $dataTypeContent) !!}
+                                            @endforeach
+                                            @if ($errors->has($row->field))
+                                                @foreach ($errors->get($row->field) as $error)
+                                                    <span class="help-block">{{ $error }}</span>
+                                                @endforeach
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                            @break
 
                             @case('productos')
                                 <div class="form-group col-md-6">
@@ -1244,7 +1319,7 @@
                 // })
             </script>
         @stop
-        @break
+    @break
         
     @case('ventas')
         @section('javascript')
@@ -1906,13 +1981,17 @@
                 async function venta_caja() {
                     $('#productos_caja tbody').empty();
                     var user_id = '{{ Auth::user()->id }}';
-                    var misventas = await axios("{{ setting('admin.url') }}api/pos/ventas/caja/"+$("input[name='caja_id']").val()+'/'+user_id);                    
+                    var misventas = await axios("{{ setting('admin.url') }}api/pos/ventas/caja/"+$("input[name='caja_id']").val()+'/'+user_id);     
+                                      
                     for (let index = 0; index < misventas.data.length; index++) {
+                        var banipay = await axios("{{ setting('admin.url') }}api/pos/banipay/get/"+misventas.data[index].id);  
+                        var milink = "{{ setting('banipay.url_base') }}"+banipay.data.urlTransaction
+                        // console.log()
                         if(misventas.data[index].option_id==3){
                             $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"</td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td><a href='#deliverys' aria-controls='deliverys' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' onclick='set_chofer("+misventas.data[index].id+")'>Chofer</a></td></tr>");
                         }
                         else{
-                            $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"<br><a href='"+misventas.data[index].payment_link+"' target='_blank'>Link de Pago</a></td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td></td></tr>");
+                            $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"<br><a href='"+milink+"' target='_blank'>Link de Pago</a></td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td></td></tr>");
                         }
                     }
                 }
@@ -2056,19 +2135,64 @@
                         var adicional=$("input[name='adicional']").val();                            
                         var micart = JSON.parse(localStorage.getItem('micart'));
                         var midata = JSON.stringify({'cliente_id': cliente_id, 'cupon_id': cupon_id, 'option_id': option_id, 'pago_id': pago_id, 'factura': factura, 'credito': credito ,'total': total, 'descuento': descuento, 'observacion': observacion, 'register_id': register_id, 'status_id': status_id, 'caja_id': caja_id, 'delivery_id': delivery_id, 'sucursal_id': sucursal_id, subtotal: subtotal, 'cantidad': micart.length, 'recibido': recibido, 'cambio': cambio, chofer_id : chofer_id, adicional:adicional });
-                        $('#modal_save_venta').modal('hide');         
-                        console.log(midata)
 
-                        var miconfig = {"affiliateCode": "8671cfc1-5c48-4c9a-85da-0298315ac297",
-                            "notificationUrl": "https://loginweb.dev/",
-                            "withInvoice": false,
-                            "externalCode": "123-A",
-                            "paymentDescription": "Pago de NETFLIX SPOTIFY por un mes",
-                            "details": [ { "concept": "Compra de NETFLIX", "quantity": 1, "unitPrice": 5 }, { "concept": "Compra de SPOTIFY", "quantity": 1, "unitPrice": 5 }],
-                            "postalCode": "BOB"
-                            }
-                        var payment_link = await axios.post('https://banipay.me:8443/api/payments/transaction', miconfig)
-                        console.log(payment_link.data) 
+                        // console.log($('#mipagos').val())
+                        switch ($('#mipagos').val()) {
+                            case '1':
+                                var venta = await axios.get("{{ setting('admin.url') }}api/pos/ventas/save/"+midata)
+                                    // console.log(venta.data)
+                                for (let index = 0; index < micart.length; index++) {
+                                    var midata2 = JSON.stringify({'producto_id': micart[index].id, 'venta_id': venta.data.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'name':micart[index].name, 'foto':micart[index].foto, 'description': micart[index].description, 'extra_name':micart[index].extra_name, 'observacion':micart[index].observacion});
+                                    var venta_detalle = axios.get("{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata2)
+                                    $("#micart tr#"+micart[index].id).remove();
+                                    mitotal(); 
+                                }
+                                break;
+                            case '2':
+                                var venta = await axios.get("{{ setting('admin.url') }}api/pos/ventas/save/"+midata)
+                                    // console.log(venta.data)
+                                for (let index = 0; index < micart.length; index++) {
+                                    var midata2 = JSON.stringify({'producto_id': micart[index].id, 'venta_id': venta.data.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'name':micart[index].name, 'foto':micart[index].foto, 'description': micart[index].description, 'extra_name':micart[index].extra_name, 'observacion':micart[index].observacion});
+                                    var venta_detalle = axios.get("{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata2)
+                                    $("#micart tr#"+micart[index].id).remove();
+                                    mitotal(); 
+                                }
+                                // BANIPAY
+                                var micart2 = []
+                                for (let index = 0; index < micart.length; index++) {
+                                    micart2.push({"concept": micart[index].name, "quantity": micart[index].cant, "unitPrice": micart[index].precio})
+                                }
+                                var miconfig = {"affiliateCode": "{{ setting('banipay.affiliatecode') }}",
+                                    "notificationUrl": "{{ setting('banipay.notificacion') }}",
+                                    "withInvoice": false,
+                                    "externalCode": venta.data.id,
+                                    "paymentDescription": "Pago por la compra en {{ setting('admin.title') }}",
+                                    "details": micart2,
+                                    "postalCode": "{{ setting('banipay.moneda') }}"
+                                    }
+                                var banipay = await axios.post('https://banipay.me:8443/api/payments/transaction', miconfig)
+                                var midata3 = JSON.stringify({paymentId: banipay.data.paymentId, transactionGenerated: banipay.data.transactionGenerated, externalCode: banipay.data.externalCode})
+                                console.log(banipay.data)
+                                await axios.get("{{ setting('admin.url') }}api/pos/banipay/save/"+midata3)
+                                break;
+                            default:
+                                console.log('default')
+                                break;
+                        }
+
+                        if ($("input[name='season']:checked").val() == 'imprimir') {
+                            $("input[name='descuento']").val(0)
+                            localStorage.setItem('micart', JSON.stringify([]));
+                            window.open( "{{ setting('admin.url') }}admin/ventas/imprimir/"+venta.data.id, "Recibo", "width=500,height=700");
+                        }else{       
+                            localStorage.setItem('micart', JSON.stringify([]));                                 
+                            toastr.success('Venta Realizada');
+                        }                      
+
+
+                   
+
+                 
                         // $.ajax({
                         //     url: "{{ setting('admin.url') }}api/pos/ventas/save/"+midata,
                         //     success: function (response) {
@@ -2417,6 +2541,7 @@
     @break
     @case('productions')
         @section('javascript')
+            <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
             <script>
 
                 //  AL CARGAR LA VISTA
@@ -3164,7 +3289,7 @@
         <script>
 
             $('document').ready(function () {
-
+                    $('.js-example-basic-single').select2();
 
                     $.ajax({
                         url: "{{ setting('admin.url') }}api/pos/categorias_all",
@@ -3292,7 +3417,100 @@
             });
         </script>
         @stop
-     @break
+    @break
+    @case('compras')
+        @section('javascript')
+            <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+            <script>
+                $('document').ready(function () {
+                    $('.js-example-basic-single').select2();
+                    $('input[name="editor_id"]').val('{{ Auth::user()->id }}');
+                    Proveedores_Compras();
+                    Unidades_Compras();
+                   
+
+
+                });
+
+                async function Proveedores_Compras(){
+
+                    var tabla= await axios("{{setting('admin.url')}}api/pos/proveedores");
+
+                    $('#proveedores_compras').append($('<option>', {
+                        value: null,
+                        text: 'Elige un Proveedor'
+                    }));
+                    for (let index = 0; index < tabla.data.length; index++) {
+                        const element = tabla.data[index];
+                        $('#proveedores_compras').append($('<option>', {
+                            value: tabla.data[index].id,
+                            text: tabla.data[index].name
+                        }));
+                    }
+                }
+
+                async function Unidades_Compras(){
+
+                    var tabla= await axios("{{setting('admin.url')}}api/pos/unidades");
+
+                    $('#unidades_compras').append($('<option>', {
+                        value: null,
+                        text: 'Elige una Unidad'
+                    }));
+                    for (let index = 0; index < tabla.data.length; index++) {
+                        const element = tabla.data[index];
+                        $('#unidades_compras').append($('<option>', {
+                            value: tabla.data[index].id,
+                            text: tabla.data[index].title
+                        }));
+                    }
+
+                }
+
+                async function InsumosPorUnidadesCompras(id){
+                    var tabla= await axios("{{setting('admin.url')}}api/pos/insumo/unidad/"+id);
+
+                    $('#insumos_compras').find('option').remove().end();
+                    $('#insumos_compras').append($('<option>', {
+                        value: null,
+                        text: 'Elige un Insumo'
+                    }));
+                    for (let index = 0; index < tabla.data.length; index++) {
+                        const element = tabla.data[index];
+                        $('#insumos_compras').append($('<option>', {
+                            value: tabla.data[index].id,
+                            text: tabla.data[index].name
+                        }));
+                    }
+
+                }
+
+                $('#proveedores_compras').on('change',function() {
+
+                    $('input[name="proveedor_id"]').val($('#proveedores_compras').val());
+
+                });
+
+
+                $('#unidades_compras').on('change', function() {
+                    InsumosPorUnidadesCompras(this.value);
+        
+                    $('input[name="unidad_id"]').val($('#unidades_compras').val());
+                });
+
+                $('#insumos_compras').on('change',function() {
+
+                    $('input[name="insumo_id"]').val($('#insumos_compras').val());
+
+                });
+
+
+
+            </script>
+
+        @stop
+    @break
+
     @default
 
         @section('javascript')

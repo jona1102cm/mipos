@@ -30,17 +30,23 @@ Route::get('/encola/{id}', function ($id) {
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 
-
     Route::get('ventas/imprimir/{id}', 'App\Http\Controllers\PosController@imprimir')->name('venta.imprimir');
-
     Route::get('detalle_cajas/imprimir/{id}', 'App\Http\Controllers\PosController@cierre_caja')->name('cajas.cierre_caja');
 
     Route::get('catalogos/enviar/{id}', function($id){
         $catalogo = App\Catalogo::find($id);
         $productos = App\RelCatalogoProducto::where('catalogo_id', $id)->get();
+        $tabla=[];
+        $index=0;
         return redirect("https://api.whatsapp.com/send?&text= MENU DEL DIA: %0A".$catalogo->title.'%0A'.$productos);
     })->name('catalogo.enviar');
     
+    Route::get('compras/insumos/{id}', function($id){
+        $insumo = App\Insumo::find($id);
+
+        return redirect("admin/insumos/".$id);
+    })->name('insumo.comprar');
+
     Route::get('import/users', 'App\Http\Controllers\PosController@import_users')->name('import.users');
     Route::get('import/clientes', 'App\Http\Controllers\PosController@import_clientes')->name('import.clientes');
     // Route::get('producto/detalle', 'App\Http\Controllers\PosController@producto_detalle')->name('producto.detalle');
