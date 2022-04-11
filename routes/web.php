@@ -14,11 +14,7 @@ use App\Http\Controllers\PosController;
 |
 */
 Route::get('/', 'App\Http\Controllers\FrontEndController@default')->name('page_default');
-// Route::get('/', function () {
-    // return view('welcome');
-    // return redirect('/admin/profile');
-// });
-
+Route::get('/page/{slug}', 'App\Http\Controllers\FrontEndController@pages')->name('pages');
 
 Route::get('venta/{id}', 'App\Http\Controllers\PosController@venta_public')->name('venta.public');
 
@@ -45,13 +41,11 @@ Route::group(['prefix' => 'admin'], function () {
             $message=$message.' '.$index.'.- '.$prod->name.' a '.$prod->precio.' Bs.'.'%0A';
         }
         $message=$message.'%0A Para realizar sus pedidos online, dirígase al siguiente link: https://pos.loginweb.dev/ ';
-       
         return redirect("https://api.whatsapp.com/send?&text= MENU DEL DIA: %0A".$catalogo->title.'%0A'.$message);
     })->name('catalogo.enviar');
     
     Route::get('compras/insumos/{id}', function($id){
         $insumo = App\Insumo::find($id);
-
         return redirect("admin/insumos/".$id);
     })->name('insumo.comprar');
     Route::get('import/users', 'App\Http\Controllers\PosController@import_users')->name('import.users');

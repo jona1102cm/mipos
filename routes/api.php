@@ -577,6 +577,11 @@ Route::get('pos/unidades', function () {
     return  Unidade::all();
 });
 
+// UNA UNIDAD
+Route::get('pos/unidades/{id}', function ($id) {
+    return  Unidade::find($id);
+});
+
 // INSUMOS FOR UNIDAD
 Route::get('pos/insumo/unidad/{id}', function ($id) {
 
