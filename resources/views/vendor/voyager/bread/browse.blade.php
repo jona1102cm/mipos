@@ -174,7 +174,7 @@
                                     @php
                                         $detalle = App\ProductionInsumo::find($_GET['s']);
                                     @endphp
-                                    <pre> <code>{{ $detalle }}</code></pre> 
+                                    <pre> <code>{{ $detalle }}</code></pre>
                                 @break
                                 @case('cocinas')
 
@@ -202,9 +202,9 @@
                                         </div>
                                     </form>
                                 @break
-                            
+
                                 @case('productions')
-                                
+
                                     <!-- <form method="get" class="form-search"> -->
                                         <div id="search-input">
                                             <div class="col-6">
@@ -222,7 +222,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                    <!-- </form>  -->                                    
+                                    <!-- </form>  -->
                                 @break
 
                                 @case('detalle-ventas')
@@ -242,7 +242,7 @@
                                                         <option value=""> ---- Elige un Filtro ----</option>
                                                         <option value="name"> NOMBRE </option>
                                                         <option value="categoria_id"> CATEGORIA </option>
-                                                       
+
                                                 </select>
                                             </div>
                                             <div class="col-6">
@@ -274,7 +274,7 @@
                                             </div>
                                         </div>
                                     </form>
-                                @break                            
+                                @break
                                 @default
                                     <form method="get" class="form-search">
                                         <div id="search-input">
@@ -357,10 +357,10 @@
                                                             <td>
                                                                 {{-- <a href="#" onclick="confirmar({{ $item->id }})" class="btn btn-success">Confirmar</a> --}}
                                                                 <a href="#" onclick="cocina({{ $item->id }})" class="btn btn-primary">Realizado</a>
-                                                                
+
                                                             </td>
                                                         </tr>
-                                                    @endforeach                                                   
+                                                    @endforeach
                                                 </tbody>
                                             </tbody>
                                         </table>
@@ -369,7 +369,7 @@
                             @case('ventas')
                                 <div class="table-responsive">
                                     <table id="dataTable" class="table table-hover">
-                                        <thead>                                  
+                                        <thead>
                                             <tr>
                                                 @if($showCheckboxColumn)
                                                     <th class="dt-not-orderable">
@@ -395,10 +395,10 @@
                                                         @endif
                                                     </th>
                                                 @endforeach
-                                               
-                                            </tr>                                   
+
+                                            </tr>
                                         </thead>
-                                        <tbody>                                 
+                                        <tbody>
                                             @foreach($dataTypeContent as $data)
                                                 @if($data->register_id == Auth::user()->id )
                                                     <tr>
@@ -432,14 +432,14 @@
                                                                         <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:100px">
                                                                     @elseif($row->type == 'relationship')
                                                                         @include('voyager::formfields.relationship', ['view' => 'browse','options' => $row->details])
-                                                                    
+
                                                                     @elseif($row->type == 'select_multiple')
                                                                         @if(property_exists($row->details, 'relationship'))
 
                                                                             @foreach($data->{$row->field} as $item)
                                                                                 {{ $item->{$row->field} }}
                                                                             @endforeach
-                                                                        
+
                                                                         @elseif(property_exists($row->details, 'options'))
                                                                             @if (!empty(json_decode($data->{$row->field})))
                                                                                 @foreach(json_decode($data->{$row->field}) as $item)
@@ -490,8 +490,8 @@
 
                                                                         @include('voyager::multilingual.input-hidden-bread-browse')
                                                                         <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
-                                                                        
-                                                                        
+
+
                                                                     @elseif($row->type == 'text_area')
                                                                         @include('voyager::multilingual.input-hidden-bread-browse')
                                                                         <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
@@ -552,13 +552,13 @@
                                                                                 <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:50px">
                                                                             @else
                                                                                 {{ $data->{$row->field} }}
-                                                                            
+
                                                                             @endif
                                                                         @else
                                                                             {{ trans_choice('voyager::media.files', 0) }}
                                                                         @endif
                                                                     @else
-                                                                    
+
                                                                         @switch($row->field)
                                                                             @case('pago_id')
                                                                                 @php
@@ -566,7 +566,7 @@
                                                                                 @endphp
                                                                                 <span>{{ $pago ? $pago->title : null }}</span>
                                                                                 @break
-                                                                        
+
                                                                             @case('status_id')
                                                                                 @php
                                                                                     $estado = App\Estado::find($data->{$row->field});
@@ -630,10 +630,10 @@
                                                                     @endif
                                                                 </td>
 
-                                                        
+
                                                         @endforeach
-                                                       
-                                                    </tr>                                    
+
+                                                    </tr>
                                                 @elseif(Auth::user()->id == 1 OR Auth::user()->role_id == 5 )
                                                     <tr>
                                                         @if($showCheckboxColumn)
@@ -664,14 +664,14 @@
                                                                         <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:100px">
                                                                     @elseif($row->type == 'relationship')
                                                                         @include('voyager::formfields.relationship', ['view' => 'browse','options' => $row->details])
-                                                                    
+
                                                                     @elseif($row->type == 'select_multiple')
                                                                         @if(property_exists($row->details, 'relationship'))
 
                                                                             @foreach($data->{$row->field} as $item)
                                                                                 {{ $item->{$row->field} }}
                                                                             @endforeach
-                                                                        
+
                                                                         @elseif(property_exists($row->details, 'options'))
                                                                             @if (!empty(json_decode($data->{$row->field})))
                                                                                 @foreach(json_decode($data->{$row->field}) as $item)
@@ -722,8 +722,8 @@
 
                                                                         @include('voyager::multilingual.input-hidden-bread-browse')
                                                                         <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
-                                                                        
-                                                                        
+
+
                                                                     @elseif($row->type == 'text_area')
                                                                         @include('voyager::multilingual.input-hidden-bread-browse')
                                                                         <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
@@ -784,13 +784,13 @@
                                                                                 <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:50px">
                                                                             @else
                                                                                 {{ $data->{$row->field} }}
-                                                                            
+
                                                                             @endif
                                                                         @else
                                                                             {{ trans_choice('voyager::media.files', 0) }}
                                                                         @endif
                                                                     @else
-                                                                    
+
                                                                         @switch($row->field)
                                                                             @case('pago_id')
                                                                                 @php
@@ -798,7 +798,7 @@
                                                                                 @endphp
                                                                                 <span>{{ $pago ? $pago->title : null }}</span>
                                                                                 @break
-                                                                        
+
                                                                             @case('status_id')
                                                                                 @php
                                                                                     $estado = App\Estado::find($data->{$row->field});
@@ -809,7 +809,7 @@
                                                                                 @php
                                                                                     $cliente = App\Cliente::find($data->{$row->field});
                                                                                 @endphp
-                                                                                <span>{{ $cliente ? $cliente->display : null }}</span> 
+                                                                                <span>{{ $cliente ? $cliente->display : null }}</span>
                                                                                 @break
                                                                             @case('register_id')
                                                                                 @php
@@ -857,12 +857,12 @@
                                                                                 @include('voyager::multilingual.input-hidden-bread-browse')
                                                                                 <span>{{ $data->{$row->field} }}</span>
                                                                         @endswitch
-                                                                        
+
                                                                     @endif
                                                                 </td>
                                                         @endforeach
-                                                     
-                                                    </tr>                                    
+
+                                                    </tr>
                                                 @endif
                                             @endforeach
                                         </tbody>
@@ -872,7 +872,7 @@
                             @case('compras')
                                 <div class="table-responsive">
                                     <table id="dataTable" class="table table-hover">
-                                        <thead>                                  
+                                        <thead>
                                             <tr>
                                                 @if($showCheckboxColumn)
                                                     <th class="dt-not-orderable">
@@ -900,10 +900,10 @@
                                                 @endforeach
                                                 <th class="actions text-right dt-not-orderable">{{ __('voyager::generic.actions') }}</th>
 
-                                            
-                                            </tr>                                   
+
+                                            </tr>
                                         </thead>
-                                        <tbody>                                 
+                                        <tbody>
                                             @foreach($dataTypeContent as $data)
                                                 @if($data->register_id == Auth::user()->id )
                                                     <tr>
@@ -937,14 +937,14 @@
                                                                         <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:100px">
                                                                     @elseif($row->type == 'relationship')
                                                                         @include('voyager::formfields.relationship', ['view' => 'browse','options' => $row->details])
-                                                                    
+
                                                                     @elseif($row->type == 'select_multiple')
                                                                         @if(property_exists($row->details, 'relationship'))
 
                                                                             @foreach($data->{$row->field} as $item)
                                                                                 {{ $item->{$row->field} }}
                                                                             @endforeach
-                                                                        
+
                                                                         @elseif(property_exists($row->details, 'options'))
                                                                             @if (!empty(json_decode($data->{$row->field})))
                                                                                 @foreach(json_decode($data->{$row->field}) as $item)
@@ -995,8 +995,8 @@
 
                                                                         @include('voyager::multilingual.input-hidden-bread-browse')
                                                                         <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
-                                                                        
-                                                                        
+
+
                                                                     @elseif($row->type == 'text_area')
                                                                         @include('voyager::multilingual.input-hidden-bread-browse')
                                                                         <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
@@ -1057,13 +1057,13 @@
                                                                                 <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:50px">
                                                                             @else
                                                                                 {{ $data->{$row->field} }}
-                                                                            
+
                                                                             @endif
                                                                         @else
                                                                             {{ trans_choice('voyager::media.files', 0) }}
                                                                         @endif
                                                                     @else
-                                                                    
+
                                                                         @switch($row->field)
                                                                             @case('insumo_id')
                                                                                 @php
@@ -1078,7 +1078,7 @@
                                                                                 @endphp
                                                                                 <span>{{ $unidad ? $unidad->title : null }}</span>
                                                                             @break
-                                                                           
+
                                                                             @case('proveedor_id')
                                                                                 @php
                                                                                     $proveedor = App\Proveedore::find($data->{$row->field});
@@ -1101,7 +1101,7 @@
                                                                     @endif
                                                                 </td>
 
-                                                        
+
                                                         @endforeach
 
                                                         <td class="no-sort no-click bread-actions">
@@ -1111,8 +1111,8 @@
                                                                 @endif
                                                             @endforeach
                                                         </td>
-                                                    
-                                                    </tr>                                    
+
+                                                    </tr>
                                                 @elseif(Auth::user()->id == 1 OR Auth::user()->role_id == 5 )
                                                     <tr>
                                                         @if($showCheckboxColumn)
@@ -1143,14 +1143,14 @@
                                                                         <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:100px">
                                                                     @elseif($row->type == 'relationship')
                                                                         @include('voyager::formfields.relationship', ['view' => 'browse','options' => $row->details])
-                                                                    
+
                                                                     @elseif($row->type == 'select_multiple')
                                                                         @if(property_exists($row->details, 'relationship'))
 
                                                                             @foreach($data->{$row->field} as $item)
                                                                                 {{ $item->{$row->field} }}
                                                                             @endforeach
-                                                                        
+
                                                                         @elseif(property_exists($row->details, 'options'))
                                                                             @if (!empty(json_decode($data->{$row->field})))
                                                                                 @foreach(json_decode($data->{$row->field}) as $item)
@@ -1201,8 +1201,8 @@
 
                                                                         @include('voyager::multilingual.input-hidden-bread-browse')
                                                                         <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
-                                                                        
-                                                                        
+
+
                                                                     @elseif($row->type == 'text_area')
                                                                         @include('voyager::multilingual.input-hidden-bread-browse')
                                                                         <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
@@ -1263,13 +1263,13 @@
                                                                                 <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:50px">
                                                                             @else
                                                                                 {{ $data->{$row->field} }}
-                                                                            
+
                                                                             @endif
                                                                         @else
                                                                             {{ trans_choice('voyager::media.files', 0) }}
                                                                         @endif
                                                                     @else
-                                                                    
+
                                                                         @switch($row->field)
 
                                                                             @case('unidad_id')
@@ -1285,7 +1285,7 @@
                                                                                 @endphp
                                                                                 <span>{{ $insumo ? $insumo->name : null }}</span>
                                                                             @break
-                                                                    
+
                                                                             @case('proveedor_id')
                                                                                 @php
                                                                                     $proveedor = App\Proveedore::find($data->{$row->field});
@@ -1304,7 +1304,7 @@
                                                                                 @include('voyager::multilingual.input-hidden-bread-browse')
                                                                                 <span>{{ $data->{$row->field} }}</span>
                                                                         @endswitch
-                                                                        
+
                                                                     @endif
                                                                 </td>
                                                         @endforeach
@@ -1316,8 +1316,8 @@
                                                                 @endif
                                                             @endforeach
                                                         </td>
-                                                    
-                                                    </tr>                                    
+
+                                                    </tr>
                                                 @endif
                                             @endforeach
                                         </tbody>
@@ -1327,7 +1327,7 @@
                             @case('productos')
                                 <div class="table-responsive">
                                     <table id="dataTable" class="table table-hover">
-                                        <thead>                                  
+                                        <thead>
                                             <tr>
                                                 @if($showCheckboxColumn)
                                                     <th class="dt-not-orderable">
@@ -1353,12 +1353,12 @@
                                                     </th>
                                                 @endforeach
                                                 <th class="actions text-right dt-not-orderable">{{ __('voyager::generic.actions') }}</th>
-                                            </tr>                                   
+                                            </tr>
                                         </thead>
-                                        <tbody>                                 
+                                        <tbody>
                                             @foreach($dataTypeContent as $data)
                                                 <tr>
-                                                
+
                                                     @if($showCheckboxColumn)
                                                         <td>
                                                             <input type="checkbox" name="row_id" id="checkbox_{{ $data->getKey() }}" value="{{ $data->getKey() }}">
@@ -1372,7 +1372,7 @@
                                                             $data->{$row->field} = $data->{$row->field.'_browse'};
                                                         }
                                                         @endphp
-                                                        
+
                                                         <td>
                                                             @if (isset($row->details->view))
                                                                 @include($row->details->view, ['row' => $row, 'dataType' => $dataType, 'dataTypeContent' => $dataTypeContent, 'content' => $data->{$row->field}, 'action' => 'browse', 'view' => 'browse', 'options' => $row->details])
@@ -1380,14 +1380,14 @@
                                                                 <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:100px">
                                                             @elseif($row->type == 'relationship')
                                                                 @include('voyager::formfields.relationship', ['view' => 'browse','options' => $row->details])
-                                                            
+
                                                             @elseif($row->type == 'select_multiple')
                                                                 @if(property_exists($row->details, 'relationship'))
 
                                                                     @foreach($data->{$row->field} as $item)
                                                                         {{ $item->{$row->field} }}
                                                                     @endforeach
-                                                                
+
                                                                 @elseif(property_exists($row->details, 'options'))
                                                                     @if (!empty(json_decode($data->{$row->field})))
                                                                         @foreach(json_decode($data->{$row->field}) as $item)
@@ -1438,8 +1438,8 @@
 
                                                                 @include('voyager::multilingual.input-hidden-bread-browse')
                                                                 <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
-                                                                
-                                                                
+
+
                                                             @elseif($row->type == 'text_area')
                                                                 @include('voyager::multilingual.input-hidden-bread-browse')
                                                                 <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
@@ -1500,14 +1500,14 @@
                                                                         <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:50px">
                                                                     @else
                                                                         {{ $data->{$row->field} }}
-                                                                    
+
                                                                     @endif
                                                                 @else
                                                                     {{ trans_choice('voyager::media.files', 0) }}
                                                                 @endif
                                                             @else
                                                                     {{-- AQUI EL CODIGO --}}
-                                                                @switch($row->field)   
+                                                                @switch($row->field)
                                                                     @case('categoria_id')
                                                                     @php
                                                                         $categoria = App\Categoria::find($data->{$row->field});
@@ -1528,7 +1528,7 @@
 
                                                                 @endswitch
 
-                                                                
+
                                                             @endif
                                                         </td>
                                                     @endforeach
@@ -1551,7 +1551,7 @@
                             @case('productions')
                                 <div class="table-responsive">
                                     <table id="dataTable" class="table table-hover">
-                                        <thead>                                  
+                                        <thead>
                                             <tr>
                                                 @if($showCheckboxColumn)
                                                     <th class="dt-not-orderable">
@@ -1577,9 +1577,9 @@
                                                     </th>
                                                 @endforeach
                                                 <th class="actions text-right dt-not-orderable">{{ __('voyager::generic.actions') }}</th>
-                                            </tr>                                   
+                                            </tr>
                                         </thead>
-                                        <tbody>                                 
+                                        <tbody>
                                             @foreach($dataTypeContent as $data)
                                                 @if($data->register_id == Auth::user()->id )
                                                     <tr>
@@ -1605,14 +1605,14 @@
                                                                         <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:100px">
                                                                     @elseif($row->type == 'relationship')
                                                                         @include('voyager::formfields.relationship', ['view' => 'browse','options' => $row->details])
-                                                                    
+
                                                                     @elseif($row->type == 'select_multiple')
                                                                         @if(property_exists($row->details, 'relationship'))
 
                                                                             @foreach($data->{$row->field} as $item)
                                                                                 {{ $item->{$row->field} }}
                                                                             @endforeach
-                                                                        
+
                                                                         @elseif(property_exists($row->details, 'options'))
                                                                             @if (!empty(json_decode($data->{$row->field})))
                                                                                 @foreach(json_decode($data->{$row->field}) as $item)
@@ -1663,8 +1663,8 @@
 
                                                                         @include('voyager::multilingual.input-hidden-bread-browse')
                                                                         <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
-                                                                        
-                                                                        
+
+
                                                                     @elseif($row->type == 'text_area')
                                                                         @include('voyager::multilingual.input-hidden-bread-browse')
                                                                         <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
@@ -1725,13 +1725,13 @@
                                                                                 <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:50px">
                                                                             @else
                                                                                 {{ $data->{$row->field} }}
-                                                                            
+
                                                                             @endif
                                                                         @else
                                                                             {{ trans_choice('voyager::media.files', 0) }}
                                                                         @endif
                                                                     @else
-                                                                    
+
                                                                         @switch($row->field)
                                                                             @case('producto_id')
                                                                                 @php
@@ -1745,10 +1745,10 @@
                                                                                 $editor=TCG\Voyager\Models\User::find($data->{$row->field});
                                                                                 @endphp
                                                                                 <span>{{ $editor ? $editor->name : null }}</span>
-                                                                                
+
                                                                                 @break
-                                                                        
-                                                                           
+
+
 
                                                                             @default
                                                                                 @include('voyager::multilingual.input-hidden-bread-browse')
@@ -1758,7 +1758,7 @@
                                                                     @endif
                                                                 </td>
 
-                                                        
+
                                                         @endforeach
 
 
@@ -1771,7 +1771,7 @@
                                                                 @endif
                                                             @endforeach
                                                         </td>
-                                                    </tr>                                    
+                                                    </tr>
                                                 @elseif(Auth::user()->id == 1)
                                                     <tr>
                                                         @if($showCheckboxColumn)
@@ -1796,14 +1796,14 @@
                                                                         <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:100px">
                                                                     @elseif($row->type == 'relationship')
                                                                         @include('voyager::formfields.relationship', ['view' => 'browse','options' => $row->details])
-                                                                    
+
                                                                     @elseif($row->type == 'select_multiple')
                                                                         @if(property_exists($row->details, 'relationship'))
 
                                                                             @foreach($data->{$row->field} as $item)
                                                                                 {{ $item->{$row->field} }}
                                                                             @endforeach
-                                                                        
+
                                                                         @elseif(property_exists($row->details, 'options'))
                                                                             @if (!empty(json_decode($data->{$row->field})))
                                                                                 @foreach(json_decode($data->{$row->field}) as $item)
@@ -1854,8 +1854,8 @@
 
                                                                         @include('voyager::multilingual.input-hidden-bread-browse')
                                                                         <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
-                                                                        
-                                                                        
+
+
                                                                     @elseif($row->type == 'text_area')
                                                                         @include('voyager::multilingual.input-hidden-bread-browse')
                                                                         <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
@@ -1916,13 +1916,13 @@
                                                                                 <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:50px">
                                                                             @else
                                                                                 {{ $data->{$row->field} }}
-                                                                            
+
                                                                             @endif
                                                                         @else
                                                                             {{ trans_choice('voyager::media.files', 0) }}
                                                                         @endif
                                                                     @else
-                                                                    
+
                                                                         @switch($row->field)
                                                                             @case('producto_id')
                                                                                 @php
@@ -1936,15 +1936,15 @@
                                                                                 $editor=TCG\Voyager\Models\User::find($data->{$row->field});
                                                                                 @endphp
                                                                                 <span>{{ $editor ? $editor->name : null }}</span>
-                                                                                
+
                                                                                 @break
-                                                                        
-                                                                            
+
+
                                                                             @default
                                                                                 @include('voyager::multilingual.input-hidden-bread-browse')
                                                                                 <span>{{ $data->{$row->field} }}</span>
                                                                         @endswitch
-                                                                        
+
                                                                     @endif
                                                                 </td>
                                                         @endforeach
@@ -1955,7 +1955,7 @@
                                                                 @endif
                                                             @endforeach
                                                         </td>
-                                                    </tr>                                    
+                                                    </tr>
                                                 @endif
                                             @endforeach
                                         </tbody>
@@ -1965,7 +1965,7 @@
                             @case('production-insumos')
                                 <div class="table-responsive">
                                     <table id="dataTable" class="table table-hover">
-                                        <thead>                                  
+                                        <thead>
                                             <tr>
                                                 @if($showCheckboxColumn)
                                                     <th class="dt-not-orderable">
@@ -1991,9 +1991,9 @@
                                                     </th>
                                                 @endforeach
                                                 <th class="actions text-right dt-not-orderable">{{ __('voyager::generic.actions') }}</th>
-                                            </tr>                                   
+                                            </tr>
                                         </thead>
-                                        <tbody>                                 
+                                        <tbody>
                                             @foreach($dataTypeContent as $data)
                                                 @if($data->register_id == Auth::user()->id )
                                                     <tr>
@@ -2019,14 +2019,14 @@
                                                                         <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:100px">
                                                                     @elseif($row->type == 'relationship')
                                                                         @include('voyager::formfields.relationship', ['view' => 'browse','options' => $row->details])
-                                                                    
+
                                                                     @elseif($row->type == 'select_multiple')
                                                                         @if(property_exists($row->details, 'relationship'))
 
                                                                             @foreach($data->{$row->field} as $item)
                                                                                 {{ $item->{$row->field} }}
                                                                             @endforeach
-                                                                        
+
                                                                         @elseif(property_exists($row->details, 'options'))
                                                                             @if (!empty(json_decode($data->{$row->field})))
                                                                                 @foreach(json_decode($data->{$row->field}) as $item)
@@ -2077,8 +2077,8 @@
 
                                                                         @include('voyager::multilingual.input-hidden-bread-browse')
                                                                         <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
-                                                                        
-                                                                        
+
+
                                                                     @elseif($row->type == 'text_area')
                                                                         @include('voyager::multilingual.input-hidden-bread-browse')
                                                                         <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
@@ -2139,7 +2139,7 @@
                                                                                 <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:50px">
                                                                             @else
                                                                                 {{ $data->{$row->field} }}
-                                                                            
+
                                                                             @endif
                                                                         @else
                                                                             {{ trans_choice('voyager::media.files', 0) }}
@@ -2174,7 +2174,7 @@
                                                                     @endif
                                                                 </td>
 
-                                                        
+
                                                         @endforeach
 
 
@@ -2187,7 +2187,7 @@
                                                                 @endif
                                                             @endforeach
                                                         </td>
-                                                    </tr>                                    
+                                                    </tr>
                                                 @elseif(Auth::user()->id == 1)
                                                     <tr>
                                                         @if($showCheckboxColumn)
@@ -2212,14 +2212,14 @@
                                                                         <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:100px">
                                                                     @elseif($row->type == 'relationship')
                                                                         @include('voyager::formfields.relationship', ['view' => 'browse','options' => $row->details])
-                                                                    
+
                                                                     @elseif($row->type == 'select_multiple')
                                                                         @if(property_exists($row->details, 'relationship'))
 
                                                                             @foreach($data->{$row->field} as $item)
                                                                                 {{ $item->{$row->field} }}
                                                                             @endforeach
-                                                                        
+
                                                                         @elseif(property_exists($row->details, 'options'))
                                                                             @if (!empty(json_decode($data->{$row->field})))
                                                                                 @foreach(json_decode($data->{$row->field}) as $item)
@@ -2270,8 +2270,8 @@
 
                                                                         @include('voyager::multilingual.input-hidden-bread-browse')
                                                                         <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
-                                                                        
-                                                                        
+
+
                                                                     @elseif($row->type == 'text_area')
                                                                         @include('voyager::multilingual.input-hidden-bread-browse')
                                                                         <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
@@ -2332,13 +2332,13 @@
                                                                                 <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:50px">
                                                                             @else
                                                                                 {{ $data->{$row->field} }}
-                                                                            
+
                                                                             @endif
                                                                         @else
                                                                             {{ trans_choice('voyager::media.files', 0) }}
                                                                         @endif
                                                                     @else
-                                                                    
+
                                                                         @switch($row->field)
                                                                             @case('insumo_id')
                                                                                 @php
@@ -2365,7 +2365,7 @@
                                                                                 @include('voyager::multilingual.input-hidden-bread-browse')
                                                                                 <span>{{ $data->{$row->field} }} </span>
                                                                         @endswitch
-                                                                        
+
                                                                     @endif
                                                                 </td>
                                                         @endforeach
@@ -2376,7 +2376,7 @@
                                                                 @endif
                                                             @endforeach
                                                         </td>
-                                                    </tr>                                    
+                                                    </tr>
                                                 @endif
                                             @endforeach
                                         </tbody>
@@ -2386,7 +2386,7 @@
                             @case('production-semis')
                                 <div class="table-responsive">
                                     <table id="dataTable" class="table table-hover">
-                                        <thead>                                  
+                                        <thead>
                                             <tr>
                                                 @if($showCheckboxColumn)
                                                     <th class="dt-not-orderable">
@@ -2412,9 +2412,9 @@
                                                     </th>
                                                 @endforeach
                                                 <th class="actions text-right dt-not-orderable">{{ __('voyager::generic.actions') }}</th>
-                                            </tr>                                   
+                                            </tr>
                                         </thead>
-                                        <tbody>                                 
+                                        <tbody>
                                             @foreach($dataTypeContent as $data)
                                                 @if($data->register_id == Auth::user()->id )
                                                     <tr>
@@ -2440,14 +2440,14 @@
                                                                         <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:100px">
                                                                     @elseif($row->type == 'relationship')
                                                                         @include('voyager::formfields.relationship', ['view' => 'browse','options' => $row->details])
-                                                                    
+
                                                                     @elseif($row->type == 'select_multiple')
                                                                         @if(property_exists($row->details, 'relationship'))
 
                                                                             @foreach($data->{$row->field} as $item)
                                                                                 {{ $item->{$row->field} }}
                                                                             @endforeach
-                                                                        
+
                                                                         @elseif(property_exists($row->details, 'options'))
                                                                             @if (!empty(json_decode($data->{$row->field})))
                                                                                 @foreach(json_decode($data->{$row->field}) as $item)
@@ -2498,8 +2498,8 @@
 
                                                                         @include('voyager::multilingual.input-hidden-bread-browse')
                                                                         <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
-                                                                        
-                                                                        
+
+
                                                                     @elseif($row->type == 'text_area')
                                                                         @include('voyager::multilingual.input-hidden-bread-browse')
                                                                         <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
@@ -2560,20 +2560,20 @@
                                                                                 <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:50px">
                                                                             @else
                                                                                 {{ $data->{$row->field} }}
-                                                                            
+
                                                                             @endif
                                                                         @else
                                                                             {{ trans_choice('voyager::media.files', 0) }}
                                                                         @endif
                                                                     @else
-                                                                    
+
                                                                         @switch($row->field)
                                                                             @case('user_id')
                                                                                 @php
                                                                                 $editor=TCG\Voyager\Models\User::find($data->{$row->field});
                                                                                 @endphp
                                                                                 <span>{{ $editor ? $editor->name : null }}</span>
-                                                                                
+
                                                                                 @break
 
                                                                             @default
@@ -2584,7 +2584,7 @@
                                                                     @endif
                                                                 </td>
 
-                                                        
+
                                                         @endforeach
 
 
@@ -2597,7 +2597,7 @@
                                                                 @endif
                                                             @endforeach
                                                         </td>
-                                                    </tr>                                    
+                                                    </tr>
                                                 @elseif(Auth::user()->id == 1)
                                                     <tr>
                                                         @if($showCheckboxColumn)
@@ -2622,14 +2622,14 @@
                                                                         <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:100px">
                                                                     @elseif($row->type == 'relationship')
                                                                         @include('voyager::formfields.relationship', ['view' => 'browse','options' => $row->details])
-                                                                    
+
                                                                     @elseif($row->type == 'select_multiple')
                                                                         @if(property_exists($row->details, 'relationship'))
 
                                                                             @foreach($data->{$row->field} as $item)
                                                                                 {{ $item->{$row->field} }}
                                                                             @endforeach
-                                                                        
+
                                                                         @elseif(property_exists($row->details, 'options'))
                                                                             @if (!empty(json_decode($data->{$row->field})))
                                                                                 @foreach(json_decode($data->{$row->field}) as $item)
@@ -2680,8 +2680,8 @@
 
                                                                         @include('voyager::multilingual.input-hidden-bread-browse')
                                                                         <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
-                                                                        
-                                                                        
+
+
                                                                     @elseif($row->type == 'text_area')
                                                                         @include('voyager::multilingual.input-hidden-bread-browse')
                                                                         <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
@@ -2742,27 +2742,27 @@
                                                                                 <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:50px">
                                                                             @else
                                                                                 {{ $data->{$row->field} }}
-                                                                            
+
                                                                             @endif
                                                                         @else
                                                                             {{ trans_choice('voyager::media.files', 0) }}
                                                                         @endif
                                                                     @else
-                                                                    
+
                                                                         @switch($row->field)
                                                                             @case('user_id')
                                                                                 @php
                                                                                 $editor=TCG\Voyager\Models\User::find($data->{$row->field});
                                                                                 @endphp
                                                                                 <span>{{ $editor ? $editor->name : null }}</span>
-                                                                            
+
                                                                             @break
 
                                                                             @default
                                                                                 @include('voyager::multilingual.input-hidden-bread-browse')
                                                                                 <span>{{ $data->{$row->field} }}</span>
                                                                         @endswitch
-                                                                        
+
                                                                     @endif
                                                                 </td>
                                                         @endforeach
@@ -2773,13 +2773,13 @@
                                                                 @endif
                                                             @endforeach
                                                         </td>
-                                                    </tr>                                    
+                                                    </tr>
                                                 @endif
                                             @endforeach
                                         </tbody>
                                     </table>
                                 </div>
-                                @break                           
+                                @break
                             @case('detalle-ventas')
                                 <div class="col-sm-4">
                                     @php
@@ -2865,7 +2865,7 @@
                                 <div class="col-sm-8">
                                     <div class="table-responsive">
                                         <table id="dataTable" class="table table-hover">
-                                            <thead>                                  
+                                            <thead>
                                                 <tr>
                                                     @if($showCheckboxColumn)
                                                         <th class="dt-not-orderable">
@@ -2890,13 +2890,13 @@
                                                             @endif
                                                         </th>
                                                     @endforeach
-                                                    
-                                                </tr>                                   
+
+                                                </tr>
                                             </thead>
-                                            <tbody>                                 
+                                            <tbody>
                                                 @foreach($dataTypeContent as $data)
                                                     <tr>
-                                                    
+
                                                         @if($showCheckboxColumn)
                                                             <td>
                                                                 <input type="checkbox" name="row_id" id="checkbox_{{ $data->getKey() }}" value="{{ $data->getKey() }}">
@@ -2910,7 +2910,7 @@
                                                                 $data->{$row->field} = $data->{$row->field.'_browse'};
                                                             }
                                                             @endphp
-                                                            
+
                                                             <td>
                                                                 @if (isset($row->details->view))
                                                                     @include($row->details->view, ['row' => $row, 'dataType' => $dataType, 'dataTypeContent' => $dataTypeContent, 'content' => $data->{$row->field}, 'action' => 'browse', 'view' => 'browse', 'options' => $row->details])
@@ -2918,14 +2918,14 @@
                                                                     <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:100px">
                                                                 @elseif($row->type == 'relationship')
                                                                     @include('voyager::formfields.relationship', ['view' => 'browse','options' => $row->details])
-                                                                
+
                                                                 @elseif($row->type == 'select_multiple')
                                                                     @if(property_exists($row->details, 'relationship'))
 
                                                                         @foreach($data->{$row->field} as $item)
                                                                             {{ $item->{$row->field} }}
                                                                         @endforeach
-                                                                    
+
                                                                     @elseif(property_exists($row->details, 'options'))
                                                                         @if (!empty(json_decode($data->{$row->field})))
                                                                             @foreach(json_decode($data->{$row->field}) as $item)
@@ -2976,8 +2976,8 @@
 
                                                                     @include('voyager::multilingual.input-hidden-bread-browse')
                                                                     <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
-                                                                    
-                                                                    
+
+
                                                                 @elseif($row->type == 'text_area')
                                                                     @include('voyager::multilingual.input-hidden-bread-browse')
                                                                     <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
@@ -3038,13 +3038,13 @@
                                                                             <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:50px">
                                                                         @else
                                                                             {{ $data->{$row->field} }}
-                                                                        
+
                                                                         @endif
                                                                     @else
                                                                         {{ trans_choice('voyager::media.files', 0) }}
                                                                     @endif
                                                                 @else
-                                                                
+
                                                                     @include('voyager::multilingual.input-hidden-bread-browse')
                                                                     <span>{{ $data->{$row->field} }}</span>
                                                                 @endif
@@ -3053,7 +3053,7 @@
 
 
 
-                                                
+
                                                     </tr>
                                                 @endforeach
                                             </tbody>
@@ -3062,10 +3062,10 @@
                                 </div>
                                 @break
                             @case('detalle-cajas')
-                                
+
                                     <div class="table-responsive">
                                         <table id="dataTable" class="table table-hover">
-                                            <thead>                                  
+                                            <thead>
                                                 <tr>
                                                     @if($showCheckboxColumn)
                                                         <th class="dt-not-orderable">
@@ -3091,19 +3091,19 @@
                                                             @endif
                                                         </th>
                                                     @endforeach
-                                                
-                                                </tr>                                   
+
+                                                </tr>
                                             </thead>
-                                            <tbody>                                 
+                                            <tbody>
                                                 @foreach($dataTypeContent as $data)
                                                     <tr>
-                                                    
+
                                                         @if($showCheckboxColumn)
                                                             <td>
                                                                 <input type="checkbox" name="row_id" id="checkbox_{{ $data->getKey() }}" value="{{ $data->getKey() }}">
                                                             </td>
                                                         @endif
-                                                        
+
                                                         <td class="no-sort no-click bread-actions">
                                                             @foreach($actions as $action)
                                                                 @if (!method_exists($action, 'massAction'))
@@ -3119,7 +3119,7 @@
                                                                 $data->{$row->field} = $data->{$row->field.'_browse'};
                                                             }
                                                             @endphp
-                                                            
+
                                                             <td>
                                                                 @if (isset($row->details->view))
                                                                     @include($row->details->view, ['row' => $row, 'dataType' => $dataType, 'dataTypeContent' => $dataTypeContent, 'content' => $data->{$row->field}, 'action' => 'browse', 'view' => 'browse', 'options' => $row->details])
@@ -3127,14 +3127,14 @@
                                                                     <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:100px">
                                                                 @elseif($row->type == 'relationship')
                                                                     @include('voyager::formfields.relationship', ['view' => 'browse','options' => $row->details])
-                                                                
+
                                                                 @elseif($row->type == 'select_multiple')
                                                                     @if(property_exists($row->details, 'relationship'))
 
                                                                         @foreach($data->{$row->field} as $item)
                                                                             {{ $item->{$row->field} }}
                                                                         @endforeach
-                                                                    
+
                                                                     @elseif(property_exists($row->details, 'options'))
                                                                         @if (!empty(json_decode($data->{$row->field})))
                                                                             @foreach(json_decode($data->{$row->field}) as $item)
@@ -3185,8 +3185,8 @@
 
                                                                     @include('voyager::multilingual.input-hidden-bread-browse')
                                                                     <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
-                                                                    
-                                                                    
+
+
                                                                 @elseif($row->type == 'text_area')
                                                                     @include('voyager::multilingual.input-hidden-bread-browse')
                                                                     <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
@@ -3247,13 +3247,13 @@
                                                                             <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:50px">
                                                                         @else
                                                                             {{ $data->{$row->field} }}
-                                                                        
+
                                                                         @endif
                                                                     @else
                                                                         {{ trans_choice('voyager::media.files', 0) }}
                                                                     @endif
                                                                 @else
-                                                                
+
                                                                     @include('voyager::multilingual.input-hidden-bread-browse')
                                                                     <span>{{ $data->{$row->field} }}</span>
                                                                 @endif
@@ -3265,9 +3265,9 @@
                                             </tbody>
                                         </table>
                                     </div>
-                             
+
                                 @break
-                            
+
                             @case('pensionado-detalles')
                                 <div class="col-sm-4">
                                     @php
@@ -3275,7 +3275,7 @@
                                     @endphp
                                     <h4>Kardex</h4>
                                     <table class="table">
-                                    
+
                                         <tbody>
                                             <tr>
                                                 <td>Cliente</td>
@@ -3298,7 +3298,7 @@
                                     </h4>
                                     <div class="table-responsive">
                                         <table id="dataTable" class="table table-hover">
-                                            <thead>                                  
+                                            <thead>
                                                 <tr>
                                                     @if($showCheckboxColumn)
                                                         <th class="dt-not-orderable">
@@ -3324,12 +3324,12 @@
                                                         </th>
                                                     @endforeach
                                                     <th class="actions text-right dt-not-orderable">{{ __('voyager::generic.actions') }}</th>
-                                                </tr>                                   
+                                                </tr>
                                             </thead>
-                                            <tbody>                                 
+                                            <tbody>
                                                 @foreach($dataTypeContent as $data)
                                                     <tr>
-                                                    
+
                                                         @if($showCheckboxColumn)
                                                             <td>
                                                                 <input type="checkbox" name="row_id" id="checkbox_{{ $data->getKey() }}" value="{{ $data->getKey() }}">
@@ -3343,7 +3343,7 @@
                                                                 $data->{$row->field} = $data->{$row->field.'_browse'};
                                                             }
                                                             @endphp
-                                                            
+
                                                             <td>
                                                                 @if (isset($row->details->view))
                                                                     @include($row->details->view, ['row' => $row, 'dataType' => $dataType, 'dataTypeContent' => $dataTypeContent, 'content' => $data->{$row->field}, 'action' => 'browse', 'view' => 'browse', 'options' => $row->details])
@@ -3351,14 +3351,14 @@
                                                                     <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:100px">
                                                                 @elseif($row->type == 'relationship')
                                                                     @include('voyager::formfields.relationship', ['view' => 'browse','options' => $row->details])
-                                                                
+
                                                                 @elseif($row->type == 'select_multiple')
                                                                     @if(property_exists($row->details, 'relationship'))
 
                                                                         @foreach($data->{$row->field} as $item)
                                                                             {{ $item->{$row->field} }}
                                                                         @endforeach
-                                                                    
+
                                                                     @elseif(property_exists($row->details, 'options'))
                                                                         @if (!empty(json_decode($data->{$row->field})))
                                                                             @foreach(json_decode($data->{$row->field}) as $item)
@@ -3409,8 +3409,8 @@
 
                                                                     @include('voyager::multilingual.input-hidden-bread-browse')
                                                                     <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
-                                                                    
-                                                                    
+
+
                                                                 @elseif($row->type == 'text_area')
                                                                     @include('voyager::multilingual.input-hidden-bread-browse')
                                                                     <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
@@ -3471,13 +3471,13 @@
                                                                             <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:50px">
                                                                         @else
                                                                             {{ $data->{$row->field} }}
-                                                                        
+
                                                                         @endif
                                                                     @else
                                                                         {{ trans_choice('voyager::media.files', 0) }}
                                                                     @endif
                                                                 @else
-                                                                
+
                                                                     @include('voyager::multilingual.input-hidden-bread-browse')
                                                                     <span>{{ $data->{$row->field} }}</span>
                                                                 @endif
@@ -3503,7 +3503,7 @@
                             @default
                                 <div class="table-responsive">
                                     <table id="dataTable" class="table table-hover">
-                                        <thead>                                  
+                                        <thead>
                                             <tr>
                                                 @if($showCheckboxColumn)
                                                     <th class="dt-not-orderable">
@@ -3529,12 +3529,12 @@
                                                     </th>
                                                 @endforeach
                                                 <th class="actions text-right dt-not-orderable">{{ __('voyager::generic.actions') }}</th>
-                                            </tr>                                   
+                                            </tr>
                                         </thead>
-                                        <tbody>                                 
+                                        <tbody>
                                             @foreach($dataTypeContent as $data)
                                                 <tr>
-                                                
+
                                                     @if($showCheckboxColumn)
                                                         <td>
                                                             <input type="checkbox" name="row_id" id="checkbox_{{ $data->getKey() }}" value="{{ $data->getKey() }}">
@@ -3548,7 +3548,7 @@
                                                             $data->{$row->field} = $data->{$row->field.'_browse'};
                                                         }
                                                         @endphp
-                                                        
+
                                                         <td>
                                                             @if (isset($row->details->view))
                                                                 @include($row->details->view, ['row' => $row, 'dataType' => $dataType, 'dataTypeContent' => $dataTypeContent, 'content' => $data->{$row->field}, 'action' => 'browse', 'view' => 'browse', 'options' => $row->details])
@@ -3556,14 +3556,14 @@
                                                                 <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:100px">
                                                             @elseif($row->type == 'relationship')
                                                                 @include('voyager::formfields.relationship', ['view' => 'browse','options' => $row->details])
-                                                            
+
                                                             @elseif($row->type == 'select_multiple')
                                                                 @if(property_exists($row->details, 'relationship'))
 
                                                                     @foreach($data->{$row->field} as $item)
                                                                         {{ $item->{$row->field} }}
                                                                     @endforeach
-                                                                
+
                                                                 @elseif(property_exists($row->details, 'options'))
                                                                     @if (!empty(json_decode($data->{$row->field})))
                                                                         @foreach(json_decode($data->{$row->field}) as $item)
@@ -3614,8 +3614,8 @@
 
                                                                 @include('voyager::multilingual.input-hidden-bread-browse')
                                                                 <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
-                                                                
-                                                                
+
+
                                                             @elseif($row->type == 'text_area')
                                                                 @include('voyager::multilingual.input-hidden-bread-browse')
                                                                 <div>{{ mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field} }}</div>
@@ -3676,13 +3676,13 @@
                                                                         <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:50px">
                                                                     @else
                                                                         {{ $data->{$row->field} }}
-                                                                    
+
                                                                     @endif
                                                                 @else
                                                                     {{ trans_choice('voyager::media.files', 0) }}
                                                                 @endif
                                                             @else
-                                                            
+
                                                                 @include('voyager::multilingual.input-hidden-bread-browse')
                                                                 <span>{{ $data->{$row->field} }}</span>
                                                             @endif
@@ -3718,7 +3718,7 @@
                                             'all' => $dataTypeContent->total()
                                         ]) }}</div>
                                 </div>
-                                <div class="pull-right"> 
+                                <div class="pull-right">
                                     {{ $dataTypeContent->appends([
                                         's' => $search->value,
                                         'filter' => $search->filter,
@@ -3738,7 +3738,7 @@
 
     <!-- ---------------------MODAL-------------------  -->
     <!-- ---------------------MODAL-------------------  -->
-    
+
         <div class="modal modal-danger fade" tabindex="-1" id="delete_modal" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -3757,7 +3757,7 @@
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
-   
+
         <div class="modal modal-primary fade" tabindex="-1" id="modal_deudas" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -3767,7 +3767,7 @@
                     <div class="modal-body">
                         <div class="row">
 
-                        
+
                             <div class="col-sm-6">
                                 <label for="">ELija una Caja</label>
                                 <select name="" id="micajas" class="form-control"></select>
@@ -3776,7 +3776,7 @@
                                 <label for="">ELija una Chofer</label>
                                 <select name="" id="michoferes" class="form-control"></select>
                             </div>
-                            <div class="col-sm-7"> 
+                            <div class="col-sm-7">
                                 <button type="button" class="btn btn-primary pull-right" onclick="filtro1()">Consultar</button>
                             </div>
                             <div class="col-sm-12">
@@ -3970,7 +3970,7 @@
                             });
 
                             break
-                            
+
                             case 'delivery_id':
                             $('#s').find('option').remove().end();
                             $.ajax({
@@ -4035,7 +4035,7 @@
                                 }
                             });
 
-                            break                   
+                            break
                         case 'pago_id':
                             $('#s').find('option').remove().end();
                             $.ajax({
@@ -4075,7 +4075,7 @@
                                     }
                                 }
                             });
-                            break             
+                            break
                         case'cupon_id':
                             $('#s').find('option').remove().end();
                             $.ajax({
@@ -4173,8 +4173,8 @@
                             if (response.length == 0 ) {
                                 toastr.error('Sin Resultados.');
                             } else {
-                                
-                                for (let index = 0; index < response.length; index++) { 
+
+                                for (let index = 0; index < response.length; index++) {
                                     mitable = mitable + "<tr><td>"+response[index].id+"</td><td>"+response[index].cliente_id+"</td><td>"+response[index].published+"</td></tr>";
                                 }
                                 $('#table_deudas').append(mitable);
@@ -4190,6 +4190,8 @@
                 @break
             @case('productos')
                 $('#search_key').on('change', function() {
+                    $('.js-example-basic-single').select2();
+
                     // alert(this.value);
                     switch (this.value) {
                         case ('categoria_id'):
@@ -4243,7 +4245,7 @@
                 $('.js-example-basic-single').select2();
                 $('#search_key').on('change', async function() {
 
-                    
+
                     switch (this.value) {
 
                         case 'proveedor_id':
@@ -4285,7 +4287,7 @@
                             $('#s').find('option').remove().end();
 
                             var tabla= await  axios("{{setting('admin.url')}}api/pos/insumos");
-                            
+
                             $('#s').append($('<option>', {
                                 value: null,
                                 text: 'Elige un Insumo'
@@ -4322,7 +4324,7 @@
             @break
 
             @default
-               
+
         @endswitch
 
     </script>

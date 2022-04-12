@@ -12,6 +12,8 @@
   <link href="{{ asset('mdb2/css/mdb.min.css') }}" rel="stylesheet">
   <style>
   </style>
+
+@yield('css')
 </head>
 
 <body class="homepage-v2 hidden-sn white-skin animated">
@@ -86,5 +88,7 @@
         });
         $(".button-collapse").sideNav();
     </script>
+
+@yield('javascript')
 </body>
 </html>
