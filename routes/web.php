@@ -40,7 +40,8 @@ Route::group(['prefix' => 'admin'], function () {
             $prod= App\Producto::find($item->producto_id);
             $message=$message.' '.$index.'.- '.$prod->name.' a '.$prod->precio.' Bs.'.'%0A';
         }
-        $message=$message.'%0A Para realizar sus pedidos online, dirígase al siguiente link: https://pos.loginweb.dev/ ';
+        $url=setting('admin.url');
+        $message=$message.'%0A Para realizar sus pedidos online, dirígase al siguiente link:  '.$url;
         return redirect("https://api.whatsapp.com/send?&text= MENU DEL DIA: %0A".$catalogo->title.'%0A'.$message);
     })->name('catalogo.enviar');
     
