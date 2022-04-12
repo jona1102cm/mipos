@@ -25,10 +25,9 @@ Route::get('/encola/{id}', function ($id) {
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
-
+    
     Route::get('ventas/imprimir/{id}', 'App\Http\Controllers\PosController@imprimir')->name('venta.imprimir');
     Route::get('detalle_cajas/imprimir/{id}', 'App\Http\Controllers\PosController@cierre_caja')->name('cajas.cierre_caja');
-
     Route::get('catalogos/enviar/{id}', function($id){
         $catalogo = App\Catalogo::find($id);
         $productos = App\RelCatalogoProducto::where('catalogo_id', $id)->get();
@@ -44,7 +43,6 @@ Route::group(['prefix' => 'admin'], function () {
         $message=$message.'%0A Para realizar sus pedidos online, dirígase al siguiente link:  '.$url;
         return redirect("https://api.whatsapp.com/send?&text= MENU DEL DIA: %0A".$catalogo->title.'%0A'.$message);
     })->name('catalogo.enviar');
-    
     Route::get('compras/insumos/{id}', function($id){
         $insumo = App\Insumo::find($id);
         return redirect("admin/insumos/".$id);
@@ -54,21 +52,17 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('import/products', 'App\Http\Controllers\PosController@import_products')->name('import.products');
     Route::get('import/ventas', 'App\Http\Controllers\PosController@import_ventas')->name('import.ventas');
 
-
     //Pages
     Route::get('{page_id}/edit', 'PageController@edit')->name('page_edit'); 
     Route::post('/page/{page_id}/update', 'PageController@update')->name('page_update');
     Route::get('/page/{page_id}/default', 'PageController@default')->name('page_default'); 
-
     Route::get('{page_id}/index', 'App\Http\Controllers\BlockController@index')->name('block_index'); 
     Route::post('/block/update/{block_id}', 'BlockController@update')->name('block_update');
     Route::get('/block/delete/{block_id}', 'BlockController@delete')->name('block_delete');
     Route::get('/block/order/{block_id}/{order}', 'BlockController@block_ordering');
-
     Route::get('/block/move_up/{block_id}', 'BlockController@move_up')->name('block_move_up'); 
     Route::get('/block/move_down/{block_id}', 'BlockController@move_down')->name('block_move_down');
-
-        
+       
 });
 
 \PWA::routes();
