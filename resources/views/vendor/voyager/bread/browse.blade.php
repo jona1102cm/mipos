@@ -171,10 +171,10 @@
                         @if ($isServerSide)
                             @switch($dataType->getTranslatedAttribute('slug'))
                                 @case('production-insumos')
-                                    @php
+                                    {{-- @php
                                         $detalle = App\ProductionInsumo::find($_GET['s']);
                                     @endphp
-                                    <pre> <code>{{ $detalle }}</code></pre>
+                                    <pre> <code>{{ $detalle }}</code></pre> --}}
                                 @break
                                 @case('cocinas')
 
@@ -2149,16 +2149,29 @@
 
                                                                                 @case('insumo_id')
                                                                                     @php
-                                                                                        $type = App\ProductionInsumo::find($data->id);
-                                                                                        $miinsumo = false;
-                                                                                        if ($type->type_insumo == 'elaborado') {
-                                                                                            $miinsumo = App\ProductosSemiElaborado::find($data->{$row->field});
-                                                                                        } else if($type->type_insumo == 'simple'){
-                                                                                            $miinsumo = App\Insumo::find($data->{$row->field});
-                                                                                        }
+                                                                                        // $type = App\ProductionInsumo::find($data->id);
+                                                                                        // $miinsumo = false;
+                                                                                        // if ($type->type_insumo == 'elaborado') {
+                                                                                        //     $miinsumo = App\ProductosSemiElaborado::find($data->{$row->field});
+                                                                                        // } else if($type->type_insumo == 'simple'){
+                                                                                        //     $miinsumo = App\Insumo::find($data->{$row->field});
+                                                                                        // }
+                                                                                            $insumo= App\Insumo::find($data->{$row->field});
                                                                                     @endphp
-                                                                                    <span>{{ $miinsumo ? $miinsumo->name : null }}</span>
+                                                                                    {{-- <span>{{ $miinsumo ? $miinsumo->name : null }}</span> --}}
+                                                                                        <span>{{ $insumo ? $insumo->name : null }}</span>
+
                                                                                     @break
+
+                                                                                @case('elaborado_id')
+                                                                                    @php
+                                                                                        $elaborado= App\ProductosSemiElaborado::find($data->{$row->field});
+                                                                                    @endphp
+                                                                                    <span>{{ $elaborado ? $elaborado->name : null }}</span>
+
+
+
+                                                                                @break
 
                                                                                 @case('proveedor_id')
                                                                                     @php
@@ -2166,6 +2179,7 @@
                                                                                     @endphp
                                                                                     <span>{{ $proveedor ? $proveedor->name : null }}</span>
                                                                                     @break
+
 
                                                                                 @default
                                                                                     @include('voyager::multilingual.input-hidden-bread-browse')
@@ -2341,17 +2355,29 @@
 
                                                                         @switch($row->field)
                                                                             @case('insumo_id')
+                                                                            @php
+                                                                                // $type = App\ProductionInsumo::find($data->id);
+                                                                                // $miinsumo = false;
+                                                                                // if ($type->type_insumo == 'elaborado') {
+                                                                                //     $miinsumo = App\ProductosSemiElaborado::find($data->{$row->field});
+                                                                                // } else if($type->type_insumo == 'simple'){
+                                                                                //     $miinsumo = App\Insumo::find($data->{$row->field});
+                                                                                // }
+                                                                                    $insumo= App\Insumo::find($data->{$row->field});
+                                                                            @endphp
+                                                                            {{-- <span>{{ $miinsumo ? $miinsumo->name : null }}</span> --}}
+                                                                                <span>{{ $insumo ? $insumo->name : null }}</span>
+
+                                                                            @break
+
+                                                                            @case('elaborado_id')
                                                                                 @php
-                                                                                    $type = App\ProductionInsumo::find($data->id);
-                                                                                    $miinsumo = false;
-                                                                                    if ($type->type_insumo == 'elaborado') {
-                                                                                        $miinsumo = App\ProductosSemiElaborado::find($data->{$row->field});
-                                                                                    } else if($type->type_insumo == 'simple'){
-                                                                                        $miinsumo = App\Insumo::find($data->{$row->field});
-                                                                                    }
+                                                                                    $elaborado= App\ProductosSemiElaborado::find($data->{$row->field});
                                                                                 @endphp
-                                                                                <span>{{ $miinsumo ? $miinsumo->name : null }}</span>
-                                                                                @break
+                                                                                <span>{{ $elaborado ? $elaborado->name : null }}</span>
+
+
+                                                                            @break
 
 
                                                                             @case('proveedor_id')
@@ -2360,6 +2386,7 @@
                                                                                 @endphp
                                                                                 <span>{{ $proveedor ? $proveedor->name : null }}</span>
                                                                                 @break
+
 
                                                                             @default
                                                                                 @include('voyager::multilingual.input-hidden-bread-browse')

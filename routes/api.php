@@ -639,10 +639,23 @@ Route::get('pos/productions/save/{midataProduction}', function($midataProduction
 Route::get('pos/productions/save/detalle/{miproduction}', function($miproduction) {
     $miproduction2 = json_decode($miproduction);
 
+    //Condición para definir si se guardará id de simple o elab
+    if($miproduction2->type=="simple"){
+        $insumo=$miproduction2->insumo_id;
+        $elab=null;
+    }
+
+    if($miproduction2->type=="elaborado"){
+        $insumo=null;
+        $elab=$miproduction2->insumo_id;
+    }
+
+
     $productionI= ProductionInsumo::create([
         'type_insumo'=>$miproduction2->type,
         'production_id'=>$miproduction2->production_id,
-        'insumo_id' => $miproduction2->insumo_id,
+        'insumo_id' => $insumo,
+        'elaborado_id'=>$elab,
         'proveedor_id'=> $miproduction2->proveedor_id,
         'precio' => $miproduction2->precio,
         'cantidad' => $miproduction2->cantidad,
@@ -650,14 +663,24 @@ Route::get('pos/productions/save/detalle/{miproduction}', function($miproduction
     ]);
 
     //Update Stock Insumo
+    if($miproduction2->type=="simple"){
     $ins= Insumo::find($miproduction2->insumo_id);
-
-
     $canta = $ins->stock;
     $cantb = $miproduction2->cantidad;
     $cantc = $canta - $cantb;
     $ins->stock = $cantc;
     $ins->save();
+    }
+
+    //Update Stock ProductosPreelaborados
+    if($miproduction2->type=="elaborado"){
+        $prodpre = ProductosSemiElaborado::find($miproduction2->insumo_id);
+        $ca= $prodpre->stock;
+        $cb= $miproduction2->cantidad;
+        $cc= $ca-$cb;
+        $prodpre->stock=$cc;
+        $prodpre->save();
+    }
 
 
 

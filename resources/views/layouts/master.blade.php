@@ -25,7 +25,7 @@
         <li>
             <ul class="collapsible collapsible-accordion">
             @php
-                $menus =  DB::table('menu_items')->where('menu_id', 3)->orderBy('order','asc')->get();
+                $menus =  DB::table('menu_items')->where('menu_id', setting('site.menu_movil'))->orderBy('order','asc')->get();
             @endphp
             @foreach ($menus as $item)
                 <li>

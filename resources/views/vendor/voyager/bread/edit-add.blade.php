@@ -3111,10 +3111,10 @@
                     var newlist = [];
                     for (let index = 0; index < miproduction.length; index++) {
                         if (miproduction[index].id == id) {
-                            var temp = {'id': miproduction[index].id, 'name': miproduction[index].name,'proveedor': miproduction[index].proveedor, 'costo': parseFloat($("#costo_"+id).val()), 'cant': parseFloat($("#cant_"+id).val()), 'total': total};
+                            var temp = {'cod':miproduction[index].cod,'type':miproduction[index].type,'idpro':miproduction[index].idpro,'id': miproduction[index].id, 'name': miproduction[index].name,'proveedor': miproduction[index].proveedor, 'costo': parseFloat($("#costo_"+id).val()), 'cant': parseFloat($("#cant_"+id).val()), 'total': total};
                             newlist.push(temp);
                         }else{
-                            var temp = {'id': miproduction[index].id, 'name': miproduction[index].name, 'proveedor': miproduction[index].proveedor,'costo': miproduction[index].costo, 'cant': miproduction[index].cant, 'total': miproduction[index].total};
+                            var temp = {'cod':miproduction[index].cod,'type':miproduction[index].type,'idpro':miproduction[index].idpro,'id': miproduction[index].id, 'name': miproduction[index].name, 'proveedor': miproduction[index].proveedor,'costo': miproduction[index].costo, 'cant': miproduction[index].cant, 'total': miproduction[index].total};
                             newlist.push(temp);
                         }
                     }
@@ -3132,10 +3132,10 @@
                     var newlist = [];
                     for (let index = 0; index < miproduction.length; index++) {
                         if (miproduction[index].id == id) {
-                            var temp = {'id': miproduction[index].id, 'name': miproduction[index].name,'proveedor': miproduction[index].proveedor, 'costo': parseFloat($("#costo_"+id).val()), 'cant': parseFloat($("#cant_"+id).val()), 'total': total};
+                            var temp = {'cod':miproduction[index].cod,'type':miproduction[index].type,'idpro':miproduction[index].idpro,'id': miproduction[index].id, 'name': miproduction[index].name,'proveedor': miproduction[index].proveedor, 'costo': parseFloat($("#costo_"+id).val()), 'cant': parseFloat($("#cant_"+id).val()), 'total': total};
                             newlist.push(temp);
                         }else{
-                            var temp = {'id': miproduction[index].id, 'name': miproduction[index].name,'proveedor': miproduction[index].proveedor,'costo': miproduction[index].costo, 'cant': miproduction[index].cant, 'total': miproduction[index].total};
+                            var temp = {'cod':miproduction[index].cod,'type':miproduction[index].type,'idpro':miproduction[index].idpro,'id': miproduction[index].id, 'name': miproduction[index].name,'proveedor': miproduction[index].proveedor,'costo': miproduction[index].costo, 'cant': miproduction[index].cant, 'total': miproduction[index].total};
                             newlist.push(temp);
                         }
                     }
@@ -3155,12 +3155,13 @@
 
                     var midata = JSON.stringify({'producto_id': producto_id, 'cantidad': cantidad, 'valor': valor, 'description': description, 'user_id': user_id });
                     var urli = "{{ setting('admin.url') }}api/pos/productions/save/"+midata;
+                    //var urli=0;
                     $.ajax({
                         url: urli,
                         success: function (response) {
                             var miproduction = JSON.parse(localStorage.getItem('miproduction'));
                             for (let index = 0; index < miproduction.length; index++) {
-
+                                console.log(miproduction[index].type);
                                 var midata = JSON.stringify({'type': miproduction[index].type, 'production_id': response, 'insumo_id': miproduction[index].id, 'proveedor_id': miproduction[index].idpro, 'precio': miproduction[index].costo, 'cantidad': miproduction[index].cant, 'total': miproduction[index].total});
                                 var urli = "{{ setting('admin.url') }}api/pos/productions/save/detalle/"+midata;
                                 $.ajax({
