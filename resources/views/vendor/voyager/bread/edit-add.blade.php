@@ -2316,7 +2316,6 @@
                     var total = 0;
                     var micart = JSON.parse(localStorage.getItem('micart'));
                     $("#micart tr#0").remove();
-                    //$("#producto_id").val();
                     var mirep = false;
                     for (let index = 0; index < micart.length; index++) {
                         if(micart[index].id == id){
@@ -2324,7 +2323,6 @@
                             break;
                         }
                     }
-
                     if(mirep){
                         toastr.error("Producto ya Registrado");
                     }else{
@@ -2335,17 +2333,13 @@
                                 var miimage =response.image ? response.image : "{{ setting('productos.imagen_default') }}"
                                 var producto_aux=response;
                                 if('{{setting('ventas.stock')}}'){
-
-
                                     if (response.mixta == 1 ) {
                                         $('#mixtos').attr("hidden",false);
                                         var micategory = $('#category').val();
-                                        // console.log(micategory);
                                         $.ajax({
                                             url: "{{ setting('admin.url') }}api/pos/producto/mixto/0/"+micategory,
                                             dataType: "json",
                                             success: function (response) {
-
                                                 $('#mixta1').append($('<option>', {
                                                     value: null,
                                                     text: 'Elige un Mitad'
@@ -2353,12 +2347,9 @@
                                                 for (let index = 0; index < response.length; index++) {
                                                     $('#mixta1').append($('<option>', {
                                                         value: response[index].id,
-                                                        //text: response[index].name + ' '+ response[index].precio + ' Bs.'
                                                         text: response[index].name
-
                                                     }));
                                                 }
-
                                                 $('#mixta2').append($('<option>', {
                                                     value: null,
                                                     text: 'Elige un Mitad'
@@ -2370,7 +2361,6 @@
                                                          text: response[index].name
                                                     }));
                                                 }
-
                                             }
                                         });
                                     } else {
@@ -2383,7 +2373,6 @@
                                             var description=null;
                                             if(response.extra){
                                                 $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+miimage+"></td><td>"+response.name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+response.id+")' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onchange='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
-
                                             }
                                             else{
                                                 $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+miimage+"></td><td>"+response.name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+response.id+")' id='observacion_"+response.id+"'></td><td></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onchange='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
@@ -2447,7 +2436,6 @@
                                         toastr.success(response.name+" - REGISTRADO");
                                     }
                                 }
-
                             }
                         });
                     }

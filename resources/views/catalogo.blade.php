@@ -1,6 +1,9 @@
 
 @extends('layouts.master')
 
+@section('css')
+@endsection
+
 @section('content')
   <div class="container-fluid mt-2 pt-2">
     <div class="row pt-4">
@@ -13,7 +16,7 @@
               </div>
             </div>
             @php
-                $product1 = App\Producto::where('ecommerce', 'new_products')->with('categoria')->get();                
+                $product1 = App\Producto::where('ecommerce', 'new_products')->with('categoria')->get();
             @endphp
             <div class="col-lg-4 col-md-12 col-12 ">
               <hr>
@@ -21,7 +24,7 @@
               <hr>
             @foreach($product1 as $item)
                 <div class="row mt-5 py-2 mb-4 hoverable align-items-center">
-                  <div class="col-6">                    
+                  <div class="col-6">
                       @php
                           $miimage = $item->image ? $item->image : setting('productos.imagen_default');
                       @endphp
@@ -31,7 +34,7 @@
                     <small>{{ $item->categoria->name }}</small><br>
                     <a class="pt-5"><strong>{{ $item->name }}</strong></a>
                     <h6 class="h6-responsive font-weight-bold dark-grey-text"><strong>{{ $item->precio }} Bs.</strong></h6>
-                    <a href="#" class="btn btn-sm">Agregar a Carrito</a>
+                    <a href="#" onclick="addproduct('{{ $item->id }}')" class="btn btn-sm">Agregar a Carrito</a>
                   </div>
                 </div>
             @endforeach
@@ -54,7 +57,7 @@
                   <div class="col-6">
                     <a class="pt-5"><strong>{{ $item->name }}</strong></a>
                     <h6 class="h6-responsive font-weight-bold dark-grey-text"><strong>{{ $item->precio }} Bs.</strong></h6>
-                    <a href="#" class="btn btn-sm">Agregar a Carrito</a>
+                    <a href="#" onclick="addproduct('{{ $item->id }}')" class="btn btn-sm">Agregar a Carrito</a>
                   </div>
                 </div>
             @endforeach
@@ -78,7 +81,7 @@
                   <div class="col-6">
                     <a class="pt-5"><strong>{{ $item->name }}</strong></a>
                     <h6 class="h6-responsive font-weight-bold dark-grey-text"><strong>{{ $item->precio }} Bs.</strong></h6>
-                    <a href="#" class="btn btn-sm">Agregar a Carrito</a>
+                    <a href="#" onclick="addproduct('{{ $item->id }}')" class="btn btn-sm">Agregar a Carrito</a>
                   </div>
                 </div>
             @endforeach
@@ -89,3 +92,76 @@
     </div>
   </div>
 @stop
+
+
+@section('javascript')
+
+    <script>
+        $('document').ready(function () {
+            //cart
+            if (localStorage.getItem('micart')) {
+                mitotal()
+            } else {
+                localStorage.setItem('micart', JSON.stringify([]));
+                mitotal()
+            }
+
+            //user
+            if (localStorage.getItem('miuser')) {
+
+            } else {
+                localStorage.setItem('miuser', JSON.stringify([]));
+            }
+        });
+
+        async function addproduct(id) {
+            var micart = JSON.parse(localStorage.getItem('micart'))
+            var mirep = false
+            var newcant = 0
+            for (let index = 0; index < micart.length; index++) {
+                if(micart[index].id == id){
+                    mirep = true
+                    newcant = micart[index].cant
+                    break;
+                }
+            }
+            if(mirep){
+                toastr.success("Cantidad Actualizada del Item: "+id)
+                updatecant(id)
+            }else{
+                var product = await axios ("{{ setting('admin.url') }}api/pos/producto/"+id)
+                toastr.info('Item Agreado: '+product.data.name)
+                console.log(product.data)
+                var temp = {'id': product.data.id, 'image': product.data.image, 'name': product.data.name, 'precio': product.data.precio, 'cant': 1}
+                micart.push(temp)
+                localStorage.setItem('micart', JSON.stringify(micart))
+                mitotal()
+            }
+        }
+
+        async function updatecant(id) {
+            var milist = JSON.parse(localStorage.getItem('micart'));
+            var newlist = [];
+            for (let index = 0; index < milist.length; index++) {
+                if (milist[index].id == id) {
+                    var newcant = milist[index].cant + 1
+                    var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'precio': milist[index].precio, 'cant': newcant}
+                }else{
+                    var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'precio': milist[index].precio, 'cant': milist[index].cant}
+                }
+                newlist.push(temp);
+            }
+            localStorage.setItem('micart', JSON.stringify(newlist));
+            mitotal()
+        }
+
+        function mitotal() {
+            var micart = JSON.parse(localStorage.getItem('micart'))
+                var mitotal = 0
+                for (let index = 0; index < micart.length; index++) {
+                    mitotal += micart[index].cant
+                }
+            $('#micount').html(mitotal)
+        }
+    </script>
+@endsection

@@ -56,6 +56,15 @@ Route::get('pos/info', function () {
 });
 
 
+// FRONEND
+Route::post('pos/save_pedido', function (Request $request) {
+    return $request;
+});
+
+Route::get('pedidos/cliente/{phone}', function ($phone) {
+    $midata = Cliente::where('phone', $phone)->first();
+    return $midata;
+});
 // --------------------------------------- VENTAS  ------------------------------------------
 // --------------------------------------- VENTAS  ------------------------------------------
 
@@ -109,7 +118,7 @@ Route::get('pos/caja/state/{state}/{id}', function ($state, $id) {
         default:
             # code...
             break;
-    }   
+    }
     return  true;
 });
 Route::get('pos/caja/detalle/save/{midata}', function ($midata) {
@@ -272,7 +281,7 @@ Route::get('pos/banipay/save/{midata}', function($midata) {
     return $banipay;
 });
 Route::get('pos/banipay/get/{venta_id}', function($venta_id) {
-   
+
     return Banipay::where('venta_id', $venta_id)->first();
 });
 
@@ -344,7 +353,7 @@ Route::get('pos/ventas/save/detalle/{micart}', function($micart) {
             'observacion'=>$micart2->observacion
         ]);
     }
-    
+
     return true;
 });
 
@@ -605,9 +614,9 @@ Route::get('pos/proveedores/{id}', function ($id) {
     return Proveedore::find($id);
 });
 
-// PRODUCTION  
+// PRODUCTION
 Route::get('pos/productions/save/{midataProduction}', function($midataProduction) {
-    
+
     $midataProduction = json_decode($midataProduction);
 
     $production = Production::create([
@@ -643,7 +652,7 @@ Route::get('pos/productions/save/detalle/{miproduction}', function($miproduction
     //Update Stock Insumo
     $ins= Insumo::find($miproduction2->insumo_id);
 
- 
+
     $canta = $ins->stock;
     $cantb = $miproduction2->cantidad;
     $cantc = $canta - $cantb;
@@ -651,15 +660,15 @@ Route::get('pos/productions/save/detalle/{miproduction}', function($miproduction
     $ins->save();
 
 
-    
+
 
     return true;
 });
 
 
-// PRODUCTION SEMI 
+// PRODUCTION SEMI
 Route::get('pos/productions/savesemi/{midataProduction}', function($midataProduction) {
-    
+
     $midataProduction = json_decode($midataProduction);
 
     $production = ProductionSemi::create([
@@ -674,7 +683,7 @@ Route::get('pos/productions/savesemi/{midataProduction}', function($midataProduc
 
 Route::get('pos/productions/savesemi/detalle/{miproduction}', function($miproduction) {
     $miproduction2 = json_decode($miproduction);
-   
+
         DetalleProductionSemi::create([
             'production_semi_id'=>$miproduction2->production_semi_id,
             'insumo_id' => $miproduction2->insumo_id,
@@ -683,7 +692,7 @@ Route::get('pos/productions/savesemi/detalle/{miproduction}', function($miproduc
             'cantidad' => $miproduction2->cantidad,
             'total' => $miproduction2->total
         ]);
-       
+
         //Update Stock Insumo
         $miinsumo= Insumo::find($miproduction2->insumo_id);
 
@@ -693,8 +702,8 @@ Route::get('pos/productions/savesemi/detalle/{miproduction}', function($miproduc
         $miinsumo->stock = $cant_c;
         $miinsumo->save();
 
-    
-   
+
+
     return true;
 });
 
@@ -704,7 +713,7 @@ Route::get('pos/productos/production', function () {
 });
 
 
-// MOVIL 
+// MOVIL
 // TODOS LOS PRODUCTOS
 Route::get('movil/productos', function () {
     return  Producto::with('categoria')->get();
