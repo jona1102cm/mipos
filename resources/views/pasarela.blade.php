@@ -44,22 +44,19 @@
                 <input type="text" id="longitud">
             </div>
             <div class="col-sm-4">
-                <div class="form-group">
+                {{-- <div class="form-group">
                     <label for="">Carrito</label>
                     <code>
                         <div id="micart"></div>
                     </code>
-                </div>
+                </div> --}}
+
                 <div class="form-group">
-                    @php
-                        $opciones = App\Option::all();
-                    @endphp
                     <label for="">Opciones</label>
                     <select class="browser-default custom-select">
-                        @foreach ($opciones as $item)
-                            <option>{{ $item->name }}</option>
-                        @endforeach
-                      </select>
+                        <option selected>Para Recoger - Costo 0 Bs.</option>
+                        <option value="1">Delivery - Costo {{ setting('ventas.precio_delivery') }} Bs.</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="">Pasarela de Pago</label>
@@ -67,6 +64,18 @@
                         <option selected>BaniPay</option>
                         <option value="1">Contra Reembolso</option>
                       </select>
+                </div>
+                <div class="form-group">
+                    <label for="">Cupon</label>
+                    <input type="text" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="">Descuento</label>
+                    <input type="number" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="">Total</label>
+                    <input type="number" class="form-control">
                 </div>
                 <div class="form-group text-center">
                     <a href="#" class="btn btn-primary" onclick="save_pedido()">Enviar Pedido</a>
@@ -83,15 +92,7 @@
     <script>
 
         $('document').ready(function () {
-            var micart = JSON.parse(localStorage.getItem('micart'));
-            $('#micart').html(JSON.stringify(micart))
-            console.log(micart)
-            if (localStorage.getItem('micart')) {
-                mitotal()
-            } else {
-                localStorage.setItem('micart', JSON.stringify([]));
-                mitotal()
-            }
+            var micart = JSON.parse(localStorage.getItem('micart'))
             var miuser = JSON.parse(localStorage.getItem('miuser'))
             $('#nombres').val(miuser.first_name)
             $('#apellidos').val(miuser.last_name)
@@ -101,9 +102,9 @@
 
 
         var options = {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
         };
 
         function success(pos) {
@@ -129,7 +130,6 @@
         };
         navigator.geolocation.getCurrentPosition(success, error, options);
 
-
         async function save_pedido() {
             var cliente = {
                 'nombres': $('#nombres').val(),
@@ -143,15 +143,6 @@
             console.log(misave.data)
             localStorage.setItem('micart', JSON.stringify([]));
             location.href = "{{ route('pages', 'consultas') }}"
-        }
-
-        function mitotal() {
-            var micart = JSON.parse(localStorage.getItem('micart'))
-                var mitotal = 0
-                for (let index = 0; index < micart.length; index++) {
-                    mitotal += micart[index].cant
-                }
-            $('#micount').html(mitotal)
         }
     </script>
 @stop

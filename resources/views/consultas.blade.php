@@ -29,22 +29,7 @@
 
 @section('javascript')
     <script>
-           $('document').ready(function () {
-            if (localStorage.getItem('micart')) {
-                mitotal()
-            } else {
-                localStorage.setItem('micart', JSON.stringify([]));
-                mitotal()
-            }
-        });
-        function mitotal() {
-            var micart = JSON.parse(localStorage.getItem('micart'))
-                var mitotal = 0
-                for (let index = 0; index < micart.length; index++) {
-                    mitotal += micart[index].cant
-                }
-            $('#micount').html(mitotal)
-        }
+
         $('#misearch').on('keypress', async function (e) {
          if(e.which === 13){
             var misearch = await axios.get("{{ setting('admin.url') }}api/pedidos/cliente/"+this.value)

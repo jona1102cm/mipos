@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>{{ setting('site.title') }}</title>
+    <link rel="icon" type="image/x-icon" href="{{ setting('admin.url').'storage/'.setting('site.logo') }}">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
     <link href="{{ asset('mdb2/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('mdb2/css/mdb.min.css') }}" rel="stylesheet">
@@ -43,7 +44,7 @@
                 <div class="float-left mr-2">
                 <a href="#" data-activates="slide-out" class="button-collapse"><i class="fas fa-bars"></i></a>
                 </div>
-                <a class="navbar-brand font-weight-bold" href="/"><strong>{{ $page->name }}</strong></a>
+                <a class="navbar-brand font-weight-bold" href="/"><strong>{{ setting('site.title') }}</strong></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-4"
                 aria-controls="navbarSupportedContent-4" aria-expanded="false" aria-label="Toggle navigation">
                 </button>
@@ -62,9 +63,7 @@
 
     <footer class="page-footer text-center text-md-left stylish-color-dark pt-0">
         <div class="footer-copyright py-3 text-center">
-        <div class="container-fluid">
             ©2022 <a href="https://loginweb.dev" target="_blank">LoginWeb - Diseño y Desarrollo de Software</a>
-        </div>
         </div>
     </footer>
 
@@ -79,13 +78,82 @@
     <script type="text/javascript">
         new WOW().init();
         $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
+            $('[data-toggle="tooltip"]').tooltip()
         })
         $(document).ready(function () {
 
-        $('.mdb-select').material_select();
+            $('.mdb-select').material_select();
+
+            //user
+            if (localStorage.getItem('miuser')) {
+
+            } else {
+                localStorage.setItem('miuser', JSON.stringify([]));
+            }
+
+            //carrito
+            if (localStorage.getItem('micart')) {
+                mitotal()
+            } else {
+                localStorage.setItem('micart', JSON.stringify([]));
+                mitotal()
+            }
         });
         $(".button-collapse").sideNav();
+
+        //carrito
+        async function addproduct(id) {
+            var micart = JSON.parse(localStorage.getItem('micart'))
+            var mirep = false
+            var newcant = 0
+            for (let index = 0; index < micart.length; index++) {
+                if(micart[index].id == id){
+                    mirep = true
+                    newcant = micart[index].cant
+                    break;
+                }
+            }
+            if(mirep){
+                toastr.success("Cantidad Actualizada del Item: "+id)
+                updatecant(id)
+            }else{
+                var product = await axios ("{{ setting('admin.url') }}api/pos/producto/"+id)
+                toastr.info('Item Agreado: '+product.data.name)
+                console.log(product.data)
+                var temp = {'id': product.data.id, 'image': product.data.image, 'name': product.data.name, 'precio': product.data.precio, 'cant': 1}
+                micart.push(temp)
+                localStorage.setItem('micart', JSON.stringify(micart))
+                mitotal()
+            }
+        }
+
+        async function updatecant(id) {
+            var milist = JSON.parse(localStorage.getItem('micart'));
+            var newlist = [];
+            for (let index = 0; index < milist.length; index++) {
+                if (milist[index].id == id) {
+                    var newcant = milist[index].cant + 1
+                    var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'precio': milist[index].precio, 'cant': newcant}
+                }else{
+                    var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'precio': milist[index].precio, 'cant': milist[index].cant}
+                }
+                newlist.push(temp);
+            }
+            localStorage.setItem('micart', JSON.stringify(newlist));
+            mitotal()
+        }
+
+        function mitotal() {
+            var micart = JSON.parse(localStorage.getItem('micart'))
+                var mitotal = 0
+                for (let index = 0; index < micart.length; index++) {
+                    mitotal += micart[index].cant
+                }
+            $('#micount').html(mitotal)
+        }
+
+
+
     </script>
 
 @yield('javascript')

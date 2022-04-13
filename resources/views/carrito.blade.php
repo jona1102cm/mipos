@@ -46,30 +46,14 @@
                 milist()
             }
 
-            if (localStorage.getItem('micart')) {
-                mitotal()
-            } else {
-                localStorage.setItem('micart', JSON.stringify([]));
-                mitotal()
-            }
-
         });
-
-        function mitotal() {
-            var micart = JSON.parse(localStorage.getItem('micart'))
-                var mitotal = 0
-                for (let index = 0; index < micart.length; index++) {
-                    mitotal += micart[index].cant
-                }
-            $('#micount').html(mitotal)
-        }
 
         function milist() {
             var milist = JSON.parse(localStorage.getItem('micart'))
             var mitotal = 0
             for (let index = 0; index < milist.length; index++) {
                 var stotal = milist[index].precio * milist[index].cant
-                $("#micart").append("<tr id="+milist[index].id+"><td><img class='img-responsive' src='{{ setting('admin.url') }}storage/"+milist[index].image+"'></td><td><strong>"+milist[index].name+"</strong></td><td>"+milist[index].precio+"</td><td>"+milist[index].cant+"</td><td>"+stotal+"</td><td><button type='button' class='btn btn-sm btn-primary' data-toggle='tooltip' data-placement='top' title='Remove item'>X</button></td></tr>")
+                $("#micart").append("<tr id="+milist[index].id+"><td><img class='img-responsive img-thumbnail' src='{{ setting('admin.url') }}storage/"+milist[index].image+"'></td><td><strong>"+milist[index].name+"</strong></td><td>"+milist[index].precio+"</td><td>"+milist[index].cant+"</td><td>"+stotal+"</td><td><button type='button' class='btn btn-sm btn-primary' data-toggle='tooltip' data-placement='top' title='Remove item'>X</button></td></tr>")
                 mitotal += stotal
             }
             $("#micart").append("<tr><td colspan='3'></td><td><h4 class='mt-2'><strong>Total</strong></h4></td><td><strong>"+mitotal+"</strong></td><td><a type='button' href='#' onclick='pagar()' class='btn btn-md btn-primary btn-rounded'>Pagar<i class='fas fa-angle-right right'></i></td></tr>")
