@@ -28,10 +28,10 @@
                     <label for="">Telefono</label>
                     <input type="number" class="form-control" id="telefono">
                 </div>
-                {{-- <div class="form-group">
-                    <label for="">Correo</label>
-                    <input type="text" class="form-control">
-                </div> --}}
+                <div class="form-group">
+                    <label for="">Carnet o NIT</label>
+                    <input type="text" id="ci_nit" class="form-control">
+                </div>
                 <div class="form-group">
                     <label for="">Direccion</label>
                     <input type="text" class="form-control" id="direccion">
@@ -51,12 +51,23 @@
                     </code>
                 </div>
                 <div class="form-group">
+                    @php
+                        $opciones = App\Option::all();
+                    @endphp
+                    <label for="">Opciones</label>
+                    <select class="browser-default custom-select">
+                        @foreach ($opciones as $item)
+                            <option>{{ $item->name }}</option>
+                        @endforeach
+                      </select>
+                </div>
+                <div class="form-group">
                     <label for="">Pasarela de Pago</label>
                     <select class="browser-default custom-select">
                         <option selected>BaniPay</option>
                         <option value="1">Contra Reembolso</option>
                       </select>
-                  </div>
+                </div>
                 <div class="form-group text-center">
                     <a href="#" class="btn btn-primary" onclick="save_pedido()">Enviar Pedido</a>
                 </div>
@@ -85,6 +96,7 @@
             $('#nombres').val(miuser.first_name)
             $('#apellidos').val(miuser.last_name)
             $('#telefono').val(miuser.phone)
+            $('#ci_nit').val(miuser.ci_nit)
         });
 
 

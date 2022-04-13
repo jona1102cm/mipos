@@ -298,9 +298,9 @@
                                         <div class="input-group col-md-4">
                                             <select class="form-control js-example-basic-single" id="proveedorelab"> </select>
                                         </div>
-                                        <!-- <div class="input-group col-md-4">
-                                            <select class="form-control" id="unidades"> </select>
-                                        </div> -->
+                                        <div class="input-group col-md-4">
+                                            <select class="form-control js-example-basic-single" id="unidades"> </select>
+                                        </div>
                                         <div class="input-group col-md-4">
                                             <select class="form-control js-example-basic-single" id="insumos"></select>
                                         </div>
@@ -2679,24 +2679,26 @@
                             }
                         });
 
+                    Unidades();
+
                     //--------------------------------
-                    $.ajax({
-                            url: "{{ setting('admin.url') }}api/pos/unidades",
-                            dataType: "json",
-                            success: function (response) {
-                                $('#unidadessemi').append($('<option>', {
-                                    value: null,
-                                    text: 'Elige una Unidad'
-                                }));
-                                for (let index = 0; index < response.length; index++) {
-                                    const element = response[index];
-                                    $('#unidadessemi').append($('<option>', {
-                                        value: response[index].id,
-                                        text: response[index].title
-                                    }));
-                                }
-                            }
-                        });
+                    // $.ajax({
+                    //         url: "{{ setting('admin.url') }}api/pos/unidades",
+                    //         dataType: "json",
+                    //         success: function (response) {
+                    //             $('#unidadessemi').append($('<option>', {
+                    //                 value: null,
+                    //                 text: 'Elige una Unidad'
+                    //             }));
+                    //             for (let index = 0; index < response.length; index++) {
+                    //                 const element = response[index];
+                    //                 $('#unidadessemi').append($('<option>', {
+                    //                     value: response[index].id,
+                    //                     text: response[index].title
+                    //                 }));
+                    //             }
+                    //         }
+                    //     });
 
                     //PROVEDORES
                     $.ajax({
@@ -2769,13 +2771,13 @@
                     }
                 }
 
-                async function unidad_name(id){
-                       var table= await axios("{{ setting('admin.url') }}api/pos/unidades/"+id);
-                       var unidad= table.data.name
-                       var prueba=1;
-                       console.log(prueba);
-                       return prueba;
-                    }
+                // async function unidad_name(id){
+                //        var table= await axios("{{ setting('admin.url') }}api/pos/unidades/"+id);
+                //        var unidad= table.data.name
+                //        var prueba=1;
+                //        console.log(prueba);
+                //        return prueba;
+                //     }
 
                 async function insumos(){
 
@@ -2871,6 +2873,23 @@
                         total = total + miproduction[index].total;
                     }
                     $("input[name='valor']").val(parseFloat(total).toFixed(2));
+                }
+
+                async function Unidades(){
+                    var table= await axios.get("{{ setting('admin.url') }}api/pos/unidades");
+
+                    $('#unidades').append($('<option>', {
+                        value: null,
+                        text: 'Elige una Unidad'
+                    }));
+                    for (let index = 0; index < table.data.length; index++) {
+                        const element = table.data[index];
+                        $('#unidades').append($('<option>', {
+                            value: table.data[index].id,
+                            text: table.data[index].title
+                        }));
+                    }
+
                 }
 
                 $('#unidades').on('change', function() {
@@ -3000,7 +3019,7 @@
                     var jchavez= await axios.get("{{ setting('admin.url') }}api/pos/insumos/"+id);
                     var cod = Math.floor(Math.random() * 999) + 800;
 
-                    $("#miproduction").append("<tr id="+cod+"><td>"+cod+"</td><td>simple</td><td>"+jchavez.data.id+"</td><td>"+jchavez.data.name+"</td><td>"+miprotext +"</td><td><input class='form-control' type='number' onclick='updatemiproduction("+jchavez.data.id+")' value='"+jchavez.data.costo+"' id='costo_"+jchavez.data.id+"' ></td><td><input class='form-control' type='number' onclick='updatemiproduction("+jchavez.data.id+")' value='1' min='1' id='cant_"+jchavez.data.id+"'></td><td><input class='form-control' type='number' value='"+jchavez.data.costo+"' id='total_"+jchavez.data.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='mideleteInsumo("+cod+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                    $("#miproduction").append("<tr id="+cod+"><td>"+cod+"</td><td>simple</td><td>"+jchavez.data.id+"</td><td>"+jchavez.data.name+"</td><td>"+miprotext +"</td><td><input class='form-control' type='number' min='0' onclick='updatemiproduction("+jchavez.data.id+")' value='"+jchavez.data.costo+"' id='costo_"+jchavez.data.id+"' ></td><td><input class='form-control' type='number' onclick='updatemiproduction("+jchavez.data.id+")' value='1' min='1' id='cant_"+jchavez.data.id+"'></td><td><input class='form-control' min='0' type='number' value='"+jchavez.data.costo+"' id='total_"+jchavez.data.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='mideleteInsumo("+cod+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
 
 
 
@@ -3057,7 +3076,7 @@
 
                     var jchavez= await axios.get("{{ setting('admin.url') }}api/pos/insumos/"+id);
 
-                    $("#miprodsemi").append("<tr id="+jchavez.data.id+"><td>"+jchavez.data.id+"</td><td>"+jchavez.data.name+"</td><td>"+miprotext +"</td><td><input class='form-control' type='number' onclick='updatemiproductionsemi("+jchavez.data.id+")' value='"+jchavez.data.costo+"' id='costo_"+jchavez.data.id+"' ></td><td><input class='form-control' type='number' onclick='updatemiproductionsemi("+jchavez.data.id+")' value='1' min='1' id='cant_"+jchavez.data.id+"'></td><td><input class='form-control' type='number' value='"+jchavez.data.costo+"' id='total_"+jchavez.data.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='mideleteInsumosemi("+jchavez.data.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                    $("#miprodsemi").append("<tr id="+jchavez.data.id+"><td>"+jchavez.data.id+"</td><td>"+jchavez.data.name+"</td><td>"+miprotext +"</td><td><input class='form-control' min='0' type='number' onclick='updatemiproductionsemi("+jchavez.data.id+")' value='"+jchavez.data.costo+"' id='costo_"+jchavez.data.id+"' ></td><td><input class='form-control' type='number' min='1' onclick='updatemiproductionsemi("+jchavez.data.id+")' value='1' min='1' id='cant_"+jchavez.data.id+"'></td><td><input class='form-control' type='number' min='0' value='"+jchavez.data.costo+"' id='total_"+jchavez.data.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='mideleteInsumosemi("+jchavez.data.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
 
 
                     var temp = {'id': jchavez.data.id, 'name': jchavez.data.name,'proveedor': mipro, 'proveedor_text': miprotext, 'costo': jchavez.data.costo, 'cant': 1, 'total': jchavez.data.costo};
@@ -3234,7 +3253,7 @@
                         var milistProduction = JSON.parse(localStorage.getItem('miprodsemi'));
                         for (var index = 0; index < milistProduction.length; index++) {
 
-                            $("#miprodsemi").append("<tr id="+milistProduction[index].id+"><td>"+milistProduction[index].id+"</td><td>"+milistProduction[index].name+"</td><td>"+milistProduction[index].proveedor_text+"</td><td><input class='form-control' type='number' value='"+milistProduction[index].costo+"' id='costo_"+milistProduction[index].id+"' ></td><td><input class='form-control' type='number' onclick='updatemiproductionsemi("+milistProduction[index].id+")' value='"+milistProduction[index].cant+"' id='cant_"+milistProduction[index].id+"'></td><td><input class='form-control' type='number' value='"+milistProduction[index].total+"' id='total_"+milistProduction[index].id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='mideleteInsumosemi("+milistProduction[index].id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                            $("#miprodsemi").append("<tr id="+milistProduction[index].id+"><td>"+milistProduction[index].id+"</td><td>"+milistProduction[index].name+"</td><td>"+milistProduction[index].proveedor_text+"</td><td><input class='form-control' type='number' min='0' value='"+milistProduction[index].costo+"' id='costo_"+milistProduction[index].id+"' ></td><td><input class='form-control' type='number' min='1' onclick='updatemiproductionsemi("+milistProduction[index].id+")' value='"+milistProduction[index].cant+"' id='cant_"+milistProduction[index].id+"'></td><td><input class='form-control' type='number' min='0' value='"+milistProduction[index].total+"' id='total_"+milistProduction[index].id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='mideleteInsumosemi("+milistProduction[index].id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
                             mitotal3();
                         }
                     } else {
@@ -3362,7 +3381,7 @@
                         success: function (jchavez) {
 
 
-                            $("#miprodsemi").append("<tr id="+jchavez.id+"><td>"+jchavez.id+"</td><td>"+jchavez.name+"</td><td>"+miprotext +"</td><td><input class='form-control' type='number' onclick='updatemiproductionsemi("+jchavez.id+")' value='"+jchavez.costo+"' id='costo_"+jchavez.id+"' ></td><td><input class='form-control' type='number' onclick='updatemiproductionsemi("+jchavez.id+")' value='1' id='cant_"+jchavez.id+"'></td><td><input class='form-control' type='number' value='"+jchavez.costo+"' id='total_"+jchavez.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='mideleteInsumosemi("+jchavez.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                            $("#miprodsemi").append("<tr id="+jchavez.id+"><td>"+jchavez.id+"</td><td>"+jchavez.name+"</td><td>"+miprotext +"</td><td><input class='form-control' type='number' min='0' onclick='updatemiproductionsemi("+jchavez.id+")' value='"+jchavez.costo+"' id='costo_"+jchavez.id+"' ></td><td><input class='form-control' type='number' min='1' onclick='updatemiproductionsemi("+jchavez.id+")' value='1' id='cant_"+jchavez.id+"'></td><td><input class='form-control' type='number' min='0' value='"+jchavez.costo+"' id='total_"+jchavez.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='mideleteInsumosemi("+jchavez.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
 
 
                             var temp = {'id': jchavez.id, 'name': jchavez.name,'proveedor': mipro, 'proveedor_text': miprotext, 'costo': jchavez.costo, 'cant': 1, 'total': jchavez.costo};

@@ -374,6 +374,7 @@ Route::get('pos/compras/save/{midata}', function($midata) {
         'editor_id'=>$midata2->editor_id,
         'cantidad'=>$midata2->cantidad,
         'costo'=>$midata2->costo,
+        'total'=>$midata2->total,
         'proveedor_id'=>$midata2->proveedor_id,
         'insumo_id'=>$midata2->insumo_id,
         'unidad_id'=>$midata2->unidad_id
@@ -385,6 +386,7 @@ Route::get('pos/compras/save/{midata}', function($midata) {
         'editor_id'=>$midata2->editor_id,
         'cantidad'=>$midata2->cantidad,
         'costo'=>$midata2->costo,
+        'total'=>$midata2->total,
         'proveedor_id'=>$midata2->proveedor_id,
         'insumo_id'=>$midata2->insumo_id,
         'unidad_id'=>$midata2->unidad_id

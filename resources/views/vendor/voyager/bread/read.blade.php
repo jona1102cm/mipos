@@ -2,7 +2,7 @@
 
 @section('page_title', __('voyager::generic.view').' '.$dataType->getTranslatedAttribute('display_name_singular'))
     @switch($dataType->getTranslatedAttribute('slug'))
-    
+
         @case('insumos')
             @section('page_header')
                 <br>
@@ -18,17 +18,17 @@
                     @endphp
                     <h2>Comprando: {{$unidad->title}} de {{$midata->name}}</h2>
                     {{-- <h2>Comprando Insumo: {{$midata->name}} </h2> --}}
-                     <div class="col-sm-6"></div>   
+                     <div class="col-sm-6"></div>
                     <div class="col-sm-6">
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 {{-- <button type="button" class="btn btn-danger" data-toggle="modal" onclick="get_total()" data-target="#cerrar_caja">Cerrar</button>
                                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#venta_caja" onclick="venta_caja()">Ventas</button>
                                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal_cliente">Cliente</button>
-                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal_asientos" onclick="cargar_asientos()">Asientos</button>        
+                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal_asientos" onclick="cargar_asientos()">Asientos</button>
                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal_save_venta" onclick="get_cambio()">Vender</button> --}}
-                                <button type="button" class="btn btn-primary"  onclick="savecompra()">Comprar</button>                            
-                            
-                            </div>                   
+                                <button type="button" class="btn btn-primary"  onclick="savecompra()">Comprar</button>
+
+                            </div>
                     </div>
                     <div class="col-sm-4">
                         <div id="info_caja"></div>
@@ -66,7 +66,7 @@
                     @endcan
                 </h1>
                 @include('voyager::multilingual.language-selector')
-    
+
             @stop
     @endswitch
 
@@ -76,7 +76,7 @@
 
 @switch($dataType->getTranslatedAttribute('slug'))
     @case('detalle-cajas')
-    
+
     @php
         $midata = App\DetalleCaja::find($dataTypeContent->getKey());
     @endphp
@@ -90,7 +90,7 @@
                                 {{ $midata }}
                             </code>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
@@ -119,10 +119,10 @@
             </div>
         {{-- </div> --}}
 
-            
+
             <div>
                 <table class="table table-responsive">
-                    
+
                     <tbody>
                         <tr>
                             {{-- <td>
@@ -149,15 +149,20 @@
                             </td>
 
                         </tr>
-                        
+
                         <tr>
                             <td>
                                 Cantidad
-                                <input type="number" class="form-control" id="cantidad_compras">
+                                <input type="number" value="1" min="0" class="form-control" id="cantidad_compras">
                             </td>
                             <td>
-                                Costo
-                                <input type="number" class="form-control" id="costo_compras">
+                                Costo Unitario
+                                <input type="number" value="{{$midata->costo}}"  min="0" class="form-control" id="costo_compras">
+                            </td>
+                            <td>
+                                Total
+                                <input type="number" class="form-control" id="total_compras" readonly>
+
                             </td>
                             <td>
                                 Descripción
@@ -172,10 +177,10 @@
             </div>
 
 
-    
+
     @break
     @default
-   
+
         <div class="page-content read container-fluid">
             <div class="row">
                 <div class="col-md-12">
@@ -320,12 +325,28 @@
                 $('document').ready(function () {
                     $('.js-example-basic-single').select2();
                     $('#editor_id').val('{{ Auth::user()->id }}');
+                    UpdateCosto();
                     Proveedores_Compras();
                     // Unidades_Compras();
-                    
-                
 
 
+
+
+                });
+
+                async function UpdateCosto(){
+
+                    var total=parseFloat($('#cantidad_compras').val()).toFixed(2)*parseFloat($('#costo_compras').val()).toFixed(2);
+                    $('#total_compras').val(total);
+
+                }
+
+                $('#cantidad_compras').on('change', function() {
+                    UpdateCosto(this.value);
+                });
+
+                $('#costo_compras').on('change', function() {
+                    UpdateCosto(this.value);
                 });
 
                 async function Proveedores_Compras(){
@@ -406,19 +427,21 @@
                     var editor_id=$('#editor_id').val();
                     var cantidad=$('#cantidad_compras').val();
                     var costo=$('#costo_compras').val();
+                    var total= $('#total_compras').val();
                     var proveedor_id=$('#proveedores_compras').val();
                     var insumo_id=$('#insumo_compras').val();
                     var unidad_id=$('#unidad_id').val();
 
-                    var midata = JSON.stringify({'description':description, 'editor_id':editor_id, 'cantidad':cantidad, 'costo':costo, 'proveedor_id':proveedor_id, 'insumo_id':insumo_id, 'unidad_id':unidad_id});
+                    var midata = JSON.stringify({'description':description, 'editor_id':editor_id, 'cantidad':cantidad, 'costo':costo,'total':total, 'proveedor_id':proveedor_id, 'insumo_id':insumo_id, 'unidad_id':unidad_id});
 
                     var compra = await axios("{{setting('admin.url')}}api/pos/compras/save/"+midata);
                     if(compra){
-                        
+
                         $('#descripcion_compras').val("");
                         $('#editor_id').val("");
                         $('#cantidad_compras').val("");
                         $('#costo_compras').val("");
+                        $('#total_compras').val("");
                         $('#proveedores_compras').val("");
                         $('#insumo_compras').val("");
                         $('#unidad_id').val("");

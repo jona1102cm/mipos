@@ -16,6 +16,7 @@ class Compra extends Model
         'costo',
         'proveedor_id',
         'insumo_id',
-        'unidad_id'
+        'unidad_id',
+        'total'
     ];
 }
