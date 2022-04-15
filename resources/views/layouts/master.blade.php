@@ -298,7 +298,7 @@
                     mitotal += stotal
                 }
                 else{
-                    $("#micart").append("<tr id="+milist[index].id+"><td><img class='img-responsive img-thumbnail' src='{{ setting('admin.url') }}storage/"+milist[index].image+"'></td><td><strong>"+milist[index].name+"<br>"+milist[index].description+"</strong></td><td></td><td><input class='form-control' type='text' onchange='updateobservacion("+milist[index].id+")' id='observacion_"+milist[index].id+"'></td><td>"+milist[index].precio+"</td><td>"+milist[index].cant+"</td><td>"+stotal+"</td><td><button type='button' class='btn btn-sm btn-primary' data-toggle='tooltip' data-placement='top' onclick='midelete("+milist[index].id+")' title='Remove item'>X</button></td></tr>")
+                    $("#micart").append("<tr id="+milist[index].id+"><td><img class='img-responsive img-thumbnail' src='{{ setting('admin.url') }}storage/"+milist[index].image+"'></td><td><strong>"+milist[index].name+"<br>"+milist[index].description+"</strong></td><td></td><td><input class='form-control' type='text' onchange='updateobservacion("+milist[index].id+")' id='observacion_"+milist[index].id+"' value="+observacion+" ></td><td>"+milist[index].precio+"</td><td>"+milist[index].cant+"</td><td>"+stotal+"</td><td><button type='button' class='btn btn-sm btn-primary' data-toggle='tooltip' data-placement='top' onclick='midelete("+milist[index].id+")' title='Remove item'>X</button></td></tr>")
                     mitotal += stotal
                 }
             }
