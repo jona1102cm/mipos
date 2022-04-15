@@ -10,9 +10,15 @@
               <table class="table product-table" id="micart">
                 <thead class="mdb-color lighten-5">
                     <tr>
-                        <th>Imagen</th>
+                        <th></th>
                         <th class="font-weight-bold">
                         <strong>Producto</strong>
+                        </th>
+                        <th class="font-weight-bold">
+                            <strong>Extras</strong>
+                        </th>
+                        <th class="font-weight-bold">
+                            <strong>Observación</strong>
                         </th>
                         <th class="font-weight-bold">
                             <strong>Precio</strong>
@@ -23,7 +29,7 @@
                         <th class="font-weight-bold">
                             <strong>STotal</strong>
                         </th>
-                        <th>Elimnar</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -33,6 +39,41 @@
           {{-- </div> --}}
         {{-- </div> --}}
       </section>
+    </div>
+
+    <!----------------------MODALES--------------------------->
+
+    <div class="modal modal-primary fade" tabindex="-1" id="modal-lista_extras" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><i class="voyager-list-add"></i> Lista de extras</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="text" name="producto_extra_id" id="producto_extra_id" hidden>
+                    <table class="table table-bordered table-hover" id="table-extras">
+                        <thead>
+                            <tr>
+                                {{-- <th>Imagen</th>
+                                <th>ID</th> --}}
+                                <th>Extra</th>
+                                <th>Precio</th>
+                                <th>Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    {{-- <td style="text-align: right">
+                        <input style="text-align:right" readonly min="0" type="number" name="total_extra" id="total_extra">
+                    </td> --}}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary pull-right" onclick="calcular_total_extra()" data-dismiss="modal">Añadir</button>
+                    <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 
@@ -48,16 +89,8 @@
 
         });
 
-        function milist() {
-            var milist = JSON.parse(localStorage.getItem('micart'))
-            var mitotal = 0
-            for (let index = 0; index < milist.length; index++) {
-                var stotal = milist[index].precio * milist[index].cant
-                $("#micart").append("<tr id="+milist[index].id+"><td><img class='img-responsive img-thumbnail' src='{{ setting('admin.url') }}storage/"+milist[index].image+"'></td><td><strong>"+milist[index].name+"</strong></td><td>"+milist[index].precio+"</td><td>"+milist[index].cant+"</td><td>"+stotal+"</td><td><button type='button' class='btn btn-sm btn-primary' data-toggle='tooltip' data-placement='top' title='Remove item'>X</button></td></tr>")
-                mitotal += stotal
-            }
-            $("#micart").append("<tr><td colspan='3'></td><td><h4 class='mt-2'><strong>Total</strong></h4></td><td><strong>"+mitotal+"</strong></td><td><a type='button' href='#' onclick='pagar()' class='btn btn-md btn-primary btn-rounded'>Pagar<i class='fas fa-angle-right right'></i></td></tr>")
-        }
+
+
 
         function pagar() {
             location.href = "{{ route('pages', 'pasarela') }}"

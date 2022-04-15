@@ -18,4 +18,5 @@ class Cliente extends Model
 		'email',
 		'default'
 	];
+
 }

@@ -30,6 +30,7 @@ use App\DetalleProductionSemi;
 use App\TypeProducto;
 use App\Banipay;
 use App\Compra;
+use App\Location;
 
 use Illuminate\Support\Facades\DB;
 /*
@@ -57,12 +58,125 @@ Route::get('pos/info', function () {
 
 
 // FRONEND
-Route::post('pos/save_pedido', function (Request $request) {
-    return $request;
+Route::post('pedido/save', function (Request $request) {
+    // $midata2 = json_decode($midata);
+    $ticket = count(Venta::where('sucursal_id', 1)->where('caja_status', false)->get());
+    $newventa = Venta::create([
+        'cliente_id' => $request->cliente_id,
+        'cupon_id' => 1,
+        'option_id' => $request->option_id,
+        'pago_id' => $request->pago_id,
+        'factura' => 'Recibo',
+        'credito'=> 0,
+        'total' => $request->total,
+        'descuento' => $request->descuento,
+        'observacion' => $request->observacion,
+        'register_id' => 1,
+        'status_id' => 1,
+        'caja_id' => 1,
+        'delivery_id' => 1,
+        'sucursal_id' => 1,
+        'subtotal' => null,
+        'caja_status' => false,
+        'ticket' => $ticket + 1,
+        'cantidad' => null,
+        'recibido' => null,
+        'cambio' => null,
+        'chofer_id'=> 1,
+        'adicional'=> null
+    ]);
+    return $newventa;
 });
 
-Route::get('pedidos/cliente/{phone}', function ($phone) {
-    $midata = Cliente::where('phone', $phone)->first();
+Route::get('pedido/products/save/{micart}', function($micart) {
+    $micart2 = json_decode($micart);
+    $miproducto = Producto::find($micart2->producto_id);
+
+    if (setting('ventas.stock')) {
+        $cant_a = $miproducto->stock;
+        $cant_b = $micart2->cantidad;
+        $cant_c = $cant_a - $cant_b;
+        $miproducto->stock = $cant_c;
+        $miproducto->save();
+        DetalleVenta::create([
+            'producto_id' => $micart2->producto_id,
+            'venta_id' => $micart2->venta_id,
+            'precio' => $micart2->precio,
+            'cantidad' => $micart2->cantidad,
+            'total' => $micart2->total,
+            'foto' => $miproducto->image ? $miproducto->image : null,
+            'name' => $miproducto->name,
+            'description' => $micart2->description,
+            'extra_name'=>$micart2->extra_name,
+            'observacion'=>$micart2->observacion
+        ]);
+
+    } else {
+        DetalleVenta::create([
+            'producto_id' => $micart2->producto_id,
+            'venta_id' => $micart2->venta_id,
+            'precio' => $micart2->precio,
+            'cantidad' => $micart2->cantidad,
+            'total' => $micart2->total,
+            'foto' => $miproducto->image ? $miproducto->image : null,
+            'name' => $miproducto->name,
+            'description' => $micart2->description,
+            'extra_name'=>$micart2->extra_name,
+            'observacion'=>$micart2->observacion
+        ]);
+    }
+
+    return true;
+});
+
+
+Route::get('cliente/{midata}', function ($midata) {
+    // return $midata;
+    $midata2 = json_decode($midata);
+    $cliente = Cliente::where('phone', $midata2->telefono)->first();
+    if ($cliente) {
+        return $cliente;
+    } else {
+        $newcliente = Cliente::create([
+        'phone' => $midata2->telefono,
+        'email' => $midata2->nombres.'.'.$midata2->apellidos.'@loginweb.dev',
+        'display' => $midata2->nombres.'.'.$midata2->apellidos,
+        'ci_nit'=> $midata2->ci_nit,
+        'first_name'=> $midata2->nombres,
+        'last_name'=> $midata2->apellidos
+        ]);
+        return $newcliente;
+    }
+});
+Route::get('location/{midata}', function ($midata) {
+    $midata2 = json_decode($midata);
+    $location = Location::where('cliente_id', $midata2->cliente_id)->where('default', 1)->first();
+    if ($location) {
+        return $location;
+    } else {
+        $newlocation = Location::create([
+            'phone' => $phone,
+            'email' => $phone.'@loginweb.dev',
+            'display' => $phone.'@loginweb.dev'
+            ]);
+        return $newcliente;
+    }
+});
+Route::get('consulta/{phone}', function ($phone) {
+
+    $cliente = Cliente::where('phone' ,$phone)->first();
+    if ($cliente) {
+        return $cliente;
+    } else {
+        return  response()->json(array('message' => 'Cliente NO Registrado' ));
+    }
+});
+Route::get('pedidos/cliente/{id}', function ($id) {
+    $midata = Venta::where('cliente_id', $id)->where('caja_status', false)->with('pasarela', 'estado', 'delivery', 'cupon')->get();
+    return $midata;
+});
+Route::get('option/{id}', function ($id) {
+    $midata = Option::find($id);
     return $midata;
 });
 // --------------------------------------- VENTAS  ------------------------------------------
@@ -535,14 +649,14 @@ Route::get('pos/cupon/{id}', function ($id) {
     return  Cupone::find($id);
 });
 
-// TODAS LAS OPCIONES
+// TODAS LAS OPCIONES PARA BACKEND
 Route::get('pos/options', function () {
-    return  Option::all();
+    return  Option::where('view','backend')->get();
 });
 
-// TODAS LOS PAGOS
+// TODAS LOS PAGOS PARA BACKEND
 Route::get('pos/pagos', function () {
-    return  Pago::all();
+    return  Pago::where('view','backend')->get();
 });
 
 // TODAS LOS STADOS
@@ -621,19 +735,32 @@ Route::get('pos/productions/save/{midataProduction}', function($midataProduction
 
     $midataProduction = json_decode($midataProduction);
 
-    $production = Production::create([
-        'producto_id' => $midataProduction->producto_id,
-        'cantidad' => $midataProduction->cantidad,
-        'valor' => $midataProduction->valor,
-        'description' => $midataProduction->description,
-        'user_id' => $midataProduction->user_id
-    ]);
+    if(setting('ventas.stock')){
 
-    //Actualizando el STOCK DEL Producto
-    $update = Producto::find($midataProduction->producto_id);
-    $actual = $update->stock;
-    $update->stock = $actual + $midataProduction->cantidad;
-    $update->save();
+        $production = Production::create([
+            'producto_id' => $midataProduction->producto_id,
+            'cantidad' => $midataProduction->cantidad,
+            'valor' => $midataProduction->valor,
+            'description' => $midataProduction->description,
+            'user_id' => $midataProduction->user_id
+        ]);
+
+        //Actualizando el STOCK DEL Producto
+        $update = Producto::find($midataProduction->producto_id);
+        $actual = $update->stock;
+        $update->stock = $actual + $midataProduction->cantidad;
+        $update->save();
+
+    }
+    else{
+        $production = Production::create([
+            'producto_id' => $midataProduction->producto_id,
+            'cantidad' => $midataProduction->cantidad,
+            'valor' => $midataProduction->valor,
+            'description' => $midataProduction->description,
+            'user_id' => $midataProduction->user_id
+        ]);
+    }
 
     return $production->id;
 });
@@ -641,47 +768,75 @@ Route::get('pos/productions/save/{midataProduction}', function($midataProduction
 Route::get('pos/productions/save/detalle/{miproduction}', function($miproduction) {
     $miproduction2 = json_decode($miproduction);
 
-    //Condición para definir si se guardará id de simple o elab
-    if($miproduction2->type=="simple"){
-        $insumo=$miproduction2->insumo_id;
-        $elab=null;
+    if(setting('ventas.stock')){
+
+        //Condición para definir si se guardará id de simple o elab
+        if($miproduction2->type=="simple"){
+            $insumo=$miproduction2->insumo_id;
+            $elab=null;
+        }
+
+        if($miproduction2->type=="elaborado"){
+            $insumo=null;
+            $elab=$miproduction2->insumo_id;
+        }
+
+
+        $productionI= ProductionInsumo::create([
+            'type_insumo'=>$miproduction2->type,
+            'production_id'=>$miproduction2->production_id,
+            'insumo_id' => $insumo,
+            'elaborado_id'=>$elab,
+            'proveedor_id'=> $miproduction2->proveedor_id,
+            'precio' => $miproduction2->precio,
+            'cantidad' => $miproduction2->cantidad,
+            'total' => $miproduction2->total
+        ]);
+
+        //Update Stock Insumo
+        if($miproduction2->type=="simple"){
+        $ins= Insumo::find($miproduction2->insumo_id);
+        $canta = $ins->stock;
+        $cantb = $miproduction2->cantidad;
+        $cantc = $canta - $cantb;
+        $ins->stock = $cantc;
+        $ins->save();
+        }
+
+        //Update Stock ProductosPreelaborados
+        if($miproduction2->type=="elaborado"){
+            $prodpre = ProductosSemiElaborado::find($miproduction2->insumo_id);
+            $ca= $prodpre->stock;
+            $cb= $miproduction2->cantidad;
+            $cc= $ca-$cb;
+            $prodpre->stock=$cc;
+            $prodpre->save();
+        }
+
     }
+    else{
+         //Condición para definir si se guardará id de simple o elab
+         if($miproduction2->type=="simple"){
+            $insumo=$miproduction2->insumo_id;
+            $elab=null;
+        }
 
-    if($miproduction2->type=="elaborado"){
-        $insumo=null;
-        $elab=$miproduction2->insumo_id;
-    }
+        if($miproduction2->type=="elaborado"){
+            $insumo=null;
+            $elab=$miproduction2->insumo_id;
+        }
 
 
-    $productionI= ProductionInsumo::create([
-        'type_insumo'=>$miproduction2->type,
-        'production_id'=>$miproduction2->production_id,
-        'insumo_id' => $insumo,
-        'elaborado_id'=>$elab,
-        'proveedor_id'=> $miproduction2->proveedor_id,
-        'precio' => $miproduction2->precio,
-        'cantidad' => $miproduction2->cantidad,
-        'total' => $miproduction2->total
-    ]);
-
-    //Update Stock Insumo
-    if($miproduction2->type=="simple"){
-    $ins= Insumo::find($miproduction2->insumo_id);
-    $canta = $ins->stock;
-    $cantb = $miproduction2->cantidad;
-    $cantc = $canta - $cantb;
-    $ins->stock = $cantc;
-    $ins->save();
-    }
-
-    //Update Stock ProductosPreelaborados
-    if($miproduction2->type=="elaborado"){
-        $prodpre = ProductosSemiElaborado::find($miproduction2->insumo_id);
-        $ca= $prodpre->stock;
-        $cb= $miproduction2->cantidad;
-        $cc= $ca-$cb;
-        $prodpre->stock=$cc;
-        $prodpre->save();
+        $productionI= ProductionInsumo::create([
+            'type_insumo'=>$miproduction2->type,
+            'production_id'=>$miproduction2->production_id,
+            'insumo_id' => $insumo,
+            'elaborado_id'=>$elab,
+            'proveedor_id'=> $miproduction2->proveedor_id,
+            'precio' => $miproduction2->precio,
+            'cantidad' => $miproduction2->cantidad,
+            'total' => $miproduction2->total
+        ]);
     }
 
 
@@ -696,18 +851,45 @@ Route::get('pos/productions/savesemi/{midataProduction}', function($midataProduc
 
     $midataProduction = json_decode($midataProduction);
 
-    $production = ProductionSemi::create([
-        'producto_semi_id' => $midataProduction->producto_semi_id,
-        'cantidad' => $midataProduction->cantidad,
-        'valor' => $midataProduction->valor,
-        'description' => $midataProduction->description,
-        'user_id' => $midataProduction->user_id
-    ]);
+    if(setting('ventas.stock')){
+
+        $production = ProductionSemi::create([
+            'producto_semi_id' => $midataProduction->producto_semi_id,
+            'cantidad' => $midataProduction->cantidad,
+            'valor' => $midataProduction->valor,
+            'description' => $midataProduction->description,
+            'user_id' => $midataProduction->user_id
+        ]);
+
+        //Update Stock Producto Semielaborado
+        $mipropre= ProductosSemiElaborado::find($midataProduction->producto_semi_id);
+
+        $a= $mipropre->stock;
+        $b= $midataProduction->cantidad;
+        $c= $a+$b;
+        $mipropre->stock= $c;
+        $mipropre->save();
+
+    }
+    else{
+        $production = ProductionSemi::create([
+            'producto_semi_id' => $midataProduction->producto_semi_id,
+            'cantidad' => $midataProduction->cantidad,
+            'valor' => $midataProduction->valor,
+            'description' => $midataProduction->description,
+            'user_id' => $midataProduction->user_id
+        ]);
+    }
+
     return $production->id;
+
 });
 
 Route::get('pos/productions/savesemi/detalle/{miproduction}', function($miproduction) {
     $miproduction2 = json_decode($miproduction);
+
+
+    if(setting('ventas.stock')){
 
         DetalleProductionSemi::create([
             'production_semi_id'=>$miproduction2->production_semi_id,
@@ -725,8 +907,19 @@ Route::get('pos/productions/savesemi/detalle/{miproduction}', function($miproduc
         $cant_b = $miproduction2->cantidad;
         $cant_c = $cant_a - $cant_b;
         $miinsumo->stock = $cant_c;
+        //console.log($miinsumo);
         $miinsumo->save();
-
+    }
+    else{
+        DetalleProductionSemi::create([
+            'production_semi_id'=>$miproduction2->production_semi_id,
+            'insumo_id' => $miproduction2->insumo_id,
+            'proveedor_id'=> $miproduction2->proveedor_id,
+            'precio' => $miproduction2->precio,
+            'cantidad' => $miproduction2->cantidad,
+            'total' => $miproduction2->total
+        ]);
+    }
 
 
     return true;

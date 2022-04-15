@@ -38,7 +38,7 @@ class Venta extends Model
 	];
 
 	protected $appends=['published'];
-	public function getPublishedAttribute(){        
+	public function getPublishedAttribute(){
 		return Carbon::createFromTimeStamp(strtotime($this->attributes['created_at']) )->diffForHumans();
 	}
 	public function cliente()
@@ -57,5 +57,13 @@ class Venta extends Model
     {
         return $this->belongsTo(Pago::class, 'pago_id');
     }
+    public function estado()
+    {
+        return $this->belongsTo(Estado::class, 'status_id');
+    }
 
+    public function cupon()
+    {
+        return $this->belongsTo(Cupone::class, 'cupon_id');
+    }
 }

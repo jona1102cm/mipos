@@ -378,7 +378,7 @@
                                     <div id="search-input">
 
                                         <div class="input-group col-md-6">
-                                            <select class="form-control" id="proveedorsemi"></select>
+                                            <select class="form-control js-example-basic-single"  id="proveedorsemi"></select>
                                         </div>
 
                                     </div>
@@ -1352,163 +1352,178 @@
                     }
 
                     // TODOS LOS CATEGORIAS
-                    $.ajax({
-                        url: "{{ setting('admin.url') }}api/pos/categorias",
-                        dataType: "json",
-                        success: function (response) {
-                            $('#category').append($('<option>', {
-                                value: 0,
-                                text: 'Elige una Categoria'
-                            }));
-                            for (let index = 0; index < response.length; index++) {
-                                const element = response[index];
-                                $('#category').append($('<option>', {
-                                    value: response[index].id,
-                                    text: response[index].name
-                                }));
-                            }
-                        }
-                    });
+                    // $.ajax({
+                    //     url: "{{ setting('admin.url') }}api/pos/categorias",
+                    //     dataType: "json",
+                    //     success: function (response) {
+                    //         $('#category').append($('<option>', {
+                    //             value: 0,
+                    //             text: 'Elige una Categoria'
+                    //         }));
+                    //         for (let index = 0; index < response.length; index++) {
+                    //             const element = response[index];
+                    //             $('#category').append($('<option>', {
+                    //                 value: response[index].id,
+                    //                 text: response[index].name
+                    //             }));
+                    //         }
+                    //     }
+                    // });
+
+                    Categorias();
 
                     // get Deliverys
-                    $.ajax({
-                        url: "{{ setting('admin.url') }}api/pos/deliverys",
-                        dataType: "json",
-                        success: function (response) {
-                            for (let index = 0; index < response.length; index++) {
-                                if (response[index].id == 1) {
-                                    $('#midelivery').append($('<option>', {
-                                    selected: true,
-                                    value: response[index].id,
-                                    text: response[index].name
-                                }));
-                                $("input[name='delivery_id']").val(response[index].id);
-                                } else {
-                                    $('#midelivery').append($('<option>', {
-                                    value: response[index].id,
-                                    text: response[index].name
-                                }));
-                                }
-                            }
-                        }
-                    });
+                    // $.ajax({
+                    //     url: "{{ setting('admin.url') }}api/pos/deliverys",
+                    //     dataType: "json",
+                    //     success: function (response) {
+                    //         for (let index = 0; index < response.length; index++) {
+                    //             if (response[index].id == 1) {
+                    //                 $('#midelivery').append($('<option>', {
+                    //                 selected: true,
+                    //                 value: response[index].id,
+                    //                 text: response[index].name
+                    //             }));
+                    //             $("input[name='delivery_id']").val(response[index].id);
+                    //             } else {
+                    //                 $('#midelivery').append($('<option>', {
+                    //                 value: response[index].id,
+                    //                 text: response[index].name
+                    //             }));
+                    //             }
+                    //         }
+                    //     }
+                    // });
+                    Deliverys();
 
                     //get cliente default
-                    $.ajax({
-                        url: "{{ setting('admin.url') }}api/pos/cliente/default/get",
-                        dataType: "json",
-                        success: function (response) {
-                            $("input[name='cliente_id']").val(response.id);
-                            $('#micliente').append($('<option>', {
-                                    value: response.id,
-                                    text: response.display+' - '+response.ci_nit
-                                }));
-                        }
-                    });
-                    $.ajax({
-                        url: "{{ setting('admin.url') }}api/pos/clientes",
-                        dataType: "json",
-                        success: function (response) {
-                            for (let index = 0; index < response.length; index++) {
-                                    $('#micliente').append($('<option>', {
-                                    value: response[index].id,
-                                    text: response[index].display
-                                 }));
-                            }
-                        }
-                    });
+                    // $.ajax({
+                    //     url: "{{ setting('admin.url') }}api/pos/cliente/default/get",
+                    //     dataType: "json",
+                    //     success: function (response) {
+                    //         $("input[name='cliente_id']").val(response.id);
+                    //         $('#micliente').append($('<option>', {
+                    //                 value: response.id,
+                    //                 text: response.display+' - '+response.ci_nit
+                    //             }));
+                    //     }
+                    // });
+                    // $.ajax({
+                    //     url: "{{ setting('admin.url') }}api/pos/clientes",
+                    //     dataType: "json",
+                    //     success: function (response) {
+                    //         for (let index = 0; index < response.length; index++) {
+                    //             if(response[index].default==0){
+                    //                 $('#micliente').append($('<option>', {
+                    //                 value: response[index].id,
+                    //                 text: response[index].display+' - '+response[index].ci_nit
+                    //              }));
+                    //             }
+                    //         }
+                    //     }
+                    // });
+
+                    ClienteDefault();
+                    Cliente();
 
                     // get cup[ones]
-                    $.ajax({
-                        url: "{{ setting('admin.url') }}api/pos/cupones",
-                        dataType: "json",
-                        success: function (response) {
-                            for (let index = 0; index < response.length; index++) {
-                                if (response[index].id == 1) {
-                                    $('#micupon').append($('<option>', {
-                                    selected: true,
-                                    value: response[index].id,
-                                    text: response[index].title
-                                }));
-                                $("input[name='cupon_id']").val(response[index].id);
-                                } else {
-                                    $('#micupon').append($('<option>', {
-                                    value: response[index].id,
-                                    text: response[index].title
-                                }));
-                                }
-                            }
-                        }
-                    });
+                    // $.ajax({
+                    //     url: "{{ setting('admin.url') }}api/pos/cupones",
+                    //     dataType: "json",
+                    //     success: function (response) {
+                    //         for (let index = 0; index < response.length; index++) {
+                    //             if (response[index].id == 1) {
+                    //                 $('#micupon').append($('<option>', {
+                    //                 selected: true,
+                    //                 value: response[index].id,
+                    //                 text: response[index].title
+                    //             }));
+                    //             $("input[name='cupon_id']").val(response[index].id);
+                    //             } else {
+                    //                 $('#micupon').append($('<option>', {
+                    //                 value: response[index].id,
+                    //                 text: response[index].title
+                    //             }));
+                    //             }
+                    //         }
+                    //     }
+                    // });
+                    Cupones();
 
                     // get pasarela
-                    $.ajax({
-                        url: "{{ setting('admin.url') }}api/pos/pagos",
-                        dataType: "json",
-                        success: function (response) {
-                            for (let index = 0; index < response.length; index++) {
-                                if (response[index].id == 1) {
-                                    $('#mipagos').append($('<option>', {
-                                    selected: true,
-                                    value: response[index].id,
-                                    text: response[index].title
-                                }));
-                                $("input[name='pago_id']").val(response[index].id);
-                                } else {
-                                    $('#mipagos').append($('<option>', {
-                                    value: response[index].id,
-                                    text: response[index].title
-                                }));
-                                }
-                            }
-                        }
-                    });
+                    // $.ajax({
+                    //     url: "{{ setting('admin.url') }}api/pos/pagos",
+                    //     dataType: "json",
+                    //     success: function (response) {
+                    //         for (let index = 0; index < response.length; index++) {
+                    //             if (response[index].id == 1) {
+                    //                 $('#mipagos').append($('<option>', {
+                    //                 selected: true,
+                    //                 value: response[index].id,
+                    //                 text: response[index].title
+                    //             }));
+                    //             $("input[name='pago_id']").val(response[index].id);
+                    //             } else {
+                    //                 $('#mipagos').append($('<option>', {
+                    //                 value: response[index].id,
+                    //                 text: response[index].title
+                    //             }));
+                    //             }
+                    //         }
+                    //     }
+                    // });
+
+                    Pasarelas();
 
                     // get estados
-                    $.ajax({
-                        url: "{{ setting('admin.url') }}api/pos/estados",
-                        dataType: "json",
-                        success: function (response) {
-                            for (let index = 0; index < response.length; index++) {
-                                if (response[index].id == 1) {
-                                    $('#miestado').append($('<option>', {
-                                    selected: true,
-                                    value: response[index].id,
-                                    text: response[index].title
-                                }));
-                                $("input[name='status_id']").val(response[index].id);
-                                } else {
-                                    $('#miestado').append($('<option>', {
-                                    value: response[index].id,
-                                    text: response[index].title
-                                }));
-                                }
-                            }
-                        }
-                    });
+                    // $.ajax({
+                    //     url: "{{ setting('admin.url') }}api/pos/estados",
+                    //     dataType: "json",
+                    //     success: function (response) {
+                    //         for (let index = 0; index < response.length; index++) {
+                    //             if (response[index].id == 1) {
+                    //                 $('#miestado').append($('<option>', {
+                    //                 selected: true,
+                    //                 value: response[index].id,
+                    //                 text: response[index].title
+                    //             }));
+                    //             $("input[name='status_id']").val(response[index].id);
+                    //             } else {
+                    //                 $('#miestado').append($('<option>', {
+                    //                 value: response[index].id,
+                    //                 text: response[index].title
+                    //             }));
+                    //             }
+                    //         }
+                    //     }
+                    // });
+
+                    Estados();
 
                     // venta_type
-                    $.ajax({
-                        url: "{{ setting('admin.url') }}api/pos/options",
-                        dataType: "json",
-                        success: function (response) {
-                            for (let index = 0; index < response.length; index++) {
-                                if (response[index].id == 1) {
-                                    $('#venta_type').append($('<option>', {
-                                    selected: true,
-                                    value: response[index].id,
-                                    text: response[index].title
-                                }));
-                                $("input[name='option_id']").val(response[index].id);
-                                } else {
-                                    $('#venta_type').append($('<option>', {
-                                    value: response[index].id,
-                                    text: response[index].title
-                                }));
-                                }
-                            }
-                        }
-                    });
+                    // $.ajax({
+                    //     url: "{{ setting('admin.url') }}api/pos/options",
+                    //     dataType: "json",
+                    //     success: function (response) {
+                    //         for (let index = 0; index < response.length; index++) {
+                    //             if (response[index].id == 1) {
+                    //                 $('#venta_type').append($('<option>', {
+                    //                 selected: true,
+                    //                 value: response[index].id,
+                    //                 text: response[index].title
+                    //             }));
+                    //             $("input[name='option_id']").val(response[index].id);
+                    //             } else {
+                    //                 $('#venta_type').append($('<option>', {
+                    //                 value: response[index].id,
+                    //                 text: response[index].title
+                    //             }));
+                    //             }
+                    //         }
+                    //     }
+                    // });
+
+                    Opciones();
 
                     //-----------------------
                     if (localStorage.getItem('micart')) {
@@ -1518,6 +1533,148 @@
                         localStorage.setItem('micart', JSON.stringify([]));
                     }
                 });
+
+                async function Categorias() {
+
+                    var table = await axios.get("{{ setting('admin.url') }}api/pos/categorias");
+
+                    $('#category').append($('<option>', {
+                        value: 0,
+                        text: 'Elige una Categoria'
+                    }));
+                    for (let index = 0; index < table.data.length; index++) {
+                        const element = table.data[index];
+                        $('#category').append($('<option>', {
+                            value: table.data[index].id,
+                            text: table.data[index].name
+                        }));
+                    }
+                }
+                async function Deliverys(){
+                    var table= await axios.get("{{ setting('admin.url') }}api/pos/deliverys");
+
+                    for (let index = 0; index < table.data.length; index++) {
+                        if (table.data[index].id == 1) {
+                            $('#midelivery').append($('<option>', {
+                            selected: true,
+                            value: table.data[index].id,
+                            text: table.data[index].name
+                        }));
+                        $("input[name='delivery_id']").val(table.data[index].id);
+                        } else {
+                            $('#midelivery').append($('<option>', {
+                            value: table.data[index].id,
+                            text: table.data[index].name
+                        }));
+                        }
+                    }
+                }
+
+                async function Cupones(){
+
+                    var table= await axios.get("{{ setting('admin.url') }}api/pos/cupones");
+
+                    for (let index = 0; index < table.data.length; index++) {
+                        if (table.data[index].id == 1) {
+                            $('#micupon').append($('<option>', {
+                            selected: true,
+                            value: table.data[index].id,
+                            text: table.data[index].title
+                        }));
+                        $("input[name='cupon_id']").val(table.data[index].id);
+                        } else {
+                            $('#micupon').append($('<option>', {
+                            value: table.data[index].id,
+                            text: table.data[index].title
+                        }));
+                        }
+                    }
+                }
+
+                async function Pasarelas() {
+                    var table= await axios.get("{{ setting('admin.url') }}api/pos/pagos");
+
+                    for (let index = 0; index < table.data.length; index++) {
+                        if (table.data[index].id == 1) {
+                            $('#mipagos').append($('<option>', {
+                            selected: true,
+                            value: table.data[index].id,
+                            text: table.data[index].title
+                        }));
+                        $("input[name='pago_id']").val(table.data[index].id);
+                        } else {
+                            $('#mipagos').append($('<option>', {
+                            value: table.data[index].id,
+                            text: table.data[index].title
+                        }));
+                        }
+                    }
+
+                }
+
+                async function Estados() {
+                    var table= await axios.get("{{ setting('admin.url') }}api/pos/estados");
+
+                    for (let index = 0; index < table.data.length; index++) {
+                        if (table.data[index].id == 1) {
+                            $('#miestado').append($('<option>', {
+                            selected: true,
+                            value: table.data[index].id,
+                            text: table.data[index].title
+                        }));
+                        $("input[name='status_id']").val(table.data[index].id);
+                        } else {
+                            $('#miestado').append($('<option>', {
+                            value: table.data[index].id,
+                            text: table.data[index].title
+                        }));
+                        }
+                    }
+                }
+
+                async function Opciones() {
+                    var table= await axios.get("{{ setting('admin.url') }}api/pos/options");
+
+                    for (let index = 0; index < table.data.length; index++) {
+                        if (table.data[index].id == 1) {
+                            $('#venta_type').append($('<option>', {
+                            selected: true,
+                            value: table.data[index].id,
+                            text: table.data[index].title
+                        }));
+                        $("input[name='option_id']").val(table.data[index].id);
+                        } else {
+                            $('#venta_type').append($('<option>', {
+                            value: table.data[index].id,
+                            text: table.data[index].title
+                        }));
+                        }
+                    }
+                }
+
+                async function Cliente(){
+                    var tabla= await axios.get("{{ setting('admin.url') }}api/pos/clientes");
+
+                    for (let index = 0; index < tabla.data.length; index++) {
+                        if(tabla.data[index].default==0){
+                            $('#micliente').append($('<option>', {
+                            value: tabla.data[index].id,
+                            text: tabla.data[index].display+' - '+tabla.data[index].ci_nit
+                            }));
+                        }
+                    }
+
+                }
+                async function ClienteDefault(){
+
+                    var tabla= await axios("{{ setting('admin.url') }}api/pos/cliente/default/get");
+
+                    $("input[name='cliente_id']").val(tabla.data.id);
+                    $('#micliente').append($('<option>', {
+                        value: tabla.data.id,
+                        text: tabla.data.display+' - '+tabla.data.ci_nit
+                    }));
+                }
 
 
                 // Extras
@@ -1847,7 +2004,7 @@
                                 dataType: "json",
                                 success: function (response) {
                                     $('#mixtos').attr("hidden", true);
-                                    $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onchange='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                    $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+", "+response.id+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onchange='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
                                     var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'precio_inicial':response.precio , 'cant': 1, 'total': response.precio, 'description': description, 'extra': response.extra, 'extras':response.extras, 'extra_name':'', 'observacion':'' };
                                     micart.push(temp);
                                     localStorage.setItem('micart', JSON.stringify(micart));
@@ -1874,7 +2031,7 @@
                             var miimage =response.image ? response.image : "{{ setting('productos.imagen_default') }}";
 
                             $('#mixtos').attr("hidden", true);
-                            $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras'onclick='addextra("+response.extras+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onchange='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                            $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras'onclick='addextra("+response.extras+", "+response.id+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onchange='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
 
                             var temp = {'id': response.id, 'image': miimage, 'name': response.name, 'precio': response.precio, 'precio_inicial':response.precio, 'cant': 1, 'total': response.precio, 'description': description, 'extra': response.extra, 'extras':response.extras, 'extra_name':'', 'observacion':''};
                             micart.push(temp);
@@ -2372,7 +2529,7 @@
                                             }
                                             var description=null;
                                             if(response.extra){
-                                                $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+miimage+"></td><td>"+response.name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+response.id+")' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onchange='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                                $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+miimage+"></td><td>"+response.name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+response.id+")' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+", "+response.id+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onchange='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
                                             }
                                             else{
                                                 $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+miimage+"></td><td>"+response.name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+response.id+")' id='observacion_"+response.id+"'></td><td></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onchange='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
@@ -2844,13 +3001,30 @@
                     var jchavez= await axios.get("{{ setting('admin.url') }}api/pos/productopreid/"+id);
                     var cod = Math.floor(Math.random() * 999) + 800;
 
-                    $("#miproduction").append("<tr id="+cod+"><td>"+cod+"</td><td>elaborado</td><td>"+jchavez.data.id+"</td><td>"+jchavez.data.name+"</td><td>"+miprotext +"</td><td><input class='form-control' type='number' value='"+jchavez.data.costo+"' id='costo_"+jchavez.data.id+"' ></td><td><input class='form-control' type='number' onclick='updatemiproduction("+jchavez.data.id+")' value='1' id='cant_"+jchavez.data.id+"'></td><td><input class='form-control' type='number' value='"+jchavez.data.costo+"' id='total_"+jchavez.data.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='mideleteInsumo("+cod+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                    if('{{setting('ventas.stock')}}'){
+                        if(jchavez.data.stock>=1){
 
-                    var temp = {'cod': cod, 'type': 'elaborado', 'idpro' :idpro,'id': jchavez.data.id, 'name': jchavez.data.name, 'proveedor_text': miprotext, 'costo': jchavez.data.costo, 'cant': 1, 'total': jchavez.data.costo};
-                    miproduction.push(temp);
-                    localStorage.setItem('miproduction', JSON.stringify(miproduction));
-                    mitotal2();
-                    toastr.success('Agreado Insumo: '+jchavez.data.name);
+                        $("#miproduction").append("<tr id="+cod+"><td>"+cod+"</td><td>elaborado</td><td>"+jchavez.data.id+"</td><td>"+jchavez.data.name+"</td><td>"+miprotext +"</td><td><input class='form-control' type='number' value='"+jchavez.data.costo+"' id='costo_"+jchavez.data.id+"' ></td><td><input class='form-control' type='number' max='"+jchavez.data.stock+"' onclick='updatemiproduction("+jchavez.data.id+")' value='1' id='cant_"+jchavez.data.id+"'></td><td><input class='form-control' type='number' value='"+jchavez.data.costo+"' id='total_"+jchavez.data.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='mideleteInsumo("+cod+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+
+                        var temp = {'cod': cod, 'type': 'elaborado', 'idpro' :idpro,'id': jchavez.data.id, 'name': jchavez.data.name, 'proveedor_text': miprotext, 'costo': jchavez.data.costo, 'cant': 1, 'total': jchavez.data.costo};
+                        miproduction.push(temp);
+                        localStorage.setItem('miproduction', JSON.stringify(miproduction));
+                        mitotal2();
+                        toastr.success('Agreado Insumo: '+jchavez.data.name);
+                        }
+                        else{
+                            toastr.error("No existe el producto: "+jchavez.data.name +" en Stock");
+                        }
+                    }
+                    else{
+                        $("#miproduction").append("<tr id="+cod+"><td>"+cod+"</td><td>elaborado</td><td>"+jchavez.data.id+"</td><td>"+jchavez.data.name+"</td><td>"+miprotext +"</td><td><input class='form-control' type='number' value='"+jchavez.data.costo+"' id='costo_"+jchavez.data.id+"' ></td><td><input class='form-control' type='number' onclick='updatemiproduction("+jchavez.data.id+")' value='1' id='cant_"+jchavez.data.id+"'></td><td><input class='form-control' type='number' value='"+jchavez.data.costo+"' id='total_"+jchavez.data.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='mideleteInsumo("+cod+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+
+                        var temp = {'cod': cod, 'type': 'elaborado', 'idpro' :idpro,'id': jchavez.data.id, 'name': jchavez.data.name, 'proveedor_text': miprotext, 'costo': jchavez.data.costo, 'cant': 1, 'total': jchavez.data.costo};
+                        miproduction.push(temp);
+                        localStorage.setItem('miproduction', JSON.stringify(miproduction));
+                        mitotal2();
+                        toastr.success('Agreado Insumo: '+jchavez.data.name);
+                    }
                 }
 
                 $('#new_producto_id').on('change', function() {
@@ -3019,15 +3193,31 @@
                     var jchavez= await axios.get("{{ setting('admin.url') }}api/pos/insumos/"+id);
                     var cod = Math.floor(Math.random() * 999) + 800;
 
-                    $("#miproduction").append("<tr id="+cod+"><td>"+cod+"</td><td>simple</td><td>"+jchavez.data.id+"</td><td>"+jchavez.data.name+"</td><td>"+miprotext +"</td><td><input class='form-control' type='number' min='0' onclick='updatemiproduction("+jchavez.data.id+")' value='"+jchavez.data.costo+"' id='costo_"+jchavez.data.id+"' ></td><td><input class='form-control' type='number' onclick='updatemiproduction("+jchavez.data.id+")' value='1' min='1' id='cant_"+jchavez.data.id+"'></td><td><input class='form-control' min='0' type='number' value='"+jchavez.data.costo+"' id='total_"+jchavez.data.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='mideleteInsumo("+cod+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                    if('{{setting('ventas.stock')}}'){
+                        if(jchavez.data.stock>=1){
 
+                            $("#miproduction").append("<tr id="+cod+"><td>"+cod+"</td><td>simple</td><td>"+jchavez.data.id+"</td><td>"+jchavez.data.name+"</td><td>"+miprotext +"</td><td><input class='form-control' type='number' min='0' onclick='updatemiproduction("+jchavez.data.id+")' value='"+jchavez.data.costo+"' id='costo_"+jchavez.data.id+"' ></td><td><input class='form-control' max='"+jchavez.data.stock+"' type='number' onclick='updatemiproduction("+jchavez.data.id+")' value='1' min='1' id='cant_"+jchavez.data.id+"'></td><td><input class='form-control' min='0' type='number' value='"+jchavez.data.costo+"' id='total_"+jchavez.data.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='mideleteInsumo("+cod+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
 
+                            var temp = {'cod': cod, 'type': 'simple', 'idpro' :idpro, 'id': jchavez.data.id, 'name': jchavez.data.name, 'proveedor_text': miprotext, 'costo': jchavez.data.costo, 'cant': 1, 'total': jchavez.data.costo};
+                            miproduction.push(temp);
+                            localStorage.setItem('miproduction', JSON.stringify(miproduction));
+                            mitotal2();
+                            toastr.success('Agregado Insumo: '+jchavez.data.name);
+                        }
+                        else{
+                            toastr.error("No existe el producto: "+jchavez.data.name +" en Stock");
 
-                    var temp = {'cod': cod, 'type': 'simple', 'idpro' :idpro, 'id': jchavez.data.id, 'name': jchavez.data.name, 'proveedor_text': miprotext, 'costo': jchavez.data.costo, 'cant': 1, 'total': jchavez.data.costo};
-                    miproduction.push(temp);
-                    localStorage.setItem('miproduction', JSON.stringify(miproduction));
-                    mitotal2();
-                    toastr.success('Agregado Insumo: '+jchavez.data.name);
+                        }
+                    }
+                    else{
+                        $("#miproduction").append("<tr id="+cod+"><td>"+cod+"</td><td>simple</td><td>"+jchavez.data.id+"</td><td>"+jchavez.data.name+"</td><td>"+miprotext +"</td><td><input class='form-control' type='number' min='0' onclick='updatemiproduction("+jchavez.data.id+")' value='"+jchavez.data.costo+"' id='costo_"+jchavez.data.id+"' ></td><td><input class='form-control' type='number' onclick='updatemiproduction("+jchavez.data.id+")' value='1' min='1' id='cant_"+jchavez.data.id+"'></td><td><input class='form-control' min='0' type='number' value='"+jchavez.data.costo+"' id='total_"+jchavez.data.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='mideleteInsumo("+cod+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+
+                        var temp = {'cod': cod, 'type': 'simple', 'idpro' :idpro, 'id': jchavez.data.id, 'name': jchavez.data.name, 'proveedor_text': miprotext, 'costo': jchavez.data.costo, 'cant': 1, 'total': jchavez.data.costo};
+                        miproduction.push(temp);
+                        localStorage.setItem('miproduction', JSON.stringify(miproduction));
+                        mitotal2();
+                        toastr.success('Agregado Insumo: '+jchavez.data.name);
+                    }
                 }
 
                 $('#insumossemi').on('change', function() {
@@ -3381,13 +3571,30 @@
                         success: function (jchavez) {
 
 
-                            $("#miprodsemi").append("<tr id="+jchavez.id+"><td>"+jchavez.id+"</td><td>"+jchavez.name+"</td><td>"+miprotext +"</td><td><input class='form-control' type='number' min='0' onclick='updatemiproductionsemi("+jchavez.id+")' value='"+jchavez.costo+"' id='costo_"+jchavez.id+"' ></td><td><input class='form-control' type='number' min='1' onclick='updatemiproductionsemi("+jchavez.id+")' value='1' id='cant_"+jchavez.id+"'></td><td><input class='form-control' type='number' min='0' value='"+jchavez.costo+"' id='total_"+jchavez.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='mideleteInsumosemi("+jchavez.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+
+                            if('{{setting('ventas.stock')}}'){
+                                if(jchavez.stock>=1){
+                                    $("#miprodsemi").append("<tr id="+jchavez.id+"><td>"+jchavez.id+"</td><td>"+jchavez.name+"</td><td>"+miprotext +"</td><td><input class='form-control' type='number' min='0' onclick='updatemiproductionsemi("+jchavez.id+")' value='"+jchavez.costo+"' id='costo_"+jchavez.id+"' ></td><td><input class='form-control' type='number' min='1' max='"+jchavez.stock+"' onclick='updatemiproductionsemi("+jchavez.id+")' value='1' id='cant_"+jchavez.id+"'></td><td><input class='form-control' type='number' min='0' value='"+jchavez.costo+"' id='total_"+jchavez.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='mideleteInsumosemi("+jchavez.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+
+                                    var temp = {'id': jchavez.id, 'name': jchavez.name,'proveedor': mipro, 'proveedor_text': miprotext, 'costo': jchavez.costo, 'cant': 1, 'total': jchavez.costo};
+                                    miproduction.push(temp);
+                                    localStorage.setItem('miprodsemi', JSON.stringify(miproduction));
+                                    mitotal3();
+                                }
+                                else{
+                                    toastr.error("No existe el producto: "+jchavez.name +" en Stock");
+                                }
+                            }
+                            else{
+                                $("#miprodsemi").append("<tr id="+jchavez.id+"><td>"+jchavez.id+"</td><td>"+jchavez.name+"</td><td>"+miprotext +"</td><td><input class='form-control' type='number' min='0' onclick='updatemiproductionsemi("+jchavez.id+")' value='"+jchavez.costo+"' id='costo_"+jchavez.id+"' ></td><td><input class='form-control' type='number' min='1'  onclick='updatemiproductionsemi("+jchavez.id+")' value='1' id='cant_"+jchavez.id+"'></td><td><input class='form-control' type='number' min='0' value='"+jchavez.costo+"' id='total_"+jchavez.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='mideleteInsumosemi("+jchavez.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+
+                                var temp = {'id': jchavez.id, 'name': jchavez.name,'proveedor': mipro, 'proveedor_text': miprotext, 'costo': jchavez.costo, 'cant': 1, 'total': jchavez.costo};
+                                miproduction.push(temp);
+                                localStorage.setItem('miprodsemi', JSON.stringify(miproduction));
+                                mitotal3();
+                            }
 
 
-                            var temp = {'id': jchavez.id, 'name': jchavez.name,'proveedor': mipro, 'proveedor_text': miprotext, 'costo': jchavez.costo, 'cant': 1, 'total': jchavez.costo};
-                            miproduction.push(temp);
-                            localStorage.setItem('miprodsemi', JSON.stringify(miproduction));
-                            mitotal3();
                             }
                         });
                     }
@@ -3402,7 +3609,7 @@
                         if (milist[index].id == id) {
 
                         } else {
-                            var temp = {'id': milist[index].id, 'name': milist[index].name,'proveedor':milist[index].proveedor, 'costo': milist[index].costo, 'cant': milist[index].cant, 'total': milist[index].total};
+                            var temp = {'id': milist[index].id, 'name': milist[index].name,'proveedor':milist[index].proveedor,'proveedor_text':milist[index].proveedor_text , 'costo': milist[index].costo, 'cant': milist[index].cant, 'total': milist[index].total};
                             newlist.push(temp);
                         }
                     }
@@ -3421,10 +3628,10 @@
                     var newlist = [];
                     for (let index = 0; index < miproduction.length; index++) {
                         if (miproduction[index].id == id) {
-                            var temp = {'id': miproduction[index].id, 'name': miproduction[index].name,'proveedor': miproduction[index].proveedor, 'costo': parseFloat($("#costo_"+id).val()), 'cant': parseFloat($("#cant_"+id).val()), 'total': total};
+                            var temp = {'id': miproduction[index].id, 'name': miproduction[index].name,'proveedor': miproduction[index].proveedor, 'proveedor_text':milist[index].proveedor_text, 'costo': parseFloat($("#costo_"+id).val()), 'cant': parseFloat($("#cant_"+id).val()), 'total': total};
                             newlist.push(temp);
                         }else{
-                            var temp = {'id': miproduction[index].id, 'name': miproduction[index].name,'proveedor': miproduction[index].proveedor,'costo': miproduction[index].costo, 'cant': miproduction[index].cant, 'total': miproduction[index].total};
+                            var temp = {'id': miproduction[index].id, 'name': miproduction[index].name,'proveedor': miproduction[index].proveedor, 'proveedor_text':milist[index].proveedor_text,'costo': miproduction[index].costo, 'cant': miproduction[index].cant, 'total': miproduction[index].total};
                             newlist.push(temp);
                         }
                     }
