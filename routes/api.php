@@ -63,7 +63,7 @@ Route::get('pedido/save/{midata}', function ($midata) {
     $ticket = count(Venta::where('sucursal_id', 3)->where('caja_status', false)->get());
     $newventa = Venta::create([
         'cliente_id' => $midata2->cliente_id,
-        'cupon_id' => 1,
+        'cupon_id' => $midata2->cupon_id,
         'option_id' => $midata2->option_id,
         'pago_id' => $midata2->pago_id,
         'factura' => 'Recibo',
@@ -79,9 +79,9 @@ Route::get('pedido/save/{midata}', function ($midata) {
         'subtotal' => null,
         'caja_status' => false,
         'ticket' => $ticket + 1,
-        'cantidad' => null,
-        'recibido' => null,
-        'cambio' => null,
+        'cantidad' => 0,
+        'recibido' => 0,
+        'cambio' => 0,
         'chofer_id'=> setting('ventas.chofer'),
         'adicional'=> 0,
         'location' => $midata2->location
@@ -156,6 +156,17 @@ Route::get('option/{id}', function ($id) {
     $midata = Option::find($id);
     return $midata;
 });
+
+Route::get('search/{criterio}', function ($criterio) {
+    $result = Producto::where('name', 'like', '%'.$criterio.'%')->get();
+    return $result;
+});
+
+Route::get('cupon/{codigo}', function ($codigo) {
+    $result = Cupone::where('codigo', $codigo)->first();
+    return $result;
+});
+
 // --------------------------------------- VENTAS  ------------------------------------------
 // --------------------------------------- VENTAS  ------------------------------------------
 

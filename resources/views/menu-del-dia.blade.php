@@ -1,24 +1,27 @@
 @extends('layouts.master')
 
 @section('content')
-
-<div class="container-fluid">
+<br>
+<div class="container-fluid mt-5">
     <div class="row">
-
+        <div class="col-sm-12 text-center">
+            <h2>Menu del Dia</h2>
+        </div>
         @php
             $catalogo = App\Catalogo::latest()->first();
             $products = App\RelCatalogoProducto::where('catalogo_id', $catalogo->id)->get();
         @endphp
-        <div class="col-sm-12">
-            <hr>
-            <h5 class="text-center font-weight-bold dark-grey-text"><strong>Nuevos Productos</strong></h5>
-            <hr>
-            @foreach($products as $item)
+
+
+
+           @foreach($products as $item)
+            <div class="col-lg-4 col-md-6 col-sm-12">
+
                 @php
                     $product = App\Producto::find($item->producto_id);
                     $miimage = $product->image ? $product->image : setting('productos.imagen_default');
                 @endphp
-                <div class="row mt-5 py-2 mb-4 hoverable align-items-center">
+                <div class="row mt-1 py-1 mb-1 hoverable align-items-center">
                     <div class="col-6">
                         <img src="{{ setting('admin.url') }}storage/{{ $miimage }}" class="img-fluid">
                     </div>
@@ -29,8 +32,9 @@
                         <a href="#" onclick="addproduct('{{ $product->id }}')" class="btn btn-sm">Agregar a Carrito</a>
                     </div>
                 </div>
+            </div>
             @endforeach
-        </div>
+
     </div>
 </div>
 @endsection

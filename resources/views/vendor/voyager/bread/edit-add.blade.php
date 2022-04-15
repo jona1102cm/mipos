@@ -241,6 +241,10 @@
                                             <strong>Tipo</strong>
                                             <select class="form-control js-example-basic-single" id="venta_type"> </select>
                                         </div>
+                                        <div class="form-group col-sm-12">
+                                            <strong>Pensionado</strong>
+                                            <select class="form-control js-example-basic-single" id="mipensionado"> </select>
+                                        </div>
 
                                         <div class="form-group col-md-12">
                                             <strong>Cupon</strong>
@@ -2089,6 +2093,7 @@
                     $('#display').val(this.value+' '+$('#last_name').val());
                     $('#email').val(this.value+'.'+$('#last_name').val()+'@loginweb.dev');
                 });
+
                 $('#last_name').keyup(function (e) {
                     e.preventDefault();
                     $('#display').val($('#first_name').val()+' '+this.value);
@@ -2213,7 +2218,6 @@
                     });
                 }
 
-
                 // cliente
                  $('#micliente').on('change', function() {
                     $('input[name="cliente_id"]').val(this.value);
@@ -2223,7 +2227,6 @@
                 $('#midelivery').on('change', function() {
                     $("input[name='delivery_id']").val(this.value);
                     toastr.success('Cambio de Delivery');
-
                 });
 
                 $('#mipagos').on('change', function() {

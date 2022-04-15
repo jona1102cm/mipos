@@ -2,43 +2,44 @@
 
 @section('content')
     <br>
-    <div class="container-fluid">
-      <section class="section mb-2 mt-5">
-        {{-- <div class="card card-ecommerce"> --}}
-          {{-- <div class="card-body"> --}}
-            <div class="table-responsive">
-              <table class="table product-table" id="micart">
-                <thead class="mdb-color lighten-5">
-                    <tr>
-                        <th></th>
-                        <th class="font-weight-bold">
-                        <strong>Producto</strong>
-                        </th>
-                        <th class="font-weight-bold">
-                            <strong>Extras</strong>
-                        </th>
-                        <th class="font-weight-bold">
-                            <strong>Observación</strong>
-                        </th>
-                        <th class="font-weight-bold">
-                            <strong>Precio</strong>
-                        </th>
-                        <th class="font-weight-bold">
-                            <strong>Cantidad</strong>
-                        </th>
-                        <th class="font-weight-bold">
-                            <strong>STotal</strong>
-                        </th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-              </table>
+    <div class="container-fluid mt-5">
+        <div class="row">
+            <div class="col-sm-12 text-center">
+                <h2>Mi Carrito</h2>
             </div>
-          {{-- </div> --}}
-        {{-- </div> --}}
-      </section>
+        </div>
+        <section class="section">
+            <div class="table-responsive">
+                <table class="table product-table" id="micart">
+                    <thead class="mdb-color lighten-5">
+                        <tr>
+                            <th></th>
+                            <th class="font-weight-bold">
+                            <strong>Producto</strong>
+                            </th>
+                            <th class="font-weight-bold">
+                                <strong>Extras</strong>
+                            </th>
+                            <th class="font-weight-bold">
+                                <strong>Observación</strong>
+                            </th>
+                            <th class="font-weight-bold">
+                                <strong>Precio</strong>
+                            </th>
+                            <th class="font-weight-bold">
+                                <strong>Cantidad</strong>
+                            </th>
+                            <th class="font-weight-bold">
+                                <strong>STotal</strong>
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </div>
 
     <!----------------------MODALES--------------------------->

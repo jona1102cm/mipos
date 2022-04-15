@@ -4,7 +4,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {{-- <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> --}}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>{{ setting('site.title') }}</title>
     <link rel="icon" type="image/x-icon" href="{{ setting('admin.url').'storage/'.setting('site.logo') }}">
@@ -12,6 +13,7 @@
     <link href="{{ asset('mdb2/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('mdb2/css/mdb.min.css') }}" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet"/>
+    <meta name="theme-color" content="{{ setting('admin.color') }}">
     @yield('css')
     <style>
         .page-footer {
@@ -29,7 +31,7 @@
         <ul id="slide-out" class="side-nav custom-scrollbar">
         <li>
             <div class="logo-wrapper waves-light">
-            <a href="#"><img src="{{ setting('admin.url').'storage/'.setting('site.banner') }}" class="img-fluid flex-center"></a>
+            <a href="/"><img src="{{ setting('admin.url').'storage/'.setting('site.banner') }}" class="img-fluid flex-center"></a>
             </div>
         </li>
         <li>
@@ -153,8 +155,7 @@
             mitotal()
         }
         async function midelete(id) {
-            $("#micart tr#"+id).remove();
-
+            // $("#micart tr#"+id).remove();
             var milist = JSON.parse(localStorage.getItem('micart'));
             var newlist = [];
             for (let index = 0; index < milist.length; index++) {
@@ -174,11 +175,8 @@
             $("#producto_extra_id").val(producto_id);
             var mitable="";
             var extrasp=  await axios.get("{{ setting('admin.url') }}api/pos/producto/extra/"+extras);
-            //console.log(extrasp.data);
             for(let index=0; index < extrasp.data.length; index++){
-                //mitable = mitable + "<tr><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+extrasp.data[index].image+"></td><td>"+extrasp.data[index].id+"</td><td><input class='form-control extra-name' readonly value='"+extrasp.data[index].name+"'></td><td><input class='form-control extra-precio' readonly  value='"+extrasp.data[index].precio+" Bs."+"'></td><td><input class='form-control extra-cantidad' style='width:100px' type='number' min='0' value='0'  id='extra_"+extrasp.data[index].id+"'></td></tr>";
                 mitable = mitable + "<tr><td>"+extrasp.data[index].id+"</td><td><input class='form-control extra-name' readonly value='"+extrasp.data[index].name+"'></td><td><input class='form-control extra-precio' readonly  value='"+extrasp.data[index].precio+" Bs."+"'></td><td><input class='form-control extra-cantidad' style='width:100px' type='number' min='0' value='0'  id='extra_"+extrasp.data[index].id+"'></td></tr>";
-
             }
             $('#table-extras').append(mitable);
         }
@@ -193,7 +191,6 @@
             var index_cantidad_aux=0;
             var precio_extras=0;
             var nombre_extras="";
-
             $('.extra-cantidad').each(function(){
                 if($(this).val()>0){
                     cantidad[index_cantidad_aux]=parseFloat($(this).val());
@@ -206,7 +203,6 @@
                         }
                         index_name+=1;
                     });
-
                     var index_precio=0;
                     $('.extra-precio').each(function(){
                         if(index_precio==index_cantidad){
@@ -215,25 +211,20 @@
                         }
                         index_precio+=1;
                     });
-
                 }
                 index_cantidad+=1;
             });
 
             for(let index=0;index<precio.length;index++){
-            nombre_extras+=name[index]+' ';
-            precio_extras+=parseFloat(cantidad[index])*parseFloat(precio[index]);
+                nombre_extras+=name[index]+' ';
+                precio_extras+=parseFloat(cantidad[index])*parseFloat(precio[index]);
             }
-            // console.log(cantidad);
-            // console.log(precio);
-            // console.log(name);
-            // console.log(nombre_extras);
-            // console.log(precio_extras);
             var producto_id=$("#producto_extra_id").val();
             var name_extra=nombre_extras;
             var precio_extra=precio_extras;
             updatecantextra(name_extra, precio_extra, producto_id);
         }
+
         async function updatecantextra( name_extra, precio_extra, producto_id){
             var miprice = $("#precio_"+producto_id).val()
             var nuevoprecio = parseFloat(precio_extra)+ parseFloat(miprice);
@@ -293,7 +284,7 @@
             for (let index = 0; index < milist.length; index++) {
                 var stotal = milist[index].precio * milist[index].cant
                 var observacion = milist[index].observacion ? milist[index].observacion: ''
-                console.log(observacion);
+                // console.log(observacion);
                 if(milist[index].extra){
                     $("#micart").append("<tr id="+milist[index].id+"><td><img class='img-responsive img-thumbnail' src='{{ setting('admin.url') }}storage/"+milist[index].image+"'></td><td><strong>"+milist[index].name+"<br>"+milist[index].description+"</strong></td><td><strong>"+milist[index].extra_name+"</strong><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+milist[index].extras+", "+milist[index].id+")'><i class='fas fa-align-justify'></i></a></td><td><input class='form-control' type='text'  onchange='updateobservacion("+milist[index].id+")' id='observacion_"+milist[index].id+"' value='"+observacion+"'></td><td>"+milist[index].precio+"</td><td>"+milist[index].cant+"</td><td>"+stotal+"</td><td><button type='button' class='btn btn-sm btn-primary' data-toggle='tooltip' data-placement='top' onclick='midelete("+milist[index].id+")' title='Remove item'>X</button></td></tr>")
                     mitotal += stotal

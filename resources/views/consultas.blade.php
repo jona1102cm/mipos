@@ -39,7 +39,11 @@
     <script>
         $(document).ready(function () {
             var miuser = JSON.parse(localStorage.getItem('miuser'))
-            cargar_user(miuser.phone)
+            if (miuser) {
+                cargar_user(miuser.phone)
+            } else {
+                toastr.error('Inicia Sesion')
+            }
         });
 
         async function cargar_user(phone) {
@@ -48,7 +52,7 @@
                 toastr.error(miuser.data.message)
             } else {
                 localStorage.setItem('miuser', JSON.stringify(miuser.data));
-                $("#micliente").html(miuser.data.display);
+                $("#micliente").html(miuser.data.display + " <a href='#' onclick='reset()'>Salir</a>");
                 $("#misearch").val(miuser.data.phone);
                 var pedidos = await axios.get("{{ setting('admin.url') }}api/pedidos/cliente/"+miuser.data.id)
                 $("#mipedidos tbody tr").remove();
@@ -64,5 +68,14 @@
                 cargar_user(this.value)
             }
         });
+
+        //reset session
+        function reset() {
+            localStorage.removeItem('miuser')
+            localStorage.removeItem('micart')
+            localStorage.removeItem('miproducts')
+            location.href = '/'
+        }
+
     </script>
 @endsection
