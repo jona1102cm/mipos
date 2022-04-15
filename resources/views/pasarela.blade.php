@@ -194,8 +194,9 @@
             console.log(pedido)
             var newpedido = await axios.post("{{ setting('admin.url') }}api/pedido/save", pedido)
 
-            var micart = JSON.parse(localStorage.getItem('micart'))
-            var products = await axios.post("{{ setting('admin.url') }}api/pedido/products/save", micart)
+            // var micart = localStorage.getItem('micart')
+            // var products = await axios.post("{{ setting('admin.url') }}api/pedido/products/save", micart)
+            // console.log(products.data)
 
             localStorage.setItem('micart', JSON.stringify([]));
             location.href = "{{ route('pages', 'consultas') }}"

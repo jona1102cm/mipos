@@ -86,11 +86,7 @@
             } else {
                 milist()
             }
-
         });
-
-
-
 
         function pagar() {
             location.href = "{{ route('pages', 'pasarela') }}"

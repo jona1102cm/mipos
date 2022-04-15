@@ -88,45 +88,23 @@ Route::post('pedido/save', function (Request $request) {
     return $newventa;
 });
 
-Route::get('pedido/products/save/{micart}', function($micart) {
-    $micart2 = json_decode($micart);
-    $miproducto = Producto::find($micart2->producto_id);
-
-    if (setting('ventas.stock')) {
-        $cant_a = $miproducto->stock;
-        $cant_b = $micart2->cantidad;
-        $cant_c = $cant_a - $cant_b;
-        $miproducto->stock = $cant_c;
-        $miproducto->save();
+Route::post('pedido/products/save', function(Request $request) {
+    return count($request);
+    for ($i=0; $i < count($request); $i++) {
+        $miproducto = Producto::find($micart2->producto_id);
         DetalleVenta::create([
-            'producto_id' => $micart2->producto_id,
-            'venta_id' => $micart2->venta_id,
-            'precio' => $micart2->precio,
-            'cantidad' => $micart2->cantidad,
-            'total' => $micart2->total,
-            'foto' => $miproducto->image ? $miproducto->image : null,
-            'name' => $miproducto->name,
-            'description' => $micart2->description,
-            'extra_name'=>$micart2->extra_name,
-            'observacion'=>$micart2->observacion
-        ]);
-
-    } else {
-        DetalleVenta::create([
-            'producto_id' => $micart2->producto_id,
-            'venta_id' => $micart2->venta_id,
-            'precio' => $micart2->precio,
-            'cantidad' => $micart2->cantidad,
-            'total' => $micart2->total,
-            'foto' => $miproducto->image ? $miproducto->image : null,
-            'name' => $miproducto->name,
-            'description' => $micart2->description,
-            'extra_name'=>$micart2->extra_name,
-            'observacion'=>$micart2->observacion
+            'producto_id' => $request->producto_id,
+            'venta_id' => $request->venta_id,
+            'precio' => $request->precio,
+            'cantidad' => $request->cantidad,
+            'total' => $request->total,
+            'foto' =>  null,
+            'name' => $request->name,
+            'description' => $request->description,
+            'extra_name'=>$request->extra_name,
+            'observacion'=>$request->observacion
         ]);
     }
-
-    return true;
 });
 
 
