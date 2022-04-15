@@ -58,58 +58,55 @@ Route::get('pos/info', function () {
 
 
 // FRONEND
-Route::post('pedido/save', function (Request $request) {
-    // $midata2 = json_decode($midata);
-    $ticket = count(Venta::where('sucursal_id', 1)->where('caja_status', false)->get());
+Route::get('pedido/save/{midata}', function ($midata) {
+    $midata2 = json_decode($midata);
+    $ticket = count(Venta::where('sucursal_id', 3)->where('caja_status', false)->get());
     $newventa = Venta::create([
-        'cliente_id' => $request->cliente_id,
+        'cliente_id' => $midata2->cliente_id,
         'cupon_id' => 1,
-        'option_id' => $request->option_id,
-        'pago_id' => $request->pago_id,
+        'option_id' => $midata2->option_id,
+        'pago_id' => $midata2->pago_id,
         'factura' => 'Recibo',
         'credito'=> 0,
-        'total' => $request->total,
-        'descuento' => $request->descuento,
-        'observacion' => $request->observacion,
-        'register_id' => 1,
+        'total' => $midata2->total,
+        'descuento' => $midata2->descuento,
+        'observacion' => $midata2->observacion,
+        'register_id' => setting('catalogo-en-linea.cliente_pag_id'),
         'status_id' => 1,
         'caja_id' => 1,
         'delivery_id' => 1,
-        'sucursal_id' => 1,
+        'sucursal_id' => 3,
         'subtotal' => null,
         'caja_status' => false,
         'ticket' => $ticket + 1,
         'cantidad' => null,
         'recibido' => null,
         'cambio' => null,
-        'chofer_id'=> 1,
-        'adicional'=> null
+        'chofer_id'=> setting('ventas.chofer'),
+        'adicional'=> 0,
+        'location' => $midata2->location
     ]);
     return $newventa;
 });
 
-Route::post('pedido/products/save', function(Request $request) {
-    return count($request);
-    for ($i=0; $i < count($request); $i++) {
-        $miproducto = Producto::find($micart2->producto_id);
-        DetalleVenta::create([
-            'producto_id' => $request->producto_id,
-            'venta_id' => $request->venta_id,
-            'precio' => $request->precio,
-            'cantidad' => $request->cantidad,
-            'total' => $request->total,
-            'foto' =>  null,
-            'name' => $request->name,
-            'description' => $request->description,
-            'extra_name'=>$request->extra_name,
-            'observacion'=>$request->observacion
-        ]);
-    }
+Route::get('pedido/products/save/{midata}', function($midata) {
+    $midata2 = json_decode($midata);
+    $miproducto = Producto::find($midata2->producto_id);
+    DetalleVenta::create([
+        'producto_id' => $midata2->producto_id,
+        'venta_id' => $midata2->venta_id,
+        'precio' => $midata2->precio,
+        'cantidad' => $midata2->cantidad,
+        // 'total' => $midata2->total,
+        'foto' =>  $miproducto->image ? $miproducto->image : null,
+        'name' => $midata2->name,
+        'description' => $midata2->description,
+        'extra_name'=> $midata2->extra_name,
+        'observacion'=> $midata2->observacion
+    ]);
+    return true;
 });
-
-
 Route::get('cliente/{midata}', function ($midata) {
-    // return $midata;
     $midata2 = json_decode($midata);
     $cliente = Cliente::where('phone', $midata2->telefono)->first();
     if ($cliente) {
@@ -128,21 +125,23 @@ Route::get('cliente/{midata}', function ($midata) {
 });
 Route::get('location/{midata}', function ($midata) {
     $midata2 = json_decode($midata);
-    $location = Location::where('cliente_id', $midata2->cliente_id)->where('default', 1)->first();
+    $location = Location::where('cliente_id', $midata2->cliente_id)->where('descripcion', $midata2->direccion)->first();
     if ($location) {
         return $location;
     } else {
         $newlocation = Location::create([
-            'phone' => $phone,
-            'email' => $phone.'@loginweb.dev',
-            'display' => $phone.'@loginweb.dev'
+            'cliente_id' => $midata2->cliente_id,
+            'latitud' => $midata2->latitud,
+            'longitud' => $midata2->longitud,
+            'descripcion' => $midata2->direccion,
+            'default' => 0
             ]);
-        return $newcliente;
+        return $newlocation;
     }
 });
 Route::get('consulta/{phone}', function ($phone) {
 
-    $cliente = Cliente::where('phone' ,$phone)->first();
+    $cliente = Cliente::where('phone', $phone)->first();
     if ($cliente) {
         return $cliente;
     } else {
@@ -150,7 +149,7 @@ Route::get('consulta/{phone}', function ($phone) {
     }
 });
 Route::get('pedidos/cliente/{id}', function ($id) {
-    $midata = Venta::where('cliente_id', $id)->where('caja_status', false)->with('pasarela', 'estado', 'delivery', 'cupon')->get();
+    $midata = Venta::where('cliente_id', $id)->where('caja_status', false)->with('pasarela', 'estado', 'delivery', 'cupon')->orderBy('created_at', 'desc')->get();
     return $midata;
 });
 Route::get('option/{id}', function ($id) {
@@ -197,16 +196,6 @@ Route::get('pos/caja/state/{state}/{id}', function ($state, $id) {
             $caja->save();
             break;
         case 'close':
-            // $ventas = Venta::where('caja_id', $id)->where('caja_status', false)->get();
-            // foreach ($ventas as $item) {
-            //     $venta = Venta::find($item->id);
-            //     $venta->caja_status = true;
-            //     $venta->save();
-            // }
-            // $caja = Caja::find($id);
-            // $caja->estado = $state;
-            // $caja->save();
-            // break;
         default:
             # code...
             break;
@@ -215,21 +204,18 @@ Route::get('pos/caja/state/{state}/{id}', function ($state, $id) {
 });
 Route::get('pos/caja/detalle/save/{midata}', function ($midata) {
     $midata2 = json_decode($midata);
-
     $ventas = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->get();
     foreach ($ventas as $item) {
         $venta = Venta::find($item->id);
         $venta->caja_status = true;
         $venta->save();
     }
-
     $asientos = Asiento::where('caja_id', $midata2->caja_id)->where('editor_id', $midata2->editor_id)->where('caja_status', false)->get();
     foreach ($asientos as $item) {
         $asiento = Asiento::find($item->id);
         $asiento->caja_status = true;
         $asiento->save();
     }
-
     $detalla_caja = DetalleCaja::create([
         'cantidad_ventas' => $midata2->cant_ventas,
         'importe_inicial' => $midata2->importe_inicial,
@@ -240,16 +226,8 @@ Route::get('pos/caja/detalle/save/{midata}', function ($midata) {
         'editor_id' => $midata2->editor_id,
         'description' => $midata2->description,
         'venta_efectivo'=> $midata2->venta_efectivo,
-		// 'venta_tarjeta'=> $midata2->venta_tarjeta,
-		// 'venta_transferencia'=> $midata2->venta_transferencia,
-		// 'venta_qr'=> $midata2->venta_qr,
-		// 'venta_tigomoney'=> $midata2->venta_tigomoney,
         'venta_banipay'=> $midata2->venta_banipay,
 		'cantidad_efectivo'=> $midata2->cantidad_efectivo,
-		// 'cantidad_tarjeta'=> $midata2->cantidad_tarjeta,
-		// 'cantidad_transferencia'=> $midata2->cantidad_transferencia,
-		// 'cantidad_qr'=> $midata2->cantidad_qr,
-		// 'cantidad_tigomoney'=> $midata2->cantidad_tigomoney,
         'cantidad_banipay'=> $midata2->cantidad_banipay,
 		'efectivo_entregado'=> $midata2->efectivo_entregado,
 		'cortes'=> $midata2->cortes,
@@ -257,9 +235,7 @@ Route::get('pos/caja/detalle/save/{midata}', function ($midata) {
         'ingreso_linea'=>$midata2->ingreso_linea,
         'egreso_efectivo'=>$midata2->egreso_efectivo,
         'egreso_linea'=>$midata2->egreso_linea
-
     ]);
-
     $caja = Caja::find($midata2->caja_id);
     $caja->estado = $midata2->status;
     $caja->save();
@@ -268,7 +244,6 @@ Route::get('pos/caja/detalle/save/{midata}', function ($midata) {
 });
 Route::get('pos/caja/get_total/{midata}', function ( $midata) {
     $midata2 = json_decode($midata);
-
     $ventas = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->get();
     $cantidad = count($ventas);
     $total = 0;
@@ -285,7 +260,6 @@ Route::get('pos/caja/get_total/{midata}', function ( $midata) {
     foreach ($egresos as $item) {
         $te = $te + $item->monto;
     }
-
     //desde aqui jchavez
     $venta_efectivo = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pago_id',1)->get();
     $cantidad_efectivo = count($venta_efectivo);
@@ -300,62 +274,27 @@ Route::get('pos/caja/get_total/{midata}', function ( $midata) {
     foreach ($venta_banipay as $item) {
         $total_banipay = $total_banipay + $item->total;
     }
-
-    // $venta_tarjeta = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pago_id',2)->get();
-    // $cantidad_tarjeta = count($venta_tarjeta);
-    // $total_tarjeta = 0;
-    // foreach ($venta_tarjeta as $item) {
-    //     $total_tarjeta = $total_tarjeta + $item->total;
-    // }
-
-    // $venta_transferencia = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pago_id',3)->get();
-    // $cantidad_transferencia = count($venta_transferencia);
-    // $total_transferencia = 0;
-    // foreach ($venta_transferencia as $item) {
-    //     $total_transferencia = $total_transferencia + $item->total;
-    // }
-
-    // $venta_qr = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pago_id',4)->get();
-    // $cantidad_qr = count($venta_qr);
-    // $total_qr = 0;
-    // foreach ($venta_qr as $item) {
-    //     $total_qr = $total_qr + $item->total;
-    // }
-
-    // $venta_tigomoney = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pago_id',5)->get();
-    // $cantidad_tigomoney = count($venta_tigomoney);
-    // $total_tigomoney = 0;
-    // foreach ($venta_tigomoney as $item) {
-    //     $total_tigomoney = $total_tigomoney + $item->total;
-    // }
-
     $ie=Asiento::where('caja_id',$midata2->caja_id)->where('editor_id',$midata2->editor_id)->where('caja_status',false)->where('type',"Ingresos")->where('pago',1)->get();
     $ingreso_efectivo=0;
     foreach($ie as $item){
         $ingreso_efectivo+= $item->monto;
     }
-
     $il=Asiento::where('caja_id',$midata2->caja_id)->where('editor_id',$midata2->editor_id)->where('caja_status',false)->where('type',"Ingresos")->where('pago',0)->get();
     $ingreso_linea=0;
     foreach($il as $item){
         $ingreso_linea+= $item->monto;
     }
-
     $ee=Asiento::where('caja_id',$midata2->caja_id)->where('editor_id',$midata2->editor_id)->where('caja_status',false)->where('type',"Egresos")->where('pago',1)->get();
     $egreso_efectivo=0;
     foreach($ee as $item){
         $egreso_efectivo+= $item->monto;
     }
-
     $el=Asiento::where('caja_id',$midata2->caja_id)->where('editor_id',$midata2->editor_id)->where('caja_status',false)->where('type',"Egresos")->where('pago',0)->get();
     $egreso_linea=0;
     foreach($el as $item){
         $egreso_linea+= $item->monto;
     }
-
-    //return  response()->json(array('total' => $total, 'cantidad' => $cantidad, 'ingresos' => $ti, 'egresos'=> $te, 'total_efectivo'=> $total_efectivo, 'cantidad_efectivo'=> $cantidad_efectivo,'total_tarjeta'=> $total_tarjeta,'cantidad_tarjeta'=>$cantidad_tarjeta,'total_transferencia'=> $total_transferencia,'cantidad_transferencia'=>$cantidad_transferencia, 'total_qr'=>$total_qr,'cantidad_qr'=>$cantidad_qr,'total_tigomoney'=>$total_tigomoney,'cantidad_tigomoney'=>$cantidad_tigomoney, 'ingreso_efectivo'=>$ingreso_efectivo, 'ingreso_linea'=>$ingreso_linea, 'egreso_efectivo'=>$egreso_efectivo, 'egreso_linea'=>$egreso_linea));
     return  response()->json(array('total' => $total, 'cantidad' => $cantidad, 'ingresos' => $ti, 'egresos'=> $te, 'total_efectivo'=> $total_efectivo, 'cantidad_efectivo'=> $cantidad_efectivo, 'total_banipay'=>$total_banipay, 'cantidad_banipay'=> $cantidad_banipay, 'ingreso_efectivo'=>$ingreso_efectivo, 'ingreso_linea'=>$ingreso_linea, 'egreso_efectivo'=>$egreso_efectivo, 'egreso_linea'=>$egreso_linea));
-
 });
 Route::get('pos/cajas', function(){
     return Caja::with('sucursal')->get();
@@ -373,7 +312,6 @@ Route::get('pos/banipay/save/{midata}', function($midata) {
     return $banipay;
 });
 Route::get('pos/banipay/get/{venta_id}', function($venta_id) {
-
     return Banipay::where('venta_id', $venta_id)->first();
 });
 
@@ -403,7 +341,8 @@ Route::get('pos/ventas/save/{midata}', function($midata) {
         'recibido' => $midata2->recibido,
         'cambio' => $midata2->cambio,
         'chofer_id'=>$midata2->chofer_id,
-        'adicional'=>$midata2->adicional
+        'adicional'=>$midata2->adicional,
+        'location' => null
     ]);
     return $venta;
 });
@@ -411,7 +350,6 @@ Route::get('pos/ventas/save/{midata}', function($midata) {
 Route::get('pos/ventas/save/detalle/{micart}', function($micart) {
     $micart2 = json_decode($micart);
     $miproducto = Producto::find($micart2->producto_id);
-
     if (setting('ventas.stock')) {
         $cant_a = $miproducto->stock;
         $cant_b = $micart2->cantidad;
@@ -430,7 +368,6 @@ Route::get('pos/ventas/save/detalle/{micart}', function($micart) {
             'extra_name'=>$micart2->extra_name,
             'observacion'=>$micart2->observacion
         ]);
-
     } else {
         DetalleVenta::create([
             'producto_id' => $micart2->producto_id,
@@ -445,7 +382,6 @@ Route::get('pos/ventas/save/detalle/{micart}', function($micart) {
             'observacion'=>$micart2->observacion
         ]);
     }
-
     return true;
 });
 
@@ -460,7 +396,6 @@ Route::get('pos/compras/save/{midata}', function($midata) {
         $cant_c = $cant_a + $cant_b;
         $miinsumo->stock = $cant_c;
         $miinsumo->save();
-
         $compra= Compra::create([
         'description'=>$midata2->description,
         'editor_id'=>$midata2->editor_id,
@@ -486,7 +421,6 @@ Route::get('pos/compras/save/{midata}', function($midata) {
     }
     return true;
 });
-
 
 // SAVE CLIENTE
 Route::get('pos/savacliente/{midata}', function ($midata) {
@@ -601,7 +535,6 @@ Route::get('pos/cliente/default/get', function () {
     // return true;
 });
 
-
 // UN VENTAS POR CLINTE
 Route::get('pos/ventas/cliente/{cliente_id}', function ($cliente_id) {
     return  Venta::where('cliente_id', $cliente_id)->get();
@@ -660,10 +593,6 @@ Route::get('pos/chofer/set/{venta_id}/{chofer_id}', function ($id, $chofer_id) {
     return  true;
 });
 
-
-
-
-
 //TODO ESTO ES PARA PRODUCCIÓN BY JONATHAN--------------------------------------
 //--  TODOS LOS INSUMOS
 Route::get('pos/insumos', function () {
@@ -710,11 +639,8 @@ Route::get('pos/proveedores/{id}', function ($id) {
 
 // PRODUCTION
 Route::get('pos/productions/save/{midataProduction}', function($midataProduction) {
-
     $midataProduction = json_decode($midataProduction);
-
     if(setting('ventas.stock')){
-
         $production = Production::create([
             'producto_id' => $midataProduction->producto_id,
             'cantidad' => $midataProduction->cantidad,
@@ -728,7 +654,6 @@ Route::get('pos/productions/save/{midataProduction}', function($midataProduction
         $actual = $update->stock;
         $update->stock = $actual + $midataProduction->cantidad;
         $update->save();
-
     }
     else{
         $production = Production::create([
@@ -739,27 +664,21 @@ Route::get('pos/productions/save/{midataProduction}', function($midataProduction
             'user_id' => $midataProduction->user_id
         ]);
     }
-
     return $production->id;
 });
 
 Route::get('pos/productions/save/detalle/{miproduction}', function($miproduction) {
     $miproduction2 = json_decode($miproduction);
-
     if(setting('ventas.stock')){
-
         //Condición para definir si se guardará id de simple o elab
         if($miproduction2->type=="simple"){
             $insumo=$miproduction2->insumo_id;
             $elab=null;
         }
-
         if($miproduction2->type=="elaborado"){
             $insumo=null;
             $elab=$miproduction2->insumo_id;
         }
-
-
         $productionI= ProductionInsumo::create([
             'type_insumo'=>$miproduction2->type,
             'production_id'=>$miproduction2->production_id,
@@ -770,7 +689,6 @@ Route::get('pos/productions/save/detalle/{miproduction}', function($miproduction
             'cantidad' => $miproduction2->cantidad,
             'total' => $miproduction2->total
         ]);
-
         //Update Stock Insumo
         if($miproduction2->type=="simple"){
         $ins= Insumo::find($miproduction2->insumo_id);
@@ -790,7 +708,6 @@ Route::get('pos/productions/save/detalle/{miproduction}', function($miproduction
             $prodpre->stock=$cc;
             $prodpre->save();
         }
-
     }
     else{
          //Condición para definir si se guardará id de simple o elab
@@ -798,13 +715,10 @@ Route::get('pos/productions/save/detalle/{miproduction}', function($miproduction
             $insumo=$miproduction2->insumo_id;
             $elab=null;
         }
-
         if($miproduction2->type=="elaborado"){
             $insumo=null;
             $elab=$miproduction2->insumo_id;
         }
-
-
         $productionI= ProductionInsumo::create([
             'type_insumo'=>$miproduction2->type,
             'production_id'=>$miproduction2->production_id,
@@ -816,10 +730,6 @@ Route::get('pos/productions/save/detalle/{miproduction}', function($miproduction
             'total' => $miproduction2->total
         ]);
     }
-
-
-
-
     return true;
 });
 
@@ -828,9 +738,7 @@ Route::get('pos/productions/save/detalle/{miproduction}', function($miproduction
 Route::get('pos/productions/savesemi/{midataProduction}', function($midataProduction) {
 
     $midataProduction = json_decode($midataProduction);
-
     if(setting('ventas.stock')){
-
         $production = ProductionSemi::create([
             'producto_semi_id' => $midataProduction->producto_semi_id,
             'cantidad' => $midataProduction->cantidad,
@@ -838,16 +746,13 @@ Route::get('pos/productions/savesemi/{midataProduction}', function($midataProduc
             'description' => $midataProduction->description,
             'user_id' => $midataProduction->user_id
         ]);
-
         //Update Stock Producto Semielaborado
         $mipropre= ProductosSemiElaborado::find($midataProduction->producto_semi_id);
-
         $a= $mipropre->stock;
         $b= $midataProduction->cantidad;
         $c= $a+$b;
         $mipropre->stock= $c;
         $mipropre->save();
-
     }
     else{
         $production = ProductionSemi::create([
@@ -858,17 +763,13 @@ Route::get('pos/productions/savesemi/{midataProduction}', function($midataProduc
             'user_id' => $midataProduction->user_id
         ]);
     }
-
     return $production->id;
 
 });
 
 Route::get('pos/productions/savesemi/detalle/{miproduction}', function($miproduction) {
     $miproduction2 = json_decode($miproduction);
-
-
     if(setting('ventas.stock')){
-
         DetalleProductionSemi::create([
             'production_semi_id'=>$miproduction2->production_semi_id,
             'insumo_id' => $miproduction2->insumo_id,
@@ -880,12 +781,10 @@ Route::get('pos/productions/savesemi/detalle/{miproduction}', function($miproduc
 
         //Update Stock Insumo
         $miinsumo= Insumo::find($miproduction2->insumo_id);
-
         $cant_a = $miinsumo->stock;
         $cant_b = $miproduction2->cantidad;
         $cant_c = $cant_a - $cant_b;
         $miinsumo->stock = $cant_c;
-        //console.log($miinsumo);
         $miinsumo->save();
     }
     else{
@@ -898,8 +797,6 @@ Route::get('pos/productions/savesemi/detalle/{miproduction}', function($miproduc
             'total' => $miproduction2->total
         ]);
     }
-
-
     return true;
 });
 
@@ -907,7 +804,6 @@ Route::get('pos/productions/savesemi/detalle/{miproduction}', function($miproduc
 Route::get('pos/productos/production', function () {
     return  Producto::where('production', true)->get();
 });
-
 
 // MOVIL
 // TODOS LOS PRODUCTOS

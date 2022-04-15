@@ -49,13 +49,7 @@
             } else {
                 localStorage.setItem('miuser', JSON.stringify(miuser.data));
                 $("#micliente").html(miuser.data.display);
-                // var midata2 = {
-                //     'cliente_id': miuser.data.id
-                // }
-                // var milocation = await axios.get("{{ setting('admin.url') }}api/location/"+JSON.stringify(midata2))
-                // if (milocation) {
-                //     localStorage.setItem('milocation', JSON.stringify(milocation.data));
-                // }
+                $("#misearch").val(miuser.data.phone);
                 var pedidos = await axios.get("{{ setting('admin.url') }}api/pedidos/cliente/"+miuser.data.id)
                 $("#mipedidos tbody tr").remove();
                 for (let index = 0; index < pedidos.data.length; index++) {

@@ -4,8 +4,8 @@
     <style>
         #map {
             width: 100%;
-            height: 400px;
-            box-shadow: 5px 5px 5px #888;
+            height: 350px;
+            /* box-shadow: 5px 5px 5px #888; */
         }
     </style>
    <script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
@@ -51,7 +51,7 @@
                             $options = App\Option::where('view', 'frontend')->get();
                         @endphp
                         @foreach ($options as $item)
-                            <option value="{{ $item->id }}">{{ $item->title }}</option>
+                            <option value="{{ $item->id }}">{{ $item->title.' - Bs. '.$item->valor }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -92,6 +92,7 @@
             </div>
         </div>
     </div>
+    <br>
 @endsection
 
 @section('javascript')
@@ -169,12 +170,11 @@
 
         function error(err) {
             alert(err.message)
-            // alert('ERROR(' + err.code + '): ' + err.message)
             console.warn('ERROR(' + err.code + '): ' + err.message)
         };
-        // navigator.geolocation.getCurrentPosition(success, error, options);
 
         async function save_pedido() {
+            // query client
             var cliente = {
                 'nombres': $('#nombres').val(),
                 'apellidos': $('#apellidos').val(),
@@ -183,6 +183,16 @@
             }
             var micliente = await axios.get("{{ setting('admin.url') }}api/cliente/"+JSON.stringify(cliente))
 
+            // query location client
+            var location = {
+                'cliente_id': micliente.data.id,
+                'latitud': $('#latitud').val(),
+                'longitud': $('#longitud').val(),
+                'direccion': $('#direccion').val()
+            }
+            var milocation = await axios.get("{{ setting('admin.url') }}api/location/"+JSON.stringify(location))
+
+            //save pedido
             var pedido = {
                 'cliente_id': micliente.data.id,
                 'option_id': $('#miopciones').val(),
@@ -190,16 +200,24 @@
                 'total': $('#total').val(),
                 'descuento': $('#descuento').val(),
                 'observacion': $('#observacion').val(),
+                'location': milocation.data.id
             }
-            console.log(pedido)
-            var newpedido = await axios.post("{{ setting('admin.url') }}api/pedido/save", pedido)
+            var newpedido = await axios.get("{{ setting('admin.url') }}api/pedido/save/"+JSON.stringify(pedido))
 
-            // var micart = localStorage.getItem('micart')
-            // var products = await axios.post("{{ setting('admin.url') }}api/pedido/products/save", micart)
-            // console.log(products.data)
+            //save cart
+            var micart = JSON.parse(localStorage.getItem('micart'))
+            for (let index = 0; index < micart.length; index++) {
+                var midata2 = JSON.stringify({'producto_id': micart[index].id, 'venta_id': newpedido.data.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'name':micart[index].name, 'foto':micart[index].foto, 'description': micart[index].description, 'extra_name':micart[index].extra_name, 'observacion':micart[index].observacion});
+                var venta_detalle = await axios.get("{{ setting('admin.url') }}api/pedido/products/save/"+midata2)
+            }
 
+            // clear cart and redirect
+            redireccionar();
+        }
+
+        function redireccionar(){
             localStorage.setItem('micart', JSON.stringify([]));
-            location.href = "{{ route('pages', 'consultas') }}"
+            location.href = "{{ route('pages', 'consultas') }}";
         }
 
         $('#telefono').on('keypress', async function (e) {
@@ -220,41 +238,6 @@
             pagototal(options.data.valor)
 
         });
-
-
-
-        // async function setuser(phone) {
-        //     var midata = {
-        //         'telefono': phone
-        //     }
-        //     var miuser = await axios.get("{{ setting('admin.url') }}api/cliente/"+JSON.stringify(midata))
-        //     if (miuser.data) {
-        //         localStorage.setItem('miuser', JSON.stringify(miuser.data));
-        //         var user = JSON.parse(localStorage.getItem('miuser'))
-        //         $('#nombres').val(user.first_name)
-        //         $('#apellidos').val(user.last_name)
-        //         $('#telefono').val(user.phone)
-        //         $('#ci_nit').val(user.ci_nit)
-
-        //         var midata2 = {
-        //             'cliente_id': miuser.data.id
-        //         }
-        //         var milocation = await axios.get("{{ setting('admin.url') }}api/location/"+JSON.stringify(midata2))
-        //         if (milocation.data) {
-        //             localStorage.setItem('milocation', JSON.stringify(milocation.data));
-        //             var location = JSON.parse(localStorage.getItem('milocation'))
-        //             $('#direccion').val(location.descripcion)
-        //             getlocation(location)
-        //         }else{
-        //             toastr.error("Cliente NO registra locacion")
-        //         }
-        //         toastr.success("Cliente Registrado")
-        //     } else {
-        //         toastr.error("Cliente NO registrado")
-        //     }
-
-        // }
-
         async function getuser(midata) {
             $('#nombres').val(midata.first_name)
             $('#apellidos').val(midata.last_name)

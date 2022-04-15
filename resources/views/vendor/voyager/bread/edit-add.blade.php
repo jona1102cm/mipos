@@ -2323,10 +2323,9 @@
                                 break;
                             case '2':
                                 var venta = await axios.get("{{ setting('admin.url') }}api/pos/ventas/save/"+midata)
-                                    // console.log(venta.data)
                                 for (let index = 0; index < micart.length; index++) {
                                     var midata2 = JSON.stringify({'producto_id': micart[index].id, 'venta_id': venta.data.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'name':micart[index].name, 'foto':micart[index].foto, 'description': micart[index].description, 'extra_name':micart[index].extra_name, 'observacion':micart[index].observacion});
-                                    var venta_detalle = axios.get("{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata2)
+                                    var venta_detalle = await axios.get("{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata2)
                                     $("#micart tr#"+micart[index].id).remove();
                                     mitotal();
                                 }
@@ -2361,41 +2360,6 @@
                             localStorage.setItem('micart', JSON.stringify([]));
                             toastr.success('Venta Realizada');
                         }
-
-
-
-
-
-                        // $.ajax({
-                        //     url: "{{ setting('admin.url') }}api/pos/ventas/save/"+midata,
-                        //     success: function (response) {
-                        //         var micart = JSON.parse(localStorage.getItem('micart'));
-                        //         for (let index = 0; index < micart.length; index++) {
-                        //             var midata = JSON.stringify({'producto_id': micart[index].id, 'venta_id': response.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'name':micart[index].name, 'foto':micart[index].foto, 'description': micart[index].description, 'extra_name':micart[index].extra_name, 'observacion':micart[index].observacion});
-                        //             var urli = "{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata;
-                        //             $.ajax({
-                        //                 url: urli,
-                        //                 success: function (midata) {
-                        //                 if ((response.cantidad - 1) == index) {
-                        //                     document.getElementById("audio").play();
-                        //                     if ($("input[name='season']:checked").val() == 'imprimir') {
-                        //                         $("input[name='descuento']").val(0)
-                        //                         localStorage.setItem('micart', JSON.stringify([]));
-                        //                         window.open( "{{ setting('admin.url') }}admin/ventas/imprimir/"+response.id, "Recibo", "width=500,height=700");
-                        //                     }else{
-                        //                         localStorage.setItem('micart', JSON.stringify([]));
-                        //                         toastr.success('Venta Realizada');
-                        //                     }
-                        //                 }
-                        //                 $("#micart tr#"+micart[index].id).remove();
-                        //                 mitotal();
-                        //                 }
-                        //             });
-                        //         }
-                        //         // enviado notification
-                        //         socket.emit(name_socket, 'VENTA REALIZADA: '+response.id)
-                        //     }
-                        // });
                     }
                 }
 

@@ -34,7 +34,8 @@ class Venta extends Model
 		'cantidad',
 		'recibido',
 		'cambio',
-		'credito'
+		'credito',
+        'location'
 	];
 
 	protected $appends=['published'];

@@ -70,9 +70,9 @@
 
     @yield('content')
 
-    <footer class="page-footer text-center text-md-left stylish-color-dark pt-0">
-        <div class="footer-copyright py-3 text-center">
-            ©2022 <a href="https://loginweb.dev" target="_blank">LoginWeb - Diseño y Desarrollo de Software</a>
+    <footer class="page-footer text-center text-md-left stylish-color-dark pt-0 mt-2">
+        <div class="footer-copyright py-0 text-center">
+            ©2022 <a href="https://loginweb.dev" target="_blank">LoginWeb - Desarrollo de Software</a>
         </div>
     </footer>
 
@@ -224,11 +224,11 @@
             nombre_extras+=name[index]+' ';
             precio_extras+=parseFloat(cantidad[index])*parseFloat(precio[index]);
             }
-            console.log(cantidad);
-            console.log(precio);
-            console.log(name);
-            console.log(nombre_extras);
-            console.log(precio_extras);
+            // console.log(cantidad);
+            // console.log(precio);
+            // console.log(name);
+            // console.log(nombre_extras);
+            // console.log(precio_extras);
             var producto_id=$("#producto_extra_id").val();
             var name_extra=nombre_extras;
             var precio_extra=precio_extras;
@@ -293,12 +293,13 @@
             for (let index = 0; index < milist.length; index++) {
                 var stotal = milist[index].precio * milist[index].cant
                 var observacion = milist[index].observacion ? milist[index].observacion: ''
+                console.log(observacion);
                 if(milist[index].extra){
-                    $("#micart").append("<tr id="+milist[index].id+"><td><img class='img-responsive img-thumbnail' src='{{ setting('admin.url') }}storage/"+milist[index].image+"'></td><td><strong>"+milist[index].name+"<br>"+milist[index].description+"</strong></td><td><strong>"+milist[index].extra_name+"</strong><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+milist[index].extras+", "+milist[index].id+")'><i class='fas fa-align-justify'></i></a></td><td><input class='form-control' type='text'  onchange='updateobservacion("+milist[index].id+")' id='observacion_"+milist[index].id+"' value="+observacion+" ></td><td>"+milist[index].precio+"</td><td>"+milist[index].cant+"</td><td>"+stotal+"</td><td><button type='button' class='btn btn-sm btn-primary' data-toggle='tooltip' data-placement='top' onclick='midelete("+milist[index].id+")' title='Remove item'>X</button></td></tr>")
+                    $("#micart").append("<tr id="+milist[index].id+"><td><img class='img-responsive img-thumbnail' src='{{ setting('admin.url') }}storage/"+milist[index].image+"'></td><td><strong>"+milist[index].name+"<br>"+milist[index].description+"</strong></td><td><strong>"+milist[index].extra_name+"</strong><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+milist[index].extras+", "+milist[index].id+")'><i class='fas fa-align-justify'></i></a></td><td><input class='form-control' type='text'  onchange='updateobservacion("+milist[index].id+")' id='observacion_"+milist[index].id+"' value='"+observacion+"'></td><td>"+milist[index].precio+"</td><td>"+milist[index].cant+"</td><td>"+stotal+"</td><td><button type='button' class='btn btn-sm btn-primary' data-toggle='tooltip' data-placement='top' onclick='midelete("+milist[index].id+")' title='Remove item'>X</button></td></tr>")
                     mitotal += stotal
                 }
                 else{
-                    $("#micart").append("<tr id="+milist[index].id+"><td><img class='img-responsive img-thumbnail' src='{{ setting('admin.url') }}storage/"+milist[index].image+"'></td><td><strong>"+milist[index].name+"<br>"+milist[index].description+"</strong></td><td></td><td><input class='form-control' type='text' onchange='updateobservacion("+milist[index].id+")' id='observacion_"+milist[index].id+"' value="+observacion+" ></td><td>"+milist[index].precio+"</td><td>"+milist[index].cant+"</td><td>"+stotal+"</td><td><button type='button' class='btn btn-sm btn-primary' data-toggle='tooltip' data-placement='top' onclick='midelete("+milist[index].id+")' title='Remove item'>X</button></td></tr>")
+                    $("#micart").append("<tr id="+milist[index].id+"><td><img class='img-responsive img-thumbnail' src='{{ setting('admin.url') }}storage/"+milist[index].image+"'></td><td><strong>"+milist[index].name+"<br>"+milist[index].description+"</strong></td><td></td><td><input class='form-control' type='text' onchange='updateobservacion("+milist[index].id+")' id='observacion_"+milist[index].id+"' value='"+observacion+"'></td><td>"+milist[index].precio+"</td><td>"+milist[index].cant+"</td><td>"+stotal+"</td><td><button type='button' class='btn btn-sm btn-primary' data-toggle='tooltip' data-placement='top' onclick='midelete("+milist[index].id+")' title='Remove item'>X</button></td></tr>")
                     mitotal += stotal
                 }
             }
