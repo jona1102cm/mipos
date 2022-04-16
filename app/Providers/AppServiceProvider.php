@@ -50,9 +50,11 @@ class AppServiceProvider extends ServiceProvider
 
         Voyager::addAction(\App\Actions\Monitor::class);
 
-        Voyager::addAction(\App\Actions\Kardex::class);
+        // Voyager::addAction(\App\Actions\Kardex::class);
 
         Voyager::addAction(\App\Actions\Block::class);
+
+        Voyager::addAction(\App\Actions\Location::class);
 
     }
 }

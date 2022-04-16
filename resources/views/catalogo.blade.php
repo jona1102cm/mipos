@@ -1,28 +1,72 @@
-
 @extends('layouts.master')
 
-@section('css')
-@endsection
 
 @section('content')
-    <div class="container-fluid mt-2 pt-2">
-        <div class="row pt-4">
-            <div class="col-lg-12">
+<br>
+<div class="container-fluid mt-5">
+    <div class="row">
+        <div class="col-sm-12 text-center">
+            <h2>Catalogo Completo</h2>
+        </div>
+        <div class="col-sm-12 form-group">
+            <label for="">Buscar</label>
+            <input type="search" id="misearch" class="form-control" placeholder="ingresa un criterio de busqueda">
+        </div>
+        <div class="col-sm-12">
+            <table class="table table-responsive" id="miresult">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Image</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Categoria</th>
+                        <th>Accion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php
+                        $products = App\Producto::all();
+                    @endphp
+                    @foreach($products as $item)
+                        <tr>
+                            <td>{{ $item->id }}</td>
+                            <td>
+                                @php
+                                    $miimage = $item->image ? $item->image : setting('productos.imagen_default');
+                                @endphp
+                                <img src="{{ setting('admin.url') }}storage/{{ $miimage }}" class="img-fluid">
+                            </td>
+                            <td>
+                                {{ $item->name }}
+                            </td>
+                            <td>
+                                {{ $item->precio }}
+                            </td>
+                            <td>
+                                {{ $item->categoria->name }}
+                            </td>
+                            <td>
+                                <a href="#" onclick="addproduct('{{ $item->id }}')" class="btn btn-sm btn-primary">+Carrito</a>
+                            </td>
+                        </tr>
+                    @endforeach
 
-            </div>
+                </tbody>
+            </table>
         </div>
     </div>
-@stop
+</div>
+@endsection
 
 
 @section('javascript')
-
     <script>
-        $('document').ready(function () {
+        $(document).ready(function () {
 
         });
 
-        $('#misearch2').on('keypress', async function (e) {
+        $('#misearch').on('keypress', async function (e) {
             if(e.which === 13){
                 var result = await axios("{{ setting('admin.url') }}api/search/"+this.value)
                 localStorage.setItem('miproducts', JSON.stringify(result.data));

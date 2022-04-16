@@ -1528,6 +1528,8 @@
                     // });
 
                     Opciones();
+                    //PensionadoDefault();
+                    Pensionados();
 
                     //-----------------------
                     if (localStorage.getItem('micart')) {
@@ -1655,6 +1657,42 @@
                         }
                     }
                 }
+                async function PensionadoDefault(){
+                    $('#mipensionado').append($('<option>', {
+                        value: 0,
+                        text: 'Elige un Pensionado'
+                    }));
+                    $('input[name="pensionado_id"]').val(0);
+
+                }
+
+                async function Pensionados(){
+                    var table= await axios.get("{{setting('admin.url')}}api/pos/pensionados");
+                    $('#mipensionado').append($('<option>', {
+                        value: 0,
+                        text: 'Elige un Pensionado'
+                    }));
+
+                    for (let index = 0; index < table.data.length; index++) {
+                        const element = table.data[index];
+                        $('#mipensionado').append($('<option>', {
+                            value: table.data[index].id,
+                            text: table.data[index].id+' - '+table.data[index].cliente.display
+                        }));
+                    }
+
+                }
+
+                $('#venta_type').on('change', function() {
+                    if($('#venta_type').text()=='Pensionado'){
+                        Pensionados();
+                    }
+                });
+
+                $('#mipensionado').on('change', function() {
+                    $('input[name="pensionado_id"]').val(this.value);
+                    toastr.success('Cambio de Pensionado');
+                });
 
                 async function Cliente(){
                     var tabla= await axios.get("{{ setting('admin.url') }}api/pos/clientes");
@@ -2309,8 +2347,9 @@
                         var cambio = $("input[name='cambio']").val();
                         var chofer_id=$("input[name='chofer_id']").val();
                         var adicional=$("input[name='adicional']").val();
+                        var pensionado_id=$("input[name='pensionado_id']").val();
                         var micart = JSON.parse(localStorage.getItem('micart'));
-                        var midata = JSON.stringify({'cliente_id': cliente_id, 'cupon_id': cupon_id, 'option_id': option_id, 'pago_id': pago_id, 'factura': factura, 'credito': credito ,'total': total, 'descuento': descuento, 'observacion': observacion, 'register_id': register_id, 'status_id': status_id, 'caja_id': caja_id, 'delivery_id': delivery_id, 'sucursal_id': sucursal_id, subtotal: subtotal, 'cantidad': micart.length, 'recibido': recibido, 'cambio': cambio, chofer_id : chofer_id, adicional:adicional });
+                        var midata = JSON.stringify({'cliente_id': cliente_id, 'cupon_id': cupon_id, 'option_id': option_id, 'pago_id': pago_id, 'factura': factura, 'credito': credito ,'total': total, 'descuento': descuento, 'observacion': observacion, 'register_id': register_id, 'status_id': status_id, 'caja_id': caja_id, 'delivery_id': delivery_id, 'sucursal_id': sucursal_id, subtotal: subtotal, 'cantidad': micart.length, 'recibido': recibido, 'cambio': cambio, chofer_id : chofer_id, adicional:adicional, 'pensionado_id':pensionado_id });
 
                         // console.log($('#mipagos').val())
                         switch ($('#mipagos').val()) {

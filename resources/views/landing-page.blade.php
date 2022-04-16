@@ -125,7 +125,7 @@
                                 <div class="row mt-5 py-2 mb-4 hoverable align-items-center">
                                     <div class="col-6">
                                         @php
-                                        $miimage = $item->image ? $item->image : setting('productos.imagen_default');
+                                            $miimage = $item->image ? $item->image : setting('productos.imagen_default');
                                         @endphp
                                         <img src="{{ setting('admin.url') }}storage/{{ $miimage }}" class="img-fluid">
                                     </div>

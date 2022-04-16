@@ -48,6 +48,7 @@ class PosController extends Controller
         $sucursal=Sucursale::find($caja->sucursal_id);
         $asiento=Asiento::where('caja_id',$detalle_caja->caja_id)->get();
         $cajero=User::find($detalle_caja->editor_id);
+        //$venta=Venta::find($detalla_caja->venta_id);
         $vista = view('cajas.cierre_caja', compact('detalle_caja','caja','sucursal','asiento','cajero'));
 
         $pdf = \App::make('dompdf.wrapper');
@@ -56,7 +57,7 @@ class PosController extends Controller
     }
 
     public function catalogo_enviar($id){
-        
+
     }
 
 

@@ -21,6 +21,7 @@ use App\Sucursale;
 use App\Insumo;
 use App\Unidade;
 use App\Option;
+use App\Pensionado;
 use App\ProductosSemiElaborado;
 use App\ProductionSemi;
 use App\Production;
@@ -60,7 +61,7 @@ Route::get('pos/info', function () {
 // FRONEND
 Route::get('pedido/save/{midata}', function ($midata) {
     $midata2 = json_decode($midata);
-    $ticket = count(Venta::where('sucursal_id', 3)->where('caja_status', false)->get());
+    $ticket = count(Venta::where('sucursal_id', 1)->where('caja_status', false)->get());
     $newventa = Venta::create([
         'cliente_id' => $midata2->cliente_id,
         'cupon_id' => $midata2->cupon_id,
@@ -75,7 +76,7 @@ Route::get('pedido/save/{midata}', function ($midata) {
         'status_id' => 1,
         'caja_id' => 1,
         'delivery_id' => 1,
-        'sucursal_id' => 3,
+        'sucursal_id' => 1,
         'subtotal' => null,
         'caja_status' => false,
         'ticket' => $ticket + 1,
@@ -215,7 +216,7 @@ Route::get('pos/caja/state/{state}/{id}', function ($state, $id) {
 });
 Route::get('pos/caja/detalle/save/{midata}', function ($midata) {
     $midata2 = json_decode($midata);
-    $ventas = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->get();
+    $ventas = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito', 'Contado')->where('pensionado_id',0)->get();
     foreach ($ventas as $item) {
         $venta = Venta::find($item->id);
         $venta->caja_status = true;
@@ -353,7 +354,8 @@ Route::get('pos/ventas/save/{midata}', function($midata) {
         'cambio' => $midata2->cambio,
         'chofer_id'=>$midata2->chofer_id,
         'adicional'=>$midata2->adicional,
-        'location' => null
+        'location' => 1,
+        'pensionado_id'=>$midata2->pensionado_id
     ]);
     return $venta;
 });
@@ -646,6 +648,13 @@ Route::get('pos/proveedores', function () {
 //UN PROVEEDOR
 Route::get('pos/proveedores/{id}', function ($id) {
     return Proveedore::find($id);
+});
+
+//PENSIONADOS ACTIVOS
+Route::get('pos/pensionados', function(){
+    $pensionados = Pensionado::where('status', 1)->with('cliente')->get();
+    // $clientes= Cliente::find($pensionados->cliente_id);
+    return $pensionados;
 });
 
 // PRODUCTION

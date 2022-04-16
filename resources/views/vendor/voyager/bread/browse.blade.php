@@ -2863,7 +2863,10 @@
                                             <tr>
                                                 <td>Pasarela</td><th>
                                                     {{ $pago->title;  }} <br>
-                                                    {{ setting('banipay.url_base').$banipay->urlTransaction }}
+                                                    @if ($banipay)
+                                                        <a href="{{ setting('banipay.url_base').$banipay->urlTransaction }}" target="_blank" >Link de Pago - BaniPay</a>
+                                                    @endif
+
                                                 </th>
                                             <tr>
                                             <tr>
@@ -3657,7 +3660,8 @@
     <script>
         $('document').ready(function () {
             $('.js-example-basic-single').select2()
-            getlocation()
+
+
 
             @if (!$dataType->server_side)
                 var table = $('#dataTable').DataTable({!! json_encode(
@@ -3696,6 +3700,7 @@
         });
 
         @if($usesSoftDeletes)
+
             @php
                 $params = [
                     's' => $search->value,
@@ -3730,6 +3735,9 @@
 
         @switch($mislug)
             @case('detalle-ventas')
+                $('document').ready(function () {
+                    getlocation()
+                });
                 function getlocation() {
                     var lat = '{{ $location->latitud }}'
                     var lng =  '{{ $location->longitud }}'
