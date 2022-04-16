@@ -1,95 +1,65 @@
 @extends('layouts.master')
 
+@section('css')
+    <style>
+        table {
+    table-layout:fixed;
+}
+table td {
+    width: 900px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+    </style>
+
+@endsection
 @section('content')
     <div class="container-fluid mt-5">
         <div class="row pt-4">
             <div class="col-lg-12">
-                <section>
-                    <div class="row">
-                        <div class="col-lg-8 col-md-12 mb-2 mb-md-2 pb-lg-2">
-                            <div class="view zoom z-depth-1">
-                                <img src="https://mdbootstrap.com/img/Photos/Others/product1.jpg" class="img-fluid" alt="sample image">
-                                <div class="mask rgba-white-light">
-                                <div class="dark-grey-text d-flex align-items-center pt-4 ml-lg-3 pl-lg-3 pl-md-5">
-                                    <div>
-                                        <a><span class="badge badge-danger">Mi Tienda</span></a>
-                                        <h2 class="card-title font-weight-bold pt-2"><strong>{{ setting('site.title') }}</strong></h2>
-                                        <p class="hidden show-ud-up">{{ setting('site.description') }}</p>
-                                        <a class="btn btn-danger btn-sm btn-rounded clearfix d-none d-md-inline-block"></i> Ver Catalogo</a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-12">
-                            <div class="view zoom z-depth-1 photo">
-                                <img src="https://mdbootstrap.com/img/Photos/Others/product3.jpg" class="img-fluid" alt="sample image">
-                                <div class="mask rgba-stylish-strong">
-                                <div class="white-text center-element text-center w-75">
-                                    <div class="">
-                                    <a><span class="badge badge-info">Mi Tienda</span></a>
-                                    <h2 class="card-title font-weight-bold pt-2"><strong>{{ setting('site.title') }}</strong></h2>
-                                    <p class="">{{ setting('site.description') }}</p>
-                                    <a class="btn btn-info btn-sm btn-rounded"></i> Ver Catalogo</a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <section class="section pt-1">
                     <div class="row">
 
-                        <!-- Grid column -->
-                        <div class="col-12">
+                      <!-- Grid column -->
+                      <div class="col-lg-8 col-md-12 mb-3 pb-lg-2">
 
-                            <!-- Image -->
-                            <div class="view  z-depth-1">
-                            <img src="https://mdbootstrap.com/img/Photos/Others/ecommerce6.jpg" class="img-fluid"
-                                alt="sample image">
+                        <!-- Image -->
+                        <div class="view zoom  z-depth-1">
 
-                            <div class="mask rgba-stylish-slight">
+                          <img src="https://mdbootstrap.com/img/Photos/Others/product2.jpg" class="img-fluid" alt="sample image">
 
-                                <div class="dark-grey-text text-right pt-lg-5 pt-md-1 mr-5 pr-md-4 pr-0">
+                          <div class="mask rgba-white-light">
 
-                                <div>
+                            <div class="dark-grey-text d-flex align-items-center pt-3 pl-4">
 
-                                    <a>
+                              <div>
 
-                                    <span class="badge badge-primary">SALE</span>
+                                <a><span class="badge badge-danger">{{ setting('site.title') }}</span></a>
 
-                                    </a>
+                                <h2 class="card-title font-weight-bold pt-2"><strong>{{ setting('site.title') }}</strong></h2>
 
-                                    <h2 class="card-title font-weight-bold pt-md-3 pt-1">
+                                <p class="">{{ setting('site.description') }}</p>
 
-                                    <strong>Sale 20% off on every smartphone!
+                                <a href="{{ route('pages', 'catalogo') }}" class="btn btn-danger btn-sm btn-rounded clearfix d-none d-md-inline-block">Catalgo</a>
 
-                                    </strong>
-
-                                    </h2>
-
-                                    <p class="pb-lg-3 pb-md-1 clearfix d-none d-md-block">Lorem ipsum dolor sit amet, consectetur
-                                    adipisicing elit. </p>
-
-                                    <a class="btn mr-0 btn-primary btn-rounded clearfix d-none d-md-inline-block">Read more</a>
-
-                                </div>
-
-                                </div>
+                              </div>
 
                             </div>
 
-                            </div>
-                            <!-- Image -->
+                          </div>
 
                         </div>
-                        <!-- Grid column -->
+                        <!-- Image -->
+
+                      </div>
+                      <!-- Grid column -->
+
 
                     </div>
                 </section>
 
-                <section>
+                {{-- <section>
                     <div class="row">
-
                         @php
                             $product1 = App\Producto::where('ecommerce', 'new_products')->with('categoria')->get();
                         @endphp
@@ -162,8 +132,45 @@
                             @endforeach
                         </div>
                     </div>
-                </section>
+                </section> --}}
 
+                <section class="mb-5">
+                    @php
+                        $categorias = App\Categoria::orderBy('order', 'asc')->get();
+                    @endphp
+                    @foreach($categorias as $key)
+                        @php
+                            $products = App\Producto::where('ecommerce', true)->where('categoria_id', $key->id)->orderBy('name', 'asc')->with('categoria')->get();
+                        @endphp
+                        <h2>{{ $key->name }}</h2>
+                        <table class="table table-responsive">
+                            <tr>
+                                @foreach($products as $item)
+
+                                    <td>
+                                        @php
+                                            $miimage = $item->image ? $item->image : setting('productos.imagen_default');
+                                        @endphp
+                                            <div class="card">
+                                                <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                                                <img src="{{ setting('admin.url') }}storage/{{ $miimage }}" class="img-fluid"/>
+                                                <a href="#!">
+                                                    <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                                                </a>
+                                                </div>
+                                                <div class="card-body">
+                                                <h6 class="h6-responsive font-weight-bold dark-grey-text">{{ $item->name }}</h6>
+                                                <h6 class="h6-responsive font-weight-bold dark-grey-text"><strong>{{ $item->precio }} Bs.</strong></h6>
+                                                <p class="card-text">{{ $item->description }}</p>
+                                                <a href="#!"  onclick="addproduct('{{ $item->id }}')" class="btn btn-sm"><i class="fas fa-cart-arrow-down"></i>Agrego</a>
+                                                </div>
+                                            </div>
+                                    </td>
+                                @endforeach
+                            </tr>
+                        </table>
+                    @endforeach
+                </section>
             </div>
         </div>
     </div>

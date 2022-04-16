@@ -191,6 +191,8 @@
                                                         <option value="chofer_id"> Chofer </option>
                                                         <option value="register_id"> Editor </option>
                                                         <option value="chofer_deudas"> Chofer Deudas </option>
+                                                        <option value="pensionado_kardex"> Kardex Pensionados </option>
+
                                                 </select>
                                             </div>
                                             <div class="col-6">
@@ -3573,7 +3575,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                       <h4>Formulario para Consulta</h4>
+                       <h4>Deudas Choferes</h4>
                     </div>
                     <div class="modal-body">
                         <div class="row">
@@ -3581,11 +3583,11 @@
 
                             <div class="col-sm-6">
                                 <label for="">ELija una Caja</label>
-                                <select name="" id="micajas" class="form-control"></select>
+                                <select name="" id="micajas" class="form-control js-example-basic-single"></select>
                             </div>
                             <div class="col-sm-6">
                                 <label for="">ELija una Chofer</label>
-                                <select name="" id="michoferes" class="form-control"></select>
+                                <select name="" id="michoferes" class="form-control js-example-basic-single"></select>
                             </div>
                             <div class="col-sm-7">
                                 <button type="button" class="btn btn-primary pull-right" onclick="filtro1()">Consultar</button>
@@ -3594,8 +3596,10 @@
                                 <table class="table" id="table_deudas">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
+                                            <th>Venta</th>
                                             <th>Cliente</th>
+                                            <th>Delivery</th>
+                                            <th>Subtotal</th>
                                             <th>Creado</th>
                                         </tr>
                                     </thead>
@@ -3612,7 +3616,54 @@
                     </div>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
+        </div>
+        <div class="modal modal-primary fade" tabindex="-1" id="modal_kardex" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                       <h4>Kardex Pensionados</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+
+                            <div class="col-sm-6">
+                                {{-- <label for="">Elija una Sucursal</label> --}}
+                                <strong>Elija una Sucursal</strong>
+                                <select name="" id="sucursalpensionado" class="form-control js-example-basic-single"></select>
+                            </div>
+                            <div class="col-sm-6">
+                                {{-- <label for="">Elija un Pensionado</label> --}}
+                                <strong>Elija un Pensionado</strong>
+                                <select name="" id="mipensionado" class="form-control js-example-basic-single"></select>
+                            </div>
+                            <div class="col-sm-7">
+                                <button type="button" class="btn btn-primary pull-right" onclick="FiltroKardex()">Consultar</button>
+                            </div>
+                            <div class="col-sm-12">
+                                <table class="table" id="table_kardex">
+                                    <thead>
+                                        <tr>
+                                            <th>Venta</th>
+                                            <th>Cliente</th>
+
+                                            <th>Creado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        {{-- <button type="submit" class="btn btn-primary pull-right" data-dismiss="modal">Consultar</button> --}}
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
 
 @stop
 
@@ -3766,8 +3817,10 @@
                 }
                 @break
             @case('ventas')
-                $('#search_key').on('change', function() {
+                $('#search_key').on('change', async function() {
+                    $('.js-example-basic-single').select2();
                     switch (this.value) {
+
                         case 'cliente_id':
                             $('#s').find('option').remove().end();
                             $.ajax({
@@ -3995,6 +4048,14 @@
                                 });
 
                             break
+                        case 'pensionado_kardex':
+                            $('#modal_kardex').modal();
+
+                                Sucursales();
+                                Pensionados();
+
+                        break
+
                         default:
                             //Declaraciones ejecutadas cuando ninguno de los valores coincide con el valor de la expresión
                             break
@@ -4003,8 +4064,9 @@
 
                 function filtro1() {
                     var urli = "{{ setting('admin.url') }}api/pos/choferes/deudas/"+$("#michoferes").val()+"/"+$("#micajas").val();
-                    console.log(urli);
+                    //console.log(urli);
                     var mitable = "";
+                    var total=0;
                     $.ajax({
                         url: urli,
                         dataType: "json",
@@ -4014,13 +4076,100 @@
                             } else {
 
                                 for (let index = 0; index < response.length; index++) {
-                                    mitable = mitable + "<tr><td>"+response[index].id+"</td><td>"+response[index].cliente_id+"</td><td>"+response[index].published+"</td></tr>";
+
+                                    mitable = mitable + "<tr><td>"+response[index].id+"</td><td>"+response[index].cliente.display+"</td><td>"+response[index].delivery.name+"</td><td>"+response[index].total+"</td><td>"+response[index].published+"</td></tr>";
+                                    total+=response[index].total;
+                                    //console.log(response[index]);
                                 }
+                                mitable = mitable +"<tr><td></td><td></td><td></td><td>Total</td><td><b>"+total+"</b></td> </tr>"
                                 $('#table_deudas').append(mitable);
                             }
                         }
                     });
                 }
+
+                async function Sucursales(){
+                    var table = await axios.get("{{setting('admin.url')}}api/pos/sucursales");
+
+                    //$("#sucursalpensionado").val()
+                    $('#sucursalpensionado').append($('<option>', {
+                        value: 0,
+                        text: 'Elige una Sucursal'
+                    }));
+
+                    for (let index = 0; index < table.data.length; index++) {
+                        const element = table.data[index];
+                        $('#sucursalpensionado').append($('<option>', {
+                            value: table.data[index].id,
+                            text: table.data[index].name
+                        }));
+                    }
+                }
+                async function Pensionados(){
+                    var table = await axios.get("{{setting('admin.url')}}api/pos/pensionados");
+                    //$("#mipensionado").val();
+
+                    $('#mipensionado').append($('<option>', {
+                        value: 0,
+                        text: 'Elige un Pensionado'
+                    }));
+
+                    for (let index = 0; index < table.data.length; index++) {
+                        const element = table.data[index];
+                        $('#mipensionado').append($('<option>', {
+                            value: table.data[index].id,
+                            text: table.data[index].cliente.display
+                        }));
+                    }
+
+                }
+                async function FiltroKardex() {
+                    Sucursales();
+                    Pensionados();
+                    $('#table-kardex tbody tr').remove();
+                    var table= await axios.get(" {{setting('admin.url')}}api/pos/pensionados/kardex/"+$("#sucursalpensionado").val()+"/"+$("#mipensionado").val());
+                    var midata="";
+                    total=0;
+                    if (table.data.length == 0 ) {
+                                toastr.error('Sin Resultados.');
+                    } else {
+
+                        for (let index = 0; index < table.data.length; index++) {
+
+                            midata = midata + "<tr><td>"+table.data[index].id+"</td><td>"+table.data[index].cliente.display+"</td><td>"+table.data[index].published+"</td></tr>";
+                            total+=1;
+                            var fecha=table.data[index].pensionado.fecha_final;
+                            //console.log(table.data[index].pensionado.fecha_final);
+                        }
+                        midata = midata +"<tr><td></td><td></td><td></td></tr>"
+                        midata = midata +"<tr><td></td><td>Dias Ventas</td><td><b>"+total+"</b></td> </tr>"
+                        midata = midata +"<tr><td></td><td>Dias Restantes del Plan</td><td><b>"+CalculoDiasRestantes(fecha)+"</b></td> </tr>"
+
+                        $('#table_kardex').append(midata);
+                        //console.log(fecha);
+                    }
+                }
+                function CalculoDiasRestantes(fecha_final){
+                    var today=new Date();
+                    var fechaInicio =   today.toISOString().split('T')[0];
+                    var fechaFin    = fecha_final;
+
+                    var fi=fechaInicio.toString();
+                    var ff=fechaFin.toString();
+
+                    var fechai = new Date(fi).getTime();
+                    var fechaf    = new Date(ff).getTime();
+
+                    var diff = fechaf - fechai;
+                    console.log(fechai);
+                    console.log(fechaf);
+                    console.log(diff/(1000*60*60*24));
+
+                    //console.log(diff/(1000*60*60*24));
+                    return (diff/(1000*60*60*24));
+                }
+
+
                 function imprimir(){
                     const queryString = window.location.search;
                     const urlParams = new URLSearchParams(queryString);

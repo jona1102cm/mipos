@@ -68,4 +68,8 @@ class Venta extends Model
     {
         return $this->belongsTo(Cupone::class, 'cupon_id');
     }
+    public function pensionado()
+    {
+        return $this->belongsTo(Pensionado::class, 'pensionado_id');
+    }
 }

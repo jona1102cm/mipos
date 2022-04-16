@@ -216,7 +216,7 @@ Route::get('pos/caja/state/{state}/{id}', function ($state, $id) {
 });
 Route::get('pos/caja/detalle/save/{midata}', function ($midata) {
     $midata2 = json_decode($midata);
-    $ventas = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito', 'Contado')->where('pensionado_id',0)->get();
+    $ventas = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->get();
     foreach ($ventas as $item) {
         $venta = Venta::find($item->id);
         $venta->caja_status = true;
@@ -256,7 +256,7 @@ Route::get('pos/caja/detalle/save/{midata}', function ($midata) {
 });
 Route::get('pos/caja/get_total/{midata}', function ( $midata) {
     $midata2 = json_decode($midata);
-    $ventas = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->get();
+    $ventas = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pensionado_id',0)->get();
     $cantidad = count($ventas);
     $total = 0;
     foreach ($ventas as $item) {
@@ -273,14 +273,14 @@ Route::get('pos/caja/get_total/{midata}', function ( $midata) {
         $te = $te + $item->monto;
     }
     //desde aqui jchavez
-    $venta_efectivo = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pago_id',1)->get();
+    $venta_efectivo = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pensionado_id',0)->where('pago_id',1)->get();
     $cantidad_efectivo = count($venta_efectivo);
     $total_efectivo = 0;
     foreach ($venta_efectivo as $item) {
         $total_efectivo = $total_efectivo + $item->total;
     }
 
-    $venta_banipay = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pago_id',2)->get();
+    $venta_banipay = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pensionado_id',0)->where('pago_id',2)->get();
     $cantidad_banipay = count($venta_banipay);
     $total_banipay = 0;
     foreach ($venta_banipay as $item) {
@@ -470,9 +470,25 @@ Route::get('pos/choferes', function(){
     $chofer= User::where('role_id', setting('ventas.role_id_chofer'))->get();
     return $chofer;
 });
+
 Route::get('pos/choferes/deudas/{chofer_id}/{caja_id}', function($chofer_id, $caja_id){
-    $ventas= Venta::where('chofer_id', $chofer_id)->where('caja_id', $caja_id)->where('caja_status', false)->get();
+    $ventas= Venta::where('chofer_id', $chofer_id)->where('caja_id', $caja_id)->where('caja_status', false)->with('cliente')->with('delivery')->get();
     return $ventas;
+});
+
+//Pensionados por Sucursal
+// Route::get('pos/pensionados/kardex/{sucursal_id}/{cliente_id}', function($sucursal_id, $cliente_id){
+//     $pensionado= Pensionado::where('sucursal_id', $sucursal_id)->where('cliente_id', $cliente_id)->where('status',1)->with('cliente')->get();
+//     return $pensionado;
+// });
+Route::get('pos/pensionados/kardex/{sucursal_id}/{cliente_id}', function($sucursal_id, $pensionado_id){
+    $pensionado= Venta::where('sucursal_id', $sucursal_id)->where('pensionado_id', $pensionado_id)->with('cliente')->with('pensionado')->get();
+    return $pensionado;
+});
+
+//Cliente Por Pensionado_ID
+Route::get('pos/cliente/pensionado/{id}', function ($id) {
+    return  Pensionado::where('id',$id)->with('cliente')->get();
 });
 
 // TODOS LOS PRODUCTOS

@@ -1677,22 +1677,58 @@
                         const element = table.data[index];
                         $('#mipensionado').append($('<option>', {
                             value: table.data[index].id,
-                            text: table.data[index].id+' - '+table.data[index].cliente.display
+                            text: table.data[index].id+' - '+table.data[index].cliente.display+' - '+table.data[index].cliente.phone
                         }));
                     }
 
                 }
 
-                $('#venta_type').on('change', function() {
-                    if($('#venta_type').text()=='Pensionado'){
-                        Pensionados();
+                // $('#venta_type').on('change', function() {
+                //     if($('#venta_type').text()=='Pensionado'){
+                //         Pensionados();
+                //     }
+                // });
+                $('#mipensionado').on('change', function() {
+                    if($('#mipensionado').val()==0){
+                        $('#micliente').find('option').remove().end();
+                        ClienteDefault();
+                        Cliente();
+                    }
+                    else{
+                        ClientePorPensionado($('#mipensionado').val());
+
+                        // var cliente=$('#mipensionado option:selected').val();
+                        // var cltext=$('#mipensionado option:selected').text();
+
+                        // $('#micliente').find('option').remove().end();
+
+                        // $('#micliente').append($('<option>', {
+                        //     value: cliente,
+                        //     text: cltext
+                        // }));
+                        // $("input[name='cliente_id']").val(cliente);
                     }
                 });
 
                 $('#mipensionado').on('change', function() {
+
                     $('input[name="pensionado_id"]').val(this.value);
                     toastr.success('Cambio de Pensionado');
                 });
+
+                async function ClientePorPensionado(id){
+                    var table = await axios.get("{{setting('admin.url')}}api/pos/cliente/pensionado/"+id);
+                    //console.log(table.data);
+                    $('#micliente').find('option').remove().end();
+                    for (let index = 0; index < table.data.length; index++) {
+
+                        $('#micliente').append($('<option>', {
+                            value: table.data[index].cliente_id,
+                            text: table.data[index].cliente.display
+                        }));
+                        $("input[name='cliente_id']").val($('#micliente').val());
+                    }
+                }
 
                 async function Cliente(){
                     var tabla= await axios.get("{{ setting('admin.url') }}api/pos/clientes");
@@ -2119,7 +2155,8 @@
                         dataType: "json",
                         success: function (response) {
                             $("input[name='cliente_id']").val(id);
-                            $('#micliente').val(response.display + ' - ' + response.ci_nit);
+                            $('#micliente').val(id);
+                            $('#micliente').text(response.display + ' - ' + response.ci_nit);
                             $('#modal_cliente').modal('hide');
                         }
                     });
