@@ -31,6 +31,7 @@
     <script>
         $(document).ready(function () {
             cargar_search()
+            $("#mireload").attr("hidden",true);
         });
 
         async function cargar_search() {

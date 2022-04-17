@@ -5,14 +5,11 @@
 <br>
 <div class="container-fluid mt-5">
     <div class="row">
-        <div class="col-sm-12 text-center">
+        <div class="col-sm-12  col-md-8 offset-md-2 text-center">
             <h2>Catalogo Completo</h2>
-        </div>
-        <div class="col-sm-12 form-group">
-            {{-- <label for="">Buscar</label> --}}
             <input type="search" id="misearch" class="form-control" placeholder="ingresa un criterio de busqueda">
         </div>
-        <div class="col-sm-12">
+        <div class="col-sm-12 col-md-8 offset-md-2">
             <table class="table table-responsive table-sm" id="miresult">
                 <thead>
                     <tr>
@@ -26,7 +23,7 @@
                 </thead>
                 <tbody>
                     @php
-                        $products = App\Producto::orderBy('name', 'asc')->get();
+                        $products = App\Producto::where('ecommerce', true)->orderBy('name', 'asc')->get();
                     @endphp
                     @foreach($products as $item)
                         <tr>
@@ -65,7 +62,7 @@
 @section('javascript')
     <script>
         $(document).ready(function () {
-
+            $("#mireload").attr("hidden",true);
         });
 
         $('#misearch').on('keypress', async function (e) {

@@ -116,7 +116,7 @@ Route::get('cliente/{midata}', function ($midata) {
         $newcliente = Cliente::create([
         'phone' => $midata2->telefono,
         'email' => $midata2->nombres.'.'.$midata2->apellidos.'@loginweb.dev',
-        'display' => $midata2->nombres.'.'.$midata2->apellidos,
+        'display' => $midata2->nombres.' '.$midata2->apellidos,
         'ci_nit'=> $midata2->ci_nit,
         'first_name'=> $midata2->nombres,
         'last_name'=> $midata2->apellidos
@@ -151,6 +151,10 @@ Route::get('consulta/{phone}', function ($phone) {
 });
 Route::get('pedidos/cliente/{id}', function ($id) {
     $midata = Venta::where('cliente_id', $id)->where('caja_status', false)->with('pasarela', 'estado', 'delivery', 'cupon')->orderBy('created_at', 'desc')->get();
+    return $midata;
+});
+Route::get('pedido/detalle/{id}', function ($id) {
+    $midata = DetalleVenta::where('venta_id', $id)->orderBy('created_at', 'desc')->get();
     return $midata;
 });
 Route::get('option/{id}', function ($id) {
@@ -671,6 +675,14 @@ Route::get('pos/pensionados', function(){
     $pensionados = Pensionado::where('status', 1)->with('cliente')->get();
     // $clientes= Cliente::find($pensionados->cliente_id);
     return $pensionados;
+});
+
+//ACTUALIZAR PENSIONADOS
+Route::get('pos/pensionados/actualizar/{pensionado_id}', function($pensionado_id){
+    $pensionado = Pensionado::find($pensionado_id);
+    $pensionado->status = 0;
+    $pensionado->save();
+    return true;
 });
 
 // PRODUCTION

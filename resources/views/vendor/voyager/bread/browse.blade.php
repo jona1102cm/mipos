@@ -192,6 +192,7 @@
                                                         <option value="register_id"> Editor </option>
                                                         <option value="chofer_deudas"> Chofer Deudas </option>
                                                         <option value="pensionado_kardex"> Kardex Pensionados </option>
+                                                        <option value="credito">Cobro Créditos</option>
 
                                                 </select>
                                             </div>
@@ -3663,6 +3664,138 @@
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div>
+        <div class="modal modal-primary fade" tabindex="-1" id="modal_cobros" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                       <h4>Ventas a Crédito</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Créditos</a></li>
+                            <li role="presentation" ><a href="#historial" aria-controls="historial" role="tab" data-toggle="tab">Historial</a></li>
+                            <li role="presentation" ><a href="#cobro" aria-controls="cobro" role="tab" data-toggle="tab">Cobrar</a></li>
+
+                        </ul>
+                        <div class="tab-content">
+
+                            <div role="tabpanel" class="tab-pane active" id="home">
+
+                                    <div class="col-sm-4">
+                                        {{-- <label for="">Elija una Sucursal</label> --}}
+                                        <strong>Elija una Sucursal</strong>
+                                        <select name="" id="sucursal_consulta" class="form-control js-example-basic-single"></select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        {{-- <label for="">Elija un Pensionado</label> --}}
+                                        <strong>Elija un Cliente</strong>
+                                        <select name="" id="cliente_consulta" class="form-control js-example-basic-single"></select>
+                                    </div>
+
+
+                                    <div class="col-sm-7">
+                                        <button type="button" class="btn btn-primary pull-right" onclick="ConsultarCredito()">Consultar</button>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <table class="table" id="table_cobros">
+                                            <thead>
+                                                <tr>
+                                                    <th>Venta</th>
+                                                    <th>Estado</th>
+                                                    <th>Cliente</th>
+                                                    <th>Deuda</th>
+                                                    <th>Restante a Pagar</th>
+                                                    <th>Creado</th>
+                                                    <th>Acción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+
+                                        </table>
+
+                                    </div>
+                                <button type="button" class="btn btn-default pull-right" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
+
+                            </div>
+
+                            <div role="tabpanel" class="tab-pane" id="historial">
+                                {{-- <div class="col-sm-4">
+                                    <strong>Elija una Sucursal</strong>
+                                    <select name="" id="sucursal_pago" class="form-control js-example-basic-single"></select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <strong>Elija un Cliente</strong>
+                                    <select name="" id="cliente_pago" class="form-control js-example-basic-single"></select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <strong>Elija una Venta</strong>
+                                    <select name="" id="venta_pago" class="form-control js-example-basic-single"></select>
+                                </div>
+
+                                <div class="col-sm-7">
+                                    <button type="button" class="btn btn-primary pull-right" onclick="ConsultarCredito()">Consultar</button>
+                                </div> --}}
+                                <div class="col-sm-12">
+                                    <table class="table" id="table-historial">
+                                        <thead>
+                                            <tr>
+                                                <th>Venta</th>
+                                                <th>Cliente</th>
+                                                <th>Deuda</th>
+                                                <th>Cuota</th>
+                                                <th>Restante a Pagar</th>
+                                                <th>Creado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+
+                                    </table>
+
+                                </div>
+
+                            </div>
+                            <div role="tabpanel" class="tab-pane" id="cobro">
+                                <div class="col-sm-12">
+                                    <table class="table" id="table_cobros">
+                                        <thead>
+                                            <tr>
+                                                <th>Venta</th>
+                                                <th>Cliente</th>
+                                                <th>Deuda</th>
+                                                <th>Cuota</th>
+                                                <th>Restante a Pagar</th>
+                                                <th>Creado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+
+                                    </table>
+                                    <div class="form-group col-sm-6">
+                                        <label for="">Cuota</label>
+                                        <input class="form-control" type="number" placeholder="Ingrese Monto" id="cuota_cobro">
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary pull-right" onclick="ActualizarCredito()">Guardar</button>
+                                <button type="button" class="btn btn-default pull-right" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
+
+
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        {{-- <button type="submit" class="btn btn-primary pull-right" data-dismiss="modal">Consultar</button> --}}
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
         <!-- /.modal -->
 
 @stop
@@ -3710,7 +3843,8 @@
     @endphp
     <script>
         $('document').ready(function () {
-            $('.js-example-basic-single').select2()
+            $('.js-example-basic-single').select2();
+            DesactivarPensionados();
 
 
 
@@ -3742,6 +3876,43 @@
                 $('input[name="row_id"]').prop('checked', $(this).prop('checked')).trigger('change');
             });
         });
+
+        async function DesactivarPensionados(){
+            var table=await axios.get("{{ setting('admin.url') }}api/pos/pensionados");
+
+            for(let index=0;index < table.data.length;index++){
+
+                var aux= parseInt(CalculoDiasRestantes(table.data[index].fecha_final));
+
+
+                if(aux<0){
+                var actualizar= await axios("{{ setting('admin.url') }}api/pos/pensionados/actualizar/"+table.data[index].id);
+                }
+
+            }
+
+        }
+
+        function CalculoDiasRestantes(fecha_final){
+            var today=new Date();
+            var fechaInicio =   today.toISOString().split('T')[0];
+            var fechaFin    = fecha_final;
+
+            var fi=fechaInicio.toString();
+            var ff=fechaFin.toString();
+
+            var fechai = new Date(fi).getTime();
+            var fechaf    = new Date(ff).getTime();
+
+            var diff = fechaf - fechai;
+            // console.log(fechai);
+            // console.log(fechaf);
+            // console.log(diff/(1000*60*60*24));
+
+            //console.log(diff/(1000*60*60*24));
+            return (diff/(1000*60*60*24));
+        }
+
 
 
         var deleteFormAction;
@@ -4060,6 +4231,10 @@
                                 Pensionados();
 
                         break
+                        case 'credito':
+                            $('#modal_cobros').modal();
+
+                        break
 
                         default:
                             //Declaraciones ejecutadas cuando ninguno de los valores coincide con el valor de la expresión
@@ -4129,6 +4304,9 @@
 
                 }
                 async function FiltroKardex() {
+                    $('#sucursalpensionado').find('option').remove().end();
+                    $('#mipensionado').find('option').remove().end();
+
                     Sucursales();
                     Pensionados();
                     $('#table-kardex tbody tr').remove();

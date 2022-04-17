@@ -5,25 +5,23 @@
 <div class="container-fluid mt-5">
     <div class="row">
 
-        <div class="col-sm-12 form-group">
+        <div class="col-sm-12 col-md-8 offset-md-2">
             <label for="">Ingresa tu telefono</label>
             <input type="number" id="misearch" class="form-control" placeholder="whatsapp">
             <label><div id="micliente"></div></label>
         </div>
-        <div class="col-sm-12 form-group">
+        <div class="col-sm-12 col-md-8 offset-md-2">
             <table class="table table-responsive" id="mipedidos">
                 <thead>
                     <tr>
                         <th>Codigo</th>
-                        {{-- <th>Ticket</th> --}}
                         <th>Fecha</th>
                         <th>Estado</th>
                         <th>Pasarela</th>
                         <th>Delivery</th>
                         <th>Cupon</th>
-                        {{-- <th>Mensaje</th> --}}
                         <th>Total</th>
-                        {{-- <th>Acciones</th> --}}
+                        <th>Accion</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -32,6 +30,34 @@
         </div>
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="midetalle_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Productos</h5>
+          {{-- <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button> --}}
+        </div>
+        <div class="modal-body">
+            <table class="table table-responsive" id="midetalle">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody> </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cerrar</button>
+          {{-- <button type="button" class="btn btn-primary">Save changes</button> --}}
+        </div>
+      </div>
+    </div>
+  </div>
 
 @endsection
 
@@ -44,6 +70,7 @@
             } else {
                 toastr.error('Inicia Sesion')
             }
+            $("#mireload").attr("hidden",true);
         });
 
         async function cargar_user(phone) {
@@ -57,7 +84,7 @@
                 var pedidos = await axios.get("{{ setting('admin.url') }}api/pedidos/cliente/"+miuser.data.id)
                 $("#mipedidos tbody tr").remove();
                 for (let index = 0; index < pedidos.data.length; index++) {
-                    $("#mipedidos").append("<tr><td>Codigo:"+pedidos.data[index].id+"<br>Ticket:"+pedidos.data[index].ticket+"</td><td>"+pedidos.data[index].published+"</td><td>"+pedidos.data[index].estado.title+"</td><td>"+pedidos.data[index].pasarela.title+"</td><td>"+pedidos.data[index].delivery.name+"</td><td>"+pedidos.data[index].cupon.title+"</td><td>"+pedidos.data[index].total+" Bs.</td></tr>")
+                    $("#mipedidos").append("<tr><td>Codigo:"+pedidos.data[index].id+"<br>Ticket:"+pedidos.data[index].ticket+"</td><td>"+pedidos.data[index].published+"</td><td>"+pedidos.data[index].estado.title+"</td><td>"+pedidos.data[index].pasarela.title+"</td><td>"+pedidos.data[index].delivery.name+"</td><td>"+pedidos.data[index].cupon.title+"</td><td>"+pedidos.data[index].total+" Bs.</td><td><button type='button' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#midetalle_modal' onclick=detalle('"+pedidos.data[index].id+"')>Productos</button></td></tr>")
                 }
                 toastr.success('Cliente Encontrado')
             }
@@ -77,5 +104,15 @@
             location.href = '/'
         }
 
+        async function detalle(id) {
+            var productos = await axios.get("{{ setting('admin.url') }}api/pedido/detalle/"+id)
+            console.log(productos.data)
+            var misearch = ''
+            $("#midetalle tbody tr").remove();
+            for (let index = 0; index < productos.data.length; index++) {
+                $('#midetalle').append("<tr><td>"+productos.data[index].name+"</td><td>"+productos.data[index].precio+"</td><td>"+productos.data[index].cantidad+"</td></tr>")
+            }
+
+        }
     </script>
 @endsection

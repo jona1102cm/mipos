@@ -1535,6 +1535,7 @@
                     Opciones();
                     //PensionadoDefault();
                     Pensionados();
+                    DesactivarPensionados();
 
                     //-----------------------
                     if (localStorage.getItem('micart')) {
@@ -1544,6 +1545,42 @@
                         localStorage.setItem('micart', JSON.stringify([]));
                     }
                 });
+
+                async function DesactivarPensionados(){
+                    var table=await axios.get("{{ setting('admin.url') }}api/pos/pensionados");
+
+                    for(let index=0;index < table.data.length;index++){
+
+                        var aux= parseInt(CalculoDiasRestantes(table.data[index].fecha_final));
+
+
+                        if(aux<0){
+                        var actualizar= await axios("{{ setting('admin.url') }}api/pos/pensionados/actualizar/"+table.data[index].id);
+                        }
+                        Pensionados();
+                    }
+
+                }
+
+                function CalculoDiasRestantes(fecha_final){
+                    var today=new Date();
+                    var fechaInicio =   today.toISOString().split('T')[0];
+                    var fechaFin    = fecha_final;
+
+                    var fi=fechaInicio.toString();
+                    var ff=fechaFin.toString();
+
+                    var fechai = new Date(fi).getTime();
+                    var fechaf    = new Date(ff).getTime();
+
+                    var diff = fechaf - fechai;
+                    // console.log(fechai);
+                    // console.log(fechaf);
+                    // console.log(diff/(1000*60*60*24));
+
+                    //console.log(diff/(1000*60*60*24));
+                    return (diff/(1000*60*60*24));
+                }
 
                 async function Categorias() {
 
@@ -1672,6 +1709,8 @@
                 }
 
                 async function Pensionados(){
+                    $('#mipensionado').find('option').remove().end();
+
                     var table= await axios.get("{{setting('admin.url')}}api/pos/pensionados");
                     $('#mipensionado').append($('<option>', {
                         value: 0,
@@ -2231,11 +2270,11 @@
                     for (let index = 0; index < misventas.data.length; index++) {
                         var banipay = await axios("{{ setting('admin.url') }}api/pos/banipay/get/"+misventas.data[index].id);
                         var milink = "{{ setting('banipay.url_base') }}"+banipay.data.urlTransaction
-                        // console.log()
-                        if(misventas.data[index].pasarela.id==2){
 
-                            if(misventas.data[index].option_id==3){
-                            $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"</td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td><a href='#deliverys' aria-controls='deliverys' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' onclick='set_chofer("+misventas.data[index].id+")'>Chofer</a></td></tr>");
+                        if(misventas.data[index].pasarela.id=="{{setting('ventas.banipay_1')}}"||misventas.data[index].pasarela.id=="{{setting('ventas.banipay_2')}}"){
+
+                            if(misventas.data[index].option_id=="{{ setting('ventas.pedido_domicilio_id') }}"){
+                            $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"<br><a href='"+milink+"' target='_blank'>Link de Pago</a></td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td><a href='#deliverys' aria-controls='deliverys' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' onclick='set_chofer("+misventas.data[index].id+")'>Chofer</a></td></tr>");
                             }
                             else{
                                 $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"<br><a href='"+milink+"' target='_blank'>Link de Pago</a></td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td></td></tr>");
@@ -2244,7 +2283,7 @@
                         }
                         else{
 
-                            if(misventas.data[index].option_id==3){
+                            if(misventas.data[index].option_id=="{{ setting('ventas.pedido_domicilio_id') }}"){
                                 $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"</td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td><a href='#deliverys' aria-controls='deliverys' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' onclick='set_chofer("+misventas.data[index].id+")'>Chofer</a></td></tr>");
                             }
                             else{

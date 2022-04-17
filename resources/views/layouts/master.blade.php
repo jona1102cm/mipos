@@ -10,10 +10,10 @@
     <title>{{ setting('site.title') }}</title>
     <link rel="icon" type="image/x-icon" href="{{ setting('admin.url').'storage/'.setting('site.logo') }}">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
-    <link href="{{ asset('mdb2/css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('mdb2/css/mdb.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('ecommerce1/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('ecommerce1/css/mdb.min.css') }}" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet"/>
-    <meta name="theme-color" content="{{ setting('admin.color') }}">
+    <meta name="theme-color" content="{{ setting('site.color') }}">
     @yield('css')
     <style>
         .page-footer {
@@ -70,6 +70,9 @@
         </nav>
     </header>
 
+    <div class="text-center" id="mireload">
+        <img src="{{ setting('admin.url').'storage/'.setting('site.reload') }}" class="img img-responsive" alt="">
+    </div>
     @yield('content')
 
     <footer class="page-footer text-center text-md-left stylish-color-dark pt-0 mt-2">
@@ -78,10 +81,10 @@
         </div>
     </footer>
 
-    <script type="text/javascript" src="{{ asset('mdb2/js/jquery-3.4.1.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('mdb2/js/popper.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('mdb2/js/bootstrap.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('mdb2/js/mdb.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('ecommerce1/js/jquery-3.4.1.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('ecommerce1/js/popper.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('ecommerce1/js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('ecommerce1/js/mdb.min.js') }}"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
@@ -100,7 +103,7 @@
                 localStorage.setItem('micart', JSON.stringify([]));
                 mitotal()
             }
-            // const socket = io('https://socket.loginweb.dev')
+
         });
         $(".button-collapse").sideNav();
 
@@ -242,7 +245,6 @@
         }
         async function updateobservacion(id){
             var observacion= $("#observacion_"+id).val()
-            //console.log(id)
             var milist = JSON.parse(localStorage.getItem('micart'));
             var newlist = [];
             for (let index = 0; index < milist.length; index++) {
@@ -276,7 +278,6 @@
             for (let index = 0; index < milist.length; index++) {
                 var stotal = milist[index].precio * milist[index].cant
                 var observacion = milist[index].observacion ? milist[index].observacion: ''
-                // console.log(observacion);
                 if(milist[index].extra){
                     $("#micart").append("<tr id="+milist[index].id+"><td><img class='img-responsive img-thumbnail' src='{{ setting('admin.url') }}storage/"+milist[index].image+"'></td><td><strong>"+milist[index].name+"<br>"+milist[index].description+"</strong></td><td><strong>"+milist[index].extra_name+"</strong><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+milist[index].extras+", "+milist[index].id+")'><i class='fas fa-align-justify'></i></a></td><td><input class='form-control' type='text'  onchange='updateobservacion("+milist[index].id+")' id='observacion_"+milist[index].id+"' value='"+observacion+"'></td><td>"+milist[index].precio+"</td><td>"+milist[index].cant+"</td><td>"+stotal+"</td><td><button type='button' class='btn btn-sm btn-primary' data-toggle='tooltip' data-placement='top' onclick='midelete("+milist[index].id+")' title='Remove item'>X</button></td></tr>")
                     mitotal += stotal

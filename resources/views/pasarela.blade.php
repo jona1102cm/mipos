@@ -89,7 +89,7 @@
                     <label for="">Mensaje al vendedor *</label>
                     <textarea id="observacion" class="form-control"></textarea>
                 </div>
-                <div class="form-group text-center">
+                <div class="form-group text-center" id="miboton">
                     <a href="#" class="btn btn-primary" onclick="save_pedido()"><i class="fab fa-cc-amazon-pay"></i> Enviar Pedido</a>
                 </div>
                 <div class="form-group text-center">
@@ -105,8 +105,6 @@
     <script src="https://socket.loginweb.dev/socket.io/socket.io.js"></script>
     <script>
          const socket = io('https://socket.loginweb.dev')
-        //  var miuser = JSON.parse(localStorage.getItem('miuser'))
-        // socket.emit("{{ setting('notificaciones.socket') }}", 'newpedido');
         $('document').ready(function () {
             pagototal(null)
             var miuser = JSON.parse(localStorage.getItem('miuser'))
@@ -122,7 +120,7 @@
             } else {
                 navigator.geolocation.getCurrentPosition(success, error, options);
             }
-
+            $("#mireload").attr("hidden",true);
         });
 
         function pagototal(delivery) {
@@ -194,10 +192,12 @@
 
         async function save_pedido() {
             //validacion
-            if ($('#telefono').val() == '' || $('#direccion').val() == '' || $('#observacion').val() == '' ) {
+            if ($('#telefono').val() == '' || $('#direccion').val() == '' || $('#observacion').val() == '' || $('#latitud').val() == '' || $('#longitud').val() == '' ) {
                 toastr.error('Todos los Campos (*) son obligatorios')
             } else {
                 // query client
+                $("#mireload").attr("hidden",false);
+                $("#miboton").attr("hidden",true);
                 var cliente = {
                     'nombres': $('#nombres').val(),
                     'apellidos': $('#apellidos').val(),
@@ -260,8 +260,8 @@
                         console.log('default')
                         break;
                 }
-                socket.emit("{{ setting('notificaciones.socket') }}", JSON.stringify(newpedido));
-                // redireccionar();
+                var minoti = await socket.emit("{{ setting('notificaciones.socket') }}", JSON.stringify(newpedido));
+                redireccionar();
             }
         }
 
