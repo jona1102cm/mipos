@@ -8,12 +8,20 @@
         <div class="col-sm-12  col-md-8 offset-md-2 text-center">
             <h2>Catalogo Completo</h2>
             <input type="search" id="misearch" class="form-control" placeholder="ingresa un criterio de busqueda">
+            @php
+                $categorias = App\Categoria::where('ecommerce', true)->orderBy('order', 'asc')->get();
+            @endphp
+            <select class="browser-default custom-select" id="mifiltros">
+                <option value="">Filtros</option>
+                @foreach($categorias as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                @endforeach
+            </select>
         </div>
         <div class="col-sm-12 col-md-8 offset-md-2">
             <table class="table table-responsive table-sm" id="miresult">
                 <thead>
                     <tr>
-                        {{-- <th>#</th> --}}
                         <th>Imagen</th>
                         <th>Nombre</th>
                         <th>Precio</th>
@@ -27,7 +35,6 @@
                     @endphp
                     @foreach($products as $item)
                         <tr>
-                            {{-- <td>{{ $item->id }}</td> --}}
                             <td>
                                 @php
                                     $miimage = $item->image ? $item->image : setting('productos.imagen_default');
@@ -37,7 +44,6 @@
                             <td>
                                 {{ $item->name }} <br>
                                 <small>{{ $item->description }}</small>
-
                             </td>
                             <td>
                                 {{ $item->precio }} Bs.
@@ -71,6 +77,13 @@
                 localStorage.setItem('miproducts', JSON.stringify(result.data));
                 location.href = "{{ route('pages', 'search') }}";
             }
+        });
+
+        $('#mifiltros').on('change', async function (e) {
+            $("#mireload").attr("hidden", false);
+            var result = await axios("{{ setting('admin.url') }}api/filtros/"+this.value)
+            localStorage.setItem('miproducts', JSON.stringify(result.data));
+            location.href = "{{ route('pages', 'search') }}";
         });
     </script>
 @endsection

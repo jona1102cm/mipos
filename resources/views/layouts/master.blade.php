@@ -50,7 +50,7 @@
         <div class="sidenav-bg mask-strong"></div>
         </ul>
         <nav class="navbar fixed-top navbar-expand-lg  navbar-light scrolling-navbar white">
-            <div class="container-fluid">
+            <div class="container">
                 <!-- SideNav slide-out button -->
                 <div class="float-left mr-2">
                 <a href="#" data-activates="slide-out" class="button-collapse"><i class="fas fa-bars"></i></a>
@@ -63,8 +63,6 @@
                 <a href="#" data-activates="slide-out" class="button-collapse">
                     <i class="fas fa-shopping-cart"><span class="badge rounded-pill badge-notification bg-danger"><div id="micount"></div></span></i>
                 </a>
-                </div>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent-4">
                 </div>
             </div>
         </nav>
@@ -279,11 +277,11 @@
                 var stotal = milist[index].precio * milist[index].cant
                 var observacion = milist[index].observacion ? milist[index].observacion: ''
                 if(milist[index].extra){
-                    $("#micart").append("<tr id="+milist[index].id+"><td><img class='img-responsive img-thumbnail' src='{{ setting('admin.url') }}storage/"+milist[index].image+"'></td><td><strong>"+milist[index].name+"<br>"+milist[index].description+"</strong></td><td><strong>"+milist[index].extra_name+"</strong><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+milist[index].extras+", "+milist[index].id+")'><i class='fas fa-align-justify'></i></a></td><td><input class='form-control' type='text'  onchange='updateobservacion("+milist[index].id+")' id='observacion_"+milist[index].id+"' value='"+observacion+"'></td><td>"+milist[index].precio+"</td><td>"+milist[index].cant+"</td><td>"+stotal+"</td><td><button type='button' class='btn btn-sm btn-primary' data-toggle='tooltip' data-placement='top' onclick='midelete("+milist[index].id+")' title='Remove item'>X</button></td></tr>")
+                    $("#micart").append("<tr id="+milist[index].id+"><td><img class='img-responsive img-thumbnail' src='{{ setting('admin.url') }}storage/"+milist[index].image+"'></td><td><strong>"+milist[index].name+"<br>"+milist[index].description+"</strong></td><td><strong>"+milist[index].extra_name+"</strong><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+milist[index].extras+", "+milist[index].id+")'><i class='fas fa-align-justify'></i></a></td><td><input class='form-control' type='text'  onchange='updateobservacion("+milist[index].id+")' id='observacion_"+milist[index].id+"' value='"+observacion+"' placeholder='algun detalle?'></td><td>"+milist[index].precio+"</td><td>"+milist[index].cant+"</td><td>"+stotal+"</td><td><button type='button' class='btn btn-sm btn-danger' data-toggle='tooltip' data-placement='top' onclick='midelete("+milist[index].id+")' title='Remove item'>X</button></td></tr>")
                     mitotal += stotal
                 }
                 else{
-                    $("#micart").append("<tr id="+milist[index].id+"><td><img class='img-responsive img-thumbnail' src='{{ setting('admin.url') }}storage/"+milist[index].image+"'></td><td><strong>"+milist[index].name+"<br>"+milist[index].description+"</strong></td><td></td><td><input class='form-control' type='text' onchange='updateobservacion("+milist[index].id+")' id='observacion_"+milist[index].id+"' value='"+observacion+"'></td><td>"+milist[index].precio+"</td><td>"+milist[index].cant+"</td><td>"+stotal+"</td><td><button type='button' class='btn btn-sm btn-primary' data-toggle='tooltip' data-placement='top' onclick='midelete("+milist[index].id+")' title='Remove item'>X</button></td></tr>")
+                    $("#micart").append("<tr id="+milist[index].id+"><td><img class='img-responsive img-thumbnail' src='{{ setting('admin.url') }}storage/"+milist[index].image+"'></td><td><strong>"+milist[index].name+"<br>"+milist[index].description+"</strong></td><td></td><td><input class='form-control' type='text' onchange='updateobservacion("+milist[index].id+")' id='observacion_"+milist[index].id+"' value='"+observacion+"'  placeholder='algun detalle?'></td><td>"+milist[index].precio+"</td><td>"+milist[index].cant+"</td><td>"+stotal+"</td><td><button type='button' class='btn btn-sm btn-primary' data-toggle='tooltip' data-placement='top' onclick='midelete("+milist[index].id+")' title='Remove item'>X</button></td></tr>")
                     mitotal += stotal
                 }
             }

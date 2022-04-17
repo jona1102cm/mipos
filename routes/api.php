@@ -163,7 +163,12 @@ Route::get('option/{id}', function ($id) {
 });
 
 Route::get('search/{criterio}', function ($criterio) {
-    $result = Producto::where('name', 'like', '%'.$criterio.'%')->get();
+    $result = Producto::where('name', 'like', '%'.$criterio.'%')->orderBy('name', 'desc')->get();
+    return $result;
+});
+
+Route::get('filtros/{categoria_id}', function ($categoria_id) {
+    $result = Producto::where('categoria_id', $categoria_id )->orderBy('name', 'desc')->get();
     return $result;
 });
 

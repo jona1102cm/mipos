@@ -25,7 +25,7 @@
 <body class="restaurant-lp">
 
     <header>
-        <nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+        <nav class="navbar fixed-top navbar-expand-lg navbar-light scrolling-navbar white">
         <div class="container">
             <a class="navbar-brand" href="#">
             <strong>{{ setting('site.title') }}</strong>
@@ -86,18 +86,18 @@
         @php
             $intro = json_decode(setting('site.intro_section'));
         @endphp
-        <div id="home" class="view jarallax" data-jarallax='{"speed": 0.2}' style="background-image: url(https://mdbootstrap.com/img/Photos/Others/images/42.jpg); background-repeat: no-repeat; background-size: cover; background-position: center center;">
+        <div id="home" class="view jarallax" data-jarallax='{"speed": 0.9}' style="background-image: url({{ setting('admin.url').'storage/'.$intro->image }}); background-repeat: no-repeat; background-size: cover; background-position: center center;">
         <div class="mask rgba-black-slight">
             <div class="container h-100 d-flex justify-content-center align-items-center">
             <div class="row smooth-scroll">
                 <div class="col-md-12 dark-grey-text text-center">
-                <div class="wow fadeInDown" data-wow-delay="0.2s">
+                <div class="wow fadeInDown" data-wow-delay="0.9s">
                     <h2 class="display-3 font-weight-bold mb-2 mt-5 mt-xl-2">{{ $intro->title }}</h2>
                     <hr class="hr-dark">
                     {{-- <h4 class="subtext-header mt-2 mb-3">{{ $intro->descripcion}}</h4> --}}
                     <h4 class="mb-5 clearfix d-none d-md-inline-block">{{ $intro->descripcion}}</h4>
                 </div>
-                <a href="{{ route('pages', 'catalogo') }}" class="btn btn-deep-orange btn-rounded wow fadeInUp" data-wow-delay="0.2s">
+                <a href="{{ route('pages', 'catalogo') }}" class="btn btn-deep-orange btn-rounded wow fadeInUp" data-wow-delay="0.9s">
                     <i class="far fa-calendar-alt mr-2"></i>
                     <span>Ver Catalgo</span>
                 </a>
