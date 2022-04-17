@@ -92,16 +92,7 @@
             $('[data-toggle="tooltip"]').tooltip()
         })
         $(document).ready(function () {
-
             $('.mdb-select').material_select();
-
-            //user
-            // if (localStorage.getItem('miuser')) {
-
-            // } else {
-            //     localStorage.setItem('miuser', JSON.stringify([]));
-            // }
-
             //carrito
             if (localStorage.getItem('micart')) {
                 mitotal()
@@ -109,6 +100,7 @@
                 localStorage.setItem('micart', JSON.stringify([]));
                 mitotal()
             }
+            // const socket = io('https://socket.loginweb.dev')
         });
         $(".button-collapse").sideNav();
 

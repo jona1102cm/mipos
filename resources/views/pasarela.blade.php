@@ -88,9 +88,6 @@
                 <div class="form-group">
                     <label for="">Mensaje al vendedor *</label>
                     <textarea id="observacion" class="form-control"></textarea>
-                    <div>
-                        😀 😃 😄 😁 😆 😅 😂 🤣 🥲 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😝 😜 🤪 🤨 🧐 🤓 😎 🥸 🤩 🥳 😏 😒 😞 😔 😟 😕 🙁 😣 😖 😫 😩 🥺 😢 😭 😤 😠 😡 🤬 🤯 😳 🥵 🥶 😱 😨 😰 😥 😓 🤗 🤔 🤭 🤫 🤥 😶 😐 😑 😬 🙄 😯 😦 😧 😮 😲 🥱 😴 🤤 😪 😵 🤐 🥴 🤢 🤮 🤧 😷 🤒 🤕 🤑
-                    </div>
                 </div>
                 <div class="form-group text-center">
                     <a href="#" class="btn btn-primary" onclick="save_pedido()"><i class="fab fa-cc-amazon-pay"></i> Enviar Pedido</a>
@@ -105,8 +102,11 @@
 @endsection
 
 @section('javascript')
+    <script src="https://socket.loginweb.dev/socket.io/socket.io.js"></script>
     <script>
-
+         const socket = io('https://socket.loginweb.dev')
+        //  var miuser = JSON.parse(localStorage.getItem('miuser'))
+        // socket.emit("{{ setting('notificaciones.socket') }}", 'newpedido');
         $('document').ready(function () {
             pagototal(null)
             var miuser = JSON.parse(localStorage.getItem('miuser'))
@@ -122,6 +122,7 @@
             } else {
                 navigator.geolocation.getCurrentPosition(success, error, options);
             }
+
         });
 
         function pagototal(delivery) {
@@ -204,6 +205,7 @@
                     'ci_nit': $('#ci_nit').val()
                 }
                 var micliente = await axios.get("{{ setting('admin.url') }}api/cliente/"+JSON.stringify(cliente))
+                localStorage.setItem('miuser', JSON.stringify(micliente.data));
 
                 // query location client
                 var location = {
@@ -258,11 +260,13 @@
                         console.log('default')
                         break;
                 }
-                redireccionar();
+                socket.emit("{{ setting('notificaciones.socket') }}", JSON.stringify(newpedido));
+                // redireccionar();
             }
         }
 
         function redireccionar(){
+
             localStorage.setItem('micart', JSON.stringify([]));
             location.href = "{{ route('pages', 'consultas') }}";
         }
@@ -283,6 +287,7 @@
                     $('#telefono').val(miuser.data.phone)
                     $('#ci_nit').val(miuser.data.ci_nit)
                     toastr.success('Cliente Encontrado')
+                    localStorage.setItem('miuser', JSON.stringify(miuser.data));
                 }
             }
         });

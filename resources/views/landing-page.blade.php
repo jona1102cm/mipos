@@ -1,16 +1,7 @@
 @extends('layouts.master')
 
 @section('css')
-    <style>
-        table {
-    table-layout:fixed;
-}
-table td {
-    width: 900px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-    </style>
+
 
 @endsection
 @section('content')
@@ -26,7 +17,7 @@ table td {
                         <!-- Image -->
                         <div class="view zoom  z-depth-1">
 
-                          <img src="https://mdbootstrap.com/img/Photos/Others/product2.jpg" class="img-fluid" alt="sample image">
+                          <img src="{{ setting('admin.url').'storage/'.setting('site.banner') }}" class="img-fluid" alt="sample image">
 
                           <div class="mask rgba-white-light">
 
@@ -142,12 +133,12 @@ table td {
                         @php
                             $products = App\Producto::where('ecommerce', true)->where('categoria_id', $key->id)->orderBy('name', 'asc')->with('categoria')->get();
                         @endphp
-                        <h2>{{ $key->name }}</h2>
+                        <h2><strong>{{ $key->name }}</strong></h2>
                         <table class="table table-responsive">
                             <tr>
                                 @foreach($products as $item)
 
-                                    <td>
+                                    <td style="white-space: normal; width:900px;">
                                         @php
                                             $miimage = $item->image ? $item->image : setting('productos.imagen_default');
                                         @endphp
@@ -161,7 +152,7 @@ table td {
                                                 <div class="card-body">
                                                 <h6 class="h6-responsive font-weight-bold dark-grey-text">{{ $item->name }}</h6>
                                                 <h6 class="h6-responsive font-weight-bold dark-grey-text"><strong>{{ $item->precio }} Bs.</strong></h6>
-                                                <p class="card-text">{{ $item->description }}</p>
+                                                {{-- <p class="card-text">{{ $item->description }}</p> --}}
                                                 <a href="#!"  onclick="addproduct('{{ $item->id }}')" class="btn btn-sm"><i class="fas fa-cart-arrow-down"></i>Agrego</a>
                                                 </div>
                                             </div>

@@ -9,15 +9,15 @@
             <h2>Catalogo Completo</h2>
         </div>
         <div class="col-sm-12 form-group">
-            <label for="">Buscar</label>
+            {{-- <label for="">Buscar</label> --}}
             <input type="search" id="misearch" class="form-control" placeholder="ingresa un criterio de busqueda">
         </div>
         <div class="col-sm-12">
-            <table class="table table-responsive" id="miresult">
+            <table class="table table-responsive table-sm" id="miresult">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Image</th>
+                        {{-- <th>#</th> --}}
+                        <th>Imagen</th>
                         <th>Nombre</th>
                         <th>Precio</th>
                         <th>Categoria</th>
@@ -26,11 +26,11 @@
                 </thead>
                 <tbody>
                     @php
-                        $products = App\Producto::all();
+                        $products = App\Producto::orderBy('name', 'asc')->get();
                     @endphp
                     @foreach($products as $item)
                         <tr>
-                            <td>{{ $item->id }}</td>
+                            {{-- <td>{{ $item->id }}</td> --}}
                             <td>
                                 @php
                                     $miimage = $item->image ? $item->image : setting('productos.imagen_default');
@@ -38,16 +38,18 @@
                                 <img src="{{ setting('admin.url') }}storage/{{ $miimage }}" class="img-fluid">
                             </td>
                             <td>
-                                {{ $item->name }}
+                                {{ $item->name }} <br>
+                                <small>{{ $item->description }}</small>
+
                             </td>
                             <td>
-                                {{ $item->precio }}
+                                {{ $item->precio }} Bs.
                             </td>
                             <td>
                                 {{ $item->categoria->name }}
                             </td>
                             <td>
-                                <a href="#" onclick="addproduct('{{ $item->id }}')" class="btn btn-sm btn-primary">+Carrito</a>
+                                <a href="#" onclick="addproduct('{{ $item->id }}')" class="btn btn-sm"><i class="fas fa-cart-arrow-down"></i>Agregar</a>
                             </td>
                         </tr>
                     @endforeach

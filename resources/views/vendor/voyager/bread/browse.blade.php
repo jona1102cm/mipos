@@ -3817,6 +3817,11 @@
                 }
                 @break
             @case('ventas')
+                socket.on("{{ setting('notificaciones.socket') }}", (msg) =>{
+                    var msg = JSON.parse(msg);
+                    console.log(msg.data)
+                    location.reload();
+                })
                 $('#search_key').on('change', async function() {
                     $('.js-example-basic-single').select2();
                     switch (this.value) {

@@ -37,7 +37,7 @@
             var miproducts = JSON.parse(localStorage.getItem('miproducts'))
             $("#miresult tbody tr").remove();
             for (let index = 0; index < miproducts.length; index++) {
-                $("#miresult").append("<tr><td><img class='img-responsive img-thumbnail' src='{{ setting('admin.url') }}storage/"+miproducts[index].image+"'></td><td>"+miproducts[index].name+"</td><td>"+miproducts[index].precio+"</td><td><a class='btn btn-sm btn-primary' onclick='addproduct("+miproducts[index].id+")'>+Carrito</a></td></tr>")
+                $("#miresult").append("<tr><td><img class='img-responsive img-thumbnail' src='{{ setting('admin.url') }}storage/"+miproducts[index].image+"'></td><td>"+miproducts[index].name+"</td><td>"+miproducts[index].precio+" Bs.</td><td><a class='btn btn-sm btn-dark' onclick='addproduct("+miproducts[index].id+")'><i class='fas fa-cart-arrow-down'>Agregar</a></td></tr>")
             }
         }
     </script>

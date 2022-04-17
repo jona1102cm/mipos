@@ -1339,6 +1339,11 @@
                 socket.on(socket_cocina, (msg) =>{
                     toastr.success('La Cocina Libero el Pedido: '+msg);
                 })
+                socket.on(name_socket, (msg) =>{
+                    var msg = JSON.parse(msg)
+                    toastr.success('CHATBOT - nueva venta: '+msg.data.observacion)
+
+                })
 
                 $('document').ready(function () {
                     $('.js-example-basic-single').select2();
