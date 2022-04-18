@@ -3583,11 +3583,11 @@
 
 
                             <div class="col-sm-6">
-                                <label for="">ELija una Caja</label>
+                                <label for="">Elija una Caja</label>
                                 <select name="" id="micajas" class="form-control js-example-basic-single"></select>
                             </div>
                             <div class="col-sm-6">
-                                <label for="">ELija una Chofer</label>
+                                <label for="">Elija un Chofer</label>
                                 <select name="" id="michoferes" class="form-control js-example-basic-single"></select>
                             </div>
                             <div class="col-sm-7">
@@ -3599,6 +3599,7 @@
                                         <tr>
                                             <th>Venta</th>
                                             <th>Cliente</th>
+                                            <th>Pasarela</th>
                                             <th>Delivery</th>
                                             <th>Subtotal</th>
                                             <th>Creado</th>
@@ -4189,39 +4190,41 @@
 
                         case 'chofer_deudas':
                                 $('#modal_deudas').modal();
-                                $.ajax({
-                                    url: "{{ setting('admin.url') }}api/pos/cajas",
-                                    dataType: "json",
-                                    success: function (response) {
-                                        $('#micajas').append($('<option>', {
-                                            value: null,
-                                            text: 'Elige una Caja'
-                                        }));
-                                        for (let index = 0; index < response.length; index++) {
-                                            // const element = response[index];
-                                            $('#micajas').append($('<option>', {
-                                                value: response[index].id,
-                                                text: response[index].id + ' - '+ response[index].title +' - '+ response[index].sucursal.name
-                                            }));
-                                        }
-                                    }
-                                });
-                                $.ajax({
-                                    url: "{{ setting('admin.url') }}api/pos/choferes/",
-                                    dataType: "json",
-                                    success: function (response) {
-                                        $('#michoferes').append($('<option>', {
-                                            value: null,
-                                            text: 'Elige un Chofer'
-                                        }));
-                                        for (let index = 0; index < response.length; index++) {
-                                            $('#michoferes').append($('<option>', {
-                                                value: response[index].id,
-                                                text: response[index].name
-                                            }));
-                                        }
-                                    }
-                                });
+                                // $.ajax({
+                                //     url: "{{ setting('admin.url') }}api/pos/cajas",
+                                //     dataType: "json",
+                                //     success: function (response) {
+                                //         $('#micajas').append($('<option>', {
+                                //             value: null,
+                                //             text: 'Elige una Caja'
+                                //         }));
+                                //         for (let index = 0; index < response.length; index++) {
+                                //             // const element = response[index];
+                                //             $('#micajas').append($('<option>', {
+                                //                 value: response[index].id,
+                                //                 text: response[index].id + ' - '+ response[index].title +' - '+ response[index].sucursal.name
+                                //             }));
+                                //         }
+                                //     }
+                                // });
+                                // $.ajax({
+                                //     url: "{{ setting('admin.url') }}api/pos/choferes/",
+                                //     dataType: "json",
+                                //     success: function (response) {
+                                //         $('#michoferes').append($('<option>', {
+                                //             value: null,
+                                //             text: 'Elige un Chofer'
+                                //         }));
+                                //         for (let index = 0; index < response.length; index++) {
+                                //             $('#michoferes').append($('<option>', {
+                                //                 value: response[index].id,
+                                //                 text: response[index].name
+                                //             }));
+                                //         }
+                                //     }
+                                //});
+                                Cajas_Deudas_Choferes();
+                                Choferes_Deudas();
 
                             break
                         case 'pensionado_kardex':
@@ -4242,11 +4245,49 @@
                     }
                 });
 
+                async function Cajas_Deudas_Choferes(){
+                    $('#micajas').find('option').remove().end();
+                    var table= await axios.get("{{ setting('admin.url') }}api/pos/cajas");
+
+                    $('#micajas').append($('<option>', {
+                        value: null,
+                        text: 'Elige una Caja'
+                    }));
+                    for (let index = 0; index < table.data.length; index++) {
+                        // const element = response[index];
+                        $('#micajas').append($('<option>', {
+                            value: table.data[index].id,
+                            text: table.data[index].id + ' - '+ table.data[index].title +' - '+ table.data[index].sucursal.name
+                        }));
+                    }
+
+                }
+                async function Choferes_Deudas() {
+                    $('#michoferes').find('option').remove().end();
+
+                    var table=await axios.get("{{ setting('admin.url') }}api/pos/choferes/");
+                    $('#michoferes').append($('<option>', {
+                        value: null,
+                        text: 'Elige un Chofer'
+                    }));
+                    for (let index = 0; index < table.data.length; index++) {
+                        $('#michoferes').append($('<option>', {
+                            value: table.data[index].id,
+                            text: table.data[index].name
+                        }));
+                    }
+
+                }
+
                 function filtro1() {
+
+                    $('#table_deudas tbody tr').remove();
                     var urli = "{{ setting('admin.url') }}api/pos/choferes/deudas/"+$("#michoferes").val()+"/"+$("#micajas").val();
                     //console.log(urli);
                     var mitable = "";
-                    var total=0;
+                    var total_efectivo=0;
+                    var total_credito=0;
+                    var total_banipay=0;
                     $.ajax({
                         url: urli,
                         dataType: "json",
@@ -4257,18 +4298,35 @@
 
                                 for (let index = 0; index < response.length; index++) {
 
-                                    mitable = mitable + "<tr><td>"+response[index].id+"</td><td>"+response[index].cliente.display+"</td><td>"+response[index].delivery.name+"</td><td>"+response[index].total+"</td><td>"+response[index].published+"</td></tr>";
-                                    total+=response[index].total;
+                                    mitable = mitable + "<tr><td>"+response[index].id+"</td><td>"+response[index].cliente.display+"</td><td>"+response[index].pasarela.title+"</td><td>"+response[index].delivery.name+"</td><td>"+response[index].total+"</td><td>"+response[index].published+"</td></tr>";
+                                    if(response[index].pasarela_id=="{{setting('ventas.banipay_1')}}"||response[index].pasarela_id=="{{setting('ventas.banipay_2')}}"){
+                                        total_banipay+=response[index].total;
+                                    }
+                                    else{
+                                        if(response[index].credito=='Contado'){
+                                            total_efectivo+=response[index].total;
+                                        }
+                                        else{
+                                            total_credito+=response[index].total;
+                                        }
+                                    }
                                     //console.log(response[index]);
                                 }
-                                mitable = mitable +"<tr><td></td><td></td><td></td><td>Total</td><td><b>"+total+"</b></td> </tr>"
+                                mitable = mitable +"<tr><td></td><td></td><td></td><td></td><td>Total en Banipay</td><td><b>"+total_banipay+"</b></td> </tr>"
+                                mitable = mitable +"<tr><td></td><td></td><td></td><td></td><td>Total a Credito</td><td><b>"+total_credito+"</b></td> </tr>"
+                                mitable = mitable +"<tr><td></td><td></td><td></td><td><td></td>Total en Efectivo</td><td><b>"+total_efectivo+"</b></td> </tr>"
+
                                 $('#table_deudas').append(mitable);
                             }
                         }
                     });
+                    Cajas_Deudas_Choferes();
+                    Choferes_Deudas();
                 }
 
                 async function Sucursales(){
+                    $('#sucursalpensionado').find('option').remove().end();
+
                     var table = await axios.get("{{setting('admin.url')}}api/pos/sucursales");
 
                     //$("#sucursalpensionado").val()
@@ -4286,6 +4344,8 @@
                     }
                 }
                 async function Pensionados(){
+                    $('#mipensionado').find('option').remove().end();
+
                     var table = await axios.get("{{setting('admin.url')}}api/pos/pensionados");
                     //$("#mipensionado").val();
 
@@ -4304,11 +4364,8 @@
 
                 }
                 async function FiltroKardex() {
-                    $('#sucursalpensionado').find('option').remove().end();
-                    $('#mipensionado').find('option').remove().end();
 
-                    Sucursales();
-                    Pensionados();
+
                     $('#table-kardex tbody tr').remove();
                     var table= await axios.get(" {{setting('admin.url')}}api/pos/pensionados/kardex/"+$("#sucursalpensionado").val()+"/"+$("#mipensionado").val());
                     var midata="";
@@ -4331,6 +4388,8 @@
                         $('#table_kardex').append(midata);
                         //console.log(fecha);
                     }
+                    Sucursales();
+                    Pensionados();
                 }
                 function CalculoDiasRestantes(fecha_final){
                     var today=new Date();

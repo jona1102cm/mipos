@@ -14,6 +14,12 @@
     <link href="{{ asset('ecommerce1/css/mdb.min.css') }}" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet"/>
     <meta name="theme-color" content="{{ setting('site.color') }}">
+
+      <!-- Add to homescreen for Chrome on Android -->
+      <meta name="mobile-web-app-capable" content="yes">
+      <meta name="application-name" content="{{ setting('site.title') }}">
+      <link rel="icon" sizes="512x512" href="{{ setting('admin.url').'storage/'.setting('site.logo') }}">
+
     @yield('css')
     <style>
         .page-footer {

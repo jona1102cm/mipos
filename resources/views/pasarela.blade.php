@@ -87,8 +87,16 @@
                 </div>
                 <div class="form-group">
                     <label for="">Mensaje al vendedor *</label>
-                    <textarea id="observacion" class="form-control"></textarea>
+                    <textarea id="observacion" class="form-control">Sin detalle</textarea>
                 </div>
+
+                <div class="form-group">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="switch_pensionado" />
+                        <label class="form-check-label" for="switch_pensionado">Es un pensionado?</label>
+                    </div>
+                </div>
+
                 <div class="form-group text-center" id="miboton">
                     <a href="#" class="btn btn-primary" onclick="save_pedido()"><i class="fab fa-cc-amazon-pay"></i> Enviar Pedido</a>
                 </div>
@@ -207,6 +215,17 @@
                 var micliente = await axios.get("{{ setting('admin.url') }}api/cliente/"+JSON.stringify(cliente))
                 localStorage.setItem('miuser', JSON.stringify(micliente.data));
 
+                var pension = 0
+                if($('#switch_pensionado').is(":checked")){
+                    pension= await axios.get("{{setting('admin.url')}}api/pos/pensionado/cliente/"+micliente.data.id);
+                    if(pension.data){
+                        pension = pension.data.id
+                    }
+                    else{
+                        toastr.error("Pensión no Encontrada o Inactiva");
+                    }
+                }
+
                 // query location client
                 var location = {
                     'cliente_id': micliente.data.id,
@@ -214,18 +233,41 @@
                     'longitud': $('#longitud').val(),
                     'direccion': $('#direccion').val()
                 }
+
+                // console.log(location);
                 var milocation = await axios.get("{{ setting('admin.url') }}api/location/"+JSON.stringify(location))
+
+                var register_id={{setting('ventas.cliente_pag_id')}};
+
+                if($('#miopciones').val()=="{{setting('ventas.delivery_zona1')}}"||$('#miopciones').val()=="{{setting('ventas.delivery_zona2')}}"){
+                    var delivery_id="{{setting('ventas.delivery_negocio_id')}}";
+                }
+                else{
+                    var delivery_id="{{setting('ventas.sindelivery_id')}}";
+                }
+
+                var aux=0;
+                var micart = JSON.parse(localStorage.getItem('micart'))
+                for(let index=0;index < micart.length;index++){
+                    aux=aux+micart[index].precio*micart[index].cant;
+                }
 
                 //save venta
                 var pedido = {
                     'cliente_id': micliente.data.id,
+                    'pensionado_id':pension,
                     'option_id': $('#miopciones').val(),
                     'pago_id': $('#pago_id').val(),
+                    'subtotal': aux,
                     'total': $('#total').val(),
                     'descuento': $('#descuento').val(),
                     'observacion': $('#observacion').val(),
                     'cupon_id': $('#micupon_id').val(),
-                    'location': milocation.data.id
+                    'location': milocation.data.id,
+                    'credito':"Contado",
+                    'register_id':register_id,
+                    'delivery_id':delivery_id
+
                 }
                 var newpedido = await axios.get("{{ setting('admin.url') }}api/pedido/save/"+JSON.stringify(pedido))
                 var micart = JSON.parse(localStorage.getItem('micart'))
@@ -261,8 +303,15 @@
                         break;
                 }
                 var minoti = await socket.emit("{{ setting('notificaciones.socket') }}", JSON.stringify(newpedido));
+
+                //chatbot
+                var phone = micliente.data.phone
+                var miurl= "{{ setting('admin.url').'page/consultas' }}"
+                var message = "Gracias por tu preferencia 🙂, Para ver tu compra completa, dirigite a siguiente link 🔎"
+                var chatbot = await axios.get("{{ setting('notificaciones.url_chatbot') }}?phone="+phone+"&type=text"+"&message="+message)
+                var chatbot2 = await axios.get("{{ setting('notificaciones.url_chatbot') }}?phone="+phone+"&type=text"+"&message="+miurl)
                 redireccionar();
-            }
+             }
         }
 
         function redireccionar(){

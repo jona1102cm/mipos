@@ -617,13 +617,25 @@
                                 @break
                             @case('chatbots')
                                 <div class="form-group col-sm-5">
+                                    @php
+                                        $clientes = App\Cliente::orderBy('created_at', 'asc')->get();
+                                    @endphp
                                     <h4 class="title">Cliente</h4>
-                                    <select id="customer" class="form-control">
-                                        <option> Elije una opcion</option>
+                                    <select id="micliente" class="form-control">
+                                        <option> Elije una Cliente</option>
+                                        @foreach ($clientes as $item)
+                                            <option value="{{ $item->phone }}"> {{ $item->display }}</option>
+                                        @endforeach
                                     </select>
+                                    @php
+                                        $productos = App\Producto::where('ecommerce', true)->orderBy('name', 'asc')->get();
+                                    @endphp
                                     <h4 class="title">Producto</h4>
                                     <select id="product" class="form-control">
-                                        <option value="0" > Elije una opcion</option>
+                                        <option> Elije una Producto</option>
+                                        @foreach ($productos as $item)
+                                        <option value="{{ $item->id }}">{{ $item->categoria->name }} - {{ $item->name }}</option>
+                                    @endforeach
                                     </select>
                                 </div>
                                 <div class="form-group col-sm-7">
@@ -653,17 +665,17 @@
                                     <div class="collapse multi-collapse" id="collapseExample5">
                                         ⌚️ 📱 📲 💻 ⌨️ 🖥 🖨 🖱 🖲 🕹 🗜 💽 💾 💿 📀 📼 📷 📸 📹 🎥 📽 🎞 📞 ☎️ 📟 📠 📺 📻 🎙 🎚 🎛 🧭 ⏱ ⏲ ⏰ 🕰 ⌛️ ⏳ 📡 🔋 🔌 💡 🔦 🕯 🪔 🧯 🛢 💸 💵 💴 💶 💷 🪙 💰 💳 💎 ⚖️ 🪜 🧰 🪛 🔧 🔨 ⚒ 🛠 ⛏ 🪚 🔩 ⚙️ 🪤 🧱 ⛓ 🧲 🔫 💣 🧨 🪓 🔪 🗡 ⚔️ 🛡 🚬 ⚰️ 🪦 ⚱️ 🏺 🔮 📿 🧿 💈 ⚗️ 🔭 🔬 🕳 🩹 🩺 💊 💉 🩸 🧬 🦠 🧫 🧪 🌡 🧹 🪠 🧺 🧻 🚽 🚰 🚿 🛁 🛀 🧼 🪥 🪒 🧽 🪣 🧴 🛎 🔑 🗝 🚪 🪑 🛋 🛏 🛌 🧸 🪆 🖼 🪞 🪟 🛍 🛒 🎁 🎈 🎏 🎀 🪄 🪅 🎊 🎉 🎎 🏮 🎐 🧧 ✉️ 📩 📨 📧 💌 📥 📤 📦 🏷 🪧 📪 📫 📬 📭 📮 📯 📜 📃 📄 📑 🧾 📊 📈 📉 🗒 🗓 📆 📅 🗑 📇 🗃 🗳 🗄 📋 📁 📂 🗂 🗞 📰 📓 📔 📒 📕 📗 📘 📙 📚 📖 🔖 🧷 🔗 📎 🖇 📐 📏 🧮 📌 📍 ✂️ 🖊 🖋 ✒️ 🖌 🖍 📝 ✏️ 🔍 🔎 🔏 🔐 🔒 🔓
                                     </div>
-                                    <textarea class="form-control" name="" id="message" rows="8"></textarea>
+                                    <textarea class="form-control" name="" id="mimensaje" rows="8"></textarea>
                                     <label class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" id="option1" name="gender" value="option1" checked>
                                         <span class="form-check-label"> Texto </span>
                                     </label>
-                                    <label class="form-check form-check-inline">
+                                    {{-- <label class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" id="option2" name="gender" value="option2">
                                         <span class="form-check-label"> Imagen </span>
-                                    </label>
+                                    </label> --}}
                                     <br>
-                                    <a href="#" onclick="send()" class="btn btn-sm btn-primary">Enviar</a>
+                                    <a href="#" onclick="send_whatsapp()" class="btn btn-sm btn-primary">Enviar</a>
                                 </div>
                                 @break
                             @default
@@ -1312,6 +1324,27 @@
 <!-- -------------------CARGADO DE JS----------------------- -->
 
 @switch($dataType->getTranslatedAttribute('slug'))
+    @case('chatbots')
+        @section('javascript')
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="https://socket.loginweb.dev/socket.io/socket.io.js"></script>
+            <script>
+                const socket = io('https://socket.loginweb.dev')
+                const socket_ventas = "{{ setting('notificaciones.venta') }}";
+                const socket_cocina = "{{ setting('notificaciones.cocina') }}";
+
+                async function send_whatsapp() {
+
+                    var phone = $('#micliente').val()
+                    var message = $('#mimensaje').val()
+                    console.log(phone)
+                    console.log(message)
+                    var send = await axios.get("{{ setting('notificaciones.url_chatbot') }}?phone="+phone+"&type=text"+"&message="+message)
+                    toastr.success('Mensaje Enviado')
+                }
+            </script>
+        @stop
+    @break
     @case('cocinas')
         @section('javascript')
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -1319,11 +1352,8 @@
         <script src="{{url('js/ventas.js')}}"></script>
             <script>
                 const socket = io('https://socket.loginweb.dev')
-                const socket_ventas = "{{ setting('notificaciones.socket') }}";
-                const socket_cocina = "{{ setting('notificaciones.socket_cocina') }}";
-                // socket.on(socket_ventas, (msg) =>{
-                //     toastr.success('La Cocina Libero el Pedido: '+msg);
-                // })
+                const socket_ventas = "{{ setting('notificaciones.venta') }}";
+                const socket_cocina = "{{ setting('notificaciones.cocina') }}";
             </script>
         @stop
     @break
@@ -1334,8 +1364,8 @@
             <script src="https://socket.loginweb.dev/socket.io/socket.io.js"></script>
             <script>
                 const socket = io('https://socket.loginweb.dev')
-                const name_socket = "{{ setting('notificaciones.socket') }}";
-                const socket_cocina = "{{ setting('notificaciones.socket_cocina') }}";
+                const name_socket = "{{ setting('notificaciones.venta') }}";
+                const socket_cocina = "{{ setting('notificaciones.cocina') }}";
                 socket.on(socket_cocina, (msg) =>{
                     toastr.success('La Cocina Libero el Pedido: '+msg);
                 })
@@ -2265,31 +2295,46 @@
                 async function venta_caja() {
                     $('#productos_caja tbody').empty();
                     var user_id = '{{ Auth::user()->id }}';
-                    var misventas = await axios("{{ setting('admin.url') }}api/pos/ventas/caja/"+$("input[name='caja_id']").val()+'/'+user_id);
+                    // var cliente_pagina_id= {{setting('ventas.cliente_pag_id')}};
+                    // var chatbot_id={{setting('ventas.chatbot_id')}};
+
+                    // console.log(cliente_pagina_id);
+                    // console.log(chatbot_id);
+
+                    var misventas = await axios("{{ setting('admin.url') }}api/pos/ventas/caja/"+$("input[name='caja_id']").val()+"/"+user_id);
 
                     for (let index = 0; index < misventas.data.length; index++) {
-                        var banipay = await axios("{{ setting('admin.url') }}api/pos/banipay/get/"+misventas.data[index].id);
-                        var milink = "{{ setting('banipay.url_base') }}"+banipay.data.urlTransaction
+                        console.log(misventas.data[index].register_id);
 
-                        if(misventas.data[index].pasarela.id=="{{setting('ventas.banipay_1')}}"||misventas.data[index].pasarela.id=="{{setting('ventas.banipay_2')}}"){
+                        // if(misventas.data[index].register_id==user_id||misventas.data[index].register_id==cliente_pagina_id||misventas.data[index].register_id==chatbot_id){}
+                            //console.log("Hola");
 
-                            if(misventas.data[index].option_id=="{{ setting('ventas.pedido_domicilio_id') }}"){
-                            $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"<br><a href='"+milink+"' target='_blank'>Link de Pago</a></td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td><a href='#deliverys' aria-controls='deliverys' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' onclick='set_chofer("+misventas.data[index].id+")'>Chofer</a></td></tr>");
+                            var banipay = await axios("{{ setting('admin.url') }}api/pos/banipay/get/"+misventas.data[index].id);
+                            var milink = "{{ setting('banipay.url_base') }}"+banipay.data.urlTransaction
+
+                            if(misventas.data[index].pasarela.id=="{{setting('ventas.banipay_1')}}"||misventas.data[index].pasarela.id=="{{setting('ventas.banipay_2')}}"){
+
+                                if(misventas.data[index].option_id=="{{ setting('ventas.pedido_domicilio_id') }}"||misventas.data[index].option_id=="{{ setting('ventas.delivery_zona1') }}"||misventas.data[index].option_id=="{{ setting('ventas.delivery_zona2') }}"){
+                                    //console.log("Entró al 1 - "+misventas.data[index].id);
+                                    $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"<br><a href='"+milink+"' target='_blank'>Link de Pago</a></td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td><a href='#deliverys' aria-controls='deliverys' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' onclick='set_chofer("+misventas.data[index].id+")'>Chofer</a></td></tr>");
+                                }
+                                else{
+                                    $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"<br><a href='"+milink+"' target='_blank'>Link de Pago</a></td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td></td></tr>");
+                                }
+
                             }
                             else{
-                                $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"<br><a href='"+milink+"' target='_blank'>Link de Pago</a></td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td></td></tr>");
+
+                                if(misventas.data[index].option_id=="{{ setting('ventas.pedido_domicilio_id') }}"||misventas.data[index].option_id=="{{ setting('ventas.delivery_zona1') }}"||misventas.data[index].option_id=="{{ setting('ventas.delivery_zona2') }}"){
+                                    //console.log("Entró al 2 - "+misventas.data[index].id);
+
+                                    $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"</td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td><a href='#deliverys' aria-controls='deliverys' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' onclick='set_chofer("+misventas.data[index].id+")'>Chofer</a></td></tr>");
+                                }
+                                else{
+                                    $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"</td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td></td></tr>");
+                                }
                             }
 
-                        }
-                        else{
-
-                            if(misventas.data[index].option_id=="{{ setting('ventas.pedido_domicilio_id') }}"){
-                                $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"</td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td><a href='#deliverys' aria-controls='deliverys' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' onclick='set_chofer("+misventas.data[index].id+")'>Chofer</a></td></tr>");
-                            }
-                            else{
-                                $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"</td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td></td></tr>");
-                            }
-                        }
                     }
                 }
 

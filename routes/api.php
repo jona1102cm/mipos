@@ -68,16 +68,16 @@ Route::get('pedido/save/{midata}', function ($midata) {
         'option_id' => $midata2->option_id,
         'pago_id' => $midata2->pago_id,
         'factura' => 'Recibo',
-        'credito'=> 0,
+        'credito'=> $midata2->credito,
         'total' => $midata2->total,
         'descuento' => $midata2->descuento,
         'observacion' => $midata2->observacion,
-        'register_id' => setting('catalogo-en-linea.cliente_pag_id'),
+        'register_id' => $midata2->register_id,
         'status_id' => 1,
-        'caja_id' => 1,
-        'delivery_id' => 1,
+        'caja_id' => setting('ventas.caja_aux_suc_principal'),
+        'delivery_id' => $midata2->delivery_id,
         'sucursal_id' => 1,
-        'subtotal' => null,
+        'subtotal' => $midata2->subtotal,
         'caja_status' => false,
         'ticket' => $ticket + 1,
         'cantidad' => 0,
@@ -85,7 +85,8 @@ Route::get('pedido/save/{midata}', function ($midata) {
         'cambio' => 0,
         'chofer_id'=> setting('ventas.chofer'),
         'adicional'=> 0,
-        'location' => $midata2->location
+        'location' => $midata2->location,
+        'pensionado_id'=> $midata2->pensionado_id
     ]);
     return $newventa;
 });
@@ -98,7 +99,7 @@ Route::get('pedido/products/save/{midata}', function($midata) {
         'venta_id' => $midata2->venta_id,
         'precio' => $midata2->precio,
         'cantidad' => $midata2->cantidad,
-        // 'total' => $midata2->total,
+        'total' => $midata2->precio*$midata2->cantidad,
         'foto' =>  $miproducto->image ? $miproducto->image : null,
         'name' => $midata2->name,
         'description' => $midata2->description,
@@ -481,7 +482,7 @@ Route::get('pos/choferes', function(){
 });
 
 Route::get('pos/choferes/deudas/{chofer_id}/{caja_id}', function($chofer_id, $caja_id){
-    $ventas= Venta::where('chofer_id', $chofer_id)->where('caja_id', $caja_id)->where('caja_status', false)->with('cliente')->with('delivery')->get();
+    $ventas= Venta::where('chofer_id', $chofer_id)->where('caja_id', $caja_id)->where('caja_status', false)->with('cliente')->with('delivery')->with('pasarela')->get();
     return $ventas;
 });
 
@@ -554,6 +555,11 @@ Route::get('pos/venta/{id}', function ($id) {
 // TODAS LAS VENTAS POR CAJA
 Route::get('pos/ventas/caja/{caja_id}/{user_id}', function ($caja_id, $user_id) {
     return  Venta::where('register_id', $user_id)->where('caja_id', $caja_id)->where('caja_status', false)->with('cliente', 'delivery','chofer', 'pasarela')->orderBy('created_at','desc')->get();
+});
+
+// TODAS LAS VENTAS POR CAJA DE TODOS
+Route::get('pos/ventas/cajas/todas/{caja_id}', function ($caja_id) {
+    return  Venta::where('caja_id', $caja_id)->where('caja_status', false)->with('cliente', 'delivery','chofer', 'pasarela')->orderBy('created_at','desc')->get();
 });
 
 // VENTA POR ID
@@ -680,6 +686,13 @@ Route::get('pos/pensionados', function(){
     $pensionados = Pensionado::where('status', 1)->with('cliente')->get();
     // $clientes= Cliente::find($pensionados->cliente_id);
     return $pensionados;
+});
+
+//PENSIONADO ACTIVO
+Route::get('pos/pensionado/cliente/{id}', function($id){
+    $pensionado = Pensionado::where('cliente_id',$id)->where('status', 1)->first();
+    // $clientes= Cliente::find($pensionados->cliente_id);
+    return $pensionado;
 });
 
 //ACTUALIZAR PENSIONADOS

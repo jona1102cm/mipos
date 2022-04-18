@@ -10,7 +10,7 @@
     <!-- Favicon -->
     <?php $admin_favicon = Voyager::setting('admin.icon_image', ''); ?>
     <link rel="shortcut icon" href="{{ Voyager::image($admin_favicon) }}" type="image/png">
- 
+
 
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -64,7 +64,7 @@
             20%   {border: 10px solid #FB3532;}
             80%  {border: 10px solid rgba(0, 0, 0, 0.7);}
         }
-    
+
         @-webkit-keyframes colorchange /* Safari and Chrome - necessary duplicate */
         {
             0%  {border: 10px solid rgba(0, 0, 0, 0.7);}
@@ -119,7 +119,7 @@
                 <div class="row">
                     <h1 class="title">{{ setting('empresa.title') }} <img src="{{ url('storage').'/'.setting('empresa.logo') }}" width="100px" alt=""></h1>
                 </div>
-              
+
                 <audio id="audio">
                     <source type="audio/mp3" src="iphone-notificacion.mp3">
                 </audio>
@@ -131,7 +131,7 @@
             </div>
         </div>
     </div>
-    
+
     @endif
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -142,7 +142,7 @@
     <script>
         document.getElementById("audio").play();
         const socket = io('https://socket.loginweb.dev')
-        socket.on("{{ setting('notificaciones.socket_cocina') }}", (msg) =>{
+        socket.on("{{ setting('notificaciones.cocina') }}", (msg) =>{
             location.reload();
         })
     </script>

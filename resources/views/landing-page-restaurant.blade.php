@@ -7,10 +7,18 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <title>{{ setting('site.title') }}</title>
   <link rel="icon" type="image/x-icon" href="{{ setting('admin.url').'storage/'.setting('site.logo') }}">
+
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
   <link href="{{ asset('mdb/css/bootstrap.min.css') }}" rel="stylesheet">
   <link href="{{ asset('mdb/css/mdb.min.css') }}" rel="stylesheet">
   <meta name="theme-color" content="{{ setting('site.color') }}">
+
+  <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="{{ setting('site.title') }}">
+    <link rel="icon" sizes="512x512" href="{{ setting('admin.url').'storage/'.setting('site.logo') }}">
+
+
   <style type="text/css">
     html,
     body,
