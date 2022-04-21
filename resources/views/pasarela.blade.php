@@ -302,9 +302,9 @@
                         console.log('default')
                         break;
                 }
-                var minoti = await socket.emit("{{ setting('notificaciones.socket') }}", JSON.stringify(newpedido));
 
-                //chatbot
+                //Notifications
+                var minoti = await socket.emit("{{ setting('notificaciones.venta') }}", JSON.stringify(newpedido));
                 var phone = micliente.data.phone
                 var miurl= "{{ setting('admin.url').'page/consultas' }}"
                 var message = "Gracias por tu preferencia 🙂, Para ver tu compra completa, dirigite a siguiente link 🔎"

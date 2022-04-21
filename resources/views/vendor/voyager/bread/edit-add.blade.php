@@ -856,7 +856,7 @@
                             <ul class="nav nav-tabs" role="tablist">
                                 <li role="presentation" class="active"><a href="#miventas" aria-controls="miventas" role="tab" data-toggle="tab">Mis Ventas</a></li>
                                 <li role="presentation"><a href="#deliverys" aria-controls="deliverys" role="tab" data-toggle="tab">Deliverys</a></li>
-                                <li role="presentation"><a href="#deliverys" aria-controls="deliverys" role="tab" data-toggle="tab">Caja CHATBOT</a></li>
+                                {{-- <li role="presentation"><a href="#deliverys" aria-controls="deliverys" role="tab" data-toggle="tab">Caja CHATBOT</a></li> --}}
                             </ul>
 
                             <div class="tab-content">
@@ -1376,6 +1376,7 @@
                 })
 
                 $('document').ready(function () {
+
                     $('.js-example-basic-single').select2();
                     $('input[name="register_id"]').val('{{ Auth::user()->id }}');
                     $('input[name="chofer_id"]').val("{{setting('ventas.chofer')}}");
@@ -1565,7 +1566,7 @@
                     Opciones();
                     //PensionadoDefault();
                     Pensionados();
-                    DesactivarPensionados();
+                    //DesactivarPensionados();
 
                     //-----------------------
                     if (localStorage.getItem('micart')) {
@@ -1577,6 +1578,7 @@
                 });
 
                 async function DesactivarPensionados(){
+
                     var table=await axios.get("{{ setting('admin.url') }}api/pos/pensionados");
 
                     for(let index=0;index < table.data.length;index++){
@@ -1587,6 +1589,7 @@
                         if(aux<0){
                         var actualizar= await axios("{{ setting('admin.url') }}api/pos/pensionados/actualizar/"+table.data[index].id);
                         }
+
                         Pensionados();
                     }
 
@@ -2025,6 +2028,12 @@
                     $("#asiento_list tbody tr").remove();
                     var mitable = "";
                     var editor = '{{ Auth::user()->id; }}';
+                    var total_banipay_ingresos=0;
+                    var total_banipay_egresos=0;
+                    var total_efectivo_ingresos=0;
+                    var total_efectivo_egreso=0;
+                    var total_efectivo_egresos=0;
+
                     var micaja = JSON.parse(localStorage.getItem('micaja'));
                     var midata = JSON.stringify({caja_id: micaja.caja_id, editor_id: editor});
                     var urli = "{{ setting('admin.url') }}api/pos/asientos/caja/editor/"+midata;
@@ -2041,14 +2050,32 @@
 
                                     if (response[index].pago == 0) {
                                         var pagotext="En Linea";
+                                        if(response[index].type=="Ingresos"){
+                                            total_banipay_ingresos+=response[index].monto;
+                                        }
+                                        else{
+                                            total_banipay_egresos+=response[index].monto;
+                                        }
                                     }
                                     if (response[index].pago == 1){
                                         var pagotext="En Efectivo";
+                                        if(response[index].type=="Ingresos"){
+                                            total_efectivo_ingresos+=response[index].monto;
+                                        }
+                                        else{
+                                            total_efectivo_egresos+=response[index].monto;
+
+                                        }
                                     }
 
                                     mitable = mitable + "<tr><td>"+response[index].id+"</td><td>"+response[index].type+"</td><td>"+pagotext+"</td><td>"+response[index].monto+"</td><td>"+response[index].concepto+"</td><td>"+response[index].created_at+"</td></tr>";
                                 }
                                 $('#asiento_list').append(mitable);
+                                if('{{setting('ventas.fila_totales')}}'){
+
+                                    $('#asiento_list').append("<tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>");
+                                    $('#asiento_list').append("<tr><td></td><td><h4>Total Efectivo: <h4></td><td><h4>"+(total_efectivo_ingresos-total_efectivo_egresos)+"</h4></td><td></td><td><h4>Total Banipay: </h4></td><td><h4>"+(total_banipay_ingresos-total_banipay_egresos)+"</h4></td></tr>");
+                                }
                             }
                         }
                     });
@@ -2302,7 +2329,8 @@
                     // console.log(chatbot_id);
 
                     var misventas = await axios("{{ setting('admin.url') }}api/pos/ventas/caja/"+$("input[name='caja_id']").val()+"/"+user_id);
-
+                    var total_efectivo=0;
+                    var total_banipay=0;
                     for (let index = 0; index < misventas.data.length; index++) {
                         console.log(misventas.data[index].register_id);
 
@@ -2313,6 +2341,7 @@
                             var milink = "{{ setting('banipay.url_base') }}"+banipay.data.urlTransaction
 
                             if(misventas.data[index].pasarela.id=="{{setting('ventas.banipay_1')}}"||misventas.data[index].pasarela.id=="{{setting('ventas.banipay_2')}}"){
+                                total_banipay+=misventas.data[index].total;
 
                                 if(misventas.data[index].option_id=="{{ setting('ventas.pedido_domicilio_id') }}"||misventas.data[index].option_id=="{{ setting('ventas.delivery_zona1') }}"||misventas.data[index].option_id=="{{ setting('ventas.delivery_zona2') }}"){
                                     //console.log("Entró al 1 - "+misventas.data[index].id);
@@ -2324,6 +2353,7 @@
 
                             }
                             else{
+                                total_efectivo+=misventas.data[index].total;
 
                                 if(misventas.data[index].option_id=="{{ setting('ventas.pedido_domicilio_id') }}"||misventas.data[index].option_id=="{{ setting('ventas.delivery_zona1') }}"||misventas.data[index].option_id=="{{ setting('ventas.delivery_zona2') }}"){
                                     //console.log("Entró al 2 - "+misventas.data[index].id);
@@ -2335,6 +2365,11 @@
                                 }
                             }
 
+                    }
+                    if('{{setting('ventas.fila_totales')}}'){
+
+                        $("#productos_caja").append("<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>");
+                        $("#productos_caja").append("<tr><td></td><td><h4>Total Ventas Efectivo: </h4></td><td><h4>"+total_efectivo+"</h4></td><td></td><td></td><td><h4>Total Ventas Banipay: </h4></td><td><h4>"+total_banipay+"</h4></td><td></td><td></td><td></td><td></td></tr>");
                     }
                 }
 
@@ -2505,6 +2540,9 @@
                                     $("#micart tr#"+micart[index].id).remove();
                                     mitotal();
                                 }
+                                if(venta.data.credito=="Credito"){
+                                   CrearCredito(venta.data.id, venta.data.cliente_id);
+                                }
                                 break;
                             case '2':
                                 var venta = await axios.get("{{ setting('admin.url') }}api/pos/ventas/save/"+midata)
@@ -2546,6 +2584,8 @@
                             toastr.success('Venta Realizada');
                         }
                     }
+                    location.reload();
+
                 }
 
                 $('#category').on('change', function() {
@@ -2764,6 +2804,29 @@
                     mitotal();
 
                 }
+                async function CrearCredito(venta, cliente){
+                    //console.log(venta);
+                    var table=await axios("{{setting('admin.url')}}api/pos/venta/"+venta);
+
+
+                        //console.log(table.data);
+                        var venta_id=venta;
+                        var cliente_id=cliente;
+                        var deuda=table.data.subtotal;
+                        //console.log(deuda);
+                        var cuota=table.data.total;
+                        var restante=parseFloat(deuda).toFixed(2)-parseFloat(cuota).toFixed(2);
+                        if(restante<=0){
+                            var status=1;
+                        }
+                        else{
+                            var status=0;
+                        }
+
+                        var midata = JSON.stringify({'venta_id':venta_id,'cliente_id':cliente_id,'deuda':deuda,'cuota':cuota,'restante':restante,'status':status});
+
+                        var table= await axios("{{setting('admin.url')}}api/pos/cobrar-credito/"+midata);
+                }
 
                 async function updatecant(id) {
 
@@ -2862,41 +2925,11 @@
 
                     // PRODUCTOS PRE ELABORADO
                     InsumosSemi();
-                    // $.ajax({
-                    //     url: "{{ setting('admin.url') }}api/pos/productosemi",
-                    //     dataType: "json",
-                    //     success: function (response) {
-                    //         $('#prod_semi').append($('<option>', {
-                    //             value: null,
-                    //             text: 'Elige un Pre Elaborado'
-                    //         }));
-                    //         for (let index = 0; index < response.length; index++) {
-                    //             $('#prod_semi').append($('<option>', {
-                    //                 value: response[index].id,
-                    //                 text: response[index].name
-                    //             }));
-                    //         }
-                    //     }
-                    // });
+
 
                     // PRODUCTOS PARA PRODUCCION
                     ProductosProduction();
-                    // $.ajax({
-                    //     url: "{{ setting('admin.url') }}api/pos/productos/production",
-                    //     dataType: "json",
-                    //     success: function (response) {
-                    //         $('#new_producto_id').append($('<option>', {
-                    //             value: null,
-                    //             text: 'Elige un Producto'
-                    //         }));
-                    //         for (let index = 0; index < response.length; index++) {
-                    //             $('#new_producto_id').append($('<option>', {
-                    //                 value: response[index].id,
-                    //                 text: response[index].name
-                    //             }));
-                    //         }
-                    //     }
-                    // });
+
 
                     // CARGADO DE SESSION INSUMOS
                     if (localStorage.getItem('miproduction')) {
@@ -2924,127 +2957,34 @@
 
                     // TODOS LOS INSUMOS
 
-
                     insumos();
 
-                    // $.ajax({
-                    //     url: "{{ setting('admin.url') }}api/pos/insumos",
-                    //     dataType: "json",
-                    //     success: function (response) {
-                    //         $('#insumos').append($('<option>', {
-                    //             value: null,
-                    //             text: 'Elige un Insumo'
-                    //         }));
-                    //         for (let index = 0; index < response.length; index++) {
-                    //             const element = response[index];
-                    //             $('#insumos').append($('<option>', {
-                    //                 value: response[index].id,
-                    //                 text: response[index].name
-                    //             }));
-                    //         }
-                    //     }
-                    // });
 
-                    //-------------------
-                    // $.ajax({
-                    //     url: "{{ setting('admin.url') }}api/pos/unidades",
-                    //     dataType: "json",
-                    //     success: function (response) {
-                    //         $('#unidades').append($('<option>', {
-                    //             value: null,
-                    //             text: 'Elige una Unidad'
-                    //         }));
-                    //         for (let index = 0; index < response.length; index++) {
-                    //             const element = response[index];
-                    //             $('#unidades').append($('<option>', {
-                    //                 value: response[index].id,
-                    //                 text: response[index].title
-                    //             }));
-                    //         }
-                    //     }
-                    // });
-
-
-                    // TODOS LOS INSUMOS SEMI
-
-                    $.ajax({
-                            url: "{{ setting('admin.url') }}api/pos/insumos",
-                            dataType: "json",
-                            success: function (response) {
-                                $('#insumossemi').append($('<option>', {
-                                    value: null,
-                                    text: 'Elige un Insumo'
-                                }));
-                                for (let index = 0; index < response.length; index++) {
-                                    const element = response[index];
-                                    $('#insumossemi').append($('<option>', {
-                                        value: response[index].id,
-                                        text: response[index].name
-                                    }));
-                                }
-                            }
-                        });
 
                     Unidades();
 
-                    //--------------------------------
-                    // $.ajax({
-                    //         url: "{{ setting('admin.url') }}api/pos/unidades",
-                    //         dataType: "json",
-                    //         success: function (response) {
-                    //             $('#unidadessemi').append($('<option>', {
-                    //                 value: null,
-                    //                 text: 'Elige una Unidad'
-                    //             }));
-                    //             for (let index = 0; index < response.length; index++) {
-                    //                 const element = response[index];
-                    //                 $('#unidadessemi').append($('<option>', {
-                    //                     value: response[index].id,
-                    //                     text: response[index].title
-                    //                 }));
-                    //             }
-                    //         }
-                    //     });
 
                     //PROVEDORES
-                    $.ajax({
-                        url: "{{ setting('admin.url') }}api/pos/proveedores",
-                        dataType: "json",
-                        success: function (response) {
-                            // $('#proveedorelab').append($('<option>', {
-                            //     value: null,
-                            //     text: 'Elige un Proveedor'
-                            // }));
-                            for (let index = 0; index < response.length; index++) {
-                                const element = response[index];
-                                $('#proveedorelab').append($('<option>', {
-                                    value: response[index].id,
-                                    text: response[index].name
-                                }));
-                            }
-                        }
-                    });
+                    ProveedoresProduction();
 
-                    //--------------
-                    $.ajax({
-                            url: "{{ setting('admin.url') }}api/pos/proveedores",
-                            dataType: "json",
-                            success: function (response) {
-                                $('#proveedorsemi').append($('<option>', {
-                                    value: null,
-                                    text: 'Elige un Proveedor'
-                                }));
-                                for (let index = 0; index < response.length; index++) {
-                                    const element = response[index];
-                                    $('#proveedorsemi').append($('<option>', {
-                                        value: response[index].id,
-                                        text: response[index].name
-                                    }));
-                                }
-                            }
-                        });
+
 
                 });
+
+                async function ProveedoresProduction() {
+                    var table= await axios.get("{{ setting('admin.url') }}api/pos/proveedores");
+                    // $('#proveedorelab').append($('<option>', {
+                    //     value: null,
+                    //     text: 'Elige un Proveedor'
+                    // }));
+                    for (let index = 0; index < table.data.length; index++) {
+                        const element = table.data[index];
+                        $('#proveedorelab').append($('<option>', {
+                            value: table.data[index].id,
+                            text: table.data[index].name
+                        }));
+                    }
+                }
 
                 async function InsumosSemi(){
                     var table = await axios.get("{{ setting('admin.url') }}api/pos/productosemi");
@@ -3072,7 +3012,7 @@
                     for (let index = 0; index < table.data.length; index++) {
                         $('#new_producto_id').append($('<option>', {
                             value: table.data[index].id,
-                            text: table.data[index].name
+                            text: table.data[index].categoria.name+' '+table.data[index].name
                         }));
                     }
                 }
@@ -3121,24 +3061,8 @@
                     if (mirep) {
                         toastr.warning(thisvalue+ 'Elaborado Repetido');
                     }else{
-                        // var idpro = $('#proveedorelab').val();
-                        // var miprotext = $('#proveedorelab option:selected').text();
                         AgregarInsumoPre(this.value);
-                        // $.ajax({
-                        //     url: "{{ setting('admin.url') }}api/pos/productopreid/"+this.value,
-                        //     dataType: "json",
-                        //     success: function (jchavez) {
-                        //         var cod = Math.floor(Math.random() * 999) + 800;
 
-                        //         $("#miproduction").append("<tr id="+cod+"><td>"+cod+"</td><td>elaborado</td><td>"+jchavez.id+"</td><td>"+jchavez.name+"</td><td>"+miprotext +"</td><td><input class='form-control' type='number' value='"+jchavez.costo+"' id='costo_"+jchavez.id+"' ></td><td><input class='form-control' type='number' onclick='updatemiproduction("+jchavez.id+")' value='1' id='cant_"+jchavez.id+"'></td><td><input class='form-control' type='number' value='"+jchavez.costo+"' id='total_"+jchavez.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='mideleteInsumo("+cod+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
-
-                        //         var temp = {'cod': cod, 'type': 'elaborado', 'idpro' :idpro,'id': jchavez.id, 'name': jchavez.name, 'proveedor_text': miprotext, 'costo': jchavez.costo, 'cant': 1, 'total': jchavez.costo};
-                        //         miproduction.push(temp);
-                        //         localStorage.setItem('miproduction', JSON.stringify(miproduction));
-                        //         mitotal2();
-                        //         toastr.success('Agreado Insumo: '+jchavez.name);
-                        //     }
-                        // });
                     }
                 });
                 async function AgregarInsumoPre(id){
@@ -3217,25 +3141,7 @@
 
                 $('#unidades').on('change', function() {
                     InsumosPorUnidad(this.value);
-                    // $.ajax({
-                    //     type: "get",
-                    //     url: "{{ setting('admin.url') }}api/pos/insumo/unidad/"+this.value,
-                    //     dataType: "json",
-                    //     success: function (response) {
-                    //         $('#insumos').find('option').remove().end();
-                    //         $('#insumos').append($('<option>', {
-                    //             value: null,
-                    //             text: 'Elige un Insumo'
-                    //         }));
-                    //         for (let index = 0; index < response.length; index++) {
-                    //             const element = response[index];
-                    //             $('#insumos').append($('<option>', {
-                    //                 value: response[index].id,
-                    //                 text: response[index].name
-                    //             }));
-                    //         }
-                    //     }
-                    // });
+
                 });
 
                 async function InsumosPorUnidad(id){
@@ -3257,25 +3163,7 @@
 
                 $('#unidadessemi').on('change', function() {
                     InsumosPorUnidadSemi(this.value);
-                    // $.ajax({
-                    //     type: "get",
-                    //     url: "{{ setting('admin.url') }}api/pos/insumo/unidad/"+this.value,
-                    //     dataType: "json",
-                    //     success: function (response) {
-                    //         $('#insumossemi').find('option').remove().end();
-                    //         $('#insumossemi').append($('<option>', {
-                    //             value: null,
-                    //             text: 'Elige un Insumo'
-                    //         }));
-                    //         for (let index = 0; index < response.length; index++) {
-                    //             const element = response[index];
-                    //             $('#insumossemi').append($('<option>', {
-                    //                 value: response[index].id,
-                    //                 text: response[index].name
-                    //             }));
-                    //         }
-                    //     }
-                    // });
+
                 });
 
                 async function InsumosPorUnidadSemi(id){
@@ -3310,26 +3198,8 @@
                     if (mirep) {
                         toastr.warning('Insumo Repetido');
                     }else{
-                        // var idpro = $('#proveedorelab').val();
-                        // var miprotext = $('#proveedorelab option:selected').text();
                         AgregarInsumoSimple(this.value);
-                        // $.ajax({
-                        //     url: "{{ setting('admin.url') }}api/pos/insumos/"+this.value,
-                        //     dataType: "json",
-                        //     success: function (jchavez) {
-                        //         var cod = Math.floor(Math.random() * 999) + 800;
 
-                        //         $("#miproduction").append("<tr id="+cod+"><td>"+cod+"</td><td>simple</td><td>"+jchavez.id+"</td><td>"+jchavez.name+"</td><td>"+miprotext +"</td><td><input class='form-control' type='number' onclick='updatemiproduction("+jchavez.id+")' value='"+jchavez.costo+"' id='costo_"+jchavez.id+"' ></td><td><input class='form-control' type='number' onclick='updatemiproduction("+jchavez.id+")' value='1' min='1' id='cant_"+jchavez.id+"'></td><td><input class='form-control' type='number' value='"+jchavez.costo+"' id='total_"+jchavez.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='mideleteInsumo("+cod+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
-
-
-
-                        //         var temp = {'cod': cod, 'type': 'simple', 'idpro' :idpro, 'id': jchavez.id, 'name': jchavez.name, 'proveedor_text': miprotext, 'costo': jchavez.costo, 'cant': 1, 'total': jchavez.costo};
-                        //         miproduction.push(temp);
-                        //         localStorage.setItem('miproduction', JSON.stringify(miproduction));
-                        //         mitotal2();
-                        //         toastr.success('Agreado Insumo: '+thisvalue);
-                        //     }
-                        // });
                     }
                 });
 
@@ -3385,24 +3255,8 @@
                     if (mirep) {
 
                     }else{
-                        // var mipro = $('#proveedorsemi').val();
-                        // var miprotext = $('#proveedorsemi option:selected').text();
                         AgregarInsumoSimpleSemi(id);
-                    // $.ajax({
-                    //     url: "{{ setting('admin.url') }}api/pos/insumos/"+id,
-                    //     dataType: "json",
-                    //     success: function (jchavez) {
 
-
-                    //         $("#miprodsemi").append("<tr id="+jchavez.id+"><td>"+jchavez.id+"</td><td>"+jchavez.name+"</td><td>"+miprotext +"</td><td><input class='form-control' type='number' onclick='updatemiproduction("+jchavez.id+")' value='"+jchavez.costo+"' id='costo_"+jchavez.id+"' ></td><td><input class='form-control' type='number' onclick='updatemiproductionsemi("+jchavez.id+")' value='1' min='1' id='cant_"+jchavez.id+"'></td><td><input class='form-control' type='number' value='"+jchavez.costo+"' id='total_"+jchavez.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='mideleteInsumosemi("+jchavez.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
-
-
-                    //         var temp = {'id': jchavez.id, 'name': jchavez.name,'proveedor': mipro, 'proveedor_text': miprotext, 'costo': jchavez.costo, 'cant': 1, 'total': jchavez.costo};
-                    //         miproduction.push(temp);
-                    //         localStorage.setItem('miprodsemi', JSON.stringify(miproduction));
-                    //         mitotal3();
-                    //         }
-                    //     });
                     }
                 }
 

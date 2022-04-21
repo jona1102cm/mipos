@@ -33,6 +33,7 @@ use App\Banipay;
 use App\Compra;
 use App\Location;
 use App\Credito;
+use App\Notificacione;
 
 use Illuminate\Support\Facades\DB;
 /*
@@ -87,7 +88,8 @@ Route::get('pedido/save/{midata}', function ($midata) {
         'chofer_id'=> setting('ventas.chofer'),
         'adicional'=> 0,
         'location' => $midata2->location,
-        'pensionado_id'=> $midata2->pensionado_id
+        'pensionado_id'=> $midata2->pensionado_id,
+        'status_credito'=> 0
     ]);
     return $newventa;
 });
@@ -109,6 +111,7 @@ Route::get('pedido/products/save/{midata}', function($midata) {
     ]);
     return true;
 });
+
 Route::get('cliente/{midata}', function ($midata) {
     $midata2 = json_decode($midata);
     $cliente = Cliente::where('phone', $midata2->telefono)->first();
@@ -126,6 +129,7 @@ Route::get('cliente/{midata}', function ($midata) {
         return $newcliente;
     }
 });
+
 Route::get('location/{midata}', function ($midata) {
     $midata2 = json_decode($midata);
     $location = Location::where('cliente_id', $midata2->cliente_id)->where('descripcion', $midata2->direccion)->first();
@@ -142,8 +146,8 @@ Route::get('location/{midata}', function ($midata) {
         return $newlocation;
     }
 });
-Route::get('consulta/{phone}', function ($phone) {
 
+Route::get('consulta/{phone}', function ($phone) {
     $cliente = Cliente::where('phone', $phone)->first();
     if ($cliente) {
         return $cliente;
@@ -151,14 +155,17 @@ Route::get('consulta/{phone}', function ($phone) {
         return  response()->json(array('message' => 'Cliente NO Registrado' ));
     }
 });
+
 Route::get('pedidos/cliente/{id}', function ($id) {
     $midata = Venta::where('cliente_id', $id)->where('caja_status', false)->with('pasarela', 'estado', 'delivery', 'cupon')->orderBy('created_at', 'desc')->get();
     return $midata;
 });
+
 Route::get('pedido/detalle/{id}', function ($id) {
     $midata = DetalleVenta::where('venta_id', $id)->orderBy('created_at', 'desc')->get();
     return $midata;
 });
+
 Route::get('option/{id}', function ($id) {
     $midata = Option::find($id);
     return $midata;
@@ -179,6 +186,17 @@ Route::get('cupon/{codigo}', function ($codigo) {
     return $result;
 });
 
+//notificaiones
+Route::get('notificaciones', function () {
+    $result = Notificacione::all();
+    return $result;
+});
+Route::get('notificacione/save/{message}', function ($message) {
+    $minoti = Notificacione::create([
+        'message' => $message,
+    ]);
+    return $minoti;
+});
 // --------------------------------------- VENTAS  ------------------------------------------
 // --------------------------------------- VENTAS  ------------------------------------------
 
@@ -665,6 +683,15 @@ Route::get('pos/chofer/set/{venta_id}/{chofer_id}', function ($id, $chofer_id) {
     return  true;
 });
 
+//Actualizar Status Credito en la venta
+Route::get('pos/status_credito/actualizar/{venta_id}', function ($id) {
+
+    $venta = Venta::find($id);
+    $venta->status_credito = 0;
+    $venta->save();
+    return  true;
+});
+
 //TODO ESTO ES PARA PRODUCCIÓN BY JONATHAN--------------------------------------
 //--  TODOS LOS INSUMOS
 Route::get('pos/insumos', function () {
@@ -896,7 +923,7 @@ Route::get('pos/productions/savesemi/detalle/{miproduction}', function($miproduc
 
 //PRODUCTIOS PARA PRODUCCION
 Route::get('pos/productos/production', function () {
-    return  Producto::where('production', true)->get();
+    return  Producto::where('production', true)->with('categoria')->get();
 });
 
 // MOVIL

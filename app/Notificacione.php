@@ -11,5 +11,7 @@ class Notificacione extends Model
 {
 
     use SoftDeletes;
-
+	protected $fillable = [
+		'message'
+	];
 }

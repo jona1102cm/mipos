@@ -70,6 +70,9 @@
                 <a href="{{ url('admin/productions') }}" class="btn btn-default btn-add-new" title="">
                     <i class="voyager-puzzle"></i> <span>Producciones</span>
                 </a>
+                <a href="{{ url('admin/proveedores') }}" class="btn btn-default btn-add-new" title="">
+                    <i class="voyager-people"></i> <span>Proveedores</span>
+                </a>
                 @break
             @case('productions')
                 <a href="{{ url('admin/productos-semi-elaborados') }}" class="btn btn-default btn-add-new" title="">
@@ -3831,17 +3834,12 @@
 @endif
 
 
-
-
 <!-- ---------------------JS-------------------  -->
 <!-- ---------------------JS-------------------  -->
-<script src="https://socket.loginweb.dev/socket.io/socket.io.js"></script>
-<script>
-    const socket = io('https://socket.loginweb.dev')
-</script>
 @section('javascript')
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
     @if(!$dataType->server_side && config('dashboard.data_tables.responsive'))
     <script src="{{ voyager_asset('lib/js/dataTables.responsive.min.js') }}"></script>
@@ -3853,9 +3851,6 @@
         $('document').ready(function () {
             $('.js-example-basic-single').select2();
             DesactivarPensionados();
-
-
-
             @if (!$dataType->server_side)
                 var table = $('#dataTable').DataTable({!! json_encode(
                     array_merge([
@@ -3872,7 +3867,6 @@
                     minimumResultsForSearch: Infinity
                 });
             @endif
-
             @if ($isModelTranslatable)
                 $('.side-body').multilingual();
                 //Reinitialise the multilingual features when they change tab
@@ -3887,41 +3881,25 @@
 
         async function DesactivarPensionados(){
             var table=await axios.get("{{ setting('admin.url') }}api/pos/pensionados");
-
             for(let index=0;index < table.data.length;index++){
-
                 var aux= parseInt(CalculoDiasRestantes(table.data[index].fecha_final));
-
-
                 if(aux<0){
                 var actualizar= await axios("{{ setting('admin.url') }}api/pos/pensionados/actualizar/"+table.data[index].id);
                 }
-
             }
-
         }
 
         function CalculoDiasRestantes(fecha_final){
             var today=new Date();
             var fechaInicio =   today.toISOString().split('T')[0];
             var fechaFin    = fecha_final;
-
             var fi=fechaInicio.toString();
             var ff=fechaFin.toString();
-
             var fechai = new Date(fi).getTime();
             var fechaf    = new Date(ff).getTime();
-
             var diff = fechaf - fechai;
-            // console.log(fechai);
-            // console.log(fechaf);
-            // console.log(diff/(1000*60*60*24));
-
-            //console.log(diff/(1000*60*60*24));
             return (diff/(1000*60*60*24));
         }
-
-
 
         var deleteFormAction;
         $('td').on('click', '.delete', function (e) {
@@ -3930,7 +3908,6 @@
         });
 
         @if($usesSoftDeletes)
-
             @php
                 $params = [
                     's' => $search->value,
@@ -3952,6 +3929,7 @@
                 })
             })
         @endif
+
         $('input[name="row_id"]').on('change', function () {
             var ids = [];
             $('input[name="row_id"]').each(function() {
@@ -3962,7 +3940,6 @@
             $('.selected_ids').val(ids);
         });
 
-
         @switch($mislug)
             @case('detalle-ventas')
                 $('document').ready(function () {
@@ -3971,7 +3948,6 @@
                 function getlocation() {
                     var lat = '{{ $location->latitud }}'
                     var lng =  '{{ $location->longitud }}'
-                    // var map = L.map('map').setView([crd.latitude, crd.longitude], 13)
                     var map = L.map('map').setView([lat, lng], 14);
                     L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                         maxZoom: 22
@@ -3981,9 +3957,6 @@
                 }
                 @break
             @case('cocinas')
-                socket.on("{{ setting('notificaciones.socket') }}", (msg) =>{
-                    location.reload();
-                })
                 function cocina(id) {
                     $.ajax({
                         url: "{{ setting('admin.url') }}api/pos/cocina/"+id,
@@ -3996,15 +3969,9 @@
                 }
                 @break
             @case('ventas')
-                socket.on("{{ setting('notificaciones.socket') }}", (msg) =>{
-                    var msg = JSON.parse(msg);
-                    console.log(msg.data)
-                    location.reload();
-                })
                 $('#search_key').on('change', async function() {
                     $('.js-example-basic-single').select2();
                     switch (this.value) {
-
                         case 'cliente_id':
                             $('#s').find('option').remove().end();
                             $.ajax({
@@ -4023,9 +3990,7 @@
                                     }
                                 }
                             });
-
                             break;
-
                         case 'sucursal_id':
                             $('#s').find('option').remove().end();
                             $.ajax({
@@ -4044,9 +4009,7 @@
                                     }
                                 }
                             });
-
                             break
-
                             case 'delivery_id':
                             $('#s').find('option').remove().end();
                             $.ajax({
@@ -4065,14 +4028,11 @@
                                     }
                                 }
                             });
-
                             break
-
                             case 'chofer_id':
                             $('#s').find('option').remove().end();
                             const queryString = window.location.search;
                             const urlParams = new URLSearchParams(queryString);
-                            // location.href = '{{"setting('admin.url')"}}admin/afiliados/recepciones/imprimir?key='+urlParams.get('key')+'&s='+urlParams.get('s');
                             $.ajax({
                                 url: "{{ setting('admin.url') }}api/pos/choferes/",
                                 dataType: "json",
@@ -4089,9 +4049,7 @@
                                     }
                                 }
                             });
-
                             break
-
                         case 'status_id':
                             $('#s').find('option').remove().end();
                             $.ajax({
@@ -4110,7 +4068,6 @@
                                     }
                                 }
                             });
-
                             break
                         case 'pago_id':
                             $('#s').find('option').remove().end();
@@ -4123,7 +4080,6 @@
                                         text: 'Elige un Tipo de Pago'
                                     }));
                                     for (let index = 0; index < response.length; index++) {
-                                        // const element = response[index];
                                         $('#s').append($('<option>', {
                                             value: response[index].id,
                                             text: response[index].title
@@ -4143,7 +4099,6 @@
                                         text: 'Elige un Cajero'
                                     }));
                                     for (let index = 0; index < response.length; index++) {
-                                        // const element = response[index];
                                         $('#s').append($('<option>', {
                                             value: response[index].id,
                                             text: response[index].name
@@ -4171,7 +4126,6 @@
                                     }
                                 }
                             });
-
                             break
                         case'option_id':
                             $('#s').find('option').remove().end();
@@ -4191,57 +4145,64 @@
                                     value: 'Recoger',
                                     text: 'Para Llevar'
                                 }));
-
-
                             break
-
                         case 'chofer_deudas':
                                 $('#modal_deudas').modal();
-
-
                                 Cajas_Deudas_Choferes();
                                 Choferes_Deudas();
-
                             break
                         case 'pensionado_kardex':
+                            LimpiarKardex();
                             $('#modal_kardex').modal();
-
-                                Sucursales();
-                                Pensionados();
-
+                            Sucursales();
                         break
                         case 'credito':
+                            LimpiarCobroCreditos();
                             $('#modal_cobros').modal();
                             sucursal_consulta();
-
                         break
-
+                        case 'caja_id':
+                        $('#s').find('option').remove().end();
+                                Cajas();
+                        break
                         default:
                             //Declaraciones ejecutadas cuando ninguno de los valores coincide con el valor de la expresión
                             break
                     }
                 });
 
+                async function Cajas() {
+                    var table= await axios.get("{{setting('admin.url')}}api/pos/cajas");
+                    $('#s').append($('<option>', {
+                        value: null,
+                        text: 'Elige una Caja'
+                    }));
+                    for (let index = 0; index < table.data.length; index++) {
+                        $('#s').append($('<option>', {
+                            value: table.data[index].id,
+                            text: table.data[index].title
+                        }));
+                    }
+
+                }
+
                 async function Cajas_Deudas_Choferes(){
                     $('#micajas').find('option').remove().end();
                     var table= await axios.get("{{ setting('admin.url') }}api/pos/cajas");
-
                     $('#micajas').append($('<option>', {
                         value: null,
                         text: 'Elige una Caja'
                     }));
                     for (let index = 0; index < table.data.length; index++) {
-                        // const element = response[index];
                         $('#micajas').append($('<option>', {
                             value: table.data[index].id,
                             text: table.data[index].id + ' - '+ table.data[index].title +' - '+ table.data[index].sucursal.name
                         }));
                     }
-
                 }
+
                 async function Choferes_Deudas() {
                     $('#michoferes').find('option').remove().end();
-
                     var table=await axios.get("{{ setting('admin.url') }}api/pos/choferes/");
                     $('#michoferes').append($('<option>', {
                         value: null,
@@ -4253,14 +4214,11 @@
                             text: table.data[index].name
                         }));
                     }
-
                 }
 
                 function filtro1() {
-
                     $('#table_deudas tbody tr').remove();
                     var urli = "{{ setting('admin.url') }}api/pos/choferes/deudas/"+$("#michoferes").val()+"/"+$("#micajas").val();
-                    //console.log(urli);
                     var mitable = "";
                     var total_efectivo=0;
                     var total_credito=0;
@@ -4303,15 +4261,11 @@
 
                 async function Sucursales(){
                     $('#sucursalpensionado').find('option').remove().end();
-
                     var table = await axios.get("{{setting('admin.url')}}api/pos/sucursales");
-
-                    //$("#sucursalpensionado").val()
                     $('#sucursalpensionado').append($('<option>', {
                         value: 0,
                         text: 'Elige una Sucursal'
                     }));
-
                     for (let index = 0; index < table.data.length; index++) {
                         const element = table.data[index];
                         $('#sucursalpensionado').append($('<option>', {
@@ -4320,17 +4274,17 @@
                         }));
                     }
                 }
+                $('#sucursalpensionado').on('change', function() {
+                    Pensionados();
+
+                });
                 async function Pensionados(){
                     $('#mipensionado').find('option').remove().end();
-
                     var table = await axios.get("{{setting('admin.url')}}api/pos/pensionados");
-                    //$("#mipensionado").val();
-
                     $('#mipensionado').append($('<option>', {
                         value: 0,
                         text: 'Elige un Pensionado'
                     }));
-
                     for (let index = 0; index < table.data.length; index++) {
                         const element = table.data[index];
                         $('#mipensionado').append($('<option>', {
@@ -4341,29 +4295,22 @@
 
                 }
                 async function FiltroKardex() {
-
-
                     $('#table-kardex tbody tr').remove();
                     var table= await axios.get(" {{setting('admin.url')}}api/pos/pensionados/kardex/"+$("#sucursalpensionado").val()+"/"+$("#mipensionado").val());
                     var midata="";
                     total=0;
                     if (table.data.length == 0 ) {
-                                toastr.error('Sin Resultados.');
+                        toastr.error('Sin Resultados.');
                     } else {
-
                         for (let index = 0; index < table.data.length; index++) {
-
                             midata = midata + "<tr><td>"+table.data[index].id+"</td><td>"+table.data[index].cliente.display+"</td><td>"+table.data[index].published+"</td></tr>";
                             total+=1;
                             var fecha=table.data[index].pensionado.fecha_final;
-                            //console.log(table.data[index].pensionado.fecha_final);
                         }
                         midata = midata +"<tr><td></td><td></td><td></td></tr>"
                         midata = midata +"<tr><td></td><td>Dias Ventas</td><td><b>"+total+"</b></td> </tr>"
                         midata = midata +"<tr><td></td><td>Dias Restantes del Plan</td><td><b>"+CalculoDiasRestantes(fecha)+"</b></td> </tr>"
-
                         $('#table_kardex').append(midata);
-                        //console.log(fecha);
                     }
                     Sucursales();
                     Pensionados();
@@ -4372,31 +4319,21 @@
                     var today=new Date();
                     var fechaInicio =   today.toISOString().split('T')[0];
                     var fechaFin    = fecha_final;
-
                     var fi=fechaInicio.toString();
                     var ff=fechaFin.toString();
-
                     var fechai = new Date(fi).getTime();
                     var fechaf    = new Date(ff).getTime();
-
                     var diff = fechaf - fechai;
-                    // console.log(fechai);
-                    // console.log(fechaf);
-                    // console.log(diff/(1000*60*60*24));
-
-                    //console.log(diff/(1000*60*60*24));
                     return (diff/(1000*60*60*24));
                 }
                 async function sucursal_consulta(){
                     $('#sucursal_consulta').find('option').remove().end();
-
                     var table= await axios.get("{{setting('admin.url')}}api/pos/sucursales");
 
                     $('#sucursal_consulta').append($('<option>', {
                         value: 0,
                         text: 'Elige una Sucursal'
                     }));
-
                     for (let index = 0; index < table.data.length; index++) {
                         const element = table.data[index];
                         $('#sucursal_consulta').append($('<option>', {
@@ -4404,24 +4341,19 @@
                             text: table.data[index].name
                         }));
                     }
-
                 }
 
                 $('#sucursal_consulta').on('change', function() {
                     cliente_consulta();
-
                 });
 
                 async function cliente_consulta() {
                     $('#cliente_consulta').find('option').remove().end();
-
                     var table= await axios.get("{{setting('admin.url')}}api/pos/clientes");
-
                     $('#cliente_consulta').append($('<option>', {
                         value: 0,
                         text: 'Elige una Sucursal'
                     }));
-
                     for (let index = 0; index < table.data.length; index++) {
                         if(table.data[index].default==0){
                             $('#cliente_consulta').append($('<option>', {
@@ -4430,7 +4362,6 @@
                             }));
                         }
                     }
-
                 }
 
                 async function ConsultarCredito() {
@@ -4439,27 +4370,22 @@
                     var midata="";
                     total=0;
                     if (venta.data.length == 0 ) {
-                                toastr.error('Sin Resultados.');
+                        toastr.error('Sin Resultados.');
                     } else {
-
                         for (let index = 0; index < venta.data.length; index++) {
-
                             if(venta.data[index].status_credito==0){
                                 var estado="Pagado";
-                               // $('#table_consultas_cobros').append("<tr><td>"+venta.data[index].id+"</td><td>"+estado+"</td><td>"+venta.data[index].cliente.display+"</td><td>"+(venta.data[index].subtotal-venta.data[index].total)+"</td><td>"+venta.data[index].published+"</td><td></td></tr>");
                             }
                             else{
                                 var estado="Debe";
                             }
                             $('#table_consultas_cobros').append("<tr><td>"+venta.data[index].id+"</td><td>"+estado+"</td><td>"+venta.data[index].cliente.display+"</td><td>"+venta.data[index].subtotal+"</td><td>"+venta.data[index].published+"</td><td><a href='#historial' aria-controls='historial' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' onclick='DetalleCredito("+venta.data[index].id+")'>Historial</a></td></tr>");
-
                         }
                     }
                 }
 
                 async function DetalleCredito(id) {
                     $('#table_historial tbody tr').remove();
-
                     var credito= await axios.get("{{setting('admin.url')}}api/pos/creditos/cliente/"+id);
                     var midata="";
                     var pagar=0;
@@ -4473,45 +4399,28 @@
                     }
                     else{
                         for(let index=0;index<credito.data.length;index++){
-
-                            // if(credito.data[index].restante==0){
-                            //     var estado="Pagado";
-                            // }
-                            // else{
-                            //     var estado="Debe";
-                            // }
                             $('#table_historial').append("<tr><td>"+credito.data[index].id+"</td><td>"+id+"</td><td>"+credito.data[index].cliente.display+"</td><td>"+credito.data[index].deuda+"</td><td>"+credito.data[index].cuota+"</td><td>"+credito.data[index].restante+"</td><td>"+credito.data[index].created_at+"</td></tr>");
                             pagar=credito.data[index].restante;
                             cliente=credito.data[index].cliente.id;
                             cliente_text=credito.data[index].cliente.display;
                             deuda=credito.data[index].deuda;
                             status=credito.data[index].status;
-                            //console.log(cliente);
                         }
-                        // console.log(id);
-                        // console.log(pagar);
-                        // console.log(cliente);
-                        // console.log(cliente_text);
-                        // console.log(deuda);
-                        // console.log(status);
-
                         if(status==0){
                             $('#table_historial').append("<tr><td></td><td></td><td></td><td></td><td></td><td></td><td><a href='#cobro' aria-controls='cobro' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' >Pagar Cuota</a></td></tr>");
-
+                            $('#table_cobros tbody tr').remove();
                             $('#table_cobros').append("<tr><td>"+id+"</td><td>"+cliente_text+"</td><td>"+deuda+"</td></tr>");
-
                             $('#venta_id').val(id);
                             $('#cliente_id').val(cliente);
                             $('#cliente_text').val(cliente_text);
                             $('#deuda').val(deuda);
                             $('#restante').val(pagar);
-
                         }
-
                     }
                 }
 
                 async function ActualizarCredito() {
+                    $('#table_cobros tbody tr').remove();
                     if($('#cuota_cobro').val()==0){
                         toastr.error("Error, revise que los datos ingresados sean correctos");
                     }
@@ -4523,18 +4432,14 @@
                         var restante=parseFloat( $('#restante').val()).toFixed(2)-parseFloat($('#cuota_cobro').val()).toFixed(2);
                         if(restante<=0){
                             var status=1;
+                            var venta_actualizada= await axios.get("{{setting('admin.url')}}api/pos/status_credito/actualizar/"+venta_id);
+                            if(venta_actualizada){
+                                toastr.success('Estado de Crédito en Venta Actualizado');
+                            }
                         }
                         else{
                             var status=0;
                         }
-
-                        console.log(venta_id);
-                        console.log(cliente_id);
-                        console.log(deuda);
-                        console.log(cuota);
-                        console.log(restante);
-                        console.log(status);
-
                         var midata = JSON.stringify({'venta_id':venta_id,'cliente_id':cliente_id,'deuda':deuda,'cuota':cuota,'restante':restante,'status':status});
 
                         var table= await axios("{{setting('admin.url')}}api/pos/cobrar-credito/"+midata);
@@ -4555,16 +4460,6 @@
                             var caja_id = micaja.caja_id;
                             var editor_id = '{{ Auth::user()->id }}';
                             var midata = JSON.stringify({caja_id: caja_id, type: type, monto: monto, editor_id: editor_id, concepto: concepto, pago:pago});
-                            console.log(midata);
-                            // $.ajax({
-                            //     url: "{{ setting('admin.url') }}api/pos/asiento/save/"+midata,
-                            //     dataType: "json",
-                            //     success: function (response) {
-                            //         // console.log(response);
-                            //         toastr.success('Asiento registrado como: '+response.type);
-                            //         $('#modal_asientos').modal('hide');
-                            //     }
-                            // });
                             var asiento= await axios("{{setting('admin.url')}}api/pos/asiento/save/"+midata);
                             if(asiento){
                                 toastr.success('Asiento registrado como: '+asiento.data.type);
@@ -4573,6 +4468,29 @@
                     }
                 }
 
+                async function LimpiarDeudasChofer() {
+                    $('#micajas').find('option').remove().end();
+                    $('#michoferes').find('option').remove().end();
+                    $('#table_deudas tbody tr').remove();
+                }
+                async function LimpiarKardex(){
+                    $('#sucursalpensionado').find('option').remove().end();
+                    $('#cliente_consulta').find('option').remove().end();
+                    $('#table-kardex tbody tr').remove();
+                }
+                async function LimpiarCobroCreditos() {
+                    $('#table_consultas_cobros tbody tr').remove();
+                    $('#table_historial tbody tr').remove();
+                    $('#table_cobros tbody tr').remove();
+                    $('#venta_id').val(0);
+                    $('#cliente_id').val(0);
+                    $('#cliente_text').val("");
+                    $('#deuda').val(0);
+                    $('#restante').val(0);
+                    $('#cuota_cobro').val(0);
+                    $('#sucursal_consulta').find('option').remove().end();
+                    $('#cliente_consulta').find('option').remove().end();
+                }
 
                 function imprimir(){
                     const queryString = window.location.search;
@@ -4684,7 +4602,6 @@
                     }
                 });
             @break
-
             @default
 
         @endswitch
