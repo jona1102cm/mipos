@@ -36,6 +36,41 @@
                 {{-- </div> --}}
             @stop
         @break
+        @case('productos')
+            @section('page_header')
+                <br>
+                {{-- <div class="row"> --}}
+                    {{-- <div class="col-sm-2">
+                        <h1 class="page-title">
+                    <i class="{{ $dataType->icon }}"></i> {{ __('voyager::generic.viewing') }} {{ ucfirst($dataType->getTranslatedAttribute('display_name_singular')) }} &nbsp;
+
+                    </div>                --}}
+                    @php
+                    $midata = App\Producto::find($dataTypeContent->getKey());
+                    // $unidad = App\Categoria::find($midata->categoria_id);
+                    @endphp
+                    {{-- <h2>Comprando: {{$unidad->name}} de {{$midata->name}}</h2> --}}
+                    <h2>Comprando: {{$midata->name}}</h2>
+
+                    {{-- <h2>Comprando Insumo: {{$midata->name}} </h2> --}}
+                    <div class="col-sm-6"></div>
+                    <div class="col-sm-6">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                {{-- <button type="button" class="btn btn-danger" data-toggle="modal" onclick="get_total()" data-target="#cerrar_caja">Cerrar</button>
+                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#venta_caja" onclick="venta_caja()">Ventas</button>
+                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal_cliente">Cliente</button>
+                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal_asientos" onclick="cargar_asientos()">Asientos</button>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal_save_venta" onclick="get_cambio()">Vender</button> --}}
+                                <button type="button" class="btn btn-primary"  onclick="savecompra()">Comprar</button>
+
+                            </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div id="info_caja"></div>
+                    </div>
+                {{-- </div> --}}
+            @stop
+        @break
         @default
             @section('page_header')
 
@@ -179,6 +214,92 @@
 
 
     @break
+
+    @case('productos')
+
+        @php
+            $midata = App\Producto::find($dataTypeContent->getKey());
+        @endphp
+
+        {{-- <div class="form-group col-md-12"> --}}
+            <div class="form-control" id="search-input">
+
+                <div class="input-group col-md-4">
+                    <select class="form-control js-example-basic-single" id="proveedores_compras"> </select>
+                </div>
+                {{-- <div class="input-group col-md-4">
+                    <select class="form-control js-example-basic-single" id="unidades_compras"> </select>
+                </div>
+                <div class="input-group col-md-4">
+                    <select class="form-control js-example-basic-single" id="insumos_compras"> </select>
+                </div>    --}}
+
+
+            </div>
+        {{-- </div> --}}
+
+
+            <div>
+                <table class="table table-responsive">
+
+                    <tbody>
+                        <tr>
+                            {{-- <td>
+                                Proveedor
+                                <input type="number" class="form-control" id="proveedor_compras">
+                            </td> --}}
+                            {{-- <td>
+                                Unidad
+                                <input type="number" class="form-control" id="unidad_compras">
+                            </td> --}}
+                            @php
+                                $midata = App\Producto::find($dataTypeContent->getKey());
+                            @endphp
+                            <td>
+                                <input type="hidden" class="form-control" id="unidad_id" value="{{$midata->categoria_id}}">
+
+                            </td>
+                            <td>
+                                <input type="hidden" class="form-control" id="editor_id" >
+
+                            </td>
+                            <td>
+                                <input type="hidden" class="form-control" id="insumo_compras" value="{{$dataTypeContent->getKey()}}" >
+                            </td>
+
+                        </tr>
+
+                        <tr>
+                            <td>
+                                Cantidad
+                                <input type="number" value="1" min="0" class="form-control" id="cantidad_compras">
+                            </td>
+                            <td>
+                                Costo Unitario
+                                <input type="number" value="{{$midata->costo}}"  min="0" class="form-control" id="costo_compras">
+                            </td>
+                            <td>
+                                Total
+                                <input type="number" class="form-control" id="total_compras" readonly>
+
+                            </td>
+                            <td>
+                                Descripción
+                                {{-- <input type="text-area" class="form-control" id="description_compras"> --}}
+                                <textarea class="form-control" name="" id="descripcion_compras"></textarea>
+                            </td>
+
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+
+
+
+    @break
+
+
     @default
 
         <div class="page-content read container-fluid">
@@ -459,6 +580,149 @@
 
         @stop
     @break
+
+    @case('productos')
+        @section('javascript')
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script>
+            $('document').ready(function () {
+                $('.js-example-basic-single').select2();
+                $('#editor_id').val('{{ Auth::user()->id }}');
+                UpdateCosto();
+                Proveedores_Compras();
+                // Unidades_Compras();
+
+
+
+
+            });
+
+            async function UpdateCosto(){
+
+                var total=parseFloat($('#cantidad_compras').val()).toFixed(2)*parseFloat($('#costo_compras').val()).toFixed(2);
+                $('#total_compras').val(total);
+
+            }
+
+            $('#cantidad_compras').on('change', function() {
+                UpdateCosto(this.value);
+            });
+
+            $('#costo_compras').on('change', function() {
+                UpdateCosto(this.value);
+            });
+
+            async function Proveedores_Compras(){
+
+                var tabla= await axios("{{setting('admin.url')}}api/pos/proveedores");
+
+                $('#proveedores_compras').append($('<option>', {
+                    value: null,
+                    text: 'Elige un Proveedor'
+                }));
+                for (let index = 0; index < tabla.data.length; index++) {
+                    const element = tabla.data[index];
+                    $('#proveedores_compras').append($('<option>', {
+                        value: tabla.data[index].id,
+                        text: tabla.data[index].name
+                    }));
+                }
+            }
+
+            // async function Unidades_Compras(){
+
+            //     var tabla= await axios("{{setting('admin.url')}}api/pos/unidades");
+
+            //     $('#unidades_compras').append($('<option>', {
+            //         value: null,
+            //         text: 'Elige una Unidad'
+            //     }));
+            //     for (let index = 0; index < tabla.data.length; index++) {
+            //         const element = tabla.data[index];
+            //         $('#unidades_compras').append($('<option>', {
+            //             value: tabla.data[index].id,
+            //             text: tabla.data[index].title
+            //         }));
+            //     }
+
+            // }
+
+            // async function InsumosPorUnidadesCompras(id){
+            //     var tabla= await axios("{{setting('admin.url')}}api/pos/insumo/unidad/"+id);
+
+            //     $('#insumos_compras').find('option').remove().end();
+            //     $('#insumos_compras').append($('<option>', {
+            //         value: null,
+            //         text: 'Elige un Insumo'
+            //     }));
+            //     for (let index = 0; index < tabla.data.length; index++) {
+            //         const element = tabla.data[index];
+            //         $('#insumos_compras').append($('<option>', {
+            //             value: tabla.data[index].id,
+            //             text: tabla.data[index].name
+            //         }));
+            //     }
+
+            // }
+
+            // $('#proveedores_compras').on('change',function() {
+
+            //     $('input[name="proveedor_id"]').val($('#proveedores_compras').val());
+
+            // });
+
+
+            // $('#unidades_compras').on('change', function() {
+            //     InsumosPorUnidadesCompras(this.value);
+
+            //     $('input[name="unidad_id"]').val($('#unidades_compras').val());
+            // });
+
+            // $('#insumos_compras').on('change',function() {
+
+            //     $('input[name="insumo_id"]').val($('#insumos_compras').val());
+
+            // });
+
+            async function savecompra(){
+
+                var description=$('#descripcion_compras').val();
+                var editor_id=$('#editor_id').val();
+                var cantidad=$('#cantidad_compras').val();
+                var costo=$('#costo_compras').val();
+                var total= $('#total_compras').val();
+                var proveedor_id=$('#proveedores_compras').val();
+                var insumo_id=$('#insumo_compras').val();
+                var unidad_id=$('#unidad_id').val();
+
+                var midata = JSON.stringify({'description':description, 'editor_id':editor_id, 'cantidad':cantidad, 'costo':costo,'total':total, 'proveedor_id':proveedor_id, 'insumo_id':insumo_id, 'unidad_id':unidad_id});
+
+                var compra = await axios("{{setting('admin.url')}}api/pos/compras-productos/save/"+midata);
+                if(compra){
+
+                    $('#descripcion_compras').val("");
+                    $('#editor_id').val("");
+                    $('#cantidad_compras').val("");
+                    $('#costo_compras').val("");
+                    $('#total_compras').val("");
+                    $('#proveedores_compras').val("");
+                    $('#insumo_compras').val("");
+                    $('#unidad_id').val("");
+                     //$ins= App\Insumo::find(insumo_id);
+                    window.location.href = "{{setting('admin.url')}}admin/productos";
+                    toastr.success('Se Registró la Compra');
+
+                }
+
+            }
+
+
+
+        </script>
+
+        @stop
+    @break
+
 
     @default
         @section('javascript')

@@ -34,7 +34,7 @@
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <button type="button" class="btn btn-danger" data-toggle="modal" onclick="get_total()" data-target="#cerrar_caja">Cerrar</button>
                                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#venta_caja" onclick="venta_caja()">Ventas</button>
-                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal_cliente">Cliente</button>
+                                <button onclick="micliente()" type="button" class="btn btn-default" data-toggle="modal" data-target="#modal_cliente">Cliente</button>
                                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal_asientos" onclick="cargar_asientos()">Asientos</button>
                                 {{-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal_save_venta" onclick="get_cambio()">Vender</button> --}}
                                 <button type="button" class="btn btn-primary"  onclick="saveventas()">Vender</button>
@@ -151,12 +151,12 @@
 
                                     <div class="form-group col-md-8">
 
+                                        <input type="search" id="misearch" class="form-control" placeholder="ingresa un creiterio de busqueda">
                                         <div>
                                             <!-- Nav tabs -->
                                             <ul class="nav nav-tabs" role="tablist">
                                                 @foreach($categorias as $item)
                                                     <li role="presentation"><a href="#{{ $item->id }}" aria-controls="home" role="tab" data-toggle="tab">{{ $item->name}}</a></li>
-
                                                 @endforeach
                                                 <li role="presentation"><a href="#vacio" aria-controls="home" role="tab" data-toggle="tab">Vacio</a></li>
                                             </ul>
@@ -241,10 +241,12 @@
                                             <strong>Tipo</strong>
                                             <select class="form-control js-example-basic-single" id="venta_type"> </select>
                                         </div>
-                                        <div class="form-group col-sm-12">
-                                            <strong>Pensionado</strong>
-                                            <select class="form-control js-example-basic-single" id="mipensionado"> </select>
-                                        </div>
+                                        @if(setting('empresa.type_negocio')=="Restaurante")
+                                            <div class="form-group col-sm-12">
+                                                <strong>Pensionado</strong>
+                                                <select class="form-control js-example-basic-single" id="mipensionado"> </select>
+                                            </div>
+                                        @endif
 
                                         <div class="form-group col-md-12">
                                             <strong>Cupon</strong>
@@ -1327,9 +1329,7 @@
     @case('chatbots')
         @section('javascript')
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-        <script src="https://socket.loginweb.dev/socket.io/socket.io.js"></script>
             <script>
-                const socket = io('https://socket.loginweb.dev')
                 const socket_ventas = "{{ setting('notificaciones.venta') }}";
                 const socket_cocina = "{{ setting('notificaciones.cocina') }}";
 
@@ -1348,10 +1348,8 @@
     @case('cocinas')
         @section('javascript')
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-        <script src="https://socket.loginweb.dev/socket.io/socket.io.js"></script>
         <script src="{{url('js/ventas.js')}}"></script>
             <script>
-                const socket = io('https://socket.loginweb.dev')
                 const socket_ventas = "{{ setting('notificaciones.venta') }}";
                 const socket_cocina = "{{ setting('notificaciones.cocina') }}";
             </script>
@@ -1361,9 +1359,7 @@
     @case('ventas')
         @section('javascript')
             <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-            <script src="https://socket.loginweb.dev/socket.io/socket.io.js"></script>
             <script>
-                const socket = io('https://socket.loginweb.dev')
                 const name_socket = "{{ setting('notificaciones.venta') }}";
                 const socket_cocina = "{{ setting('notificaciones.cocina') }}";
                 socket.on(socket_cocina, (msg) =>{
@@ -1577,48 +1573,35 @@
                     }
                 });
 
+                async function micliente() {
+                    var miphone = Math.floor(Math.random() * 100000000);
+                    $('#phone').val(miphone)
+                }
                 async function DesactivarPensionados(){
-
                     var table=await axios.get("{{ setting('admin.url') }}api/pos/pensionados");
-
                     for(let index=0;index < table.data.length;index++){
-
                         var aux= parseInt(CalculoDiasRestantes(table.data[index].fecha_final));
-
-
                         if(aux<0){
                         var actualizar= await axios("{{ setting('admin.url') }}api/pos/pensionados/actualizar/"+table.data[index].id);
                         }
-
                         Pensionados();
                     }
-
                 }
 
                 function CalculoDiasRestantes(fecha_final){
                     var today=new Date();
                     var fechaInicio =   today.toISOString().split('T')[0];
                     var fechaFin    = fecha_final;
-
                     var fi=fechaInicio.toString();
                     var ff=fechaFin.toString();
-
                     var fechai = new Date(fi).getTime();
                     var fechaf    = new Date(ff).getTime();
-
                     var diff = fechaf - fechai;
-                    // console.log(fechai);
-                    // console.log(fechaf);
-                    // console.log(diff/(1000*60*60*24));
-
-                    //console.log(diff/(1000*60*60*24));
                     return (diff/(1000*60*60*24));
                 }
 
                 async function Categorias() {
-
                     var table = await axios.get("{{ setting('admin.url') }}api/pos/categorias");
-
                     $('#category').append($('<option>', {
                         value: 0,
                         text: 'Elige una Categoria'
@@ -1631,6 +1614,7 @@
                         }));
                     }
                 }
+
                 async function Deliverys(){
                     var table= await axios.get("{{ setting('admin.url') }}api/pos/deliverys");
 
@@ -1652,9 +1636,7 @@
                 }
 
                 async function Cupones(){
-
                     var table= await axios.get("{{ setting('admin.url') }}api/pos/cupones");
-
                     for (let index = 0; index < table.data.length; index++) {
                         if (table.data[index].id == 1) {
                             $('#micupon').append($('<option>', {
@@ -1732,6 +1714,7 @@
                         }
                     }
                 }
+
                 async function PensionadoDefault(){
                     $('#mipensionado').append($('<option>', {
                         value: 0,
@@ -1760,11 +1743,13 @@
 
                 }
 
-                // $('#venta_type').on('change', function() {
-                //     if($('#venta_type').text()=='Pensionado'){
-                //         Pensionados();
-                //     }
-                // });
+                $('#misearch').keypress(function(event) {
+                    if ( event.which == 13 ) {
+                        event.preventDefault();
+                        toastr.info('buscando '+this.value)
+                    }
+                });
+
                 $('#mipensionado').on('change', function() {
                     if($('#mipensionado').val()==0){
                         $('#micliente').find('option').remove().end();

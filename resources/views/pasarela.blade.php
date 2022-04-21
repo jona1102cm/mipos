@@ -90,13 +90,14 @@
                     <textarea id="observacion" class="form-control">Sin detalle</textarea>
                 </div>
 
-                <div class="form-group">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" id="switch_pensionado" />
-                        <label class="form-check-label" for="switch_pensionado">Es un pensionado?</label>
+                @if(setting('empresa.type_negocio')=="Restaurante")
+                    <div class="form-group">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="switch_pensionado" />
+                            <label class="form-check-label" for="switch_pensionado">Es un pensionado?</label>
+                        </div>
                     </div>
-                </div>
-
+                @endif
                 <div class="form-group text-center" id="miboton">
                     <a href="#" class="btn btn-primary" onclick="save_pedido()"><i class="fab fa-cc-amazon-pay"></i> Enviar Pedido</a>
                 </div>
