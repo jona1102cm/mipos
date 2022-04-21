@@ -185,6 +185,7 @@
                                             <div class="col-4">
                                                 <select id="search_key" name="key" style="width: 250px" class="js-example-basic-single">
                                                         <option value=""> ---- Elige un Filtro ----</option>
+                                                        <option value="caja_id"> Cajas </option>
                                                         <option value="cliente_id"> Cliente </option>
                                                         <option value="sucursal_id"> Sucursal </option>
                                                         <option value="delivery_id"> Delivery</option>
@@ -3699,14 +3700,13 @@
                                         <button type="button" class="btn btn-primary pull-right" onclick="ConsultarCredito()">Consultar</button>
                                     </div>
                                     <div class="col-sm-12">
-                                        <table class="table" id="table_cobros">
+                                        <table class="table" id="table_consultas_cobros">
                                             <thead>
                                                 <tr>
                                                     <th>Venta</th>
                                                     <th>Estado</th>
                                                     <th>Cliente</th>
                                                     <th>Deuda</th>
-                                                    <th>Restante a Pagar</th>
                                                     <th>Creado</th>
                                                     <th>Acción</th>
                                                 </tr>
@@ -3722,26 +3722,12 @@
                             </div>
 
                             <div role="tabpanel" class="tab-pane" id="historial">
-                                {{-- <div class="col-sm-4">
-                                    <strong>Elija una Sucursal</strong>
-                                    <select name="" id="sucursal_pago" class="form-control js-example-basic-single"></select>
-                                </div>
-                                <div class="col-sm-4">
-                                    <strong>Elija un Cliente</strong>
-                                    <select name="" id="cliente_pago" class="form-control js-example-basic-single"></select>
-                                </div>
-                                <div class="col-sm-4">
-                                    <strong>Elija una Venta</strong>
-                                    <select name="" id="venta_pago" class="form-control js-example-basic-single"></select>
-                                </div>
 
-                                <div class="col-sm-7">
-                                    <button type="button" class="btn btn-primary pull-right" onclick="ConsultarCredito()">Consultar</button>
-                                </div> --}}
                                 <div class="col-sm-12">
-                                    <table class="table" id="table-historial">
+                                    <table class="table" id="table_historial">
                                         <thead>
                                             <tr>
+                                                <th>ID</th>
                                                 <th>Venta</th>
                                                 <th>Cliente</th>
                                                 <th>Deuda</th>
@@ -3766,19 +3752,40 @@
                                                 <th>Venta</th>
                                                 <th>Cliente</th>
                                                 <th>Deuda</th>
-                                                <th>Cuota</th>
-                                                <th>Restante a Pagar</th>
-                                                <th>Creado</th>
+
                                             </tr>
                                         </thead>
                                         <tbody>
                                         </tbody>
 
                                     </table>
+                                    <div class="form-group col-md-4 text-center">
+                                        <form class="form-horizontal" role="form">
+                                            <label class="radio-inline"> <input type="radio" name="season" id="" value="1" checked> Pago En Efectivo </label>
+                                            <label class="radio-inline"> <input type="radio" name="season" id="" value="0"> Pago en Línea </label>
+                                        </form>
+                                    </div>
                                     <div class="form-group col-sm-6">
                                         <label for="">Cuota</label>
-                                        <input class="form-control" type="number" placeholder="Ingrese Monto" id="cuota_cobro">
+                                        <input class="form-control" type="number" value="0" min="0" placeholder="Ingrese Monto" id="cuota_cobro">
                                     </div>
+                                    <div class="form-group col-sm-6">
+                                        <input class="form-control" type="hidden" placeholder="Ingrese Venta" id="venta_id">
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <input class="form-control" type="hidden" placeholder="Ingrese Deuda" id="deuda">
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <input class="form-control" type="hidden" placeholder="Ingrese Cliente" id="cliente_id">
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <input class="form-control" type="hidden" placeholder="Ingrese texto Cliente" id="cliente_text">
+                                    </div>
+
+                                    <div class="form-group col-sm-6">
+                                        <input class="form-control" type="hidden" placeholder="Ingrese Restante" id="restante">
+                                    </div>
+
                                 </div>
                                 <button type="button" class="btn btn-primary pull-right" onclick="ActualizarCredito()">Guardar</button>
                                 <button type="button" class="btn btn-default pull-right" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
@@ -4190,39 +4197,8 @@
 
                         case 'chofer_deudas':
                                 $('#modal_deudas').modal();
-                                // $.ajax({
-                                //     url: "{{ setting('admin.url') }}api/pos/cajas",
-                                //     dataType: "json",
-                                //     success: function (response) {
-                                //         $('#micajas').append($('<option>', {
-                                //             value: null,
-                                //             text: 'Elige una Caja'
-                                //         }));
-                                //         for (let index = 0; index < response.length; index++) {
-                                //             // const element = response[index];
-                                //             $('#micajas').append($('<option>', {
-                                //                 value: response[index].id,
-                                //                 text: response[index].id + ' - '+ response[index].title +' - '+ response[index].sucursal.name
-                                //             }));
-                                //         }
-                                //     }
-                                // });
-                                // $.ajax({
-                                //     url: "{{ setting('admin.url') }}api/pos/choferes/",
-                                //     dataType: "json",
-                                //     success: function (response) {
-                                //         $('#michoferes').append($('<option>', {
-                                //             value: null,
-                                //             text: 'Elige un Chofer'
-                                //         }));
-                                //         for (let index = 0; index < response.length; index++) {
-                                //             $('#michoferes').append($('<option>', {
-                                //                 value: response[index].id,
-                                //                 text: response[index].name
-                                //             }));
-                                //         }
-                                //     }
-                                //});
+
+
                                 Cajas_Deudas_Choferes();
                                 Choferes_Deudas();
 
@@ -4236,6 +4212,7 @@
                         break
                         case 'credito':
                             $('#modal_cobros').modal();
+                            sucursal_consulta();
 
                         break
 
@@ -4403,12 +4380,197 @@
                     var fechaf    = new Date(ff).getTime();
 
                     var diff = fechaf - fechai;
-                    console.log(fechai);
-                    console.log(fechaf);
-                    console.log(diff/(1000*60*60*24));
+                    // console.log(fechai);
+                    // console.log(fechaf);
+                    // console.log(diff/(1000*60*60*24));
 
                     //console.log(diff/(1000*60*60*24));
                     return (diff/(1000*60*60*24));
+                }
+                async function sucursal_consulta(){
+                    $('#sucursal_consulta').find('option').remove().end();
+
+                    var table= await axios.get("{{setting('admin.url')}}api/pos/sucursales");
+
+                    $('#sucursal_consulta').append($('<option>', {
+                        value: 0,
+                        text: 'Elige una Sucursal'
+                    }));
+
+                    for (let index = 0; index < table.data.length; index++) {
+                        const element = table.data[index];
+                        $('#sucursal_consulta').append($('<option>', {
+                            value: table.data[index].id,
+                            text: table.data[index].name
+                        }));
+                    }
+
+                }
+
+                $('#sucursal_consulta').on('change', function() {
+                    cliente_consulta();
+
+                });
+
+                async function cliente_consulta() {
+                    $('#cliente_consulta').find('option').remove().end();
+
+                    var table= await axios.get("{{setting('admin.url')}}api/pos/clientes");
+
+                    $('#cliente_consulta').append($('<option>', {
+                        value: 0,
+                        text: 'Elige una Sucursal'
+                    }));
+
+                    for (let index = 0; index < table.data.length; index++) {
+                        if(table.data[index].default==0){
+                            $('#cliente_consulta').append($('<option>', {
+                            value: table.data[index].id,
+                            text: table.data[index].display+' - '+table.data[index].ci_nit
+                            }));
+                        }
+                    }
+
+                }
+
+                async function ConsultarCredito() {
+                    $('#table_consultas_cobros tbody tr').remove();
+                    var venta= await axios.get("{{setting('admin.url')}}api/pos/ventas-creditos/"+$("#cliente_consulta").val()+"/"+$("#sucursal_consulta").val());
+                    var midata="";
+                    total=0;
+                    if (venta.data.length == 0 ) {
+                                toastr.error('Sin Resultados.');
+                    } else {
+
+                        for (let index = 0; index < venta.data.length; index++) {
+
+                            if(venta.data[index].status_credito==0){
+                                var estado="Pagado";
+                               // $('#table_consultas_cobros').append("<tr><td>"+venta.data[index].id+"</td><td>"+estado+"</td><td>"+venta.data[index].cliente.display+"</td><td>"+(venta.data[index].subtotal-venta.data[index].total)+"</td><td>"+venta.data[index].published+"</td><td></td></tr>");
+                            }
+                            else{
+                                var estado="Debe";
+                            }
+                            $('#table_consultas_cobros').append("<tr><td>"+venta.data[index].id+"</td><td>"+estado+"</td><td>"+venta.data[index].cliente.display+"</td><td>"+venta.data[index].subtotal+"</td><td>"+venta.data[index].published+"</td><td><a href='#historial' aria-controls='historial' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' onclick='DetalleCredito("+venta.data[index].id+")'>Historial</a></td></tr>");
+
+                        }
+                    }
+                }
+
+                async function DetalleCredito(id) {
+                    $('#table_historial tbody tr').remove();
+
+                    var credito= await axios.get("{{setting('admin.url')}}api/pos/creditos/cliente/"+id);
+                    var midata="";
+                    var pagar=0;
+                    var venta=0;
+                    var cliente=0;
+                    var cliente_text="";
+                    var deuda=0;
+                    var status=0;
+                    if(credito.data.length==0){
+                        toastr.error('No se encontraron creditos del cliente.'+credito.data[index].cliente.display);
+                    }
+                    else{
+                        for(let index=0;index<credito.data.length;index++){
+
+                            // if(credito.data[index].restante==0){
+                            //     var estado="Pagado";
+                            // }
+                            // else{
+                            //     var estado="Debe";
+                            // }
+                            $('#table_historial').append("<tr><td>"+credito.data[index].id+"</td><td>"+id+"</td><td>"+credito.data[index].cliente.display+"</td><td>"+credito.data[index].deuda+"</td><td>"+credito.data[index].cuota+"</td><td>"+credito.data[index].restante+"</td><td>"+credito.data[index].created_at+"</td></tr>");
+                            pagar=credito.data[index].restante;
+                            cliente=credito.data[index].cliente.id;
+                            cliente_text=credito.data[index].cliente.display;
+                            deuda=credito.data[index].deuda;
+                            status=credito.data[index].status;
+                            //console.log(cliente);
+                        }
+                        // console.log(id);
+                        // console.log(pagar);
+                        // console.log(cliente);
+                        // console.log(cliente_text);
+                        // console.log(deuda);
+                        // console.log(status);
+
+                        if(status==0){
+                            $('#table_historial').append("<tr><td></td><td></td><td></td><td></td><td></td><td></td><td><a href='#cobro' aria-controls='cobro' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' >Pagar Cuota</a></td></tr>");
+
+                            $('#table_cobros').append("<tr><td>"+id+"</td><td>"+cliente_text+"</td><td>"+deuda+"</td></tr>");
+
+                            $('#venta_id').val(id);
+                            $('#cliente_id').val(cliente);
+                            $('#cliente_text').val(cliente_text);
+                            $('#deuda').val(deuda);
+                            $('#restante').val(pagar);
+
+                        }
+
+                    }
+                }
+
+                async function ActualizarCredito() {
+                    if($('#cuota_cobro').val()==0){
+                        toastr.error("Error, revise que los datos ingresados sean correctos");
+                    }
+                    else{
+                        var venta_id=$('#venta_id').val();
+                        var cliente_id=$('#cliente_id').val();
+                        var deuda=$('#deuda').val();
+                        var cuota=$('#cuota_cobro').val();
+                        var restante=parseFloat( $('#restante').val()).toFixed(2)-parseFloat($('#cuota_cobro').val()).toFixed(2);
+                        if(restante<=0){
+                            var status=1;
+                        }
+                        else{
+                            var status=0;
+                        }
+
+                        console.log(venta_id);
+                        console.log(cliente_id);
+                        console.log(deuda);
+                        console.log(cuota);
+                        console.log(restante);
+                        console.log(status);
+
+                        var midata = JSON.stringify({'venta_id':venta_id,'cliente_id':cliente_id,'deuda':deuda,'cuota':cuota,'restante':restante,'status':status});
+
+                        var table= await axios("{{setting('admin.url')}}api/pos/cobrar-credito/"+midata);
+                        if(table){
+                            toastr.success('Pago de Crédito Registrado');
+
+                            if ($("input[name='season']:checked").val() == '0') {
+                            var pagotext="En Linea";
+                            }
+                            if ($("input[name='season']:checked").val() == '1'){
+                                var pagotext="En Efectivo";
+                            }
+                            var pago=$("input[name='season']:checked").val();
+                            var micaja = JSON.parse(localStorage.getItem('micaja'));
+                            var concepto = "Pago por cuota de Crédito de Venta: "+ $('#venta_id').val() +" del cliente: "+$('#cliente_text').val()+"";
+                            var monto = $('#cuota_cobro').val();
+                            var type = "Ingresos";
+                            var caja_id = micaja.caja_id;
+                            var editor_id = '{{ Auth::user()->id }}';
+                            var midata = JSON.stringify({caja_id: caja_id, type: type, monto: monto, editor_id: editor_id, concepto: concepto, pago:pago});
+                            console.log(midata);
+                            // $.ajax({
+                            //     url: "{{ setting('admin.url') }}api/pos/asiento/save/"+midata,
+                            //     dataType: "json",
+                            //     success: function (response) {
+                            //         // console.log(response);
+                            //         toastr.success('Asiento registrado como: '+response.type);
+                            //         $('#modal_asientos').modal('hide');
+                            //     }
+                            // });
+                            var asiento= await axios("{{setting('admin.url')}}api/pos/asiento/save/"+midata);
+                            if(asiento){
+                                toastr.success('Asiento registrado como: '+asiento.data.type);
+                            }
+                        }
+                    }
                 }
 
 
@@ -4494,22 +4656,7 @@
                                 }));
                             }
 
-                            // $.ajax({
-                            //     url: "{{ setting('admin.url') }}api/pos/proveedores",
-                            //     dataType: "json",
-                            //     success: function (response) {
-                            //         $('#s').append($('<option>', {
-                            //             value: null,
-                            //             text: 'Elige un Proveedor'
-                            //         }));
-                            //         for (let index = 0; index < response.length; index++) {
-                            //             $('#s').append($('<option>', {
-                            //                 value: response[index].id,
-                            //                 text: response[index].name
-                            //             }));
-                            //         }
-                            //     }
-                            // });
+
 
                         break;
 
@@ -4530,22 +4677,7 @@
                             }
 
 
-                            // $.ajax({
-                            //     url: "{{ setting('admin.url') }}api/pos/insumos",
-                            //     dataType: "json",
-                            //     success: function (response) {
-                            //         $('#s').append($('<option>', {
-                            //             value: null,
-                            //             text: 'Elige un Insumo'
-                            //         }));
-                            //         for (let index = 0; index < response.length; index++) {
-                            //             $('#s').append($('<option>', {
-                            //                 value: response[index].id,
-                            //                 text: response[index].name
-                            //             }));
-                            //         }
-                            //     }
-                            // });
+
 
                         break;
 

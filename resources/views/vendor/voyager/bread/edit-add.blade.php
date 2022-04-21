@@ -856,7 +856,7 @@
                             <ul class="nav nav-tabs" role="tablist">
                                 <li role="presentation" class="active"><a href="#miventas" aria-controls="miventas" role="tab" data-toggle="tab">Mis Ventas</a></li>
                                 <li role="presentation"><a href="#deliverys" aria-controls="deliverys" role="tab" data-toggle="tab">Deliverys</a></li>
-
+                                <li role="presentation"><a href="#deliverys" aria-controls="deliverys" role="tab" data-toggle="tab">Caja CHATBOT</a></li>
                             </ul>
 
                             <div class="tab-content">
@@ -1379,7 +1379,7 @@
                     $('.js-example-basic-single').select2();
                     $('input[name="register_id"]').val('{{ Auth::user()->id }}');
                     $('input[name="chofer_id"]').val("{{setting('ventas.chofer')}}");
-
+                    $("input[name='status_credito']").val(0);
 
                     if (localStorage.getItem('micaja')) {
                         var micaja = JSON.parse(localStorage.getItem('micaja'));
@@ -2448,6 +2448,22 @@
                     mitotal();
                 });
 
+                $('input[type=radio][name=credito]').on('change', function() {
+                    switch ($(this).val()) {
+                        case 'Contado':
+                            $("input[name='status_credito']").val(0);
+                            mitotal();
+
+                            toastr.info('Venta Actualizada')
+                        break;
+                        case 'Credito':
+                            $("input[name='status_credito']").val(1);
+                            $("input[name='total']").val(0);
+                            toastr.info('Venta Actualizada')
+                        break;
+                    }
+                });
+
                 async function saveventas() {
                     var micart = JSON.parse(localStorage.getItem('micart'));
                     if (micart.length == 0 ) {
@@ -2461,6 +2477,7 @@
                         var option_id = $("input[name='option_id']").val();
                         var factura = $("input[name='factura']:checked").val();
                         var credito = $("input[name='credito']:checked").val();
+                        var status_credito=$("input[name='status_credito']").val();
                         var total = $("input[name='total']").val();
                         var descuento = $("input[name='descuento']").val();
                         var observacion = $("input[name='observacion']").val();
@@ -2475,7 +2492,7 @@
                         var adicional=$("input[name='adicional']").val();
                         var pensionado_id=$("input[name='pensionado_id']").val();
                         var micart = JSON.parse(localStorage.getItem('micart'));
-                        var midata = JSON.stringify({'cliente_id': cliente_id, 'cupon_id': cupon_id, 'option_id': option_id, 'pago_id': pago_id, 'factura': factura, 'credito': credito ,'total': total, 'descuento': descuento, 'observacion': observacion, 'register_id': register_id, 'status_id': status_id, 'caja_id': caja_id, 'delivery_id': delivery_id, 'sucursal_id': sucursal_id, subtotal: subtotal, 'cantidad': micart.length, 'recibido': recibido, 'cambio': cambio, chofer_id : chofer_id, adicional:adicional, 'pensionado_id':pensionado_id });
+                        var midata = JSON.stringify({'cliente_id': cliente_id, 'cupon_id': cupon_id, 'option_id': option_id, 'pago_id': pago_id, 'factura': factura, 'credito': credito ,'total': total, 'descuento': descuento, 'observacion': observacion, 'register_id': register_id, 'status_id': status_id, 'caja_id': caja_id, 'delivery_id': delivery_id, 'sucursal_id': sucursal_id, subtotal: subtotal, 'cantidad': micart.length, 'recibido': recibido, 'cambio': cambio, chofer_id : chofer_id, adicional:adicional, 'pensionado_id':pensionado_id, 'status_credito':status_credito });
 
                         // console.log($('#mipagos').val())
                         switch ($('#mipagos').val()) {

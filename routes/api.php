@@ -32,6 +32,7 @@ use App\TypeProducto;
 use App\Banipay;
 use App\Compra;
 use App\Location;
+use App\Credito;
 
 use Illuminate\Support\Facades\DB;
 /*
@@ -365,7 +366,8 @@ Route::get('pos/ventas/save/{midata}', function($midata) {
         'chofer_id'=>$midata2->chofer_id,
         'adicional'=>$midata2->adicional,
         'location' => 1,
-        'pensionado_id'=>$midata2->pensionado_id
+        'pensionado_id'=>$midata2->pensionado_id,
+        'status_credito'=>$midata2->status_credito
     ]);
     return $venta;
 });
@@ -484,6 +486,32 @@ Route::get('pos/choferes', function(){
 Route::get('pos/choferes/deudas/{chofer_id}/{caja_id}', function($chofer_id, $caja_id){
     $ventas= Venta::where('chofer_id', $chofer_id)->where('caja_id', $caja_id)->where('caja_status', false)->with('cliente')->with('delivery')->with('pasarela')->get();
     return $ventas;
+});
+
+//Ventas Creditos Clientes
+Route::get('pos/ventas-creditos/{cliente_id}/{sucursal_id}', function($cliente_id, $sucursal_id){
+    $ventas= Venta::where('cliente_id', $cliente_id)->where('sucursal_id', $sucursal_id)->where('credito',"Credito")->with('cliente')->with('pasarela')->get();
+    return $ventas;
+});
+
+//Credito por Venta
+Route::get('pos/creditos/cliente/{id}', function ($id) {
+    return  Credito::where('venta_id',$id)->with('cliente')->get();
+});
+
+//Cobrar Credito
+Route::get('pos/cobrar-credito/{midata}', function($midata) {
+    $midata2 = json_decode($midata);
+
+    $credito = Credito::create([
+        'venta_id' => $midata2->venta_id,
+        'cliente_id' => $midata2->cliente_id,
+        'deuda' => $midata2->deuda,
+        'cuota' => $midata2->cuota,
+        'restante' => $midata2->restante,
+        'status'=>$midata2->status
+    ]);
+    return true;
 });
 
 //Pensionados por Sucursal
