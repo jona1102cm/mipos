@@ -111,9 +111,8 @@
 @endsection
 
 @section('javascript')
-    <script src="https://socket.loginweb.dev/socket.io/socket.io.js"></script>
     <script>
-         const socket = io('https://socket.loginweb.dev')
+        const socket = io('https://socket.loginweb.dev')
         $('document').ready(function () {
             pagototal(null)
             var miuser = JSON.parse(localStorage.getItem('miuser'))
@@ -125,7 +124,6 @@
                 } else {
                     navigator.geolocation.getCurrentPosition(success, error, options);
                 }
-
             } else {
                 navigator.geolocation.getCurrentPosition(success, error, options);
             }
@@ -178,8 +176,14 @@
 
             L.circle([crd.latitude, crd.longitude], 100).addTo(map);
 
+
             var latlngs = [[-14.830167776694829, -64.90951945830604], [-14.828518383986012, -64.91451091438648],[-14.844355929499383, -64.91524142213166],[-14.846062227540793, -64.91364399378655],[-14.847770400899062, -64.89361958520023], [-14.845764951303547, -64.89210717292737], [-14.826552918046218, -64.89196953421926], [-14.825043082661521, -64.90546275337694], [-14.828620673625943, -64.90681257768303]];
             var polygon = L.polygon(latlngs, {color: 'blue'}).addTo(map);
+            polygon.bindTooltip("ZONA 1 - 5Bs.", {permanent: false, direction:"center"})
+            // var label = new L.Label()
+            // label.setContent("static label")
+            // label.setLatLng(polygon.getBounds().getCenter())
+            // map.showLabel(label);
 
             var mimarker = L.marker([crd.latitude, crd.longitude], { title: "My marker", draggable: true }).addTo(map);
             mimarker.bindPopup("Estas a 100 metros desde este punto").openPopup();
@@ -305,7 +309,9 @@
                 }
 
                 //Notifications
-                var minoti = await socket.emit("{{ setting('notificaciones.venta') }}", JSON.stringify(newpedido));
+                var minoti = "Venta Registrada con ID:"+newpedido.data.id
+                socket.emit("{{ setting('notificaciones.venta') }}", minoti);
+                // console.log(JSON.stringify(newpedido.data))
                 var phone = micliente.data.phone
                 var miurl= "{{ setting('admin.url').'page/consultas' }}"
                 var message = "Gracias por tu preferencia 🙂, Para ver tu compra completa, dirigite a siguiente link 🔎"
@@ -316,7 +322,6 @@
         }
 
         function redireccionar(){
-
             localStorage.setItem('micart', JSON.stringify([]));
             location.href = "{{ route('pages', 'consultas') }}";
         }

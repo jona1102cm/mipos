@@ -1,23 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>{{ setting('site.title') }}</title>
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
-  <!-- Bootstrap core CSS -->
-  <link href="{{ asset('mdb/css/bootstrap.min.css') }}" rel="stylesheet">
-  <!-- Material Design Bootstrap -->
-  <link href="{{ asset('mdb/css/mdb.min.css') }}" rel="stylesheet">
-
-    <!-- Add to homescreen for Chrome on Android -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{{ setting('site.title') }}</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <link href="{{ asset('mdb/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('mdb/css/mdb.min.css') }}" rel="stylesheet">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="{{ setting('site.title') }}">
     <link rel="icon" sizes="512x512" href="{{ setting('admin.url').'storage/'.setting('site.logo') }}">
-
 
   <style type="text/css">
     html,
@@ -95,11 +88,12 @@
               <div class="white-text">
                 <h1 class="h1-responsive font-weight-bold mt-md-5 mt-0 wow fadeInLeft" data-wow-delay="0.3s">{{ setting('site.title') }}</h1>
                 <hr class="hr-light wow fadeInLeft" data-wow-delay="0.3s">
-                <p class="wow fadeInLeft mb-3" data-wow-delay="0.3s">Lorem ipsum dolor sit amet, consectetur
+                {{-- <p class="wow fadeInLeft mb-3" data-wow-delay="0.3s">Lorem ipsum dolor sit amet, consectetur
                   adipisicing elit. Rem repellendus quasi fuga nesciunt
                   dolorum nulla magnam veniam sapiente, fugiat! Commodi sequi non animi ea dolor molestiae
                   iste.
-                </p>
+                </p> --}}
+                <p class="wow fadeInLeft mb-3" data-wow-delay="0.3s">{{ setting('site.description') }}</p>
                 <br>
                 <a href="{{ route('pages', 'catalogo') }}" class="btn btn-unique btn-rounded font-weight-bold ml-lg-0 wow fadeInLeft" data-wow-delay="0.3s">Catalogo</a>
                 {{-- <a class="btn btn-outline-white btn-rounded font-weight-bold wow fadeInLeft" data-wow-delay="0.3s">Learn

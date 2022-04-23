@@ -27,6 +27,12 @@ class AppServiceProvider extends ServiceProvider
 
         Voyager::addAction(\App\Actions\CompraInsumo::class);
 
+        $empresa=setting('empresa.type_negocio');
+        if($empresa=="Farmacia"||$empresa=="Ferreteria"){
+            Voyager::addAction(\App\Actions\CompraProducto::class);
+            Voyager::addAction(\App\Actions\CompraProductoDetalle::class);
+
+        }
 
         Voyager::addAction(\App\Actions\CierreCaja::class);
         //
@@ -44,6 +50,8 @@ class AppServiceProvider extends ServiceProvider
         Voyager::addAction(\App\Actions\CajaDetalle::class);
 
         Voyager::addAction(\App\Actions\CompraDetalle::class);
+
+
 
 
         // Voyager::addAction(\App\Actions\DetalleCaja::class);

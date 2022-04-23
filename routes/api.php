@@ -34,6 +34,10 @@ use App\Compra;
 use App\Location;
 use App\Credito;
 use App\Notificacione;
+use App\Laboratorio;
+use App\Presentacione;
+use App\Marca;
+use App\ComprasProducto;
 
 use Illuminate\Support\Facades\DB;
 /*
@@ -192,10 +196,17 @@ Route::get('notificaciones', function () {
     return $result;
 });
 Route::get('notificacione/save/{message}', function ($message) {
+    // $midata2 = json_decode($message);
     $minoti = Notificacione::create([
         'message' => $message,
     ]);
     return $minoti;
+});
+
+//banipay
+Route::get('banipay/{venta_id}', function ($venta_id) {
+    $result = Banipay::where('venta_id', $venta_id)->first();
+    return $result;
 });
 // --------------------------------------- VENTAS  ------------------------------------------
 // --------------------------------------- VENTAS  ------------------------------------------
@@ -550,6 +561,11 @@ Route::get('pos/cliente/pensionado/{id}', function ($id) {
 // TODOS LOS PRODUCTOS
 Route::get('pos/productos', function () {
     return  Producto::all();
+});
+
+// SEARCH PRODUCTO
+Route::get('pos/producto/search/{midata}', function ($midata) {
+    return  Producto::where('name', 'like', '%'.$midata.'%')->get();
 });
 
 // UN PRODUCT
@@ -919,6 +935,85 @@ Route::get('pos/productions/savesemi/detalle/{miproduction}', function($miproduc
         ]);
     }
     return true;
+});
+
+//Guardar Producto Comprado
+Route::get('pos/addproducto/{midata}', function($midata){
+    $midata2 = json_decode($midata);
+
+    $producto=Producto::create([
+        'name'=>$midata2->name,
+        'categoria_id'=>$midata2->categoria_id ? $midata2->categoria_id: null,
+        'description'=>$midata2->description_producto ? $midata2->description_producto:null,
+        'image'=>$midata2->image ? $midata2->image: null,
+        'precio'=>$midata2->precio_venta,
+        'stock'=>$midata2->cantidad,
+        'production'=>$midata2->production ? $midata2->production:null,
+        'description_long'=>$midata2->description_long ? $midata2->description_long:null,
+        'precio_compra'=>$midata2->costo,
+        'images'=>$midata2->images ? $midata2->images:null,
+        'vencimiento'=>$midata2->vencimiento ? $midata2->vencimiento : null,
+        'mixta'=>$midata2->mixta ? $midata2->mixta :null,
+        'type_producto_id'=>$midata2->type_producto_id ? $midata2->type_producto_id :null,
+        'extra'=>$midata2->extra ? $midata2->extra:null,
+        'extras'=>$midata2->extras ? $midata2->extras:null,
+        'ecommerce'=>$midata2->ecommerce ? $midata2->ecommerce : null,
+        'presentacion_id'=>$midata2->presentacion_id ? $midata2->presentacion_id:null,
+        'marca_id'=>$midata2->marca_id ? $midata2->marca_id:null,
+        'laboratorio_id'=>$midata2->laboratorio_id ? $midata2->laboratorio_id:null,
+        'status'=>1
+
+    ]);
+
+    return $producto;
+});
+
+//Guardar Compras de Productos
+Route::get('pos/compras-productos/save/{midata}/{producto_id}', function($midata, $producto_id){
+    $midata2= json_decode($midata);
+
+    $compra= ComprasProducto::create([
+        'title'=>$midata2->title ? $midata2->title:null ,
+        'description'=>$midata2->description ? $midata2->description:null,
+        'editor_id'=>$midata2->editor_id,
+        'cantidad'=>$midata2->cantidad,
+        'costo'=>$midata2->costo,
+        'proveedor_id'=>$midata2->proveedor_id ? $midata2->proveedor_id:null ,
+        'producto_id'=>$producto_id,
+        'total'=>$midata2->total,
+        'fecha_vencimiento'=>$midata2->vencimiento ? $midata2->vencimiento : null,
+        'presentacion_id'=>$midata2->presentacion_id ? $midata2->presentacion_id:null,
+        'laboratorio_id'=>$midata2->laboratorio_id ? $midata2->laboratorio_id:null,
+        'marca_id'=>$midata2->marca_id ? $midata2->marca_id:null
+    ]);
+
+    return $compra;
+});
+
+//Actualizar Status Producto
+Route::get('pos/producto-update/{producto_id}',function($producto_id){
+    $producto= Producto::find($producto_id);
+
+    $producto->status=0;
+    $producto->save();
+
+
+    return true;
+});
+
+//Laboratorios para Productos
+Route::get('pos/laboratorios', function () {
+    return Laboratorio::all();
+});
+
+//Presentaciones para Productos
+Route::get('pos/presentaciones', function () {
+    return Presentacione::all();
+});
+
+//Marcas para Productos
+Route::get('pos/marcas', function () {
+    return Marca::all();
 });
 
 //PRODUCTIOS PARA PRODUCCION

@@ -84,7 +84,13 @@
                 var pedidos = await axios.get("{{ setting('admin.url') }}api/pedidos/cliente/"+miuser.data.id)
                 $("#mipedidos tbody tr").remove();
                 for (let index = 0; index < pedidos.data.length; index++) {
-                    $("#mipedidos").append("<tr><td>Codigo:"+pedidos.data[index].id+"<br>Ticket:"+pedidos.data[index].ticket+"</td><td>"+pedidos.data[index].published+"</td><td>"+pedidos.data[index].estado.title+"</td><td>"+pedidos.data[index].pasarela.title+"</td><td>"+pedidos.data[index].delivery.name+"</td><td>"+pedidos.data[index].cupon.title+"</td><td>"+pedidos.data[index].total+" Bs.</td><td><button type='button' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#midetalle_modal' onclick=detalle('"+pedidos.data[index].id+"')>Productos</button></td></tr>")
+                    var banipay = await axios.get("{{ setting('admin.url') }}api/banipay/"+pedidos.data[index].id)
+                    var urlbaipay = banipay.data ? banipay.data.urlTransaction : ''
+                    if (banipay.data) {
+                        $("#mipedidos").append("<tr><td>Codigo:"+pedidos.data[index].id+"<br>Ticket:"+pedidos.data[index].ticket+"</td><td>"+pedidos.data[index].published+"</td><td>"+pedidos.data[index].estado.title+"</td><td>"+pedidos.data[index].pasarela.title+"<br><a href='{{ setting('banipay.url_base') }}"+urlbaipay+"' target='_blank' class='btn btn-sm btn-dark'>Pagar</a></td><td>"+pedidos.data[index].delivery.name+"</td><td>"+pedidos.data[index].cupon.title+"</td><td>"+pedidos.data[index].total+" Bs.</td><td><button type='button' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#midetalle_modal' onclick=detalle('"+pedidos.data[index].id+"')>Productos</button></td></tr>")
+                    } else {
+                        $("#mipedidos").append("<tr><td>Codigo:"+pedidos.data[index].id+"<br>Ticket:"+pedidos.data[index].ticket+"</td><td>"+pedidos.data[index].published+"</td><td>"+pedidos.data[index].estado.title+"</td><td>"+pedidos.data[index].pasarela.title+"</td><td>"+pedidos.data[index].delivery.name+"</td><td>"+pedidos.data[index].cupon.title+"</td><td>"+pedidos.data[index].total+" Bs.</td><td><button type='button' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#midetalle_modal' onclick=detalle('"+pedidos.data[index].id+"')>Productos</button></td></tr>")
+                    }
                 }
                 toastr.success('Cliente Encontrado')
             }

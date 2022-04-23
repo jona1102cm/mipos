@@ -47,6 +47,13 @@ Route::group(['prefix' => 'admin'], function () {
         $insumo = App\Insumo::find($id);
         return redirect("admin/insumos/".$id);
     })->name('insumo.comprar');
+
+
+    Route::get('compras/producto/{id}', function($id){
+        $insumo = App\Producto::find($id);
+        return redirect("admin/productos/".$id);
+    })->name('producto.comprar');
+
     Route::get('import/users', 'App\Http\Controllers\PosController@import_users')->name('import.users');
     Route::get('import/clientes', 'App\Http\Controllers\PosController@import_clientes')->name('import.clientes');
     Route::get('import/products', 'App\Http\Controllers\PosController@import_products')->name('import.products');

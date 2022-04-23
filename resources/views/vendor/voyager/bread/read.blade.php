@@ -46,11 +46,49 @@
 
                     </div>                --}}
                     @php
-                    $midata = App\Producto::find($dataTypeContent->getKey());
-                    // $unidad = App\Categoria::find($midata->categoria_id);
+                    if(setting('empresa.type_negocio')=="Farmacia"){
+                        $midata = App\Producto::find($dataTypeContent->getKey());
+
+                        if($midata->presentacion_id!=null){
+                            $presentacion = App\Presentacione::find($midata->presentacion_id);
+
+                            if($midata->laboratorio_id!=null){
+                                $laboratorio = App\Laboratorio::find($midata->laboratorio_id);
+                                print"<h2>Comprando: $presentacion->name de $midata->name del Laboratorio: $laboratorio->name</h2>";
+                            }
+                            else{
+                                print"<h2>Comprando: $presentacion->name de $midata->name</h2>";
+                            }
+                        }
+                        else{
+                            print"<h2>Comprando: $midata->name</h2>";
+                        }
+                    }
+                    if(setting('empresa.type_negocio')=="Ferreteria"){
+                        $midata = App\Producto::find($dataTypeContent->getKey());
+                        $marca = App\Marca::find($midata->marca_id);
+
+                        if($midata->marca_id!=null){
+                            if($midata->presentacion_id!=null){
+                                $presentacion = App\Presentacione::find($midata->presentacion_id);
+                                print"<h2>Comprando: $presentacion->name de $midata->name marca $marca->name</h2>";
+
+                            }
+                            else{
+                                print"<h2>Comprando: $midata->name marca $marca->name</h2>";
+
+                            }
+                        }
+                        else{
+                            print"<h2>Comprando: $midata->name</h2>";
+
+                        }
+
+                    }
+
                     @endphp
                     {{-- <h2>Comprando: {{$unidad->name}} de {{$midata->name}}</h2> --}}
-                    <h2>Comprando: {{$midata->name}}</h2>
+                    {{-- <h2>Comprando: {{$midata->name}}</h2> --}}
 
                     {{-- <h2>Comprando Insumo: {{$midata->name}} </h2> --}}
                     <div class="col-sm-6"></div>
@@ -221,81 +259,118 @@
             $midata = App\Producto::find($dataTypeContent->getKey());
         @endphp
 
-        {{-- <div class="form-group col-md-12"> --}}
-            <div class="form-control" id="search-input">
+        <div class="page-content read  container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-bordered" style="padding-bottom:5px;">
+                        <div class="panel-heading" style="border-bottom:0;">
+                            <h3 class="panel-title"></h3>
+                        </div>
+                        <div class="panel-body" style="padding-top:0;">
+                                <div class="row">
+                                    <div class="col-sm-6">
 
-                <div class="input-group col-md-4">
-                    <select class="form-control js-example-basic-single" id="proveedores_compras"> </select>
+                                        <div class="form-group">
+                                            <label for="">Título</label>
+                                            <input type="text"  class="form-control" id="title">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="">Cantidad</label>
+                                            <input type="number" value="1" min="0" class="form-control" id="cantidad_compras">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="">Precio Compra</label>
+                                            <input type="number" value="{{$midata->precio_compra}}"  min="0" class="form-control" id="costo_compras">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="">Total</label>
+                                            <input type="number" class="form-control" id="total_compras" readonly>
+                                        </div>
+
+                                        @php
+                                            $midata = App\Producto::find($dataTypeContent->getKey());
+                                            $fecha_vec =$midata->vencimiento ? $midata->vencimiento :null;
+                                            $stock_original=$midata->stock_original ? $midata->stock_original:null;
+
+                                            $categoria_id= $midata->categoria_id ? $midata->categoria_id :null;
+                                            $description= $midata->description ? $midata->description :null;
+                                            $image= $midata->image ? $midata->image :null;
+                                            $production= $midata->production ? $midata->production :null;
+                                            $description_long=  $midata->description_long ? $midata->description_long :null;
+                                            $images=  $midata->images ? $midata->images :null;
+                                            $mixta=  $midata->mixta ? $midata->mixta :null;
+                                            $type_producto_id=  $midata->type_producto_id ? $midata->type_producto_id :null;
+                                            $extra=  $midata->extra ? $midata->extra :null;
+                                            $extras=  $midata->extras ? $midata->extras :null;
+                                            $ecommerce=  $midata->ecommerce ? $midata->ecommerce :null;
+                                            $presentacion_id=  $midata->presentacion_id ? $midata->presentacion_id :null;
+                                            $laboratorio_id=  $midata->laboratorio_id ? $midata->laboratorio_id :null;
+                                            $marca_id=  $midata->marca_id ? $midata->marca_id :null;
+
+
+
+                                        @endphp
+                                        <input type="hidden" class="form-control" id="producto_compras" value="{{$dataTypeContent->getKey()}}" >
+                                        <input type="hidden" class="form-control" id="fecha_vec_original" value="{{$fecha_vec}}">
+                                        <input type="hidden" class="form-control" id="stock_original" value="{{$stock_original}}">
+
+
+
+                                        <input type="hidden" class="form-control" id="categoria_id" value="{{$categoria_id}}">
+                                        <input type="hidden" class="form-control" id="editor_id" >
+                                        <input type="hidden" class="form-control" id="name_producto" value="{{$midata->name}}" >
+                                        <input type="hidden" class="form-control" id="descripcion_compras_producto" value="{{$description}}" >
+                                        <input type="hidden" class="form-control" id="image" value="{{$image}}" >
+                                        <input type="hidden" class="form-control" id="production" value="{{$production}}" >
+                                        <input type="hidden" class="form-control" id="description_long" value="{{$description_long}}" >
+                                        <input type="hidden" class="form-control" id="images" value="{{$images}}" >
+                                        <input type="hidden" class="form-control" id="mixta" value="{{$mixta}}" >
+                                        <input type="hidden" class="form-control" id="type_producto_id" value="{{$type_producto_id}}" >
+                                        <input type="hidden" class="form-control" id="extra" value="{{$extra}}" >
+                                        <input type="hidden" class="form-control" id="extras" value="{{$extras}}" >
+                                        <input type="hidden" class="form-control" id="ecommerce" value="{{$ecommerce}}" >
+                                        <input type="hidden" class="form-control" id="presentacion_id" value="{{$presentacion_id}}" >
+                                        <input type="hidden" class="form-control" id="laboratorio_id" value="{{$laboratorio_id}}" >
+                                        <input type="hidden" class="form-control" id="marca_id" value="{{$marca_id}}" >
+
+
+
+                                        {{-- @if (setting('empresa.type_negocio')=="Farmacia")
+                                        @endif --}}
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="">Proveedor</label>
+                                            <select class="form-control js-example-basic-single" id="proveedores_compras"> </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="">Precio Venta</label>
+                                            <input type="number" value="{{$midata->precio}}"  min="0" class="form-control" id="costo_compras_venta">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="">Fecha Vencimiento</label>
+                                            <input type="date" value="null" class="form-control" id="fecha_vencimiento_compras">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="">Descripción de la Compra</label>
+                                            <textarea class="form-control" name="" id="descripcion_compras"></textarea>
+                                        </div>
+
+                                        {{-- <div class="form-group">
+                                            <label for="">Descripción del Producto</label>
+                                            <textarea class="form-control" name="" id="descripcion_compras_producto"></textarea>
+                                        </div> --}}
+
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
                 </div>
-                {{-- <div class="input-group col-md-4">
-                    <select class="form-control js-example-basic-single" id="unidades_compras"> </select>
-                </div>
-                <div class="input-group col-md-4">
-                    <select class="form-control js-example-basic-single" id="insumos_compras"> </select>
-                </div>    --}}
-
-
             </div>
-        {{-- </div> --}}
-
-
-            <div>
-                <table class="table table-responsive">
-
-                    <tbody>
-                        <tr>
-                            {{-- <td>
-                                Proveedor
-                                <input type="number" class="form-control" id="proveedor_compras">
-                            </td> --}}
-                            {{-- <td>
-                                Unidad
-                                <input type="number" class="form-control" id="unidad_compras">
-                            </td> --}}
-                            @php
-                                $midata = App\Producto::find($dataTypeContent->getKey());
-                            @endphp
-                            <td>
-                                <input type="hidden" class="form-control" id="unidad_id" value="{{$midata->categoria_id}}">
-
-                            </td>
-                            <td>
-                                <input type="hidden" class="form-control" id="editor_id" >
-
-                            </td>
-                            <td>
-                                <input type="hidden" class="form-control" id="insumo_compras" value="{{$dataTypeContent->getKey()}}" >
-                            </td>
-
-                        </tr>
-
-                        <tr>
-                            <td>
-                                Cantidad
-                                <input type="number" value="1" min="0" class="form-control" id="cantidad_compras">
-                            </td>
-                            <td>
-                                Costo Unitario
-                                <input type="number" value="{{$midata->costo}}"  min="0" class="form-control" id="costo_compras">
-                            </td>
-                            <td>
-                                Total
-                                <input type="number" class="form-control" id="total_compras" readonly>
-
-                            </td>
-                            <td>
-                                Descripción
-                                {{-- <input type="text-area" class="form-control" id="description_compras"> --}}
-                                <textarea class="form-control" name="" id="descripcion_compras"></textarea>
-                            </td>
-
-                        </tr>
-                    </tbody>
-
-                </table>
-            </div>
-
-
+        </div>
 
     @break
 
@@ -475,7 +550,7 @@
                     var tabla= await axios("{{setting('admin.url')}}api/pos/proveedores");
 
                     $('#proveedores_compras').append($('<option>', {
-                        value: null,
+                        value: 0,
                         text: 'Elige un Proveedor'
                     }));
                     for (let index = 0; index < tabla.data.length; index++) {
@@ -617,7 +692,7 @@
                 var tabla= await axios("{{setting('admin.url')}}api/pos/proveedores");
 
                 $('#proveedores_compras').append($('<option>', {
-                    value: null,
+                    value: 0,
                     text: 'Elige un Proveedor'
                 }));
                 for (let index = 0; index < tabla.data.length; index++) {
@@ -629,76 +704,54 @@
                 }
             }
 
-            // async function Unidades_Compras(){
-
-            //     var tabla= await axios("{{setting('admin.url')}}api/pos/unidades");
-
-            //     $('#unidades_compras').append($('<option>', {
-            //         value: null,
-            //         text: 'Elige una Unidad'
-            //     }));
-            //     for (let index = 0; index < tabla.data.length; index++) {
-            //         const element = tabla.data[index];
-            //         $('#unidades_compras').append($('<option>', {
-            //             value: tabla.data[index].id,
-            //             text: tabla.data[index].title
-            //         }));
-            //     }
-
-            // }
-
-            // async function InsumosPorUnidadesCompras(id){
-            //     var tabla= await axios("{{setting('admin.url')}}api/pos/insumo/unidad/"+id);
-
-            //     $('#insumos_compras').find('option').remove().end();
-            //     $('#insumos_compras').append($('<option>', {
-            //         value: null,
-            //         text: 'Elige un Insumo'
-            //     }));
-            //     for (let index = 0; index < tabla.data.length; index++) {
-            //         const element = tabla.data[index];
-            //         $('#insumos_compras').append($('<option>', {
-            //             value: tabla.data[index].id,
-            //             text: tabla.data[index].name
-            //         }));
-            //     }
-
-            // }
-
-            // $('#proveedores_compras').on('change',function() {
-
-            //     $('input[name="proveedor_id"]').val($('#proveedores_compras').val());
-
-            // });
-
-
-            // $('#unidades_compras').on('change', function() {
-            //     InsumosPorUnidadesCompras(this.value);
-
-            //     $('input[name="unidad_id"]').val($('#unidades_compras').val());
-            // });
-
-            // $('#insumos_compras').on('change',function() {
-
-            //     $('input[name="insumo_id"]').val($('#insumos_compras').val());
-
-            // });
 
             async function savecompra(){
 
+
+                var vencimiento=$('#fecha_vencimiento_compras').val();
+
+
+                var description_producto=$('#descripcion_compras_producto').val();
                 var description=$('#descripcion_compras').val();
                 var editor_id=$('#editor_id').val();
                 var cantidad=$('#cantidad_compras').val();
                 var costo=$('#costo_compras').val();
                 var total= $('#total_compras').val();
                 var proveedor_id=$('#proveedores_compras').val();
-                var insumo_id=$('#insumo_compras').val();
-                var unidad_id=$('#unidad_id').val();
+                var producto_id=$('#producto_compras').val();
+                var categoria_id=$('#categoria_id').val();
 
-                var midata = JSON.stringify({'description':description, 'editor_id':editor_id, 'cantidad':cantidad, 'costo':costo,'total':total, 'proveedor_id':proveedor_id, 'insumo_id':insumo_id, 'unidad_id':unidad_id});
 
-                var compra = await axios("{{setting('admin.url')}}api/pos/compras-productos/save/"+midata);
-                if(compra){
+                var title=$('#title').val();
+                var precio_venta=$('#costo_compras_venta').val();
+                var name=$('#name_producto').val();
+                var image=$('#image').val();
+                var production=$('#production').val();
+                var description_long=$('#description_long').val();
+                var images=$('#images').val();
+                var mixta=$('#mixta').val();
+                var type_producto_id=$('#type_producto_id').val();
+                var extra=$('#extra').val();
+                var extras=$('#extras').val();
+                var ecommerce=$('#ecommerce').val();
+                var presentacion_id=$('#presentacion_id').val();
+                var laboratorio_id=$('#laboratorio_id').val();
+                var marca_id=$('#marca_id').val();
+
+                var midata = JSON.stringify({'description':description, 'editor_id':editor_id, 'cantidad':cantidad, 'costo':costo,'total':total, 'proveedor_id':proveedor_id, 'producto_id':producto_id, 'categoria_id':categoria_id, 'description_producto':description_producto, 'vencimiento':vencimiento, 'precio_venta':precio_venta,'name':name, 'image':image,'production':production, 'description_long':description_long, 'images':images, 'mixta':mixta, 'type_producto_id':type_producto_id, 'extra':extra, 'extras':extras, 'ecommerce':ecommerce, 'presentacion_id':presentacion_id, 'laboratorio_id':laboratorio_id, 'marca_id':marca_id, 'title':title});
+
+                var producto= await axios("{{setting('admin.url')}}api/pos/addproducto/"+midata);
+
+                if(producto.data.length!=0){
+                    toastr.success("Producto Creado exitosamente");
+                }
+                else{
+                    toastr.error("Ha ocurrido un error con el guardado del producto");
+                }
+
+
+                var compra = await axios("{{setting('admin.url')}}api/pos/compras-productos/save/"+midata+"/"+producto.data.id);
+                if(compra.data.length!=0){
 
                     $('#descripcion_compras').val("");
                     $('#editor_id').val("");
@@ -707,14 +760,65 @@
                     $('#total_compras').val("");
                     $('#proveedores_compras').val("");
                     $('#insumo_compras').val("");
-                    $('#unidad_id').val("");
+                    $('#categoria_id').val("");
+                    $('#descripcion_compras_producto').val("");
+                    $('#fecha_vencimiento_compras').val("");
+                    $('#costo_compras_venta').val("");
+
+                    $('#name_producto').val("");
+                    $('#image').val("");
+                    $('#production').val("");
+                    $('#description_long').val("");
+                    $('#images').val("");
+                    $('#mixta').val("");
+                    $('#type_producto_id').val("");
+                    $('#extra').val("");
+                    $('#extras').val("");
+                    $('#ecommerce').val("");
+                    $('#presentacion_id').val("");
+                    $('#laboratorio_id').val("");
+                    $('marca_id').val("");
                      //$ins= App\Insumo::find(insumo_id);
                     window.location.href = "{{setting('admin.url')}}admin/productos";
                     toastr.success('Se Registró la Compra');
 
+                    var fecha_vec_original=$('#fecha_vec_original').val();
+
+
+                    var stock_original=$('#stock_original').val();
+
+                    if(fecha_vec_original!=null){
+                        if(CalcularFecha(fecha_vec_original)<=0){
+                            var actualizacion= await axios("{{setting('admin.url')}}api/pos/producto-update/"+producto_id);
+                        }
+                    }
+
+                    if(stock_original==0){
+                        var actualizacion= await axios("{{setting('admin.url')}}api/pos/producto-update/"+producto_id);
+                    }
+
+
+                }
+                else{
+                    toastr.error("Ha ocurrido un error con el guardado de la compra");
                 }
 
+
             }
+
+            function CalcularFecha(fecha_final){
+                var today=new Date();
+                var fechaInicio =   today.toISOString().split('T')[0];
+                var fechaFin    = fecha_final;
+                var fi=fechaInicio.toString();
+                var ff=fechaFin.toString();
+                var fechai = new Date(fi).getTime();
+                var fechaf    = new Date(ff).getTime();
+                var diff = fechaf - fechai;
+                return (diff/(1000*60*60*24));
+            }
+
+
 
 
 

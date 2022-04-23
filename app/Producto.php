@@ -9,12 +9,25 @@ class Producto extends Model
 {
 	use SoftDeletes;
 	protected $fillable = [
-		'id',
 		'name',
+        'categoria_id',
 		'description',
+        'image',
 		'precio',
-		'categoria_id',
-		'stock'
+		'stock',
+        'production',
+        'description_long',
+        'precio_compra',
+        'images',
+        'vencimiento',
+        'mixta',
+        'type_producto_id',
+        'extra',
+        'extras',
+        'ecommerce',
+        'presentacion_id',
+        'marca_id',
+        'status'
 	];
 
 	public function categoria()

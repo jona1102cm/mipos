@@ -150,9 +150,24 @@
                                 @endphp
 
                                     <div class="form-group col-md-8">
-
-                                        <input type="search" id="misearch" class="form-control" placeholder="ingresa un creiterio de busqueda">
+                                        <input type="search" id="misearch" class="form-control" placeholder="Ingresa un criterio de busqueda, QR o codigo de barra">
                                         <div>
+                                        <div id="miresult" hidden>
+                                            <table class="table table-responsive" id="mitableresult">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Imagen</th>
+                                                        <th>Item</th>
+                                                        <th>Stock</th>
+                                                        <th>Precio</th>
+                                                        <th>Accion</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                            <a href="#" onclick="return $('#miresult').attr('hidden', true)" class="btn btn-sm btn-default">Cerrar</a>
+                                        </div>
                                             <!-- Nav tabs -->
                                             <ul class="nav nav-tabs" role="tablist">
                                                 @foreach($categorias as $item)
@@ -182,7 +197,6 @@
                                                             @endforeach
                                                         </div>
                                                     </div>
-
                                                 @endforeach
                                                 <div role="tabpanel" class="tab-pane" id="vacio">
                                                 </div>
@@ -227,7 +241,6 @@
                                         </form>
                                     </div>
                                     <div class="form-group col-md-4">
-
                                         <div class="form-group col-md-12">
                                             <strong>Cliente</strong>
                                             <select class="form-control js-example-basic-single" id="micliente"> </select>
@@ -575,10 +588,31 @@
                                     <strong>Categoria</strong>
                                     <select class="form-control js-example-basic-single" name="micategory" id="micategory"></select>
                                 </div>
-                                <div class="form-group col-md-6">
-                                    <strong>Tipo Producto</strong>
-                                    <select class="form-control js-example-basic-single" name="type_producto" id="type_producto"></select>
-                                </div>
+                                @if(setting('empresa.type_negocio')=="Restaurante")
+                                    <div class="form-group col-md-6">
+                                        <strong>Tipo Producto</strong>
+                                        <select class="form-control js-example-basic-single" name="type_producto" id="type_producto"></select>
+                                    </div>
+                                @endif
+                                @if(setting('empresa.type_negocio')=="Farmacia")
+                                    <div class="form-group col-md-6">
+                                        <strong>Laboratorio</strong>
+                                        <select class="form-control js-example-basic-single" name="laboratorio_producto" id="laboratorio_producto"></select>
+                                    </div>
+                                @endif
+                                @if(setting('empresa.type_negocio')=="Ferreteria")
+                                    <div class="form-group col-md-6">
+                                        <strong>Marca</strong>
+                                        <select class="form-control js-example-basic-single" name="marca_producto" id="marca_producto"></select>
+                                    </div>
+                                @endif
+                                @if(setting('empresa.type_negocio')=="Ferreteria"||setting('empresa.type_negocio')=="Farmacia")
+                                    <div class="form-group col-md-6">
+                                        <strong>Presentación</strong>
+                                        <select class="form-control js-example-basic-single" name="presentacion_producto" id="presentacion_producto"></select>
+                                    </div>
+                                @endif
+
                                 @foreach($dataTypeRows as $row)
                                     <!-- GET THE DISPLAY OPTIONS -->
                                     @php
@@ -1388,176 +1422,32 @@
                     }
 
                     // TODOS LOS CATEGORIAS
-                    // $.ajax({
-                    //     url: "{{ setting('admin.url') }}api/pos/categorias",
-                    //     dataType: "json",
-                    //     success: function (response) {
-                    //         $('#category').append($('<option>', {
-                    //             value: 0,
-                    //             text: 'Elige una Categoria'
-                    //         }));
-                    //         for (let index = 0; index < response.length; index++) {
-                    //             const element = response[index];
-                    //             $('#category').append($('<option>', {
-                    //                 value: response[index].id,
-                    //                 text: response[index].name
-                    //             }));
-                    //         }
-                    //     }
-                    // });
+
 
                     Categorias();
 
                     // get Deliverys
-                    // $.ajax({
-                    //     url: "{{ setting('admin.url') }}api/pos/deliverys",
-                    //     dataType: "json",
-                    //     success: function (response) {
-                    //         for (let index = 0; index < response.length; index++) {
-                    //             if (response[index].id == 1) {
-                    //                 $('#midelivery').append($('<option>', {
-                    //                 selected: true,
-                    //                 value: response[index].id,
-                    //                 text: response[index].name
-                    //             }));
-                    //             $("input[name='delivery_id']").val(response[index].id);
-                    //             } else {
-                    //                 $('#midelivery').append($('<option>', {
-                    //                 value: response[index].id,
-                    //                 text: response[index].name
-                    //             }));
-                    //             }
-                    //         }
-                    //     }
-                    // });
+
                     Deliverys();
 
-                    //get cliente default
-                    // $.ajax({
-                    //     url: "{{ setting('admin.url') }}api/pos/cliente/default/get",
-                    //     dataType: "json",
-                    //     success: function (response) {
-                    //         $("input[name='cliente_id']").val(response.id);
-                    //         $('#micliente').append($('<option>', {
-                    //                 value: response.id,
-                    //                 text: response.display+' - '+response.ci_nit
-                    //             }));
-                    //     }
-                    // });
-                    // $.ajax({
-                    //     url: "{{ setting('admin.url') }}api/pos/clientes",
-                    //     dataType: "json",
-                    //     success: function (response) {
-                    //         for (let index = 0; index < response.length; index++) {
-                    //             if(response[index].default==0){
-                    //                 $('#micliente').append($('<option>', {
-                    //                 value: response[index].id,
-                    //                 text: response[index].display+' - '+response[index].ci_nit
-                    //              }));
-                    //             }
-                    //         }
-                    //     }
-                    // });
+
 
                     ClienteDefault();
                     Cliente();
 
-                    // get cup[ones]
-                    // $.ajax({
-                    //     url: "{{ setting('admin.url') }}api/pos/cupones",
-                    //     dataType: "json",
-                    //     success: function (response) {
-                    //         for (let index = 0; index < response.length; index++) {
-                    //             if (response[index].id == 1) {
-                    //                 $('#micupon').append($('<option>', {
-                    //                 selected: true,
-                    //                 value: response[index].id,
-                    //                 text: response[index].title
-                    //             }));
-                    //             $("input[name='cupon_id']").val(response[index].id);
-                    //             } else {
-                    //                 $('#micupon').append($('<option>', {
-                    //                 value: response[index].id,
-                    //                 text: response[index].title
-                    //             }));
-                    //             }
-                    //         }
-                    //     }
-                    // });
+
                     Cupones();
 
-                    // get pasarela
-                    // $.ajax({
-                    //     url: "{{ setting('admin.url') }}api/pos/pagos",
-                    //     dataType: "json",
-                    //     success: function (response) {
-                    //         for (let index = 0; index < response.length; index++) {
-                    //             if (response[index].id == 1) {
-                    //                 $('#mipagos').append($('<option>', {
-                    //                 selected: true,
-                    //                 value: response[index].id,
-                    //                 text: response[index].title
-                    //             }));
-                    //             $("input[name='pago_id']").val(response[index].id);
-                    //             } else {
-                    //                 $('#mipagos').append($('<option>', {
-                    //                 value: response[index].id,
-                    //                 text: response[index].title
-                    //             }));
-                    //             }
-                    //         }
-                    //     }
-                    // });
+
 
                     Pasarelas();
 
-                    // get estados
-                    // $.ajax({
-                    //     url: "{{ setting('admin.url') }}api/pos/estados",
-                    //     dataType: "json",
-                    //     success: function (response) {
-                    //         for (let index = 0; index < response.length; index++) {
-                    //             if (response[index].id == 1) {
-                    //                 $('#miestado').append($('<option>', {
-                    //                 selected: true,
-                    //                 value: response[index].id,
-                    //                 text: response[index].title
-                    //             }));
-                    //             $("input[name='status_id']").val(response[index].id);
-                    //             } else {
-                    //                 $('#miestado').append($('<option>', {
-                    //                 value: response[index].id,
-                    //                 text: response[index].title
-                    //             }));
-                    //             }
-                    //         }
-                    //     }
-                    // });
+
 
                     Estados();
 
                     // venta_type
-                    // $.ajax({
-                    //     url: "{{ setting('admin.url') }}api/pos/options",
-                    //     dataType: "json",
-                    //     success: function (response) {
-                    //         for (let index = 0; index < response.length; index++) {
-                    //             if (response[index].id == 1) {
-                    //                 $('#venta_type').append($('<option>', {
-                    //                 selected: true,
-                    //                 value: response[index].id,
-                    //                 text: response[index].title
-                    //             }));
-                    //             $("input[name='option_id']").val(response[index].id);
-                    //             } else {
-                    //                 $('#venta_type').append($('<option>', {
-                    //                 value: response[index].id,
-                    //                 text: response[index].title
-                    //             }));
-                    //             }
-                    //         }
-                    //     }
-                    // });
+
 
                     Opciones();
                     //PensionadoDefault();
@@ -1743,10 +1633,17 @@
 
                 }
 
-                $('#misearch').keypress(function(event) {
+                $('#misearch').keypress(async function(event) {
                     if ( event.which == 13 ) {
                         event.preventDefault();
                         toastr.info('buscando '+this.value)
+                        var miresult = await axios.get("{{setting('admin.url')}}api/pos/producto/search/"+this.value)
+                        $("#mitableresult tbody tr").remove()
+                        $("#miresult").attr("hidden", false)
+                        for(let index=0; index < miresult.data.length; index++){
+                            var img = miresult.data[index].image ? miresult.data[index].image : "{{ setting('productos.imagen_default') }}"
+                            $('#mitableresult').append("<tr><td>"+miresult.data[index].id+"</td><td><img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+img+"></td><td>"+miresult.data[index].name+"</td><td>"+miresult.data[index].stock+"</td><td>"+miresult.data[index].precio+"</td><td><a class='btn btn-sm btn-success' href='#' onclick='addproduct("+miresult.data[index].id+")'>Agregar</a></td></tr>")
+                        }
                     }
                 });
 
@@ -1773,17 +1670,14 @@
                 });
 
                 $('#mipensionado').on('change', function() {
-
                     $('input[name="pensionado_id"]').val(this.value);
                     toastr.success('Cambio de Pensionado');
                 });
 
                 async function ClientePorPensionado(id){
                     var table = await axios.get("{{setting('admin.url')}}api/pos/cliente/pensionado/"+id);
-                    //console.log(table.data);
                     $('#micliente').find('option').remove().end();
                     for (let index = 0; index < table.data.length; index++) {
-
                         $('#micliente').append($('<option>', {
                             value: table.data[index].cliente_id,
                             text: table.data[index].cliente.display
@@ -1794,7 +1688,6 @@
 
                 async function Cliente(){
                     var tabla= await axios.get("{{ setting('admin.url') }}api/pos/clientes");
-
                     for (let index = 0; index < tabla.data.length; index++) {
                         if(tabla.data[index].default==0){
                             $('#micliente').append($('<option>', {
@@ -1803,12 +1696,10 @@
                             }));
                         }
                     }
-
                 }
+
                 async function ClienteDefault(){
-
                     var tabla= await axios("{{ setting('admin.url') }}api/pos/cliente/default/get");
-
                     $("input[name='cliente_id']").val(tabla.data.id);
                     $('#micliente').append($('<option>', {
                         value: tabla.data.id,
@@ -1823,7 +1714,6 @@
                     $("#producto_extra_id").val(producto_id);
                     var mitable="";
                     var extrasp=  await axios.get("{{ setting('admin.url') }}api/pos/producto/extra/"+extras);
-                    //console.log(extrasp.data);
                     for(let index=0; index < extrasp.data.length; index++){
                         mitable = mitable + "<tr><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+extrasp.data[index].image+"></td><td>"+extrasp.data[index].id+"</td><td><input class='form-control extra-name' readonly value='"+extrasp.data[index].name+"'></td><td><input class='form-control extra-precio' readonly  value='"+extrasp.data[index].precio+" Bs."+"'></td><td><input class='form-control extra-cantidad' style='width:100px' type='number' min='0' value='0'  id='extra_"+extrasp.data[index].id+"'></td></tr>";
                     }
@@ -2644,6 +2534,7 @@
                 });
 
                 function addproduct(id) {
+                    $("#miresult").attr("hidden", true)
                     var total = 0;
                     var micart = JSON.parse(localStorage.getItem('micart'));
                     $("#micart tr#0").remove();
@@ -2774,12 +2665,11 @@
 
                 function midelete(id) {
                     $("#micart tr#"+id).remove();
-
                     var milist = JSON.parse(localStorage.getItem('micart'));
                     var newlist = [];
                     for (let index = 0; index < milist.length; index++) {
                         if (milist[index].id == id) {
-                            toastr.info(milist[index].name+" - ELIMINADO");
+                            toastr.error(milist[index].name+" - ELIMINADO");
                         } else {
                             var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'precio': milist[index].precio, 'precio_inicial':milist[index].precio_inicial, 'cant': milist[index].cant, 'total': milist[index].total, 'description': milist[index].description, 'extra':milist[index].extra, 'extras':milist[index].extras, 'extra_name':milist[index].extra_name, 'observacion':milist[index].observacion };
                             newlist.push(temp);
@@ -2787,7 +2677,6 @@
                     }
                     localStorage.setItem('micart', JSON.stringify(newlist));
                     mitotal();
-
                 }
                 async function CrearCredito(venta, cliente){
                     //console.log(venta);
@@ -3666,9 +3555,10 @@
     @break
     @case('productos')
         @section('javascript')
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <script>
 
-            $('document').ready(function () {
+            $('document').ready(async function () {
                     $('.js-example-basic-single').select2();
 
                     $.ajax({
@@ -3707,8 +3597,57 @@
                         }
                     });
 
+                    LaboratorioProducto();
+                    PresentacionProducto();
+                    MarcaProducto();
 
             });
+
+            async function LaboratorioProducto() {
+                var table= await axios.get("{{setting('admin.url')}}api/pos/laboratorios");
+
+                $('#laboratorio_producto').append($('<option>', {
+                    value: null,
+                    text: 'Elige un Laboratorio'
+                }));
+                for (let index = 0; index < table.data.length; index++) {
+                    const element = table.data[index];
+                    $('#laboratorio_producto').append($('<option>', {
+                        value: table.data[index].id,
+                        text: table.data[index].name
+                    }));
+                }
+            }
+            async function PresentacionProducto(){
+                var table= await axios.get("{{setting('admin.url')}}api/pos/presentaciones");
+
+                $('#presentacion_producto').append($('<option>', {
+                    value: null,
+                    text: 'Elige una Presentación'
+                }));
+                for (let index = 0; index < table.data.length; index++) {
+                    const element = table.data[index];
+                    $('#presentacion_producto').append($('<option>', {
+                        value: table.data[index].id,
+                        text: table.data[index].name
+                    }));
+                }
+            }
+            async function MarcaProducto() {
+                var table= await axios.get("{{setting('admin.url')}}api/pos/marcas");
+
+                $('#marca_producto').append($('<option>', {
+                    value: null,
+                    text: 'Elige una Marca'
+                }));
+                for (let index = 0; index < table.data.length; index++) {
+                    const element = table.data[index];
+                    $('#marca_producto').append($('<option>', {
+                        value: table.data[index].id,
+                        text: table.data[index].name
+                    }));
+                }
+            }
 
             $('#micategory').on('change', function() {
 
@@ -3722,6 +3661,27 @@
 
                 var type_producto_id = $('#type_producto').val();
                 $('input[name="type_producto_id"]').val(type_producto_id);
+
+            });
+
+            $('#laboratorio_producto').on('change', function() {
+
+                var laboratorio_producto = $('#laboratorio_producto').val();
+                $('input[name="laboratorio_id"]').val(laboratorio_producto);
+
+            });
+
+            $('#presentacion_producto').on('change', function() {
+
+                var presentacion_producto = $('#presentacion_producto').val();
+                $('input[name="presentacion_id"]').val(presentacion_producto);
+
+            });
+
+            $('#marca_producto').on('change', function() {
+
+                var marca_producto = $('#marca_producto').val();
+                $('input[name="marca_id"]').val(marca_producto);
 
             });
 
