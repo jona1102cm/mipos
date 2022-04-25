@@ -158,8 +158,11 @@
                                                     <tr>
                                                         <th>#</th>
                                                         <th>Imagen</th>
+                                                        <th>Presentación</th>
                                                         <th>Item</th>
+                                                        <th>Nombre Genérico</th>
                                                         <th>Stock</th>
+                                                        <th>Vencimiento</th>
                                                         <th>Precio</th>
                                                         <th>Accion</th>
                                                     </tr>
@@ -189,10 +192,15 @@
                                                                     <a href="#" onclick="addproduct('{{$item->id}}')" class="thumbnail">
                                                                         @php
                                                                         $miimage =$item->image ? $item->image :  setting('productos.imagen_default') ;
+                                                                        $stock = $item->stock ? $item->stock : " ";
                                                                         @endphp
                                                                         <img src="{{setting('admin.url')}}storage/{{ $miimage }}">
                                                                     </a>
-                                                                    <small>{{ $item->name }}</small>
+                                                                    @if(setting('ventas.stock'))
+                                                                        <small>{{ $item->name }} - {{$stock}}</small>
+                                                                    @else
+                                                                        <small>{{ $item->name }}</small>
+                                                                    @endif
                                                                 </div>
                                                             @endforeach
                                                         </div>
@@ -1623,12 +1631,15 @@
                         text: 'Elige un Pensionado'
                     }));
 
-                    for (let index = 0; index < table.data.length; index++) {
-                        const element = table.data[index];
-                        $('#mipensionado').append($('<option>', {
-                            value: table.data[index].id,
-                            text: table.data[index].id+' - '+table.data[index].cliente.display+' - '+table.data[index].cliente.phone
-                        }));
+                    if(table.data.length>0){
+
+                        for (let index = 0; index < table.data.length; index++) {
+                            const element = table.data[index];
+                            $('#mipensionado').append($('<option>', {
+                                value: table.data[index].id,
+                                text: table.data[index].id+' - '+table.data[index].cliente.display+' - '+table.data[index].cliente.phone
+                            }));
+                        }
                     }
 
                 }
@@ -1641,8 +1652,17 @@
                         $("#mitableresult tbody tr").remove()
                         $("#miresult").attr("hidden", false)
                         for(let index=0; index < miresult.data.length; index++){
+                            var presentacion_id= miresult.data[index].presentacion_id ? miresult.data[index].presentacion_id :" "
+                            if(presentacion_id!= " "||presentacion_id!=null){
+                                var presentacion= await axios("{{setting('admin.url')}}api/pos/presentacion/"+presentacion_id)
+                            }
+                            else{
+                                var presentacion = " "
+                            }
                             var img = miresult.data[index].image ? miresult.data[index].image : "{{ setting('productos.imagen_default') }}"
-                            $('#mitableresult').append("<tr><td>"+miresult.data[index].id+"</td><td><img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+img+"></td><td>"+miresult.data[index].name+"</td><td>"+miresult.data[index].stock+"</td><td>"+miresult.data[index].precio+"</td><td><a class='btn btn-sm btn-success' href='#' onclick='addproduct("+miresult.data[index].id+")'>Agregar</a></td></tr>")
+                            var nombre_genérico= miresult.data[index].title ? miresult.data[index].title : " "
+                            var vencimiento = miresult.data[index].vencimiento ? miresult.data[index].vencimiento : " "
+                            $('#mitableresult').append("<tr><td>"+miresult.data[index].id+"</td><td><img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+img+"></td><td>"+presentacion.data.name+"</td><td>"+miresult.data[index].name+"</td><td>"+nombre_genérico+"</td><td>"+miresult.data[index].stock+"</td><td>"+vencimiento+"</td><td>"+miresult.data[index].precio+"</td><td><a class='btn btn-sm btn-success' href='#' onclick='addproduct("+miresult.data[index].id+")'>Agregar</a></td></tr>")
                         }
                     }
                 });

@@ -176,7 +176,7 @@ Route::get('option/{id}', function ($id) {
 });
 
 Route::get('search/{criterio}', function ($criterio) {
-    $result = Producto::where('name', 'like', '%'.$criterio.'%')->orderBy('name', 'desc')->get();
+    $result = Producto::where('name', 'like', '%'.$criterio.'%')->where('title', 'like', '%'.$criterio.'%')->orderBy('name', 'desc')->get();
     return $result;
 });
 
@@ -961,7 +961,7 @@ Route::get('pos/addproducto/{midata}', function($midata){
         'presentacion_id'=>$midata2->presentacion_id ? $midata2->presentacion_id:null,
         'marca_id'=>$midata2->marca_id ? $midata2->marca_id:null,
         'laboratorio_id'=>$midata2->laboratorio_id ? $midata2->laboratorio_id:null,
-        'status'=>1
+        //'status'=>1
 
     ]);
 
@@ -993,11 +993,7 @@ Route::get('pos/compras-productos/save/{midata}/{producto_id}', function($midata
 //Actualizar Status Producto
 Route::get('pos/producto-update/{producto_id}',function($producto_id){
     $producto= Producto::find($producto_id);
-
-    $producto->status=0;
-    $producto->save();
-
-
+    $producto->delete();
     return true;
 });
 
@@ -1009,6 +1005,11 @@ Route::get('pos/laboratorios', function () {
 //Presentaciones para Productos
 Route::get('pos/presentaciones', function () {
     return Presentacione::all();
+});
+
+//Presentaciones por ID
+Route::get('pos/presentacion/{id}', function ($id) {
+    return Presentacione::find($id);
 });
 
 //Marcas para Productos

@@ -248,6 +248,7 @@
                                                         <option value=""> ---- Elige un Filtro ----</option>
                                                         <option value="name"> NOMBRE </option>
                                                         <option value="categoria_id"> CATEGORIA </option>
+                                                        <option value="capital_productos">CAPITAL PRODUCTOS</option>
 
                                                 </select>
                                             </div>
@@ -1549,7 +1550,7 @@
                                                                     <span>{{ $marca_producto ? $marca_producto->name : null }}</span>
                                                                     @break
 
-                                                                    @case('status')
+                                                                    {{-- @case('status')
                                                                     @php
                                                                         if(($data->{$row->field})){
                                                                             $estado="Activo";
@@ -1559,7 +1560,7 @@
                                                                         }
                                                                     @endphp
                                                                     <span>{{ $estado ? $estado : null }}</span>
-                                                                    @break
+                                                                    @break --}}
 
 
                                                                     @default
@@ -4100,6 +4101,47 @@
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div>
+        <div class="modal modal-primary fade" tabindex="-1" id="modal_capital" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                       <h4>Capital en Productos</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+
+                            {{-- <div class="col-sm-6">
+                                <strong>Elija una Sucursal</strong>
+                                <select name="" id="sucursalpensionado" class="form-control js-example-basic-single"></select>
+                            </div> --}}
+
+                            <div class="col-sm-7">
+                                <button type="button" class="btn btn-primary pull-right" onclick="CalcularCapitalDefault()">Consultar</button>
+                            </div>
+                            <div class="col-sm-12">
+                                <table class="table" id="table-capital-productos">
+                                    <thead>
+                                        <tr>
+                                            <th>Cantidad Productos</th>
+                                            <th>Total Stock * Cantidad Productos</th>
+                                            <th>Promedio de Ganancia por Producto</th>
+                                            <th><b>Capital en Productos</b></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        {{-- <button type="submit" class="btn btn-primary pull-right" data-dismiss="modal">Consultar</button> --}}
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
         <!-- /.modal -->
 
 @stop
@@ -4792,7 +4834,7 @@
                 }
                 @break
             @case('productos')
-                $('#search_key').on('change', function() {
+                $('#search_key').on('change',async function() {
                     $('.js-example-basic-single').select2();
 
                     // alert(this.value);
@@ -4838,11 +4880,42 @@
                             });
 
                         break;
+
+                        case('capital_productos'):
+                            $('#table-capital-productos tbody tr').remove();
+                            $('#modal_capital').modal();
+
+                        break;
+
                         default:
 
                         break
                     }
                 });
+
+                async function CalcularCapitalDefault() {
+
+                    var table= await axios.get("{{setting('admin.url')}}api/pos/productos");
+                    var num_productos=table.data.length;
+                    var num_total_stock_productos=0;
+                    var promedio_prod=0;
+                    var capital=0;
+
+                    for(let index=0;index<table.data.length;index++){
+                        if(table.data[index].stock!=null){
+                            promedio_prod+=(table.data[index].precio-table.data[index].precio_compra);
+                            capital+=(table.data[index].precio_compra*table.data[index].stock);
+                            num_total_stock_productos+=table.data[index].stock;
+                        }
+                    }
+
+                    promedio_prod=promedio_prod/num_productos;
+
+                    $('#table-capital-productos').append("<tr><td><h5>"+num_productos+"</h5></td><td><h5>"+num_total_stock_productos+"</h5></td><td><h5>"+promedio_prod.toFixed(2)+"</h5></td><td><h4>"+capital+"</h4></td></tr>");
+
+
+                }
+
                 @break
             @case('compras')
                 $('.js-example-basic-single').select2();
