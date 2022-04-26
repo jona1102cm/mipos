@@ -312,8 +312,8 @@
 
                                         @endphp
                                         <input type="hidden" class="form-control" id="producto_compras" value="{{$dataTypeContent->getKey()}}" >
-                                        <input type="date" class="form-control" id="fecha_vec_original" value="{{$fecha_vec}}">
-                                        <input type="number" class="form-control" id="stock_original" value="{{$stock_original}}">
+                                        <input type="hidden" class="form-control" id="fecha_vec_original" value="{{$fecha_vec}}">
+                                        <input type="hidden" class="form-control" id="stock_original" value="{{$stock_original}}">
 
 
 
