@@ -105,7 +105,7 @@
                 </p> --}}
                 <p class="wow fadeInLeft mb-3" data-wow-delay="0.3s">{{ setting('site.description') }}</p>
                 <br>
-                {{-- <a href="{{ route('pages', 'catalogo') }}" class="btn btn-unique btn-rounded font-weight-bold ml-lg-0 wow fadeInLeft" data-wow-delay="0.3s">Catalogo</a> --}}
+                <a href="{{ route('pages', 'catalogo') }}" class="btn btn-unique btn-rounded font-weight-bold ml-lg-0 wow fadeInLeft" data-wow-delay="0.3s">Catalogo</a>
                 {{-- <a class="btn btn-outline-white btn-rounded font-weight-bold wow fadeInLeft" data-wow-delay="0.3s">Learn
                   more
                 </a> --}}

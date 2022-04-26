@@ -107,6 +107,7 @@
             localStorage.removeItem('miuser')
             localStorage.removeItem('micart')
             localStorage.removeItem('miproducts')
+            localStorage.removeItem('mipedido')
             location.reload()
         }
 

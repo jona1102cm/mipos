@@ -109,11 +109,12 @@
         </div>
     </div>
     <br>
+    <br>
 @endsection
 
 @section('javascript')
 <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBacu367x_GAuwEOzKrjbQSyYqHCwWJpsc&callback=initMap&v=weekly" defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBacu367x_GAuwEOzKrjbQSyYqHCwWJpsc&v=weekly" defer></script>
 
     <script>
         const socket = io('https://socket.loginweb.dev')
@@ -121,66 +122,49 @@
             pagototal(null)
             var miuser = JSON.parse(localStorage.getItem('miuser'))
             var milocation = JSON.parse(localStorage.getItem('milocation'))
+            var options = {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+            };
             if (miuser || milocation ) {
                 getuser(miuser)
                 if (milocation) {
                     // getlocation(milocation)
                 } else {
-                    // navigator.geolocation.getCurrentPosition(success, error, options);
+                    navigator.geolocation.getCurrentPosition(initMap, error, options);
                 }
             } else {
-                // navigator.geolocation.getCurrentPosition(success, error, options);
+                navigator.geolocation.getCurrentPosition(initMap, error, options);
             }
             $("#mireload").attr("hidden",true);
-
         });
 
         //----------- GEO ------------
-        let map;
-        let marker;
-        let watchID;
-        let geoLoc;
-        function initMap() {
-            const myLatLng = { lat: -34.397, lng: 150.644 }
+        function initMap(pos) {
+            var crd = pos.coords
+            var radio = pos.accuracy
+            var myLatLng = { lat: pos.coords.latitude, lng: pos.coords.longitude }
             map = new google.maps.Map(document.getElementById("map"), {
                 center: myLatLng,
                 zoom: 14,
             });
             marker = new google.maps.Marker({
+                animation: google.maps.Animation.DROP,
+                draggable: true,
                 position: myLatLng,
                 map,
-                title: "Hola Mundo"
+                title: "Hola Mundo",
+                label: "Yo"
             });
-            geoPosition();
+            google.maps.event.addListener(marker, 'dragend', function (evt) {
+                $("#latitud").val(evt.latLng.lat());
+                $("#longitud").val(evt.latLng.lng());
+                map.panTo(evt.latLng);
+            });
+            $("#latitud").val(pos.coords.latitude);
+            $("#longitud").val(pos.coords.longitude);
         }
-        window.initMap = initMap;
-
-        function geoPosition(){
-            if (navigator.geolocation) {
-                var options = {timeout:60000};
-                geoLoc = navigator.geolocation;
-                watchID = geoLoc.watchPosition(showLocationOnMap, errorHandler, options);
-            } else {
-                alert("lo sentimos, el explorador no soporta geolocalizacion");
-            }
-        }
-        function showLocationOnMap(position) {
-            var latitud = position.coords.latitude;
-            var longitud = position.coords.longitude;
-            console.log("Latitud: "+ latitud+ " Longitud: "+ longitud);
-            const myLatLng = {lat: latitud, lng: longitud};
-            marker.setPosition(myLatLng);
-            map.setCenter(myLatLng);
-        }
-        function errorHandler(err) {
-            if (err.code == 1) {
-                alert("Error Acceso Enegado")
-            } else if(err.code == 2) {
-                alert("Error Position no wxiste o no se encuentra !")
-            }
-        }
-
-        //  ----------------------
 
         function pagototal(delivery) {
             var micart = JSON.parse(localStorage.getItem('micart'))
@@ -194,57 +178,11 @@
             $('#total').val(mitotal)
             return mitotal
         }
-        // function getlocation(midata) {
-        //     var map = L.map('map').setView([midata.latitud, midata.longitud], 14);
-        //     L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        //         maxZoom: 22
-        //     }).addTo(map);
-        //     var mimarker = L.marker([midata.latitud, midata.longitud], { title: "My marker", draggable: true }).addTo(map);
-        //     mimarker.bindPopup("Mi Ubicacion").openPopup();
-        //     $('#latitud').val(midata.latitud)
-        //     $('#longitud').val(midata.longitud)
-        //     $('#direccion').val(midata.descripcion)
-        //     mimarker.on('drag', function (e) {
-        //         var marker = e.target;
-        //         var position = marker.getLatLng();
-        //         $('#latitud').val(position.lat)
-        //         $('#longitud').val(position.lng)
-        //         $('#direccion').val('nueva direccion')
-        //     }).addTo(map);
-        // }
 
-        // var options = {
-        //     enableHighAccuracy: true,
-        //     timeout: 5000,
-        //     maximumAge: 0
-        // };
-        // function success(pos) {
-        //     var crd = pos.coords
-        //     var radio = pos.accuracy
-        //     var map = L.map('map').setView([crd.latitude, crd.longitude], 13)
-        //     L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        //         maxZoom: 18
-        //     }).addTo(map);
-        //     L.circle([crd.latitude, crd.longitude], 100).addTo(map);
-        //     var latlngs = [[-14.830167776694829, -64.90951945830604], [-14.828518383986012, -64.91451091438648],[-14.844355929499383, -64.91524142213166],[-14.846062227540793, -64.91364399378655],[-14.847770400899062, -64.89361958520023], [-14.845764951303547, -64.89210717292737], [-14.826552918046218, -64.89196953421926], [-14.825043082661521, -64.90546275337694], [-14.828620673625943, -64.90681257768303]];
-        //     var polygon = L.polygon(latlngs, {color: 'blue'}).addTo(map);
-        //     polygon.bindTooltip("ZONA 1 - 5Bs.", {permanent: false, direction:"center"})
-        //     var mimarker = L.marker([crd.latitude, crd.longitude], { title: "My marker", draggable: true }).addTo(map);
-        //     mimarker.bindPopup("Estas a 100 metros desde este punto").openPopup();
-        //     $('#latitud').val(crd.latitude)
-        //     $('#longitud').val(crd.longitude)
-        //     mimarker.on('drag', function (e) {
-        //         var marker = e.target;
-        //         var position = marker.getLatLng();
-        //         $('#latitud').val(position.lat)
-        //         $('#longitud').val(position.lng)
-        //     }).addTo(map);
-        // };
-
-        // function error(err) {
-        //     alert(err.message)
-        //     console.warn('ERROR(' + err.code + '): ' + err.message)
-        // };
+        function error(err) {
+            alert(err.message)
+            console.warn('ERROR(' + err.code + '): ' + err.message)
+        };
 
         async function save_pedido() {
             //validacion
@@ -352,11 +290,12 @@
                 }
 
                 //Notifications
+                localStorage.setItem('mipedido', JSON.stringify(newpedido.data))
                 var minoti = "Venta Registrada con ID:"+newpedido.data.id
                 socket.emit("{{ setting('notificaciones.venta') }}", minoti);
                 // console.log(JSON.stringify(newpedido.data))
                 var phone = micliente.data.phone
-                var miurl= "{{ setting('admin.url').'page/consultas' }}"
+                var miurl= "{{ setting('admin.url').'page/pedido' }}"
                 var message = "Gracias por tu preferencia 🙂, Para ver tu compra completa, dirigite a siguiente link 🔎"
                 var chatbot = await axios.get("{{ setting('notificaciones.url_chatbot') }}?phone="+phone+"&type=text"+"&message="+message)
                 var chatbot2 = await axios.get("{{ setting('notificaciones.url_chatbot') }}?phone="+phone+"&type=text"+"&message="+miurl)
@@ -366,7 +305,7 @@
 
         function redireccionar(){
             localStorage.setItem('micart', JSON.stringify([]));
-            location.href = "{{ route('pages', 'consultas') }}";
+            location.href = "{{ route('pages', 'pedido') }}";
         }
 
         $('#telefono').on('keypress', async function (e) {

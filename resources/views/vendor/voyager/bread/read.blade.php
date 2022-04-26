@@ -291,7 +291,7 @@
                                         @php
                                             $midata = App\Producto::find($dataTypeContent->getKey());
                                             $fecha_vec =$midata->vencimiento ? $midata->vencimiento :null;
-                                            $stock_original=$midata->stock_original ? $midata->stock_original:null;
+                                            $stock_original=$midata->stock ? $midata->stock:null;
 
                                             $categoria_id= $midata->categoria_id ? $midata->categoria_id :null;
                                             $description= $midata->description ? $midata->description :null;
@@ -312,8 +312,8 @@
 
                                         @endphp
                                         <input type="hidden" class="form-control" id="producto_compras" value="{{$dataTypeContent->getKey()}}" >
-                                        <input type="hidden" class="form-control" id="fecha_vec_original" value="{{$fecha_vec}}">
-                                        <input type="hidden" class="form-control" id="stock_original" value="{{$stock_original}}">
+                                        <input type="date" class="form-control" id="fecha_vec_original" value="{{$fecha_vec}}">
+                                        <input type="number" class="form-control" id="stock_original" value="{{$stock_original}}">
 
 
 
@@ -779,7 +779,7 @@
                     $('#laboratorio_id').val("");
                     $('marca_id').val("");
                      //$ins= App\Insumo::find(insumo_id);
-                    window.location.href = "{{setting('admin.url')}}admin/productos";
+                    //window.location.href = "{{setting('admin.url')}}admin/productos";
                     toastr.success('Se Registró la Compra');
 
                     var fecha_vec_original=$('#fecha_vec_original').val();
@@ -789,11 +789,15 @@
 
                     if(fecha_vec_original!=null){
                         if(CalcularFecha(fecha_vec_original)<=0){
+                            // console.log("Entró a fecha");
+                            // console.log(CalcularFecha(fecha_vec_original));
+
                             var actualizacion= await axios("{{setting('admin.url')}}api/pos/producto-update/"+producto_id);
                         }
                     }
 
                     if(stock_original==0){
+                        // console.log("Entró a Stock");
                         var actualizacion= await axios("{{setting('admin.url')}}api/pos/producto-update/"+producto_id);
                     }
 

@@ -61,14 +61,14 @@
                 {{-- <div class="float-left mr-2">
                 <a href="#" data-activates="slide-out" class="button-collapse"><i class="fas fa-bars"></i></a>
                 </div> --}}
-                <a class="navbar-brand font-weight-bold" href="#"><strong>{{ setting('site.title') }}</strong></a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-4"
+                <a class="navbar-brand font-weight-bold" href="/"><strong>{{ setting('site.title') }}</strong></a>
+                {{-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-4"
                 aria-controls="navbarSupportedContent-4" aria-expanded="false" aria-label="Toggle navigation">
-                </button>
+                </button> --}}
                 <div class="float-rigth mr-2">
-                <a href="#">
-                    <i class="fas fa-shopping-cart"><span class="badge rounded-pill badge-notification bg-danger"><div id="micount"></div></span></i>
-                </a>
+                    <a href="{{ route('pages', 'carrito') }}">
+                        <i class="fas fa-shopping-cart"><span class="badge rounded-pill badge-notification bg-danger"><div id="micount"></div></span></i>
+                    </a>
                 </div>
             </div>
         </nav>
