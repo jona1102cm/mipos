@@ -779,7 +779,6 @@
                     $('#laboratorio_id').val("");
                     $('marca_id').val("");
                      //$ins= App\Insumo::find(insumo_id);
-                    //window.location.href = "{{setting('admin.url')}}admin/productos";
                     toastr.success('Se Registró la Compra');
 
                     var fecha_vec_original=$('#fecha_vec_original').val();
@@ -800,6 +799,8 @@
                         // console.log("Entró a Stock");
                         var actualizacion= await axios("{{setting('admin.url')}}api/pos/producto-update/"+producto_id);
                     }
+                    window.location.href = "{{setting('admin.url')}}admin/productos";
+
 
 
                 }
