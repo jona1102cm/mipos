@@ -78,6 +78,7 @@
             if (miuser.data.message) {
                 toastr.error(miuser.data.message)
             } else {
+                // toastr.info('Cliente Encontrado')
                 localStorage.setItem('miuser', JSON.stringify(miuser.data));
                 $("#micliente").html(miuser.data.display + " <a href='#' onclick='reset()'>Salir</a>");
                 $("#misearch").val(miuser.data.phone);
@@ -92,7 +93,6 @@
                         $("#mipedidos").append("<tr><td>Codigo:"+pedidos.data[index].id+"<br>Ticket:"+pedidos.data[index].ticket+"</td><td>"+pedidos.data[index].published+"</td><td>"+pedidos.data[index].estado.title+"</td><td>"+pedidos.data[index].pasarela.title+"</td><td>"+pedidos.data[index].delivery.name+"</td><td>"+pedidos.data[index].cupon.title+"</td><td>"+pedidos.data[index].total+" Bs.</td><td><button type='button' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#midetalle_modal' onclick=detalle('"+pedidos.data[index].id+"')>Productos</button></td></tr>")
                     }
                 }
-                toastr.success('Cliente Encontrado')
             }
         }
 
@@ -107,7 +107,7 @@
             localStorage.removeItem('miuser')
             localStorage.removeItem('micart')
             localStorage.removeItem('miproducts')
-            location.href = '/'
+            location.reload()
         }
 
         async function detalle(id) {

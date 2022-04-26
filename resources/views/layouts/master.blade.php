@@ -34,7 +34,7 @@
 
 <body class="homepage-v2 hidden-sn white-skin animated">
     <header>
-        <ul id="slide-out" class="side-nav custom-scrollbar">
+        {{-- <ul id="slide-out" class="side-nav custom-scrollbar">
         <li>
             <div class="logo-wrapper waves-light">
             <a href="/"><img src="{{ setting('admin.url').'storage/'.setting('site.banner') }}" class="img-fluid flex-center"></a>
@@ -52,21 +52,21 @@
                 </li>
             @endforeach
             </ul>
-        </li>
+        </li> --}}
         <div class="sidenav-bg mask-strong"></div>
         </ul>
         <nav class="navbar fixed-top navbar-expand-lg  navbar-light scrolling-navbar white">
             <div class="container">
                 <!-- SideNav slide-out button -->
-                <div class="float-left mr-2">
+                {{-- <div class="float-left mr-2">
                 <a href="#" data-activates="slide-out" class="button-collapse"><i class="fas fa-bars"></i></a>
-                </div>
-                <a class="navbar-brand font-weight-bold" href="/"><strong>{{ setting('site.title') }}</strong></a>
+                </div> --}}
+                <a class="navbar-brand font-weight-bold" href="#"><strong>{{ setting('site.title') }}</strong></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-4"
                 aria-controls="navbarSupportedContent-4" aria-expanded="false" aria-label="Toggle navigation">
                 </button>
                 <div class="float-rigth mr-2">
-                <a href="#" data-activates="slide-out" class="button-collapse">
+                <a href="#">
                     <i class="fas fa-shopping-cart"><span class="badge rounded-pill badge-notification bg-danger"><div id="micount"></div></span></i>
                 </a>
                 </div>
@@ -101,6 +101,22 @@
             $('[data-toggle="tooltip"]').tooltip()
         })
         $(document).ready(function () {
+
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "positionClass": "toast-top-left",
+                "onclick": null,
+                "showDuration": "1000",
+                "hideDuration": "1000",
+                "timeOut": "5000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+
             $('.mdb-select').material_select();
             //carrito
             if (localStorage.getItem('micart')) {
@@ -131,7 +147,7 @@
             }else{
                 var product = await axios ("{{ setting('admin.url') }}api/pos/producto/"+id)
                 toastr.info('Item Agregado: '+product.data.name)
-                console.log(product.data)
+                // console.log(product.data)
                 var miimage =product.data.image ? product.data.image:  "{{setting('productos.imagen_default')}}" ;
                 var temp = {'id': product.data.id, 'image': miimage, 'name': product.data.name, 'precio': product.data.precio,'precio_inicial': product.data.precio , 'cant': 1, 'description':'' ,'extra':product.data.extra, 'extras':product.data.extras,'extra_name':'', 'observacion':''}
                 micart.push(temp)
@@ -289,11 +305,11 @@
                     mitotal += stotal
                 }
                 else{
-                    $("#micart").append("<tr id="+milist[index].id+"><td><img class='img-responsive img-thumbnail' src='{{ setting('admin.url') }}storage/"+milist[index].image+"'></td><td><strong>"+milist[index].name+"<br>"+milist[index].description+"</strong></td><td></td><td><input class='form-control' type='text' onchange='updateobservacion("+milist[index].id+")' id='observacion_"+milist[index].id+"' value='"+observacion+"'  placeholder='algun detalle?'></td><td>"+milist[index].precio+"</td><td>"+milist[index].cant+"</td><td>"+stotal+"</td><td><button type='button' class='btn btn-sm btn-primary' data-toggle='tooltip' data-placement='top' onclick='midelete("+milist[index].id+")' title='Remove item'>X</button></td></tr>")
+                    $("#micart").append("<tr id="+milist[index].id+"><td><img class='img-responsive img-thumbnail' src='{{ setting('admin.url') }}storage/"+milist[index].image+"'></td><td><strong>"+milist[index].name+"<br>"+milist[index].description+"</strong></td><td></td><td><input class='form-control' type='text' onchange='updateobservacion("+milist[index].id+")' id='observacion_"+milist[index].id+"' value='"+observacion+"'  placeholder='algun detalle?'></td><td>"+milist[index].precio+"</td><td>"+milist[index].cant+"</td><td>"+stotal+"</td><td><button type='button' class='btn btn-sm btn-danger' data-toggle='tooltip' data-placement='top' onclick='midelete("+milist[index].id+")' title='Remove item'>X</button></td></tr>")
                     mitotal += stotal
                 }
             }
-            $("#micart").append("<tr id='mitotal' ><td colspan='3'></td><td colspan='2'><h4 class='mt-2'><strong>Total Bs.</strong></h4></td><td><h4 class='mt-2'><strong>"+mitotal+"</strong></h4></td><td <td colspan='2'><a type='button' href='#' onclick='pagar()' class='btn btn-md btn-primary btn-rounded'>Pagar<i class='fas fa-angle-right right'></i></td></tr>")
+            $("#micart").append("<tr id='mitotal' ><td colspan='2'><h4 class='mt-2'><strong>Total Bs.</strong></h4></td><td><h4 class='mt-2'><strong>"+mitotal+"</strong></h4></td><td <td colspan='2'><a type='button' href='#' onclick='pagar()' class='btn btn-md btn-primary btn-rounded'>Pagar<i class='fas fa-angle-right right'></i></td></tr>")
         }
 
     </script>

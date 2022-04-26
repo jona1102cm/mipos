@@ -45,7 +45,16 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <!--Links-->
             <ul class="navbar-nav mr-auto smooth-scroll">
+                @php
+                    $menus =  DB::table('menu_items')->where('menu_id', 2)->orderBy('order','asc')->get();
+                @endphp
+                @foreach ($menus as $item)
                 <li class="nav-item">
+                    <a class="nav-link" href="{{ $item->url }}">{{ $item->title }}<span class="sr-only">(current)</span></a>
+                </li>
+                @endforeach
+
+                {{-- <li class="nav-item">
                 <a class="nav-link" href="#home">Home
                     <span class="sr-only">(current)</span>
                 </a>
@@ -64,7 +73,7 @@
                 </li>
                 <li class="nav-item">
                 <a class="nav-link" href="#testimonials" data-offset="100">Opinions</a>
-                </li>
+                </li> --}}
             </ul>
 
             <!--Social Icons-->
@@ -100,15 +109,15 @@
             <div class="row smooth-scroll">
                 <div class="col-md-12 dark-grey-text text-center">
                 <div class="wow fadeInDown" data-wow-delay="0.9s">
-                    <h2 class="display-3 font-weight-bold mb-2 mt-5 mt-xl-2">{{ $intro->title }}</h2>
+                    <h2 class="display-3 font-weight-bold mb-2 mt-5 mt-xl-2">{{ setting('site.title') }}</h2>
                     <hr class="hr-dark">
-                    {{-- <h4 class="subtext-header mt-2 mb-3">{{ $intro->descripcion}}</h4> --}}
-                    <h4 class="mb-5 clearfix d-none d-md-inline-block">{{ $intro->descripcion}}</h4>
+                    <h4 class="subtext-header mt-2 mb-3">{{ setting('site.description') }}</h4>
+                    {{-- <h4 class="mb-5 clearfix d-none d-md-inline-block">{{ setting('site.description') }}</h4> --}}
                 </div>
-                <a href="{{ route('pages', 'catalogo') }}" class="btn btn-deep-orange btn-rounded wow fadeInUp" data-wow-delay="0.9s">
+                {{-- <a href="{{ route('pages', 'catalogo') }}" class="btn btn-deep-orange btn-rounded wow fadeInUp" data-wow-delay="0.9s">
                     <i class="far fa-calendar-alt mr-2"></i>
                     <span>Ver Catalgo</span>
-                </a>
+                </a> --}}
                 </div>
             </div>
             </div>
