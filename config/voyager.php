@@ -152,6 +152,11 @@ return [
                 'icon_class' => 'voyager-lock',
                 'target_blank' => false,
             ],
+            'Usuarios' => [
+                'route'      => 'voyager.users.index',
+                'icon_class' => 'voyager-person',
+                'target_blank' => false,
+            ],
             'Compass' => [
                 'route'      => 'voyager.compass.index',
                 'icon_class' => 'voyager-compass',
@@ -223,7 +228,7 @@ return [
 
     'primary_color' => '#303841',
 
-    'show_dev_tips' => true, // Show development tip "How To Use:" in Menu and Settings
+    'show_dev_tips' => false, // Show development tip "How To Use:" in Menu and Settings
 
     // Here you can specify additional assets you would like to be included in the master.blade
     'additional_css' => [
