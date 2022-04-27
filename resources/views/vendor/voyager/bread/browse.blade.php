@@ -4048,7 +4048,8 @@
                                             <tr>
                                                 <th>Venta</th>
                                                 <th>Cliente</th>
-                                                <th>Deuda</th>
+                                                <th>Deuda Inicial</th>
+                                                <th>Restante a Pagar</th>
 
                                             </tr>
                                         </thead>
@@ -4714,7 +4715,8 @@
                             else{
                                 var estado="Debe";
                             }
-                            $('#table_consultas_cobros').append("<tr><td>"+venta.data[index].id+"</td><td>"+estado+"</td><td>"+venta.data[index].cliente.display+"</td><td>"+venta.data[index].subtotal+"</td><td>"+venta.data[index].published+"</td><td><a href='#historial' aria-controls='historial' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' onclick='DetalleCredito("+venta.data[index].id+")'>Historial</a></td></tr>");
+                            var deuda= venta.data[index].subtotal+venta.data[index].adicional-venta.data[index].descuento;
+                            $('#table_consultas_cobros').append("<tr><td>"+venta.data[index].id+"</td><td>"+estado+"</td><td>"+venta.data[index].cliente.display+"</td><td>"+deuda+"</td><td>"+venta.data[index].published+"</td><td><a href='#historial' aria-controls='historial' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' onclick='DetalleCredito("+venta.data[index].id+")'>Historial</a></td></tr>");
                         }
                     }
                 }
@@ -4744,7 +4746,7 @@
                         if(status==0){
                             $('#table_historial').append("<tr><td></td><td></td><td></td><td></td><td></td><td></td><td><a href='#cobro' aria-controls='cobro' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' >Pagar Cuota</a></td></tr>");
                             $('#table_cobros tbody tr').remove();
-                            $('#table_cobros').append("<tr><td>"+id+"</td><td>"+cliente_text+"</td><td>"+deuda+"</td></tr>");
+                            $('#table_cobros').append("<tr><td>"+id+"</td><td>"+cliente_text+"</td><td>"+deuda+"</td><td>"+pagar+"</td></tr>");
                             $('#venta_id').val(id);
                             $('#cliente_id').val(cliente);
                             $('#cliente_text').val(cliente_text);

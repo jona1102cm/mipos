@@ -1471,6 +1471,18 @@
                     }
                 });
 
+                function CalculoDiasRestantes(fecha_final){
+                    var today=new Date();
+                    var fechaInicio =   today.toISOString().split('T')[0];
+                    var fechaFin    = fecha_final;
+                    var fi=fechaInicio.toString();
+                    var ff=fechaFin.toString();
+                    var fechai = new Date(fi).getTime();
+                    var fechaf    = new Date(ff).getTime();
+                    var diff = fechaf - fechai;
+                    return (diff/(1000*60*60*24));
+                }
+
                 async function micliente() {
                     var miphone = Math.floor(Math.random() * 100000000);
                     $('#phone').val(miphone)
@@ -2071,21 +2083,36 @@
                     if(inventario){
                         if(cant_i1){
                             if(cant_i2){
-                                var micart = JSON.parse(localStorage.getItem('micart'));
-                                var description = $('#mixta1 :selected').text() + ' - ' + $('#mixta2 :selected').text();
-                                $.ajax({
-                                url: "{{ setting('admin.url') }}api/pos/producto/"+id,
-                                dataType: "json",
-                                success: function (response) {
-                                    $('#mixtos').attr("hidden", true);
-                                    $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+", "+response.id+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onchange='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
-                                    var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'precio_inicial':response.precio , 'cant': 1, 'total': response.precio, 'description': description, 'extra': response.extra, 'extras':response.extras, 'extra_name':'', 'observacion':'' };
-                                    micart.push(temp);
-                                    localStorage.setItem('micart', JSON.stringify(micart));
-                                    mitotal();
-                                    toastr.success(response.name+" - REGISTRADO");
+                                var vencimiento1=miresponse1.vencimiento ? miresponse1.vencimiento :1;
+                                var vencimiento2=miresponse2.vencimiento ? miresponse2.vencimiento :1;
+
+                                if(vencimiento1 || CalculoDiasRestantes(miresponse1.vencimiento)>=1){
+
+
+                                    if(vencimiento2 || CalculoDiasRestantes(miresponse2.vencimiento)>=1){
+                                        var micart = JSON.parse(localStorage.getItem('micart'));
+                                        var description = $('#mixta1 :selected').text() + ' - ' + $('#mixta2 :selected').text();
+                                        $.ajax({
+                                        url: "{{ setting('admin.url') }}api/pos/producto/"+id,
+                                        dataType: "json",
+                                        success: function (response) {
+                                            $('#mixtos').attr("hidden", true);
+                                            $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+", "+response.id+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onchange='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                            var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'precio_inicial':response.precio , 'cant': 1, 'total': response.precio, 'description': description, 'extra': response.extra, 'extras':response.extras, 'extra_name':'', 'observacion':'' };
+                                            micart.push(temp);
+                                            localStorage.setItem('micart', JSON.stringify(micart));
+                                            mitotal();
+                                            toastr.success(response.name+" - REGISTRADO");
+                                            }
+                                        });
                                     }
-                                });
+                                    else{
+                                        toastr.error("El producto: "+prod2+" está vencido");
+                                    }
+                                }
+                                else{
+                                    toastr.error("El producto: "+prod1+" está vencido");
+                                }
                             }else{
                                 toastr.error("No existe en Stock: "+prod2);
                             }
@@ -2553,6 +2580,13 @@
                     mitotal();
                 });
 
+                $("input[name='descuento']").on('change', function() {
+                    mitotal();
+                });
+                $("input[name='descuento']").keyup(function(){
+                    mitotal();
+                });
+
                 function addproduct(id) {
                     $("#miresult").attr("hidden", true)
                     var total = 0;
@@ -2607,7 +2641,8 @@
                                         });
                                     } else {
                                         $('#mixtos').attr("hidden",true);
-                                        if(response.stock >= 1){
+                                        var vencimiento=response.vencimiento ? response.vencimiento: 1 ;
+                                        if((response.stock >= 1 && CalculoDiasRestantes(response.vencimiento)>0)||(vencimiento==1 && response.stock >= 1 )){
                                             if(response.stock <= '{{setting('ventas.minimo_stock')}}')
                                             {
                                                 toastr.error("Solo quedan: "+response.stock+" "+response.name +" ");
@@ -2627,7 +2662,12 @@
 
                                         }
                                         else{
-                                            toastr.error("No existe el producto: "+response.name +" en Stock");
+                                            if(response.stock<1){
+                                                toastr.error("No existe el producto: "+response.name +" en Stock");
+                                            }
+                                            if(CalculoDiasRestantes(response.vencimiento)<=0){
+                                                toastr.error("El producto: "+response.name +" está vencido");
+                                            }
                                         }
                                     }
                                 } else {
@@ -2706,7 +2746,7 @@
                         //console.log(table.data);
                         var venta_id=venta;
                         var cliente_id=cliente;
-                        var deuda=table.data.subtotal;
+                        var deuda=table.data.subtotal+table.data.adicional-table.data.descuento;
                         //console.log(deuda);
                         var cuota=table.data.total;
                         var restante=parseFloat(deuda).toFixed(2)-parseFloat(cuota).toFixed(2);
