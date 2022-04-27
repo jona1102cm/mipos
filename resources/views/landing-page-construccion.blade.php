@@ -36,19 +36,25 @@
   <header>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top scrolling-navbar">
+    {{-- <nav class="navbar navbar-expand-lg navbar-dark fixed-top scrolling-navbar"> --}}
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light scrolling-navbar white">
       <div class="container">
-        <a class="navbar-brand" href="#">Navbar</a>
+        <a class="navbar-brand" href="#">{{ setting('site.title') }}</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02"
           aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
           <ul class="navbar-nav mr-auto smooth-scroll">
-            <li class="nav-item">
-              <a class="nav-link" href="#home">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
+            @php
+                $menus =  DB::table('menu_items')->where('menu_id', 2)->orderBy('order','asc')->get();
+            @endphp
+            @foreach ($menus as $item)
+                <li class="nav-item">
+                <a class="nav-link" href="{{ $item->url }}">{{ $item->title }} <span class="sr-only">(current)</span></a>
+                </li>
+            @endforeach
+            {{-- <li class="nav-item">
               <a class="nav-link" href="#features" data-offset="90">Features</a>
             </li>
             <li class="nav-item">
@@ -62,7 +68,7 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#contact" data-offset="90">Contact</a>
-            </li>
+            </li> --}}
           </ul>
           <!-- Social Icon  -->
           <ul class="navbar-nav nav-flex-icons">
