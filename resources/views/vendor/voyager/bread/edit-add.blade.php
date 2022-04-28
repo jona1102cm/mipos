@@ -171,44 +171,43 @@
                                             </table>
                                             <a href="#" onclick="return $('#miresult').attr('hidden', true)" class="btn btn-sm btn-default">Cerrar</a>
                                         </div>
-                                            <!-- Nav tabs -->
-                                            <ul class="nav nav-tabs" role="tablist">
-                                                @foreach($categorias as $item)
-                                                    <li role="presentation"><a href="#{{ $item->id }}" aria-controls="home" role="tab" data-toggle="tab">{{ $item->name}}</a></li>
-                                                @endforeach
-                                                <li role="presentation"><a href="#vacio" aria-controls="home" role="tab" data-toggle="tab">Vacio</a></li>
-                                            </ul>
-
-                                            <!-- Tab panes -->
-                                            <div class="tab-content">
-                                                @foreach($categorias as $item)
-                                                    <div role="tabpanel" class="tab-pane" id="{{ $item->id }}">
-                                                        @php
-                                                            $products = App\Producto::where('categoria_id', $item->id )->get();
-                                                        @endphp
-                                                         <div class="row">
-                                                            @foreach($products as $item)
-                                                                <div class="col-xs-3">
-                                                                    <a href="#" onclick="addproduct('{{$item->id}}')" class="thumbnail">
-                                                                        @php
-                                                                        $miimage =$item->image ? $item->image :  setting('productos.imagen_default') ;
-                                                                        $stock = $item->stock ? $item->stock : " ";
-                                                                        @endphp
-                                                                        <img src="{{setting('admin.url')}}storage/{{ $miimage }}">
-                                                                    </a>
-                                                                    @if(setting('ventas.stock'))
-                                                                        <small>{{ $item->name }} - {{$stock}}</small>
-                                                                    @else
-                                                                        <small>{{ $item->name }}</small>
-                                                                    @endif
-                                                                </div>
-                                                            @endforeach
+                                            @if(setting('empresa.type_negocio')=="Restaurente")
+                                                <ul class="nav nav-tabs" role="tablist">
+                                                    @foreach($categorias as $item)
+                                                        <li role="presentation"><a href="#{{ $item->id }}" aria-controls="home" role="tab" data-toggle="tab">{{ $item->name}}</a></li>
+                                                    @endforeach
+                                                    <li role="presentation"><a href="#vacio" aria-controls="home" role="tab" data-toggle="tab">Vacio</a></li>
+                                                </ul>
+                                                <div class="tab-content">
+                                                    @foreach($categorias as $item)
+                                                        <div role="tabpanel" class="tab-pane" id="{{ $item->id }}">
+                                                            @php
+                                                                $products = App\Producto::where('categoria_id', $item->id )->get();
+                                                            @endphp
+                                                            <div class="row">
+                                                                @foreach($products as $item)
+                                                                    <div class="col-xs-3">
+                                                                        <a href="#" onclick="addproduct('{{$item->id}}')" class="thumbnail">
+                                                                            @php
+                                                                            $miimage =$item->image ? $item->image :  setting('productos.imagen_default') ;
+                                                                            $stock = $item->stock ? $item->stock : " ";
+                                                                            @endphp
+                                                                            <img src="{{setting('admin.url')}}storage/{{ $miimage }}">
+                                                                        </a>
+                                                                        @if(setting('ventas.stock'))
+                                                                            <small>{{ $item->name }} - {{$stock}}</small>
+                                                                        @else
+                                                                            <small>{{ $item->name }}</small>
+                                                                        @endif
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
                                                         </div>
+                                                    @endforeach
+                                                    <div role="tabpanel" class="tab-pane" id="vacio">
                                                     </div>
-                                                @endforeach
-                                                <div role="tabpanel" class="tab-pane" id="vacio">
                                                 </div>
-                                            </div>
+                                            @endif
                                         </div>
                                         <div id="search-input">
                                             <div class="input-group col-sm-6">
@@ -613,8 +612,6 @@
                                         <strong>Marca</strong>
                                         <select class="form-control js-example-basic-single" name="marca_producto" id="marca_producto"></select>
                                     </div>
-                                @endif
-                                @if(setting('empresa.type_negocio')=="Ferreteria"||setting('empresa.type_negocio')=="Farmacia")
                                     <div class="form-group col-md-6">
                                         <strong>Presentación</strong>
                                         <select class="form-control js-example-basic-single" name="presentacion_producto" id="presentacion_producto"></select>
@@ -812,7 +809,6 @@
     <!-- -------------------MODALES----------------------- -->
     @switch($dataType->getTranslatedAttribute('slug'))
         @case('ventas')
-
             <div class="modal fade modal-primary" id="micaja">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -820,22 +816,18 @@
                             <h4 class="modal-title"><i class="voyager-info"></i> Abrir Caja</h4>
                         </div>
                         <div class="modal-body">
-
                             <table class="table table-responsive">
                                 <thead>
                                     <tr>
                                         <th>Titulo</th>
                                         <th>Estado</th>
-
                                         <th>Sucursal</th>
                                         <th>Cajeros</th>
                                         <th>Importe</th>
-
                                         <th>Accion</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-
                                     @foreach($micajas as $caja)
                                         @php
                                             $tienda = App\Sucursale::find($caja->sucursal_id);
@@ -886,7 +878,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="modal fade modal-primary" id="venta_caja">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
@@ -900,12 +891,9 @@
                             <ul class="nav nav-tabs" role="tablist">
                                 <li role="presentation" class="active"><a href="#miventas" aria-controls="miventas" role="tab" data-toggle="tab">Mis Ventas</a></li>
                                 <li role="presentation"><a href="#deliverys" aria-controls="deliverys" role="tab" data-toggle="tab">Deliverys</a></li>
-                                {{-- <li role="presentation"><a href="#deliverys" aria-controls="deliverys" role="tab" data-toggle="tab">Caja CHATBOT</a></li> --}}
                             </ul>
-
                             <div class="tab-content">
                                 <div role="tabpanel" class="tab-pane active" id="miventas">
-
                                     <table class="table table-striped table-inverse table-responsive" id="productos_caja">
                                         <thead class="thead-inverse">
                                             <tr>
@@ -926,18 +914,15 @@
                                     </table>
 
                                 </div>
-
                                 <div role="tabpanel" class="tab-pane" id="deliverys">
                                     <input id="venta_id" type="hidden" class="form-control" hidden>
                                     <select id="mideliverys" class="form-control"></select>
                                     <a href="#" class="btn btn-sm btn-primary" onclick="save_set_chofer()">Asignar</a>
                                 </div>
                             </div>
-
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
-
                         </div>
                     </div>
                 </div>
@@ -992,43 +977,13 @@
                                         Venta en Efectivo
                                         <input type="number" class="form-control" id="venta_efectivo" value="0" readonly>
                                     </td>
-                                    {{-- <td>
-                                        Venta con Tarjeta
-                                        <input type="number" class="form-control" id="venta_tarjeta" value="0" readonly>
-                                    </td>
-                                    <td>
-                                        Venta por Transferencia
-                                        <input type="number" class="form-control" id="venta_transferencia" value="0" readonly>
-                                    </td> --}}
                                 </tr>
                                 <tr>
-                                    {{-- <td>
-                                        Venta por QR
-                                        <input type="number" class="form-control" id="venta_qr" value="0" readonly>
-                                    </td>
-                                    <td>
-                                        Venta por TigoMoney
-                                        <input type="number" class="form-control" id="venta_tigomoney" value="0" readonly>
-                                    </td> --}}
                                     <td>
                                         Cantidad en Efectivo
                                         <input type="number" class="form-control" id="cantidad_efectivo" value="0" readonly>
                                     </td>
                                 </tr>
-                                {{-- <tr>
-                                    <td>
-                                        Cantidad por Tarjeta
-                                        <input type="number" class="form-control" id="cantidad_tarjeta" value="0" readonly>
-                                    </td>
-                                    <td>
-                                        Cantidad por Transferencia
-                                        <input type="number" class="form-control" id="cantidad_transferencia" value="0" readonly>
-                                    </td>
-                                    <td>
-                                        Cantidad por QR
-                                        <input type="number" class="form-control" id="cantidad_qr" value="0" readonly>
-                                    </td>
-                                </tr> --}}
                                 <tr>
                                     <td>
                                         Venta Efectivo
@@ -1046,10 +1001,7 @@
                                         Egreso En Linea
                                         <input type="number" class="form-control" id="egreso_linea" value="0" readonly>
                                     </td>
-
-
                                 </tr>
-
                                 <tr>
                                     <td>
                                         Venta con BaniPay
@@ -1059,15 +1011,8 @@
                                         Cantidad por BaniPay
                                         <input type="number" class="form-control" id="cantidad_banipay" value="0" readonly>
                                     </td>
-
                                 </tr>
-
                                 <tr>
-                                    {{-- <td>
-                                        Cantidad por TigoMoney
-                                        <input type="number" class="form-control" id="cantidad_tigomoney" value="0" readonly>
-                                    </td> --}}
-
                                     <td>
                                         <label for="">Total Caja Bs.</label>
                                         <input type="number" class="form-control col-6" id="_total" value="0" readonly>
@@ -1077,16 +1022,12 @@
                                         <input type="text" class="form-control" id="cortes" readonly>
                                     </td>
                                         <td>
-
-                                                <label for="">Cantidad de Ventas</label>
-                                                <input type="number" class="form-control" id="cant_ventas" value="0" readonly>
-
+                                            <label for="">Cantidad de Ventas</label>
+                                            <input type="number" class="form-control" id="cant_ventas" value="0" readonly>
                                         </td>
                                 </tr>
-
                             </tbody>
                             </table>
-
 
                             <table class="table table-hover">
                                 <thead>

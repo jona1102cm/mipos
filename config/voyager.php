@@ -182,6 +182,11 @@ return [
                 'icon_class' => 'voyager-images',
                 'target_blank' => false,
             ],
+            'Negocios' => [
+                'route'      => 'voyager.negocios.index',
+                'icon_class' => 'voyager-helm',
+                'target_blank' => false,
+            ],
             'voyager::generic.logout' => [
                 'route'      => 'voyager.logout',
                 'icon_class' => 'voyager-power',

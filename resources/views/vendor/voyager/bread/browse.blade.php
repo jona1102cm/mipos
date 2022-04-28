@@ -195,9 +195,10 @@
                                                         <option value="chofer_id"> Chofer </option>
                                                         <option value="register_id"> Editor </option>
                                                         <option value="chofer_deudas"> Chofer Deudas </option>
-                                                        <option value="pensionado_kardex"> Kardex Pensionados </option>
                                                         <option value="credito">Cobro Créditos</option>
-
+                                                        @if(setting('empresa.type_negocio')=="Restaurente")
+                                                            <option value="pensionado_kardex"> Kardex Pensionados </option>
+                                                        @endif
                                                 </select>
                                             </div>
                                             <div class="col-6">
