@@ -7,6 +7,7 @@
     <div class="row">
         <div class="col-sm-12  col-md-8 offset-md-2 text-center">
             <h2>Catalogo Completo</h2>
+            <h3></h3>
             <input type="search" id="misearch" class="form-control" placeholder="ingresa un criterio de busqueda">
             @php
                 $categorias = App\Categoria::where('ecommerce', true)->orderBy('order', 'asc')->get();

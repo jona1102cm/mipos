@@ -55,22 +55,22 @@
         </li> --}}
         <div class="sidenav-bg mask-strong"></div>
         </ul>
-        <nav class="navbar fixed-top navbar-expand-lg  navbar-light scrolling-navbar white">
-            <div class="container">
+        <nav class="navbar fixed-top navbar-expand-lg  navbar-dark scrolling-navbar bg-dark">
+            {{-- <div class="container"> --}}
                 <!-- SideNav slide-out button -->
                 {{-- <div class="float-left mr-2">
                 <a href="#" data-activates="slide-out" class="button-collapse"><i class="fas fa-bars"></i></a>
                 </div> --}}
-                <a class="navbar-brand font-weight-bold" href="/"><strong>{{ setting('site.title') }}</strong></a>
+                <a class="navbar-brand mx-auto font-weight-bold" href="/"><strong>{{ setting('site.title') }}</strong></a>
                 {{-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-4"
                 aria-controls="navbarSupportedContent-4" aria-expanded="false" aria-label="Toggle navigation">
                 </button> --}}
-                <div class="float-rigth mr-2">
+                {{-- <div class="float-rigth mr-2">
                     <a href="{{ route('pages', 'carrito') }}">
                         <i class="fas fa-shopping-cart"><span class="badge rounded-pill badge-notification bg-danger"><div id="micount"></div></span></i>
                     </a>
-                </div>
-            </div>
+                </div> --}}
+            {{-- </div> --}}
         </nav>
     </header>
 

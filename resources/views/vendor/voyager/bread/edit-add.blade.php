@@ -1381,7 +1381,7 @@
 
 
 
-                    ClienteDefault();
+                    //ClienteDefault();
                     Cliente();
 
 
@@ -1452,6 +1452,8 @@
                 }
 
                 async function Categorias() {
+                    $('#category').find('option').remove().end();
+
                     var table = await axios.get("{{ setting('admin.url') }}api/pos/categorias");
                     $('#category').append($('<option>', {
                         value: 0,
@@ -1467,6 +1469,8 @@
                 }
 
                 async function Deliverys(){
+                    $('#midelivery').find('option').remove().end();
+
                     var table= await axios.get("{{ setting('admin.url') }}api/pos/deliverys");
 
                     for (let index = 0; index < table.data.length; index++) {
@@ -1487,6 +1491,8 @@
                 }
 
                 async function Cupones(){
+                    $('#micupon').find('option').remove().end();
+
                     var table= await axios.get("{{ setting('admin.url') }}api/pos/cupones");
                     for (let index = 0; index < table.data.length; index++) {
                         if (table.data[index].id == 1) {
@@ -1506,6 +1512,8 @@
                 }
 
                 async function Pasarelas() {
+                    $('#mipagos').find('option').remove().end();
+
                     var table= await axios.get("{{ setting('admin.url') }}api/pos/pagos");
 
                     for (let index = 0; index < table.data.length; index++) {
@@ -1527,6 +1535,8 @@
                 }
 
                 async function Estados() {
+                    $('#miestado').find('option').remove().end();
+
                     var table= await axios.get("{{ setting('admin.url') }}api/pos/estados");
 
                     for (let index = 0; index < table.data.length; index++) {
@@ -1547,6 +1557,10 @@
                 }
 
                 async function Opciones() {
+
+                    $('#venta_type').find('option').remove().end();
+
+
                     var table= await axios.get("{{ setting('admin.url') }}api/pos/options");
 
                     for (let index = 0; index < table.data.length; index++) {
@@ -1566,14 +1580,14 @@
                     }
                 }
 
-                async function PensionadoDefault(){
-                    $('#mipensionado').append($('<option>', {
-                        value: 0,
-                        text: 'Elige un Pensionado'
-                    }));
-                    $('input[name="pensionado_id"]').val(0);
+                // async function PensionadoDefault(){
+                //     $('#mipensionado').append($('<option>', {
+                //         value: 0,
+                //         text: 'Elige un Pensionado'
+                //     }));
+                //     $('input[name="pensionado_id"]').val(0);
 
-                }
+                // }
 
                 async function Pensionados(){
                     $('#mipensionado').find('option').remove().end();
@@ -1583,6 +1597,7 @@
                         value: 0,
                         text: 'Elige un Pensionado'
                     }));
+                    $('input[name="pensionado_id"]').val(0);
 
                     if(table.data.length>0){
 
@@ -1623,7 +1638,7 @@
                 $('#mipensionado').on('change', function() {
                     if($('#mipensionado').val()==0){
                         $('#micliente').find('option').remove().end();
-                        ClienteDefault();
+                        //ClienteDefault();
                         Cliente();
                     }
                     else{
@@ -1660,6 +1675,16 @@
                 }
 
                 async function Cliente(){
+
+                    $('#micliente').find('option').remove().end();
+                    var table= await axios("{{ setting('admin.url') }}api/pos/cliente/default/get");
+                    $("input[name='cliente_id']").val(table.data.id);
+                    $('#micliente').append($('<option>', {
+                        value: table.data.id,
+                        text: table.data.display+' - '+table.data.ci_nit
+                    }));
+
+
                     var tabla= await axios.get("{{ setting('admin.url') }}api/pos/clientes");
                     for (let index = 0; index < tabla.data.length; index++) {
                         if(tabla.data[index].default==0){
@@ -1671,14 +1696,14 @@
                     }
                 }
 
-                async function ClienteDefault(){
-                    var tabla= await axios("{{ setting('admin.url') }}api/pos/cliente/default/get");
-                    $("input[name='cliente_id']").val(tabla.data.id);
-                    $('#micliente').append($('<option>', {
-                        value: tabla.data.id,
-                        text: tabla.data.display+' - '+tabla.data.ci_nit
-                    }));
-                }
+                // async function ClienteDefault(){
+                //     var tabla= await axios("{{ setting('admin.url') }}api/pos/cliente/default/get");
+                //     $("input[name='cliente_id']").val(tabla.data.id);
+                //     $('#micliente').append($('<option>', {
+                //         value: tabla.data.id,
+                //         text: tabla.data.display+' - '+tabla.data.ci_nit
+                //     }));
+                // }
 
 
                 // Extras
@@ -2439,15 +2464,48 @@
                         }
 
                         if ($("input[name='season']:checked").val() == 'imprimir') {
-                            $("input[name='descuento']").val(0)
+                            //$("input[name='descuento']").val(0)
                             localStorage.setItem('micart', JSON.stringify([]));
                             window.open( "{{ setting('admin.url') }}admin/ventas/imprimir/"+venta.data.id, "Recibo", "width=500,height=700");
                         }else{
                             localStorage.setItem('micart', JSON.stringify([]));
                             toastr.success('Venta Realizada');
                         }
+
                     }
-                    location.reload();
+                    //location.reload();
+                    LimpiarVenta();
+                }
+
+                async function LimpiarVenta() {
+
+                    $('input[name="register_id"]').val('{{ Auth::user()->id }}');
+                    $('input[name="chofer_id"]').val("{{setting('ventas.chofer')}}");
+                    $("input[name='status_credito']").val(0);
+
+
+                    Categorias();
+                    Deliverys();
+                    Cliente();
+                    Cupones();
+                    Pasarelas();
+                    Estados();
+                    Opciones();
+                    Pensionados();
+
+                    $("[name=credito]").val(["Contado"]);
+                    $("[name=season]").val(["imprimir"]);
+                    $("[name=factura]").val(["Recibo"]);
+
+                    $("input[name='total']").val(0);
+                    $("input[name='descuento']").val(0);
+                    $("input[name='observacion']").val("sin observ.");
+                    $("input[name='subtotal']").val(0);
+                    $("input[name='recibido']").val(0);
+                    $("input[name='cambio']").val(0);
+
+                    //console.log("entró");
+
 
                 }
 
