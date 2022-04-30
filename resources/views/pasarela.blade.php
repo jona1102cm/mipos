@@ -328,16 +328,19 @@
                 }
             }
         });
+
         $('#miopciones').on('change', async function (e) {
             toastr.success('Delivery Actualizado')
             var options = await axios("{{ setting('admin.url') }}api/option/"+this.value)
             pagototal(options.data.valor)
 
         });
+
         $('#pago_id').on('change', async function (e) {
             toastr.success('Pasarela de Pago Actualizado')
 
         });
+
         async function getuser(midata) {
             $('#nombres').val(midata.first_name)
             $('#apellidos').val(midata.last_name)
