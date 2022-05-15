@@ -377,7 +377,7 @@ Route::get('pos/ventas/save/{midata}', function($midata) {
         'option_id' => $midata2->option_id,
         'pago_id' => $midata2->pago_id,
         'factura' => $midata2->factura ? $midata2->factura : null,
-        'credito'=> $midata2->credito,
+        'credito'=> $midata2->credito ? $midata2->credito : null,
         'total' => $midata2->total,
         'descuento' => $midata2->descuento,
         'observacion' => $midata2->observacion,
@@ -570,7 +570,7 @@ Route::get('pos/producto/search/{midata}', function ($midata) {
 
 // UN PRODUCT
 Route::get('pos/producto/{id}', function ($id) {
-    return  Producto::find($id);
+    return  Producto::where('id', $id)->with('categoria')->first();
 });
 
 // UN PRODUCT MIXTAS

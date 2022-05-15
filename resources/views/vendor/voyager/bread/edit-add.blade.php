@@ -146,7 +146,7 @@
                                 @php
                                     $miuser = TCG\Voyager\Models\User::find(Auth::user()->id);
                                     $micajas = App\Caja::all();
-                                    $categorias = App\Categoria::where('id', '!=', 7 )->where('id', '!=', 16 )->orderBy('order', 'asc')->get();
+                                    $categorias = App\Categoria::where('id', '!=', 9 )->where('id', '!=', 16 )->orderBy('order', 'asc')->get();
                                 @endphp
 
                                     <div class="form-group col-md-8">
@@ -171,7 +171,7 @@
                                             </table>
                                             <a href="#" onclick="return $('#miresult').attr('hidden', true)" class="btn btn-sm btn-default">Cerrar</a>
                                         </div>
-                                            @if(setting('empresa.type_negocio')=="Restaurente")
+                                            {{-- @if(setting('empresa.type_negocio')=="Restaurente") --}}
                                                 <ul class="nav nav-tabs" role="tablist">
                                                     @foreach($categorias as $item)
                                                         <li role="presentation"><a href="#{{ $item->id }}" aria-controls="home" role="tab" data-toggle="tab">{{ $item->name}}</a></li>
@@ -187,7 +187,7 @@
                                                             <div class="row">
                                                                 @foreach($products as $item)
                                                                     <div class="col-xs-3">
-                                                                        <a href="#" onclick="addproduct('{{$item->id}}')" class="thumbnail">
+                                                                        <a onclick="addproduct('{{$item->id}}')" class="thumbnail">
                                                                             @php
                                                                             $miimage =$item->image ? $item->image :  setting('productos.imagen_default') ;
                                                                             $stock = $item->stock ? $item->stock : " ";
@@ -207,7 +207,7 @@
                                                     <div role="tabpanel" class="tab-pane" id="vacio">
                                                     </div>
                                                 </div>
-                                            @endif
+                                            {{-- @endif --}}
                                         </div>
                                         <div id="search-input">
                                             <div class="input-group col-sm-6">
@@ -220,7 +220,7 @@
                                         <div class="form-group" id="mixtos" hidden>
                                             <select class="form-control js-example-basic-single" id="mixta1" style="width: 250px"></select>
                                             <select class="form-control js-example-basic-single" id="mixta2" style="width: 250px"></select>
-                                            <a href="#" onclick="addmixta()" class="btn btn-sm btn-primary">Agregar</a>
+                                            <a onclick="addmixta()" class="btn btn-sm btn-primary">Agregar</a>
                                         </div>
                                         <table class="table table-striped table-inverse table-responsive" id="micart">
                                             <thead class="thead-inverse">
@@ -261,12 +261,12 @@
                                             <strong>Tipo</strong>
                                             <select class="form-control js-example-basic-single" id="venta_type"> </select>
                                         </div>
-                                        @if(setting('empresa.type_negocio')=="Restaurante")
+                                        {{-- @if(setting('empresa.type_negocio')=="Restaurante")
                                             <div class="form-group col-sm-12">
                                                 <strong>Pensionado</strong>
                                                 <select class="form-control js-example-basic-single" id="mipensionado"> </select>
                                             </div>
-                                        @endif
+                                        @endif --}}
 
                                         <div class="form-group col-md-12">
                                             <strong>Cupon</strong>
@@ -1343,16 +1343,16 @@
         @section('javascript')
             <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
             <script>
-                const name_socket = "{{ setting('notificaciones.venta') }}";
-                const socket_cocina = "{{ setting('notificaciones.cocina') }}";
-                socket.on(socket_cocina, (msg) =>{
-                    toastr.success('La Cocina Libero el Pedido: '+msg);
-                })
-                socket.on(name_socket, (msg) =>{
-                    var msg = JSON.parse(msg)
-                    toastr.success('CHATBOT - nueva venta: '+msg.data.observacion)
+                // const name_socket = "{{ setting('notificaciones.venta') }}";
+                // const socket_cocina = "{{ setting('notificaciones.cocina') }}";
+                // socket.on(socket_cocina, (msg) =>{
+                //     toastr.success('La Cocina Libero el Pedido: '+msg);
+                // })
+                // socket.on(name_socket, (msg) =>{
+                //     var msg = JSON.parse(msg)
+                //     toastr.success('CHATBOT - nueva venta: '+msg.data.observacion)
 
-                })
+                // })
 
                 $('document').ready(function () {
 
@@ -1400,7 +1400,7 @@
 
                     Opciones();
                     //PensionadoDefault();
-                    Pensionados();
+                    // Pensionados();
                     //DesactivarPensionados();
 
                     //-----------------------
@@ -2063,7 +2063,7 @@
                                         dataType: "json",
                                         success: function (response) {
                                             $('#mixtos').attr("hidden", true);
-                                            $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+", "+response.id+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onchange='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                            $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><a class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+", "+response.id+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onchange='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
                                             var temp = {'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'precio_inicial':response.precio , 'cant': 1, 'total': response.precio, 'description': description, 'extra': response.extra, 'extras':response.extras, 'extra_name':'', 'observacion':'' };
                                             micart.push(temp);
                                             localStorage.setItem('micart', JSON.stringify(micart));
@@ -2087,25 +2087,26 @@
                         }
                     }
                     else{
-
+                        console.log('NO INVENTARIO')
                         var micart = JSON.parse(localStorage.getItem('micart'));
+                        var miproduct = JSON.parse(localStorage.getItem('miproduct'));
                         var description = $('#mixta1 :selected').text() + ' - ' + $('#mixta2 :selected').text();
                         $.ajax({
-                        url: "{{ setting('admin.url') }}api/pos/producto/"+id,
-                        dataType: "json",
-                        success: function (response) {
+                            url: "{{ setting('admin.url') }}api/pos/producto/"+miproduct.id,
+                            dataType: "json",
+                            success: function (response) {
 
-                            var miimage =response.image ? response.image : "{{ setting('productos.imagen_default') }}";
+                                var miimage =response.image ? response.image : "{{ setting('productos.imagen_default') }}";
 
-                            $('#mixtos').attr("hidden", true);
-                            $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras'onclick='addextra("+response.extras+", "+response.id+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onchange='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                $('#mixtos').attr("hidden", true);
+                                $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+response.id+"'></td><td><a class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras'onclick='addextra("+response.extras+", "+response.id+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onchange='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
 
-                            var temp = {'id': response.id, 'image': miimage, 'name': response.name, 'precio': response.precio, 'precio_inicial':response.precio, 'cant': 1, 'total': response.precio, 'description': description, 'extra': response.extra, 'extras':response.extras, 'extra_name':'', 'observacion':''};
-                            micart.push(temp);
-                            localStorage.setItem('micart', JSON.stringify(micart));
+                                var temp = {'id': response.id, 'image': miimage, 'name': response.name, 'precio': response.precio, 'precio_inicial':response.precio, 'cant': 1, 'total': response.precio, 'description': description, 'extra': response.extra, 'extras':response.extras, 'extra_name':'', 'observacion':''};
+                                micart.push(temp);
+                                localStorage.setItem('micart', JSON.stringify(micart));
 
-                            mitotal();
-                            toastr.success(response.name+" - REGISTRADO");
+                                mitotal();
+                                toastr.success(response.name+" - REGISTRADO");
 
                             }
                         });
@@ -2399,7 +2400,7 @@
                         var status_id = $("input[name='status_id']").val();
                         var option_id = $("input[name='option_id']").val();
                         var factura = $("input[name='factura']:checked").val();
-                        var credito = $("input[name='credito']:checked").val();
+                        var credito = $("input[name='credito']:checked").val() ? $("input[name='credito']:checked").val() : null;
                         var status_credito=$("input[name='status_credito']").val();
                         var total = $("input[name='total']").val();
                         var descuento = $("input[name='descuento']").val();
@@ -2453,10 +2454,10 @@
                                     "details": micart2,
                                     "postalCode": "{{ setting('banipay.moneda') }}"
                                     }
-                                var banipay = await axios.post('https://banipay.me:8443/api/payments/transaction', miconfig)
-                                var midata3 = JSON.stringify({paymentId: banipay.data.paymentId, transactionGenerated: banipay.data.transactionGenerated, externalCode: banipay.data.externalCode})
-                                console.log(banipay.data)
-                                await axios.get("{{ setting('admin.url') }}api/pos/banipay/save/"+midata3)
+                                    var banipay = await axios.post('https://banipay.me:8443/api/payments/transaction', miconfig)
+                                    var midata3 = JSON.stringify({paymentId: banipay.data.paymentId, transactionGenerated: banipay.data.transactionGenerated, externalCode: banipay.data.externalCode})
+                                    console.log(banipay.data)
+                                    await axios.get("{{ setting('admin.url') }}api/pos/banipay/save/"+midata3)
                                 break;
                             default:
                                 console.log('default')
@@ -2509,8 +2510,8 @@
 
                 }
 
-                $('#category').on('change', function() {
-                    if (+this.value == 0) {
+                $('#category').on('change', async function() {
+                    if (this.value == 0) {
                         $.ajax({
                             url: "{{ setting('admin.url') }}api/pos/productos/",
                             dataType: "json",
@@ -2530,24 +2531,25 @@
                         });
                         toastr.success('Todos los Productos');
                     } else {
-                        $.ajax({
-                            url: "{{ setting('admin.url') }}api/pos/productos/category/"+this.value,
-                            dataType: "json",
-                            success: function (response) {
+                        // console.log('categoria haere')
+                        var products = await axios("{{ setting('admin.url') }}api/pos/productos/category/"+this.value)
+                        // $.ajax({
+                        //     url: "{{ setting('admin.url') }}api/pos/productos/category/"+this.value,
+                        //     dataType: "json",
+                        //     success: function (response) {
                                 $('#s').find('option').remove().end();
                                 $('#s').append($('<option>', {
                                     value: null,
                                     text: 'Elige un Producto'
                                 }));
-                                for (let index = 0; index < response.length; index++) {
-                                    const element = response[index];
+                                for (let index = 0; index < products.data.length; index++) {
                                     $('#s').append($('<option>', {
-                                        value: response[index].id,
-                                        text: response[index].categoria.abreviatura+'-'+response[index].name+'-'+response[index].precio+'-'+response[index].stock
+                                        value: products.data[index].id,
+                                        text: products.data[index].categoria.abreviatura+'-'+products.data[index].name+'-'+products.data[index].precio+'-'+products.data[index].stock
                                     }));
                                 }
-                            }
-                        });
+                        //     }
+                        // });
                     }
 
                 });
@@ -2569,6 +2571,7 @@
                 }
 
                 $('#s').on('change', function() {
+                    console.log(this.value + " change s")
                     addproduct(this.value);
                 });
 
@@ -2586,7 +2589,7 @@
                     mitotal();
                 });
 
-                function addproduct(id) {
+                async function addproduct(id) {
                     $("#miresult").attr("hidden", true)
                     var total = 0;
                     var micart = JSON.parse(localStorage.getItem('micart'));
@@ -2601,6 +2604,9 @@
                     if(mirep){
                         toastr.error("Producto ya Registrado");
                     }else{
+
+                        // var miproducto = await axios("{{ setting('admin.url') }}api/pos/producto/"+id)
+                        // console.log(miproducto.data)
                         $.ajax({
                             url: "{{ setting('admin.url') }}api/pos/producto/"+id,
                             dataType: "json",
@@ -2611,13 +2617,14 @@
                                     if (response.mixta == 1 ) {
                                         $('#mixtos').attr("hidden",false);
                                         var micategory = $('#category').val();
+                                        console.log(micategory)
                                         $.ajax({
                                             url: "{{ setting('admin.url') }}api/pos/producto/mixto/0/"+micategory,
                                             dataType: "json",
                                             success: function (response) {
                                                 $('#mixta1').append($('<option>', {
                                                     value: null,
-                                                    text: 'Elige un Mitad'
+                                                    text: 'Elige una Mitad'
                                                 }));
                                                 for (let index = 0; index < response.length; index++) {
                                                     $('#mixta1').append($('<option>', {
@@ -2627,7 +2634,7 @@
                                                 }
                                                 $('#mixta2').append($('<option>', {
                                                     value: null,
-                                                    text: 'Elige un Mitad'
+                                                    text: 'Elige una Mitad'
                                                 }));
                                                 for (let index = 0; index < response.length; index++) {
                                                     $('#mixta2').append($('<option>', {
@@ -2648,10 +2655,10 @@
                                             }
                                             var description=null;
                                             if(response.extra){
-                                                $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+miimage+"></td><td>"+response.name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+response.id+")' id='observacion_"+response.id+"'></td><td><a href='#' class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+", "+response.id+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onchange='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                                $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+miimage+"></td><td>"+response.name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+response.id+")' id='observacion_"+response.id+"'></td><td><a class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+", "+response.id+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onchange='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
                                             }
                                             else{
-                                                $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+miimage+"></td><td>"+response.name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+response.id+")' id='observacion_"+response.id+"'></td><td></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onchange='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a href='#' class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
+                                                $("#micart").append("<tr id="+response.id+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+miimage+"></td><td>"+response.name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+response.id+")' id='observacion_"+response.id+"'></td><td></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+response.id+"' onchange='updateprice("+response.id+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+")' value='1' min='1' max='"+response.stock+"' id='cant_"+response.id+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+response.id+"' readonly></td><td><a class='btn btn-sm btn-danger' onclick='midelete("+response.id+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
                                             }
                                             var temp = {'id': response.id, 'image': miimage, 'name': response.name, 'precio': response.precio, 'precio_inicial':response.precio, 'cant': 1, 'total': response.precio, 'description': '', 'extra':response.extra, 'extras':response.extras, 'extra_name':'', 'observacion':''};
                                             micart.push(temp);
@@ -2672,6 +2679,9 @@
                                 } else {
                                     if (response.mixta == 1 ) {
                                         $('#mixtos').attr("hidden",false);
+                                        $("#category").val(response.categoria_id).change();
+                                        localStorage.setItem('miproduct', JSON.stringify(response))
+                                        // $("#s option[value="+response.id+"]").attr("selected", true);
                                         var micategory = $('#category').val();
                                         $.ajax({
                                             url: "{{ setting('admin.url') }}api/pos/producto/mixto/0/"+micategory,

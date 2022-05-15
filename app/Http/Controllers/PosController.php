@@ -22,6 +22,12 @@ use App\Asiento;
 
 use NumerosEnLetras;
 
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\PrintConnectors\FilePrintConnector;
+use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+use Mike42\Escpos\CapabilityProfile;
+
 class PosController extends Controller
 {
 
@@ -37,8 +43,18 @@ class PosController extends Controller
         $vista = view('ventas.recibo', compact('ventas' ,'detalle_ventas', 'cliente','sucursal','option', 'literal'));
 
         $pdf = \App::make('dompdf.wrapper');
-        $pdf->loadHTML($vista)->setPaper('legal');
+        $pdf->loadHTML($vista);
         return $pdf->stream();
+        // $tmpfname = tempnam(sys_get_temp_dir(), 'print-');
+        // $profile = CapabilityProfile::load("simple");
+        // $profile = CapabilityProfile::load("EPSON_TM_T20II");
+        // $connector = new WindowsPrintConnector("/dev/ttyUSB0");
+        // $printer = new Printer($connector, $profile);
+        $connector = new FilePrintConnector("php://stdout");
+        $printer = new Printer($connector);
+        $printer -> text("Hello World!\n");
+        $printer -> cut();
+        $printer -> close();
     }
 
        // PARA IMPRIMIR CIERRE CAJA
