@@ -4,19 +4,13 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        {{-- <meta http-equiv="X-UA-Compatible" content="ie=edge"> --}}
         <title>Recibo de venta</title>
-
-
     </head>
-    <body style="font-size: 20px; margin: 0px; padding: 5px 10px;">
-        {{-- <div style="text-align:right" id="print">
-            <button onclick="javascript:window.print()" class="btn-print">Imprimir</button>
-        </div> --}}
+    <body style="font-size: 22px;">
         <table>
             <tr>
                 <td colspan="2" align="center">
-                    <img src="{{ url('storage').'/'.setting('empresa.logo') }}" alt="loginweb" width="100px"><br>
+                    <img src="{{ url('storage').'/'.setting('empresa.logo') }}" alt="loginweb" width="120px"><br>
                     <b>De: {{ setting('empresa.propietario') }}</b><br>
                     <b>{{ strtoupper($sucursal->name) }}</b><br>
                     <b>{{ setting('empresa.direccion') }}<b><br>
@@ -27,8 +21,9 @@
             <tr>
                 <!-- consulta para saber si es factura o recibo -->
                 <td colspan="2" align="center">
-                    <h2>TICKET # {{ $ventas->ticket }}</h2>
-                     <span class="badge">{{ strtoupper($option->title) }}</span>
+                    <h2>TICKET # {{ $ventas->ticket }}<br>
+                     <span style="padding:2px 20px;background-color:black;color:white;font-weight:bold;">{{ strtoupper($option->title) }}</span>
+                    </h2>
                     <hr>
                 </td>
             </tr>
@@ -55,10 +50,10 @@
                     <table>
                         <tr>
                             <td><strong>DETALLE</strong></td>
-                            <td><strong>EXTRAS</strong></td>
-                            <td><strong>OBSERVAC</strong></td>
-                            <td><strong>PRECIO UNIT.</strong></td>
-                            <td><strong>TOTAL UNIT.</strong></td>
+                            <td><strong>EXT</strong></td>
+                            <td><strong>OBS</strong></td>
+                            <td><strong>PRECIO</strong></td>
+                            <td><strong>TOTAL</strong></td>
                          </tr>
                          @foreach ($detalle_ventas as $item)
                              @php
@@ -100,13 +95,13 @@
             <tr>
                 <td colspan="2">Son: {{ $literal }}</td>
             </tr>
-
-            <tr>
-                <td colspan="2"><h3>Gracias por su preferencia, vuelva pronto.</h3> </td>
-            </tr>
             <tr>
                 <td colspan="2"><hr></td>
             </tr>
+            <tr>
+                <td colspan="2"><h3>Gracias por su preferencia, vuelva pronto.</h3> </td>
+            </tr>
+
             <tr>
                 <td colspan="2"><b>Atendido por : </b> {{ Auth::user()->name }}</td>
             </tr>
@@ -114,16 +109,18 @@
                 <td colspan="2"><b>Hora : {{ date('H:i:s') }}</b></td>
             </tr>
         </table>
+
         <div class="saltopagina" style="display:block; page-break-before:always;"></div>
+
         @if(setting('ventas.cocina'))
             <table>
                 <tr>
                     <td colspan="2" align="center">
-                        <h3>
+                        <h2>
                             ORDEN #{{$ventas->ticket}}<br>
                             {{date('d/m/Y H:i:s')}}<br>
-                            <span class="badge">{{ strtoupper($option->title) }}</span>
-                        </h3><hr>
+                            <span style="padding:2px 20px;background-color:black;color:white;font-weight:bold;">{{ strtoupper($option->title) }}</span>
+                        </h2><hr>
                     </td>
                 </tr>
                 <tr>
@@ -131,10 +128,10 @@
                         <table>
                             <tr>
                                 <td><strong>DETALLE</strong></td>
-                                <td><strong>EXTRAS</strong></td>
-                                <td><strong>OBSERVAC</strong></td>
-                                <td><strong>PRECIO UNIT.</strong></td>
-                                <td><strong>TOTAL UNIT.</strong></td>
+                                <td><strong>EXT</strong></td>
+                                <td><strong>OBS</strong></td>
+                                <td><strong>PRECIO</strong></td>
+                                <td><strong>TOTAL</strong></td>
                             </tr>
                             @foreach ($detalle_ventas as $item)
                                 @php
@@ -179,6 +176,9 @@
         <script type="text/javascript">
             try {
                 this.print();
+                setTimeout(function(){
+                    this.close();
+                }, 10000);
             }
             catch(e) {
                 window.onload = window.print;

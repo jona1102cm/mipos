@@ -24,13 +24,13 @@
             @section('page_header')
             <br>
                 {{-- <div class="row"> --}}
-                    <div class="col-sm-2">
+                    <div class="col-sm-2 col-md-2 col-lg-2">
                         <h4 class="">
                             <i class="{{ $dataType->icon }}"></i>
                             {{ __('voyager::generic.'.($edit ? 'edit' : 'add')).' '.$dataType->getTranslatedAttribute('display_name_singular') }}
                         </h4>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-6 col-md-6 col-lg-6">
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <button type="button" class="btn btn-danger" data-toggle="modal" onclick="get_total()" data-target="#cerrar_caja">Cerrar</button>
                                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#venta_caja" onclick="venta_caja()">Ventas</button>
@@ -41,7 +41,7 @@
 
                             </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-4 col-md-4 col-lg-4">
                         <div id="info_caja"></div>
                     </div>
                 {{-- </div> --}}
@@ -149,7 +149,7 @@
                                     $categorias = App\Categoria::where('id', '!=', 9 )->where('id', '!=', 16 )->orderBy('order', 'asc')->get();
                                 @endphp
 
-                                    <div class="form-group col-md-8">
+                                    <div class="form-group col-lg-9 col-md-8 col-sm-12">
                                         <input type="search" id="misearch" class="form-control" placeholder="Ingresa un criterio de busqueda, QR o codigo de barra">
                                         <div>
                                         <div id="miresult" hidden>
@@ -158,7 +158,7 @@
                                                     <tr>
                                                         <th>#</th>
                                                         <th>Imagen</th>
-                                                        <th>Presentación</th>
+                                                        {{-- <th>Presentación</th> --}}
                                                         <th>Item</th>
                                                         <th>Nombre Genérico</th>
                                                         <th>Stock</th>
@@ -169,9 +169,12 @@
                                                 </thead>
                                                 <tbody></tbody>
                                             </table>
-                                            <a href="#" onclick="return $('#miresult').attr('hidden', true)" class="btn btn-sm btn-default">Cerrar</a>
+                                            <a onclick="return $('#miresult').attr('hidden', true)" class="btn btn-sm btn-default">Cerrar</a>
                                         </div>
                                             {{-- @if(setting('empresa.type_negocio')=="Restaurente") --}}
+                                            <div style="cursor: pointer; hover: {cursor: url('https://tpv.tatupizzeria.com.bo/storage/tocar.png')};">
+
+
                                                 <ul class="nav nav-tabs" role="tablist">
                                                     @foreach($categorias as $item)
                                                         <li role="presentation"><a href="#{{ $item->id }}" aria-controls="home" role="tab" data-toggle="tab">{{ $item->name}}</a></li>
@@ -186,18 +189,18 @@
                                                             @endphp
                                                             <div class="row">
                                                                 @foreach($products as $item)
-                                                                    <div class="col-xs-3">
+                                                                    <div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-2">
                                                                         <a onclick="addproduct('{{$item->id}}')" class="thumbnail">
                                                                             @php
-                                                                            $miimage =$item->image ? $item->image :  setting('productos.imagen_default') ;
-                                                                            $stock = $item->stock ? $item->stock : " ";
+                                                                                $miimage =$item->image ? $item->image :  setting('productos.imagen_default') ;
+                                                                                $stock = $item->stock ? $item->stock : " ";
                                                                             @endphp
                                                                             <img src="{{setting('admin.url')}}storage/{{ $miimage }}">
                                                                         </a>
                                                                         @if(setting('ventas.stock'))
-                                                                            <small>{{ $item->name }} - {{$stock}}</small>
+                                                                            <small>Titulo: {{ $item->name }} - {{$stock}}</small>
                                                                         @else
-                                                                            <small>{{ $item->name }}</small>
+                                                                            <small>Titulo: {{ $item->name }}</small>
                                                                         @endif
                                                                     </div>
                                                                 @endforeach
@@ -207,20 +210,25 @@
                                                     <div role="tabpanel" class="tab-pane" id="vacio">
                                                     </div>
                                                 </div>
+                                            </div>
                                             {{-- @endif --}}
                                         </div>
-                                        <div id="search-input">
-                                            <div class="input-group col-sm-6">
-                                                <select class="form-control js-example-basic-single" id="category"></select>
-                                            </div>
-                                            <div class="input-group col-sm-6">
-                                                <select class="form-control js-example-basic-single" id="s"></select>
+                                        <div hidden>
+                                            <div id="search-input" >
+                                                <div class="input-group col-sm-6" >
+                                                    <select class="form-control js-example-basic-single" id="category"></select>
+                                                </div>
+                                                <div class="input-group col-sm-6">
+                                                    <select class="form-control js-example-basic-single" id="s"></select>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="form-group" id="mixtos" hidden>
-                                            <select class="form-control js-example-basic-single" id="mixta1" style="width: 250px"></select>
-                                            <select class="form-control js-example-basic-single" id="mixta2" style="width: 250px"></select>
-                                            <a onclick="addmixta()" class="btn btn-sm btn-primary">Agregar</a>
+                                        <div  id="mixtos" hidden>
+                                            <div class="form-group">
+                                                <select class="form-control js-example-basic-single" id="mixta1" style="width: 250px"></select>
+                                                <select class="form-control js-example-basic-single" id="mixta2" style="width: 250px"></select>
+                                                <a onclick="addmixta()" class="btn btn-sm btn-primary">Agregar</a>
+                                            </div>
                                         </div>
                                         <table class="table table-striped table-inverse table-responsive" id="micart">
                                             <thead class="thead-inverse">
@@ -241,13 +249,13 @@
                                         </table>
                                     </div>
 
-                                    <div class="form-group col-md-4 text-center">
+                                    <div class="form-group col-lg-3 col-md-4 text-center">
                                         <form class="form-horizontal" role="form">
                                             <label class="radio-inline"> <input type="radio" name="season" id="" value="imprimir" checked> Imprimir </label>
                                             <label class="radio-inline"> <input type="radio" name="season" id="" value="seguir"> Seguir </label>
                                         </form>
                                     </div>
-                                    <div class="form-group col-md-4">
+                                    <div class="form-group col-lg-3 col-md-4">
                                         <div class="form-group col-md-12">
                                             <strong>Cliente</strong>
                                             <select class="form-control js-example-basic-single" id="micliente"> </select>
@@ -1365,7 +1373,7 @@
                         var micaja = JSON.parse(localStorage.getItem('micaja'));
                         $("input[name='caja_id']").val(micaja.caja_id);
                         $('input[name="sucursal_id"]').val(micaja.sucursal_id);
-                        $("#info_caja").html("<h4>"+micaja.title+" - "+micaja.sucursal+" - "+micaja.importe+" Bs. - <a href='#' onclick='reset()'>Reset</a></h4>");
+                        $("#info_caja").html("<h4>"+micaja.title+" - "+micaja.sucursal+" - "+micaja.importe+" Bs. - <a onclick='reset()'>Reset</a></h4>");
                     }else{
                         $("#micaja").modal();
                     }
@@ -1615,22 +1623,23 @@
                 $('#misearch').keypress(async function(event) {
                     if ( event.which == 13 ) {
                         event.preventDefault();
+
                         toastr.info('buscando '+this.value)
                         var miresult = await axios.get("{{setting('admin.url')}}api/pos/producto/search/"+this.value)
                         $("#mitableresult tbody tr").remove()
                         $("#miresult").attr("hidden", false)
                         for(let index=0; index < miresult.data.length; index++){
                             var presentacion_id= miresult.data[index].presentacion_id ? miresult.data[index].presentacion_id :" "
-                            if(presentacion_id!= " "||presentacion_id!=null){
-                                var presentacion= await axios("{{setting('admin.url')}}api/pos/presentacion/"+presentacion_id)
-                            }
-                            else{
-                                var presentacion = " "
-                            }
+                            // if(presentacion_id!= " "||presentacion_id!=null){
+                            //     var presentacion= await axios("{{setting('admin.url')}}api/pos/presentacion/"+presentacion_id)
+                            // }
+                            // else{
+                            //     var presentacion = " "
+                            // }
                             var img = miresult.data[index].image ? miresult.data[index].image : "{{ setting('productos.imagen_default') }}"
                             var nombre_genérico= miresult.data[index].title ? miresult.data[index].title : " "
                             var vencimiento = miresult.data[index].vencimiento ? miresult.data[index].vencimiento : " "
-                            $('#mitableresult').append("<tr><td>"+miresult.data[index].id+"</td><td><img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+img+"></td><td>"+presentacion.data.name+"</td><td>"+miresult.data[index].name+"</td><td>"+nombre_genérico+"</td><td>"+miresult.data[index].stock+"</td><td>"+vencimiento+"</td><td>"+miresult.data[index].precio+"</td><td><a class='btn btn-sm btn-success' href='#' onclick='addproduct("+miresult.data[index].id+")'>Agregar</a></td></tr>")
+                            $('#mitableresult').append("<tr><td>"+miresult.data[index].id+"</td><td><img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+img+"></td><td>"+miresult.data[index].name+"</td><td>"+nombre_genérico+"</td><td>"+miresult.data[index].stock+"</td><td>"+vencimiento+"</td><td>"+miresult.data[index].precio+"</td><td><a class='btn btn-sm btn-success' onclick='addproduct("+miresult.data[index].id+")'>Agregar</a></td></tr>")
                         }
                     }
                 });
