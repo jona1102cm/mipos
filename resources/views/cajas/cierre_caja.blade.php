@@ -5,94 +5,24 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        {{-- <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet"> --}}
         <title>Reporte Cierre Caja</title>
         <style>
-            .btn-print{
-                background-color: #fa2a00;
-                color:white;
-                border: 1px solid #fa2a00;
-                padding: 5px 8px;
-                border-radius:5px
+            table, th, td {
+                width: 100%;
+                border: 0px solid black;
             }
-            @media print {
-                #print{
-                    display: none;
-                }
-            }
-            body{
-                font-size: 11px;
-                font-family: 'Noto Sans', sans-serif;
-                /* border: 1px solid black;
-                border-radius: 1px; */
-                padding: 5px 10px;
-                margin: 0px
-            }
-
-			@media all {
-			   div.saltopagina{
-			      display: none;
-			   }
-			}
-
-			@media print{
-			   div.saltopagina{
-			      display:block;
-			      page-break-before:always;
-			   }
-			}
-            .badge{
-                padding:2px 20px;
-                background-color:black;
-                color:white;
-                font-size: 12px;
-                font-weight:bold;
-            }
+            @page { size: 30rem 100rem; font-size: 28px;}
 		</style>
     </head>
     <body>
-        {{-- <div style="text-align:right" id="print">
-            <button onclick="javascript:window.print()" class="btn-print">Imprimir</button>
-        </div> --}}
 
-        {{-- @php
-            $ingreso_efectivo=0;
-            $ingreso_linea=0;
-            $egreso_efectivo=0;
-            $egreso_linea=0;
-        @endphp
-        @foreach($asiento as $item)
-            @if($item->pago==true && $item->type=="Ingresos")
-                @php
-                    $ingreso_efectivo+=$item->monto;
-                @endphp
-            @endif
-            @if($item->pago==false && $item->type=="Ingresos")
-                @php
-                    $ingreso_linea+=$item->monto;
-                @endphp
-            @endif
-            @if($item->pago==true && $item->type=="Egresos")
-                @php
-                    $egreso_efectivo+=$item->monto;
-                @endphp
-            @endif
-            @if($item->pago==false && $item->type=="Egresos")
-                @php
-                    $egreso_linea+=$item->monto;
-                @endphp
-            @endif
-        @endforeach --}}
-     
-
-        <table width="300px">
-            
+        <table>
             <tr>
                 <td colspan="2">
-                    <table width="100%">
+                    <table>
                         <tr>
                                 <th></th>
-                                <th align="center" style="font-size:18px">CIERRE CAJA # {{ $detalle_caja->id }}</th>
+                                <td align="center" style="font-size:18px">CIERRE CAJA # {{ $detalle_caja->id }}</td>
                                 <th></th>
                         </tr>
                         <tr>
@@ -105,7 +35,7 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <table width="100%">
+                    <table>
                         <tr>
                             <td>
                                 <b> Nº Venta Inicial: </b>{{$detalle_caja->venta_inicio}}
@@ -129,8 +59,8 @@
 
 
             </tr>
-        
-            
+
+
             <tr>
                 <td colspan="2"><hr></td>
             </tr>
@@ -145,13 +75,13 @@
                     </table>
                 </td>
             </tr>
-           
+
             <tr>
                 <td colspan="2">
-                    
+
                     <table width="100%">
-                        
-                       
+
+
                         <tr>
                             <th>Cantidad</th>
                             <th>Detalle</th>
@@ -235,11 +165,11 @@
             <tr>
                 <td colspan="2">
                     <table width="100%">
-                        
+
                         <tr>
                             <th></th>
                             <th>
-                                EGRESOS EN EFECTIVO: 
+                                EGRESOS EN EFECTIVO:
                             </th>
                             <th> {{$detalle_caja->egreso_efectivo}}</th>
                         </tr>
@@ -286,7 +216,7 @@
                             <th>INGRESOS EN EFECTIVO</th>
                             <th>{{$detalle_caja->ingreso_efectivo}}</th>
                         </tr>
-                        
+
                         <tr>
                             <th>EGRESOS EN EFECTIVO</th>
                             <th>{{$detalle_caja->egreso_efectivo}}</th>
@@ -390,19 +320,19 @@
                 <td colspan="2">
                     <table width="100%">
                         <tr>
-                    
+
                             <th><hr></th>
-                           
+
                         </tr>
                         <tr>
                             <th align="center">Cajero(a): {{$cajero->name}}</th>
                         </tr><br><br><br>
 
                         <tr>
-                            
-                            
+
+
                             <th align="center"><hr></th>
-                            
+
                         </tr>
                         <tr>
                             <th align="center">Administrador(a): </th>
@@ -412,10 +342,10 @@
 
                 </td>
             </tr>
-            
-           
+
+
         </table>
-        
+
         <script>
             window.print();
             setTimeout(function(){

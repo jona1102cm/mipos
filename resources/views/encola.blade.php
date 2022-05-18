@@ -120,9 +120,9 @@
                     <h1 class="title">{{ setting('empresa.title') }} <img src="{{ url('storage').'/'.setting('empresa.logo') }}" width="100px" alt=""></h1>
                 </div>
 
-                <audio id="audio">
+                {{-- <audio id="audio">
                     <source type="audio/mp3" src="iphone-notificacion.mp3">
-                </audio>
+                </audio> --}}
             </div>
         </div>
         <div class="footer">
@@ -137,12 +137,11 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-
     <script src="https://socket.loginweb.dev/socket.io/socket.io.js"></script>
     <script>
-        document.getElementById("audio").play();
+        // document.getElementById("audio").play();
         const socket = io('https://socket.loginweb.dev')
-        socket.on("{{ setting('notificaciones.cocina') }}", (msg) =>{
+        socket.on("{{ setting('notificaciones.monitor') }}", (msg) =>{
             location.reload();
         })
     </script>

@@ -33,28 +33,25 @@ class PosController extends Controller
 
     // PARA IMPRIMIR RECIBO
 	public function imprimir($id){
-
         $ventas = Venta::find($id);
         $detalle_ventas = DetalleVenta::where('venta_id',$id)->get();
         $cliente = Cliente::find($ventas->cliente_id);
         $sucursal=Sucursale::find($ventas->sucursal_id);
         $option=Option::find($ventas->option_id);
         $literal = NumerosEnLetras::convertir($ventas->total,'Bolivianos',true);
-        $vista = view('ventas.recibo', compact('ventas' ,'detalle_ventas', 'cliente','sucursal','option', 'literal'));
 
-        $pdf = \App::make('dompdf.wrapper');
-        $pdf->loadHTML($vista);
-        return $pdf->stream();
-        // $tmpfname = tempnam(sys_get_temp_dir(), 'print-');
-        // $profile = CapabilityProfile::load("simple");
-        // $profile = CapabilityProfile::load("EPSON_TM_T20II");
-        // $connector = new WindowsPrintConnector("/dev/ttyUSB0");
-        // $printer = new Printer($connector, $profile);
-        $connector = new FilePrintConnector("php://stdout");
-        $printer = new Printer($connector);
-        $printer -> text("Hello World!\n");
-        $printer -> cut();
-        $printer -> close();
+        //logica para direccionar a recibo o factura ventas.factura
+        if ($ventas->factura == 'Recibo') {
+            $vista = view('ventas.recibo', compact('ventas' ,'detalle_ventas', 'cliente','sucursal','option', 'literal'));
+            $pdf = \App::make('dompdf.wrapper');
+            $pdf->loadHTML($vista)->setPaper('legal');
+            return $pdf->stream();
+        } else {
+            $vista = view('ventas.factura', compact('ventas' ,'detalle_ventas', 'cliente','sucursal','option', 'literal'));
+            $pdf = \App::make('dompdf.wrapper');
+            $pdf->loadHTML($vista)->setPaper('legal');
+            return $pdf->stream();
+        }
     }
 
        // PARA IMPRIMIR CIERRE CAJA

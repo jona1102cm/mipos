@@ -565,7 +565,7 @@ Route::get('pos/productos', function () {
 
 // SEARCH PRODUCTO
 Route::get('pos/producto/search/{midata}', function ($midata) {
-    return  Producto::where('name', 'like', '%'.$midata.'%')->get();
+    return  Producto::where('name', 'like', '%'.$midata.'%')->with('categoria')->get();
 });
 
 // UN PRODUCT
@@ -586,6 +586,11 @@ Route::get('pos/categorias_all', function () {
     return  Categoria::orderBy('order', 'asc')->get();
 });
 
+//Categoria por ID
+Route::get('pos/category/{id}', function ($id) {
+    return  Categoria::find($id);
+});
+
 // Productos de categoria Extra Grande y Mediana
 Route::get('pos/producto/extra/{categoria_id}',function($categoria_id){
     return Producto::where('categoria_id', $categoria_id)->get();
@@ -595,6 +600,11 @@ Route::get('pos/producto/extra/{categoria_id}',function($categoria_id){
 Route::get('pos/typeproductos', function () {
     //return  Categoria::orderBy('order', 'asc')->get();
     return TypeProducto::all();
+});
+
+//-- Un Type producto
+Route::get('pos/typeproduct/{id}', function ($id) {
+    return TypeProducto::find($id);
 });
 
 Route::get('pos/category/{id}', function ($id) {

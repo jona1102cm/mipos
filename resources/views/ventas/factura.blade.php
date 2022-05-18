@@ -5,7 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <title>Recibo de venta</title>
+        <title>Factura de venta</title>
         <style>
             table, th, td {
                 width: 100%;
@@ -23,17 +23,24 @@
                     <b>{{ strtoupper($sucursal->name) }}</b><br>
                     <b>{{ setting('empresa.direccion') }}<b><br>
                     <b>Cel: {{ setting('empresa.celular') }}</b><br>
-                    <b>{{ setting('empresa.ciudad') }}</b>
+                    <b>{{ setting('empresa.ciudad') }}</b> <br>
+                    <b>{{ setting('empresa.actividad_economica') }}</b>
                 </td>
+            </tr>
+            <tr>
+                <td colspan="3"><hr></td>
             </tr>
             <tr>
                 <!-- consulta para saber si es factura o recibo -->
                 <td colspan="3" align="center">
-                    <h2>TICKET # {{ $ventas->ticket }}<br>
-                     <span style="padding:2px 2px; background-color:black;color:white;font-weight:bold;">{{ strtoupper($option->title) }}</span>
-                    </h2>
-                    <hr>
+                    <strong>F A C T U R A</strong><br>
+                    <strong>NIT: {{ setting('empresa.nit') }}</strong><br>
+                    <strong>AUTORIZACION: {{ setting('empresa.nit') }}</strong><br>
+                    <strong>FACTURA: {{$ventas->ticket}}</strong><br>
                 </td>
+            </tr>
+            <tr>
+                <td colspan="3"><hr></td>
             </tr>
             {{-- // Cliente --}}
             <tr>
