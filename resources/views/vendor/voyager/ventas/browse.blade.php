@@ -130,6 +130,10 @@
                                                             @include('voyager::bread.partials.actions', ['action' => $action])
                                                         @endif
                                                     @endforeach
+                                                    @if ($data->factura == "Recibo")
+                                                        <a onclick="CargarClienteVenta({{$data}})" class="btn btn-sm btn-warning pull-right" data-toggle="modal" data-target="#modal_recibo_a_factura" ><i class="voyager-helm"></i><span class="hidden-xs hidden-sm">Factura</span></a>
+
+                                                    @endif
                                                 </td>
 
                                                 @foreach($dataType->browseRows as $row)
@@ -361,13 +365,15 @@
                                                         @if (!method_exists($action, 'massAction'))
                                                             @include('voyager::bread.partials.actions', ['action' => $action])
                                                         @endif
-                                                        <a href="#" class="btn btn-sm btn-dark">Factura</a>
+                                                        <a href="#" class="btn btn-sm btn-danger">Factura</a>
                                                     @endforeach
-                                                    {{-- <a href="#" class="btn btn-sm btn-dark">Factura</a> --}}
+                                                    @if ($data->factura == "Recibo")
+                                                        <a onclick="CargarClienteVenta({{$data}})" class="btn btn-sm btn-warning pull-right" data-toggle="modal" data-target="#modal_recibo_a_factura" ><i class="voyager-helm"></i><span class="hidden-xs hidden-sm">Factura</span></a>
+
+                                                    @endif
                                                 </td>
                                                 @foreach($dataType->browseRows as $row)
 
-                                                {{-- <a href="#" class="btn btn-sm btn-dark">Factura</a> --}}
                                                     @php
                                                     if ($data->{$row->field.'_browse'}) {
                                                         $data->{$row->field} = $data->{$row->field.'_browse'};
@@ -919,6 +925,127 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div>
+
+    <div class="modal modal-primary fade" tabindex="-1" id="modal_recibo_a_factura" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <center><h4>Convertir Recibo a Factura</h4></center>
+
+                </div>
+                <div class="modal-body">
+
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#principal" aria-controls="principal" role="tab" data-toggle="tab">Datos Actuales</a></li>
+                        <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Buscar</a></li>
+                        <li role="presentation"><a href="#create" aria-controls="create" role="tab" data-toggle="tab">Crear</a></li>
+
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="principal">
+                            <input type="hidden" class="form-control" id="id_venta_conversion" >
+                            <input type="hidden" class="form-control" id="cliente_id_conversion" >
+
+
+                            <div class="col-sm-6">
+                                <label for="first_name_conversion">Nombre</label>
+                                <input type="text" class="form-control" placeholder="Nombres" id="first_name_conversion"  >
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="last_name_conversion">Apellido</label>
+                                <input type="text" class="form-control" placeholder="Apellidos" id="last_name_conversion"  >
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="ci_nit_conversion">NIT o CI</label>
+                                <input type="text" class="form-control" placeholder="NIT o CI" id="ci_nit_conversion"  >
+                            </div>
+
+
+                            <div class="col-sm-6">
+                                <button type="button" class="btn btn-dark" id="" onclick="ActualizarCliente()">Actualizar Cliente</button>
+                            </div><br>
+
+                            <div class="col-sm-7">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
+                            </div>
+                            <div class="col-sm-5">
+                                <button type="button" class="btn btn-primary" id="" onclick="modal_conversion()">Convertir a Factura</button>
+                            </div>
+
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="profile">
+                            <div class="form-group col-sm-6">
+                                <label for="">Buscar Cliente por Nombre</label>
+                                <input type="text" class="form-control" placeholder="Criterio de Busquedas.." id="cliente_busqueda">
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="">Buscar Cliente por CI</label>
+                                <input type="text" class="form-control" placeholder="Criterio de Busquedas.." id="cliente_busqueda_ci">
+                            </div>
+                            <br>
+                            <table class="table" id="cliente_list">
+                                <thead>
+                                    <th>#</th>
+                                    <th>Cliente</th>
+                                    <th>CI - NIT</th>
+                                    <th>Opciones</th>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+
+
+
+
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="create">
+
+                            <div class="form-group col-sm-6">
+                                <label for="">Nombres</label>
+                                <input class="form-control" type="text" placeholder="Nombres" id="first_name">
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="">Apellidos</label>
+                                <input class="form-control" type="text" placeholder="Apellidos" id="last_name">
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="">Telefono</label>
+                                <input class="form-control" type="text" placeholder="Telefono" id="phone" value="0">
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="">NIT</label>
+                                    <input class="form-control" type="text" placeholder="Carnet o NIT" id="nit" value="0">
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="">Display</label>
+                                <input class="form-control" type="text" placeholder="Display" id="display" hidden>
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="">Correo</label>
+                                <input class="form-control" type="text" placeholder="Email" id="email" hidden>
+                            </div>
+
+                            <div class="form-group col-sm-6">
+
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <button type="button" class="btn btn-sm btn-primary" onclick="savecliente()" >Agregar</button>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
 @stop
 
 @section('css')
@@ -1002,6 +1129,149 @@
             });
             $('.selected_ids').val(ids);
         });
+
+
+        async function ActualizarCliente() {
+            var id=$('#cliente_id_conversion').val()
+            var nombres=$('#first_name_conversion').val()
+            var apellidos=$('#last_name_conversion').val()
+            var ci_nit=$('#ci_nit_conversion').val()
+            var midata= JSON.stringify({
+                'id':id,
+                'first_name': nombres,
+                'last_name':apellidos,
+                'ci_nit':ci_nit
+            })
+            var table=await axios("{{setting('admin.url')}}api/pos/update_datos_cliente/"+midata)
+            if(table.data){
+                toastr.success('Cliente Actualizado')
+            }
+        }
+
+        $('#cliente_busqueda').keyup(async function (e) {
+            e.preventDefault();
+            if (e.keyCode == 13) {
+                $("#cliente_list tbody tr").remove();
+                var mitable = "";
+
+                var table= await axios.get("{{ setting('admin.url') }}api/pos/clientes/search/"+this.value)
+                if(table.data){
+                    if (table.data.length == 0 ) {
+                            toastr.error('Sin Resultados.');
+                    }
+                    else{
+                        toastr.success('Clientes Encontrados');
+                        for (let index = 0; index < table.data.length; index++) {
+                            mitable = mitable + "<tr><td>"+table.data[index].id+"</td><td>"+table.data[index].display+"</td><td>"+table.data[index].ci_nit+"</td><td><a class='btn btn-sm btn-success' onclick='cliente_get("+table.data[index].id+")'>Elegir</a></td></tr>";
+                        }
+                        $('#cliente_list').append(mitable);
+                    }
+                }
+
+            }
+        });
+        $('#cliente_busqueda_ci').keyup(async function (e) {
+            e.preventDefault();
+            if (e.keyCode == 13) {
+                $("#cliente_list tbody tr").remove();
+                var mitable = "";
+
+                var table= await axios.get("{{ setting('admin.url') }}api/pos/clientes/search_ci/"+this.value)
+                if(table.data){
+                    if (table.data.length == 0 ) {
+                            toastr.error('Sin Resultados.');
+                    }
+                    else{
+                        toastr.success('Clientes Encontrados');
+                        for (let index = 0; index < table.data.length; index++) {
+                            mitable = mitable + "<tr><td>"+table.data[index].id+"</td><td>"+table.data[index].display+"</td><td>"+table.data[index].ci_nit+"</td><td><a class='btn btn-sm btn-success' onclick='cliente_get("+table.data[index].id+")'>Elegir</a></td></tr>";
+                        }
+                        $('#cliente_list').append(mitable);
+                    }
+                }
+
+            }
+        });
+
+        async function savecliente() {
+
+            var first = $('#first_name').val();
+            var last = $('#last_name').val();
+            var phone = $('#phone').val();
+            var nit = $('#nit').val();
+            var display = $('#display').val();
+            var email = $('#email').val();
+            var midata = JSON.stringify({first_name: first, last_name: last, phone: phone, nit: nit, display: display, email: email});
+
+            var table= await axios("{{ setting('admin.url') }}api/pos/savacliente/"+midata)
+            if(table.data){
+                toastr.success('Cliente Creado');
+                $('#first_name_conversion').val(table.data.first_name)
+                $('#last_name_conversion').val(table.data.last_name)
+                $('#ci_nit_conversion').val(table.data.ci_nit)
+                $('#cliente_id_conversion').val(table.data.id)
+
+            }
+
+
+        }
+
+        // cliente_get
+        async function cliente_get(id) {
+            var table= await axios("{{ setting('admin.url') }}api/pos/cliente/"+id)
+            if(table.data){
+                toastr.success('Cliente Seleccionado');
+                $('#first_name_conversion').val(table.data.first_name)
+                $('#last_name_conversion').val(table.data.last_name)
+                $('#ci_nit_conversion').val(table.data.ci_nit)
+                $('#cliente_id_conversion').val(table.data.id)
+            }
+        }
+
+        // ADD DISPLAY
+        $('#first_name').keyup(function (e) {
+            e.preventDefault();
+            $('#display').val(this.value+' '+$('#last_name').val());
+            $('#email').val(this.value+'.'+$('#last_name').val()+'@loginweb.dev');
+        });
+
+        $('#last_name').keyup(function (e) {
+            e.preventDefault();
+            $('#display').val($('#first_name').val()+' '+this.value);
+            $('#email').val($('#first_name').val()+'.'+this.value+'@loginweb.dev');
+        });
+
+         async function CargarClienteVenta(data){
+
+            var table= await axios("{{setting('admin.url')}}api/pos/cliente/"+data.cliente_id)
+
+            $('#first_name_conversion').val(table.data.first_name)
+            $('#last_name_conversion').val(table.data.last_name)
+            $('#ci_nit_conversion').val(table.data.ci_nit)
+            $('#id_venta_conversion').val(data.id)
+            $('#cliente_id_conversion').val(data.cliente_id)
+
+
+        }
+
+        async function modal_conversion() {
+            var id=$('#id_venta_conversion').val()
+            var table=await axios("{{setting('admin.url')}}api/pos/venta/"+id)
+            var cliente_id=$('#cliente_id_conversion').val()
+            // console.log(table.data)
+            var nrofactura =await axios("{{setting('admin.url')}}api/pos/nro_factura")
+            var midata = JSON.stringify({
+                'id':table.data.id,
+                'numero_factura':nrofactura.data,
+                'cliente_id' : cliente_id,
+                'fecha_compra' : table.data.created_at,
+                'monto_compra' : table.data.total
+
+            })
+            var table=await axios("{{setting('admin.url')}}api/pos/convertir_a_factura/"+midata)
+
+            location.reload();
+        }
 
 
         $('#search_key').on('change', async function() {

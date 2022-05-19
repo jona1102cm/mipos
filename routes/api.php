@@ -38,8 +38,10 @@ use App\Laboratorio;
 use App\Presentacione;
 use App\Marca;
 use App\ComprasProducto;
+use App\Dosificacione;
 
 use Illuminate\Support\Facades\DB;
+use App\Micodigo\CodigoControlV7;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -50,13 +52,16 @@ use Illuminate\Support\Facades\DB;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
+// require_once('librerias/CodigoControlV7.php');
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 // TODAS LOS USER
 Route::get('pos/users', function () {
+    // $pricesClass = new codigo_control();
+    // return $pricesClass;
     return  User::all();
+
 });
 
 Route::get('pos/info', function () {
@@ -371,6 +376,9 @@ Route::get('pos/banipay/get/{venta_id}', function($venta_id) {
 Route::get('pos/ventas/save/{midata}', function($midata) {
     $midata2 = json_decode($midata);
     $ticket = count(Venta::where('sucursal_id', $midata2->sucursal_id)->where('caja_status', false)->get());
+
+
+
     $venta = Venta::create([
         'cliente_id' => $midata2->cliente_id,
         'cupon_id' => $midata2->cupon_id,
@@ -396,8 +404,32 @@ Route::get('pos/ventas/save/{midata}', function($midata) {
         'adicional'=>$midata2->adicional,
         'location' => 1,
         'pensionado_id'=>$midata2->pensionado_id,
-        'status_credito'=>$midata2->status_credito
+        'status_credito'=>$midata2->status_credito,
+        'codido_control'=>null,
+        'nro_factura'=>$midata2->nro_factura
     ]);
+
+    if($midata2->factura=="Factura"){
+
+        $newventa=Venta::find($venta->id);
+
+        $dosificacion=Dosificacione::where('activa',1)->first();
+        $cliente= Cliente::find($midata2->cliente_id);
+        $fecha=date('Ymd', strtotime($venta->created_at));
+        $numero_autorizacion = $dosificacion->nro_autorizacion;
+        $numero_factura = $venta->nro_factura;
+        $nit_cliente =$cliente->ci_nit;
+        $fecha_compra = $fecha;
+        $monto_compra = round($venta->total);
+        $clave = $dosificacion->llave_dosificacion;
+
+        $coco = CodigoControlV7::generar($numero_autorizacion, $numero_factura, $nit_cliente, $fecha_compra, $monto_compra, $clave);
+
+
+        $venta->codigo_control=$coco;
+        $venta->save();
+    }
+
     return $venta;
 });
 
@@ -492,7 +524,17 @@ Route::get('pos/savacliente/{midata}', function ($midata) {
 });
 
 Route::get('pos/clientes/search/{criterio}', function ($criterio) {
+    // $clientes = Cliente::where('display', 'like', '%'.$criterio.'%')->where('ci_nit','like','%'.$criterio.'%')->orderBy('display', 'desc')->get();
     $clientes = Cliente::where('display', 'like', '%'.$criterio.'%')->get();
+
+    return $clientes;
+});
+
+//Busqueda Cliente CI
+Route::get('pos/clientes/search_ci/{criterio}', function ($criterio) {
+    // $clientes = Cliente::where('display', 'like', '%'.$criterio.'%')->where('ci_nit','like','%'.$criterio.'%')->orderBy('display', 'desc')->get();
+    $clientes = Cliente::where('ci_nit', 'like', '%'.$criterio.'%')->get();
+
     return $clientes;
 });
 
@@ -1036,4 +1078,58 @@ Route::get('pos/productos/production', function () {
 // TODOS LOS PRODUCTOS
 Route::get('movil/productos', function () {
     return  Producto::with('categoria')->get();
+});
+
+//Convertir Recibo a Factura
+Route::get('pos/convertir_a_factura/{data}',function($data){
+    $midata= json_decode($data);
+    $dosificacion=Dosificacione::where('activa',1)->first();
+    $cliente= Cliente::find($midata->cliente_id);
+
+
+    $fecha=date('Ymd', strtotime($midata->fecha_compra));
+
+
+    $numero_autorizacion = $dosificacion->nro_autorizacion;
+    $numero_factura = $midata->numero_factura;
+    $nit_cliente = $cliente->ci_nit;
+    $fecha_compra = $fecha;
+    $monto_compra = round($midata->monto_compra);
+    $clave = $dosificacion->llave_dosificacion;
+    $coco = CodigoControlV7::generar($numero_autorizacion, $numero_factura, $nit_cliente, $fecha_compra, $monto_compra, $clave);
+
+    $venta=Venta::find($midata->id);
+    $venta->factura="Factura";
+    $venta->nro_factura=$midata->numero_factura;
+    $venta->codigo_control=$coco;
+    $venta->cliente_id=$cliente->id;
+    $venta->save();
+});
+
+// public function get_codigo_control(){
+//     return "Hola";
+// }
+
+//Update y Get Número de Factura
+Route::get('pos/nro_factura',function(){
+    $dosificacion=Dosificacione::where('activa',1)->first();
+    $nro_factura=($dosificacion->numero_actual)+1;
+    $dosificacion->numero_actual=$nro_factura;
+    $dosificacion->save();
+    return $nro_factura;
+});
+
+
+//Update cliente
+Route::get('pos/update_datos_cliente/{data}',function($data){
+    $midata=json_decode($data);
+
+    $cliente=Cliente::find($midata->id);
+    $cliente->first_name=$midata->first_name;
+    $cliente->last_name=$midata->last_name;
+    $cliente->ci_nit=$midata->ci_nit;
+    $cliente->display=$midata->first_name." ".$midata->last_name;
+    $cliente->save();
+
+    return $cliente;
 });

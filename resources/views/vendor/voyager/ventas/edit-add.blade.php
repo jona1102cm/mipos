@@ -94,10 +94,205 @@
                             @endphp
 
                             @if ($edit)
-                                <h1>edit - en desarrollo</h1>
+                                {{-- <h1>edit - en desarrollo</h1> --}}
+                                @php
+                                    $venta = App\Venta::find($dataTypeContent->getKey());
+                                    $clientes = App\Cliente::orderBy('created_at', 'desc')->get();
+                                    $pasarelas = App\Pago::orderBy('created_at', 'desc')->get();
+                                    $opciones = App\Option::orderBy('created_at', 'desc')->get();
+                                    $cupones = App\Cupone::orderBy('created_at', 'desc')->get();
+                                    $mensajeros = App\Mensajero::orderBy('created_at', 'desc')->get();
+                                    $sucursales = App\Sucursale::orderBy('created_at', 'desc')->get();
+                                    $cajas = App\Caja::orderBy('created_at', 'desc')->get();
+                                    $estados = App\Estado::orderBy('created_at', 'desc')->get();
+                                    $locationes = App\Location::orderBy('created_at', 'desc')->get();
+                                @endphp
+                                <div class="row">
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="cliente_id">Cliente</label>
+                                            <select name="cliente_id" id="cliente_id" class="form-control js-example-basic-single">
+                                                @foreach ($clientes as $item)
+                                                    <option value="{{ $item->id }}" @if($venta->cliente_id == $item->id)selected @endif>{{ $item->display }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="cliente_id">Pasarela</label>
+                                            <select name="pago_id" id="pago_id" class="form-control js-example-basic-single">
+                                                @foreach ($pasarelas as $item)
+                                                    <option value="{{ $item->id }}" @if($venta->pago_id == $item->id)selected @endif>{{ $item->title }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="option_id">Opciones</label>
+                                            <select name="option_id" id="option_id" class="form-control js-example-basic-single">
+                                                @foreach ($opciones as $item)
+                                                    <option value="{{ $item->id }}" @if($venta->option_id == $item->id)selected @endif>{{ $item->title }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="option_id">Cupnes</label>
+                                            <select name="cupon_id" id="cupon_id" class="form-control js-example-basic-single">
+                                                @foreach ($cupones as $item)
+                                                    <option value="{{ $item->id }}" @if($venta->cupon_id == $item->id)selected @endif>{{ $item->title.' - Bs '.$item->valor }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="option_id">Sucursales</label>
+                                            <select name="sucursal_id" id="sucursal_id" class="form-control">
+                                                @foreach ($sucursales as $item)
+                                                    <option value="{{ $item->id }}"@if($venta->sucursal_id == $item->id)selected @endif>{{ $item->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="delivery_id">Delivery</label>
+                                            <select name="delivery_id" id="delivery_id" class="form-control js-example-basic-single">
+                                                @foreach ($mensajeros as $item)
+                                                    <option value="{{ $item->id }}"@if($venta->delivery_id == $item->id)selected @endif>{{ $item->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="caja_id">Cajas</label>
+                                            <select name="caja_id" id="caja_id" class="form-control js-example-basic-single">
+                                                @foreach ($cajas as $item)
+                                                    <option value="{{ $item->id }}"@if($venta->caja_id == $item->id)selected @endif>{{ $item->title }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="status_id">Estados</label>
+                                            <select name="status_id" id="status_id" class="form-control js-example-basic-single">
+                                                @foreach ($estados as $item)
+                                                    <option value="{{ $item->id }}"@if($venta->status_id == $item->id)selected @endif>{{ $item->title }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="location">Ubicaciones</label>
+                                            <select name="location" id="location" class="form-control js-example-basic-single">
+                                                @foreach ($locationes as $item)
+                                                    <option value="{{ $item->id }}"@if($venta->location == $item->id)selected @endif>{{ $item->descripcion }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="">Ticket</label>
+                                            <input class="form-control" type="text" name="ticket" id="ticket" value="{{ $venta->ticket }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="">Mensaje</label>
+                                            <input class="form-control" type="text" name="observacion" id="observacion" value="{{ $venta->observacion }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="">Descuento</label>
+                                            <input class="form-control" type="number" name="descuento" id="descuento" value="{{ $venta->descuento }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="">Adicional</label>
+                                            <input class="form-control" type="number" name="adicional" id="adicional" value="{{ $venta->adicional }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="">Cantidad de Productos</label>
+                                            <input class="form-control" type="number" name="cantidad" id="cantidad" value="{{ $venta->cantidad }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="">Dinero Recibido</label>
+                                            <input class="form-control" type="number" name="recibido" id="recibido" value="{{ $venta->recibido }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="">Dinero Cambio</label>
+                                            <input class="form-control" type="number" name="cambio" id="cambio" value="{{ $venta->cambio }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="">Sub Total</label> <small>{{ $venta->subtotal }}</small>
+                                            <input class="form-control" type="subtotal" name="subtotal" id="subtotal" value="{{ $venta->subtotal }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="">Total</label> <small>{{ $venta->total }}</small>
+                                            <input class="form-control" type="number" name="total" id="total" value="{{ $venta->total }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="">Estado de Credito (al fio)</label>
+                                            <input class="form-control" type="number" name="status_credito" id="status_credito" value="{{ $venta->status_credito }}">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="">Impuesto</label>(Factura o Recibo)
+                                            <input class="form-control" type="text" name="factura" id="factura" value="{{ $venta->factura }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="">Editor</label>
+                                            <input class="form-control" type="text" name="register_id" id="register_id" value="{{ Auth::user()->id; }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="">Credito</label>(Contado o Credito)
+                                            <input class="form-control" type="text" name="credito" id="credito" value="{{ $venta->credito }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="">Chofer</label>
+                                            <input class="form-control" type="text" name="chofer_id" id="chofer_id" value="{{ $venta->chofer_id }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="">Contabilidad</label>
+                                            <input class="form-control" type="text" name="caja_status" id="caja_status" value="{{ $venta->caja_status }}">
+                                        </div>
+                                    </div>
+                                </div>
+
                             @else
                                 <div class="form-group col-lg-9 col-md-8 col-sm-12">
-
                                     <input type="search" id="misearch" class="form-control" placeholder="Ingresa un criterio de busqueda, QR o codigo de barra">
                                     <div>
                                     <div id="miresult" hidden>
@@ -265,16 +460,22 @@
                                             @endif
                                         </div>
                                     @endforeach
-
+                                    <div class="form-group col-md-12" align="center">
+                                        {!! QrCode::size(200)->generate('LoginWeb @2022') !!}
+                                    </div>
                                 </div>
+
                             @endif
                         </div><!-- panel-body -->
 
                         <div class="panel-footer">
-                            {{-- @section('submit-buttons')
-                                <button type="submit" class="btn btn-primary save">{{ __('voyager::generic.save') }}</button>
-                            @stop
-                            @yield('submit-buttons') --}}
+                            @if($edit)
+                                @section('submit-buttons')
+                                    <button type="submit" class="btn btn-primary save">{{ __('voyager::generic.save') }}</button>
+                                @stop
+                                @yield('submit-buttons')
+                            @endif
+
                         </div>
                     </form>
 
@@ -440,7 +641,7 @@
                 <h4>¿Estás seguro de cerrar?</h4>
                 </div>
                 <div class="modal-body">
-                    <table class="table table-responsive" >
+                    <table class="table table-responsive" hidden>
                     <thead>
                         <tr>
                             <th>INGRESOS</th>
@@ -780,7 +981,6 @@
 
         $('document').ready(function () {
             $('.toggleswitch').bootstrapToggle();
-
             socket.on("{{ setting('notificaciones.monitor') }}", (msg) =>{
                 //location.reload()
                 toastr.success("El Pedido "+msg+" ya está listo.")
@@ -1869,6 +2069,7 @@
             toastr.error('Tu Carrito esta Vacio');
         }
         else{
+            //Nro_Factura();
             var cliente_id = $("input[name='cliente_id']").val();
             var cupon_id = $("input[name='cupon_id']").val();
             var pago_id = $("input[name='pago_id']").val();
@@ -1890,8 +2091,24 @@
             var chofer_id=$("input[name='chofer_id']").val();
             var adicional=$("input[name='adicional']").val();
             var pensionado_id=$("input[name='pensionado_id']").val();
+            var nro_factura=null;
+
+            if($("input[name='factura']:checked").val()=="Factura"){
+                nrofactura =await axios("{{setting('admin.url')}}api/pos/nro_factura")
+                //$("input[name='nro_factura']").val(nro_factura)
+                //console.log(nrofactura.data)
+                nro_factura=nrofactura.data;
+
+            }
+            else{
+                nrofactura=null;
+                //$("input[name='nro_factura']").val(nro_factura)
+                nro_factura=nrofactura;
+            }
+            //nro_factura=$("input[name='nro_factura']").val();
+
             var micart = JSON.parse(localStorage.getItem('micart'));
-            var midata = JSON.stringify({'cliente_id': cliente_id, 'cupon_id': cupon_id, 'option_id': option_id, 'pago_id': pago_id, 'factura': factura, 'credito': credito ,'total': total, 'descuento': descuento, 'observacion': observacion, 'register_id': register_id, 'status_id': status_id, 'caja_id': caja_id, 'delivery_id': delivery_id, 'sucursal_id': sucursal_id, subtotal: subtotal, 'cantidad': micart.length, 'recibido': recibido, 'cambio': cambio, chofer_id : chofer_id, adicional:adicional, 'pensionado_id':pensionado_id, 'status_credito':status_credito });
+            var midata = JSON.stringify({'cliente_id': cliente_id, 'cupon_id': cupon_id, 'option_id': option_id, 'pago_id': pago_id, 'factura': factura, 'credito': credito ,'total': total, 'descuento': descuento, 'observacion': observacion, 'register_id': register_id, 'status_id': status_id, 'caja_id': caja_id, 'delivery_id': delivery_id, 'sucursal_id': sucursal_id, subtotal: subtotal, 'cantidad': micart.length, 'recibido': recibido, 'cambio': cambio, chofer_id : chofer_id, adicional:adicional, 'pensionado_id':pensionado_id, 'status_credito':status_credito, 'nro_factura':nro_factura });
             switch ($('#mipagos').val()) {
                 case '1':
                     var venta = await axios.get("{{ setting('admin.url') }}api/pos/ventas/save/"+midata)
@@ -1989,6 +2206,20 @@
 
 
     }
+
+    // async function Nro_Factura() {
+    //     if($("input[name='factura']:checked").val()=="Factura"){
+    //             var nro_factura =await axios("{{setting('admin.url')}}api/pos/nro_factura")
+    //             $("input[name='nro_factura']").val(nro_factura)
+    //             console.log("Si entré")
+
+    //     }
+    //     else{
+    //         var nro_factura=null;
+    //         $("input[name='nro_factura']").val(nro_factura)
+
+    //     }
+    // }
 
     $('#category').on('change', async function() {
 

@@ -18,7 +18,7 @@
         <table>
             <tr>
                 <td colspan="3" align="center">
-                    <img src="{{ url('storage').'/'.setting('empresa.logo') }}" alt="loginweb" width="120px"><br>
+                    <img src="{{ url('storage').'/'.setting('empresa.logo') }}" alt="loginweb" width="200px"><br>
                     <b>De: {{ setting('empresa.propietario') }}</b><br>
                     <b>{{ strtoupper($sucursal->name) }}</b><br>
                     <b>{{ setting('empresa.direccion') }}<b><br>
@@ -35,8 +35,8 @@
                 <td colspan="3" align="center">
                     <strong>F A C T U R A</strong><br>
                     <strong>NIT: {{ setting('empresa.nit') }}</strong><br>
-                    <strong>AUTORIZACION: {{ setting('empresa.nit') }}</strong><br>
-                    <strong>FACTURA: {{$ventas->ticket}}</strong><br>
+                    <strong>AUTORIZACION: {{ $dosificacion->nro_autorizacion }}</strong><br>
+                    <strong>FACTURA: {{$ventas->nro_factura}}</strong><br>
                 </td>
             </tr>
             <tr>
@@ -107,7 +107,28 @@
                 <td colspan="3"> <strong> Son: {{ $literal }} </strong></td>
             </tr>
             <tr>
-                <td colspan="3"><hr></td>
+                <td colspan="3"><hr>
+                </td>
+            </tr>
+            <tr>
+                <td align="left" colspan="3">
+                    <strong>FECHA LIMITE DE EMISION: {{$dosificacion->fecha_limite}}</strong> <br>
+                    <strong>CODIDO DE CONTROL: {{$ventas->codigo_control}}</strong> <br>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" colspan="3">
+                    <br>
+                    <img src="data:image/svg+xml;base64,{{ base64_encode($codigoQR) }}">
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">{!! setting('empresa.leyenda_factura') !!}</td>
+            </tr>
+            <tr>
+                <td colspan="3"><hr>
+                </td>
             </tr>
 
             <tr>

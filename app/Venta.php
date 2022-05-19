@@ -37,7 +37,9 @@ class Venta extends Model
 		'credito',
         'location',
         'pensionado_id',
-        'status_credito'
+        'status_credito',
+        'codigo_control',
+        'nro_factura'
 	];
 
 	protected $appends=['published'];

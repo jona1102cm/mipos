@@ -19,7 +19,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Cliente;
 use App\Sucursale;
 use App\Asiento;
-
+use App\Dosificacione;
 use NumerosEnLetras;
 
 use Mike42\Escpos\Printer;
@@ -28,6 +28,8 @@ use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\CapabilityProfile;
 
+// use SimpleSoftwareIO\QrCode\BaconQrCodeGenerator;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 class PosController extends Controller
 {
 
@@ -47,7 +49,14 @@ class PosController extends Controller
             $pdf->loadHTML($vista)->setPaper('legal');
             return $pdf->stream();
         } else {
-            $vista = view('ventas.factura', compact('ventas' ,'detalle_ventas', 'cliente','sucursal','option', 'literal'));
+            $dosificacion=Dosificacione::where('activa',1)->first();
+
+            //QR
+            // $texto_qr="texto";
+            $texto_qr = setting('empresa.nit').'|'.$ventas->nro_factura.'|'.$dosificacion->nro_autorizacion.'|'.$ventas->created_at.'|'.number_format($ventas->total, 2, '.', '').'|'.number_format($ventas->total, 2, '.', '').'|'.$ventas->codigo_control.'|'.$cliente->ci_nit.'|0.00|0.00|0.00|0.00';
+
+            $codigoQR = QrCode::format('png')->size(250)->generate($texto_qr);
+            $vista = view('ventas.factura', compact('ventas' ,'detalle_ventas', 'cliente','sucursal','option', 'literal', 'codigoQR', 'dosificacion'));
             $pdf = \App::make('dompdf.wrapper');
             $pdf->loadHTML($vista)->setPaper('legal');
             return $pdf->stream();
