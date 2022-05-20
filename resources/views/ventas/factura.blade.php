@@ -11,7 +11,7 @@
                 width: 100%;
                 border: 0px solid black;
             }
-            @page { size: 30rem 100rem; font-size: 28px;}
+            @page { size: {{setting('impresion.size')}} font-size: {{ setting('impresion.text_principal') }} }
         </style>
     </head>
     <body>
@@ -64,7 +64,7 @@
                     <table>
                         <tr>
                             <td><strong>PRODUCTO</strong></td>
-                            <td><strong>OBSV</strong></td>
+                            <td><strong>DETALLE</strong></td>
                             {{-- <td><strong>OBS</strong></td> --}}
                             <td><strong>CANT</strong></td>
                             <td><strong>PRECIO</strong></td>
@@ -76,7 +76,7 @@
                                  $totalunit=($item->cantidad)*($item->precio);
                              @endphp
                              <tr>
-                                 <td><b>{{ $miproduct->name }} <br> </b><div style="font-size: 18px;">{{ $item->extra_name }}</div></td>
+                                 <td><b>{{ $miproduct->name }} <br> </b><div style="font-size: {{ setting('impresion.text_secundario') }}">{{ $item->extra_name }}</div></td>
                                  <td><b>{{$item->observacion}}</b></td>
                                  {{-- <td><b>{{ $item->observacion }}</b></td> --}}
                                  <td align="center"><b>{{ $item->cantidad }}</b></td>
@@ -158,7 +158,7 @@
                         <table>
                             <tr>
                                 <td><strong>PRODUCTO</strong></td>
-                                <td><strong>OBSV</strong></td>
+                                <td><strong>DETALLE</strong></td>
                                 {{-- <td><strong>OBS</strong></td> --}}
                                 <td><strong>CANT</strong></td>
                                 <td><strong>PRECIO</strong></td>

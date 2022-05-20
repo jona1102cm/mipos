@@ -365,7 +365,7 @@
                                                         @if (!method_exists($action, 'massAction'))
                                                             @include('voyager::bread.partials.actions', ['action' => $action])
                                                         @endif
-                                                        <a href="#" class="btn btn-sm btn-danger">Factura</a>
+                                                        {{-- <a href="#" class="btn btn-sm btn-danger">Factura</a> --}}
                                                     @endforeach
                                                     @if ($data->factura == "Recibo")
                                                         <a onclick="CargarClienteVenta({{$data}})" class="btn btn-sm btn-warning pull-right" data-toggle="modal" data-target="#modal_recibo_a_factura" ><i class="voyager-helm"></i><span class="hidden-xs hidden-sm">Factura</span></a>
