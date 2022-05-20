@@ -59,7 +59,7 @@
                             <td><strong>PRODUCTO</strong></td>
                             <td><strong>DETALLE</strong></td>
                             {{-- <td><strong>OBS</strong></td> --}}
-                            <td><strong>CANT</strong></td>
+                            <th><strong>CANT</strong></th>
                             <td><strong>PRECIO</strong></td>
                             <td><strong>TOTAL</strong></td>
                          </tr>
@@ -132,7 +132,7 @@
                                 <td><strong>PRODUCTO</strong></td>
                                 <td><strong>DETALLE</strong></td>
                                 {{-- <td><strong>OBS</strong></td> --}}
-                                <td><strong>CANT</strong></td>
+                                <th><strong>CANT</strong></th>
                                 <td><strong>PRECIO</strong></td>
                                 <td><strong>TOTAL</strong></td>
                              </tr>
@@ -142,7 +142,7 @@
                                      $totalunit=($item->cantidad)*($item->precio);
                                  @endphp
                                  <tr>
-                                    <td><b>{{ $miproduct->name }} <br> </b><div style="font-size: 18px;">{{ $item->extra_name }}</div></td>
+                                    <td><b>{{ $miproduct->name }} <br> </b><div style="font-size: {{ setting('impresion.text_secundario') }}">{{ $item->extra_name }}</div></td>
 
                                      <td><b> {{ $item->observacion }}</b></td>
                                      {{-- <td><b>{{ $item->observacion }}</b></td> --}}

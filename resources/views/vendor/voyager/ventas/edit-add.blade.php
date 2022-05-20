@@ -1452,7 +1452,8 @@
        });
 
        for(let index=0;index<precio.length;index++){
-        nombre_extras+=name[index]+' ';
+        nombre_extras+=cantidad[index]+' '+name[index]+' ';
+        //console.log(nombre_extras)
         precio_extras+=parseFloat(cantidad[index])*parseFloat(precio[index]);
        }
     //    console.log(cantidad);
@@ -1469,7 +1470,7 @@
 
     //Agregar Observacion al Carrito
     async function updateobservacion(id,code){
-        var observacion= $("#observacion_"+code).val()
+        var observacion= ($("#observacion_"+code).val()).toUpperCase()
         //console.log(id)
         var milist = JSON.parse(localStorage.getItem('micart'));
         var newlist = [];
@@ -2432,7 +2433,7 @@
                             $('#mixtos').attr("hidden",true);
                             var description=null;
                             if(response.extra){
-                                $("#micart").append("<tr id="+newcode+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+miimage+"></td><td>"+response.name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+response.id+","+newcode+")' id='observacion_"+newcode+"'></td><td><a class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+", "+response.id+","+newcode+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+newcode+"' onchange='updateprice("+response.id+","+newcode+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+","+newcode+")' value='1' min='1'  id='cant_"+newcode+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+newcode+"' readonly></td><td><a class='btn btn-sm btn-danger' onclick='midelete("+newcode+")'><i class='voyager-trash'></i></a></td></tr>");
+                                $("#micart").append("<tr id="+newcode+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+miimage+"></td><td>"+response.name+"</td><td><input class='form-control' type='text'  onchange='updateobservacion("+response.id+","+newcode+")' id='observacion_"+newcode+"'></td><td><a class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+", "+response.id+","+newcode+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+newcode+"' onchange='updateprice("+response.id+","+newcode+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+","+newcode+")' value='1' min='1'  id='cant_"+newcode+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+newcode+"' readonly></td><td><a class='btn btn-sm btn-danger' onclick='midelete("+newcode+")'><i class='voyager-trash'></i></a></td></tr>");
 
                             }else{
                                 $("#micart").append("<tr id="+newcode+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+miimage+"></td><td>"+response.name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+response.id+","+newcode+")' id='observacion_"+newcode+"'></td><td></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+newcode+"' onchange='updateprice("+response.id+","+newcode+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+","+newcode+")' value='1' min='1'  id='cant_"+newcode+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+newcode+"' readonly></td><td><a  class='btn btn-sm btn-danger' onclick='midelete("+newcode+")'><i class='voyager-trash'></i></a></td></tr>");

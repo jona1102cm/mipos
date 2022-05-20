@@ -66,9 +66,9 @@
                             <td><strong>PRODUCTO</strong></td>
                             <td><strong>DETALLE</strong></td>
                             {{-- <td><strong>OBS</strong></td> --}}
-                            <td><strong>CANT</strong></td>
-                            <td><strong>PRECIO</strong></td>
-                            <td><strong>TOTAL</strong></td>
+                            <th><strong>CANT</strong></th>
+                            <th><strong>PRECIO</strong></th>
+                            <th><strong>TOTAL</strong></th>
                          </tr>
                          @foreach ($detalle_ventas as $item)
                              @php
@@ -170,7 +170,7 @@
                                      $totalunit=($item->cantidad)*($item->precio);
                                  @endphp
                                  <tr>
-                                    <td><b>{{ $miproduct->name }} <br> </b><div style="font-size: 18px;">{{ $item->extra_name }}</div></td>
+                                    <td><b>{{ $miproduct->name }} <br> </b><div style="font-size: {{ setting('impresion.text_secundario') }}">{{ $item->extra_name }}</div></td>
 
                                      <td><b> {{ $item->observacion }}</b></td>
                                      {{-- <td><b>{{ $item->observacion }}</b></td> --}}
