@@ -8,7 +8,7 @@ class CajaDetalle extends AbstractAction
 {
     public function getTitle()
     {
-        return 'Detalle';
+        return 'Cierres';
     }
 
     public function getIcon()
@@ -24,7 +24,7 @@ class CajaDetalle extends AbstractAction
     public function getAttributes()
     {
         return [
-            'class' => 'btn btn-sm btn-success pull-right',
+            'class' => 'btn btn-sm btn-dark pull-right',
         ];
     }
 

@@ -63,7 +63,9 @@
                                                 {{-- <option value="chofer_id"> Choferes </option> --}}
                                                 {{-- <option value="register_id"> Editor </option> --}}
                                                 <option value="chofer_deudas"> Deudas de Choferes </option>
+
                                                 <option value="credito">Cobro Créditos</option>
+                                                <option value="reportes"> Reportes </option>
                                                 @if(setting('empresa.type_negocio')=="Restaurente")
                                                     <option value="pensionado_kardex"> Kardex Pensionados </option>
                                                 @endif
@@ -647,11 +649,9 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-sm-6">
-                            {{-- <label for="">Elija una Caja</label><br> --}}
                             <select name="" id="micajas" class="form-control"></select>
                         </div>
                         <div class="col-sm-6">
-                            {{-- <label for="">Elija un Chofer</label><br> --}}
                             <select name="" id="michoferes" class="form-control"></select>
                         </div>
                         <div class="col-sm-7">
@@ -676,13 +676,10 @@
                     </div>
 
                 </div>
-                {{-- <div class="modal-footer"> --}}
-                    {{-- <button type="submit" class="btn btn-primary pull-right" data-dismiss="modal">Consultar</button> --}}
-                    {{-- <button type="button" class="btn btn-default pull-right" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button> --}}
-                {{-- </div> --}}
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
+            </div>
+        </div>
     </div>
+
     <div class="modal modal-primary fade" tabindex="-1" id="modal_kardex" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -729,6 +726,7 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div>
+
     <div class="modal modal-primary fade" tabindex="-1" id="modal_cobros" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -848,6 +846,7 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div>
+
     <div class="modal modal-primary fade" tabindex="-1" id="modal_capital" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -882,6 +881,7 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div>
+
     <div class="modal modal-primary fade" tabindex="-1" id="modal_vencimiento_productos" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -1040,6 +1040,36 @@
                 </div>
                 <div class="modal-footer">
 
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- //graficos --}}
+    <div class="modal modal-primary fade" tabindex="-1" id="modal_reportes" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                   <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('voyager::generic.close') }}"><span aria-hidden="true">&times;</span></button>
+                   <h4 class="modal-title">Reportes</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label for="">Fecha Inicial</label>
+                            <input class="form-control" type="date" name="date1" id="date1">
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="">Fecha Final</label>
+                            <input class="form-control" type="date" name="date2" id="date2">
+                        </div>
+                        <div class="col-sm-12 text-center">
+                            <a href="#" onclick="mireport()" class="btn btn-sm btn-dark"> <i class="voyager-search"></i> Consultar</a>
+                        </div>
+                    </div>
+                        <table class="table table-responsive" id="report_table">
+                            <tbody></tbody>
+                        </table>
                 </div>
             </div>
         </div>
@@ -1273,7 +1303,7 @@
         }
 
 
-        $('#search_key').on('change', async function() {
+                $('#search_key').on('change', async function() {
                     $('.js-example-basic-single').select2();
                     switch (this.value) {
                         case 'cliente_id':
@@ -1459,6 +1489,9 @@
                             LimpiarKardex();
                             $('#modal_kardex').modal();
                             Sucursales();
+                        break
+                        case 'reportes':
+                            $('#modal_reportes').modal();
                         break
                         case 'credito':
                             LimpiarCobroCreditos();
@@ -1828,5 +1861,25 @@
                 return (diff/(1000*60*60*24));
             }
 
+            //reportes
+            async function mireport() {
+                var midata1 = $("#date1").val()
+                var midata2 = $("#date2").val()
+                var miuser = "{{ Auth::user()->id }}"
+                var midata = JSON.stringify({
+                    date1: midata1,
+                    date2: midata2,
+                    user: miuser
+                })
+                var ventas = await axios("{{ setting('admin.url') }}api/pos/ventas/fechas/"+midata)
+                $('#report_table tbody tr').remove();
+                $('#report_table').append("<tr><td>Total Bs: </td><td> "+ventas.data.total+"</td></tr>");
+                $('#report_table').append("<tr><td>Cantidad: </td><td> "+ventas.data.cantidad+"</td></tr>");
+                $('#report_table').append("<tr><td>Pasarelas: </td><td> "+ventas.data.pasarelas+"</td></tr>");
+                $('#report_table').append("<tr><td>Impuestos: </td><td> "+ventas.data.impuestos+"</td></tr>");
+                $('#report_table').append("<tr><td>Delivery: </td><td> "+ventas.data.delivery+"</td></tr>");
+                $('#report_table').append("<tr><td>Estados: </td><td> "+ventas.data.estados+"</td></tr>");
+
+            }
     </script>
 @stop
