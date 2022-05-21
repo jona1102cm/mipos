@@ -18,7 +18,7 @@
         <table>
             <tr>
                 <td colspan="3" align="center">
-                    <img src="{{ url('storage').'/'.setting('empresa.logo') }}" alt="loginweb" width="200px"><br>
+                    <img src="{{ url('storage').'/'.setting('empresa.logo') }}" alt="loginweb" width="300px"><br>
                     <b>De: {{ setting('empresa.propietario') }}</b><br>
                     <b>{{ strtoupper($sucursal->name) }}</b><br>
                     <b>{{ setting('empresa.direccion') }}<b><br>
@@ -64,7 +64,7 @@
                     <table>
                         <tr>
                             <td><strong>PRODUCTO</strong></td>
-                            <td><strong>DETALLE</strong></td>
+                            <td><strong>SABORES</strong></td>
                             {{-- <td><strong>OBS</strong></td> --}}
                             <th><strong>CANT</strong></th>
                             <th><strong>PRECIO</strong></th>
@@ -132,7 +132,7 @@
             </tr>
 
             <tr>
-                <td colspan="2"><b>Atendido por : </b> {{ Auth::user()->name }}</td>
+                <td colspan="2"><b>Atendido por : </b> {{ Auth::user()->name }} - <b>TICKET# {{$ventas->ticket}}</b></td>
                 <td><b>Hora : {{ date('H:i:s') }}</b></td>
             </tr>
             <tr>
@@ -147,7 +147,8 @@
                 <tr>
                     <td colspan="3" align="center">
                         <h2>
-                            ORDEN #{{$ventas->ticket}}<br>
+                            VENTA #{{$ventas->id}} <br>
+                            TICKET #{{$ventas->ticket}}<br>
                             {{date('d/m/Y H:i:s')}}<br>
                             <span style="padding:2px 20px;background-color:black;color:white;font-weight:bold;">{{ strtoupper($option->title) }}</span>
                         </h2><hr>
@@ -158,7 +159,7 @@
                         <table>
                             <tr>
                                 <td><strong>PRODUCTO</strong></td>
-                                <td><strong>DETALLE</strong></td>
+                                <td><strong>SABORES</strong></td>
                                 {{-- <td><strong>OBS</strong></td> --}}
                                 <td><strong>CANT</strong></td>
                                 <td><strong>PRECIO</strong></td>
