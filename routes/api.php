@@ -284,8 +284,12 @@ Route::get('pos/caja/detalle/save/{midata}', function ($midata) {
         'description' => $midata2->description,
         'venta_efectivo'=> $midata2->venta_efectivo,
         'venta_banipay'=> $midata2->venta_banipay,
+        'venta_tarjeta'=>$midata2->venta_tarjeta,
+        'venta_qr'=>$midata2->venta_qr,
 		'cantidad_efectivo'=> $midata2->cantidad_efectivo,
         'cantidad_banipay'=> $midata2->cantidad_banipay,
+        'cantidad_tarjeta'=>$midata2->cantidad_tarjeta,
+        'cantidad_qr'=>$midata2->cantidad_qr,
 		'efectivo_entregado'=> $midata2->efectivo_entregado,
 		'cortes'=> $midata2->cortes,
         'ingreso_efectivo'=>$midata2->ingreso_efectivo,
@@ -331,6 +335,21 @@ Route::get('pos/caja/get_total/{midata}', function ( $midata) {
     foreach ($venta_banipay as $item) {
         $total_banipay = $total_banipay + $item->total;
     }
+
+    $venta_tarjeta = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pensionado_id',0)->where('pago_id',6)->get();
+    $cantidad_tarjeta = count($venta_tarjeta);
+    $total_tarjeta = 0;
+    foreach ($venta_tarjeta as $item) {
+        $total_tarjeta = $total_tarjeta + $item->total;
+    }
+
+    $venta_qr = Venta::where('caja_id', $midata2->caja_id)->where('register_id', $midata2->editor_id)->where('caja_status', false)->where('credito',"Contado")->where('pensionado_id',0)->where('pago_id',7)->get();
+    $cantidad_qr = count($venta_qr);
+    $total_qr = 0;
+    foreach ($venta_qr as $item) {
+        $total_qr = $total_qr + $item->total;
+    }
+
     $ie=Asiento::where('caja_id',$midata2->caja_id)->where('editor_id',$midata2->editor_id)->where('caja_status',false)->where('type',"Ingresos")->where('pago',1)->get();
     $ingreso_efectivo=0;
     foreach($ie as $item){
@@ -351,7 +370,7 @@ Route::get('pos/caja/get_total/{midata}', function ( $midata) {
     foreach($el as $item){
         $egreso_linea+= $item->monto;
     }
-    return  response()->json(array('total' => $total, 'cantidad' => $cantidad, 'ingresos' => $ti, 'egresos'=> $te, 'total_efectivo'=> $total_efectivo, 'cantidad_efectivo'=> $cantidad_efectivo, 'total_banipay'=>$total_banipay, 'cantidad_banipay'=> $cantidad_banipay, 'ingreso_efectivo'=>$ingreso_efectivo, 'ingreso_linea'=>$ingreso_linea, 'egreso_efectivo'=>$egreso_efectivo, 'egreso_linea'=>$egreso_linea));
+    return  response()->json(array('total' => $total, 'cantidad' => $cantidad, 'ingresos' => $ti, 'egresos'=> $te, 'total_efectivo'=> $total_efectivo, 'cantidad_efectivo'=> $cantidad_efectivo, 'total_banipay'=>$total_banipay, 'cantidad_banipay'=> $cantidad_banipay,'total_tarjeta'=>$total_tarjeta,'cantidad_tarjeta'=>$cantidad_tarjeta,'total_qr'=>$total_qr,'cantidad_qr'=>$cantidad_qr, 'ingreso_efectivo'=>$ingreso_efectivo, 'ingreso_linea'=>$ingreso_linea, 'egreso_efectivo'=>$egreso_efectivo, 'egreso_linea'=>$egreso_linea));
 });
 Route::get('pos/cajas', function(){
     return Caja::with('sucursal')->get();

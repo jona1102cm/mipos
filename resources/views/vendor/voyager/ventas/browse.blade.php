@@ -56,13 +56,13 @@
                                     <div class="col-4">
                                         <select id="search_key" name="key" style="width: 250px" class="js-example-basic-single">
                                                 <option value=""> ---- Elige un Filtro ----</option>
-                                                <option value="caja_id"> Cajas </option>
-                                                <option value="cliente_id"> Cliente </option>
-                                                <option value="sucursal_id"> Sucursal </option>
-                                                <option value="delivery_id"> Delivery</option>
-                                                <option value="chofer_id"> Chofer </option>
-                                                <option value="register_id"> Editor </option>
-                                                <option value="chofer_deudas"> Chofer Deudas </option>
+                                                {{-- <option value="caja_id"> Cajas </option> --}}
+                                                {{-- <option value="cliente_id"> Cliente </option> --}}
+                                                {{-- <option value="sucursal_id"> Sucursal </option> --}}
+                                                <option value="delivery_id"> Deliverys</option>
+                                                {{-- <option value="chofer_id"> Choferes </option> --}}
+                                                {{-- <option value="register_id"> Editor </option> --}}
+                                                <option value="chofer_deudas"> Deudas de Choferes </option>
                                                 <option value="credito">Cobro Créditos</option>
                                                 @if(setting('empresa.type_negocio')=="Restaurente")
                                                     <option value="pensionado_kardex"> Kardex Pensionados </option>
@@ -641,22 +641,21 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                   <h4>Deudas Choferes</h4>
+                   <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('voyager::generic.close') }}"><span aria-hidden="true">&times;</span></button>
+                   <h4 class="modal-title">Deudas Choferes</h4>
                 </div>
                 <div class="modal-body">
                     <div class="row">
-
-
                         <div class="col-sm-6">
-                            <label for="">Elija una Caja</label>
-                            <select name="" id="micajas" class="form-control js-example-basic-single"></select>
+                            {{-- <label for="">Elija una Caja</label><br> --}}
+                            <select name="" id="micajas" class="form-control"></select>
                         </div>
                         <div class="col-sm-6">
-                            <label for="">Elija un Chofer</label>
-                            <select name="" id="michoferes" class="form-control js-example-basic-single"></select>
+                            {{-- <label for="">Elija un Chofer</label><br> --}}
+                            <select name="" id="michoferes" class="form-control"></select>
                         </div>
                         <div class="col-sm-7">
-                            <button type="button" class="btn btn-primary pull-right" onclick="filtro1()">Consultar</button>
+                            <button type="button" class="btn btn-dark pull-right" onclick="filtro1()"><i class="voyager-search"></i> Consultar</button>
                         </div>
                         <div class="col-sm-12">
                             <table class="table" id="table_deudas">
@@ -677,10 +676,10 @@
                     </div>
 
                 </div>
-                <div class="modal-footer">
+                {{-- <div class="modal-footer"> --}}
                     {{-- <button type="submit" class="btn btn-primary pull-right" data-dismiss="modal">Consultar</button> --}}
-                    <button type="button" class="btn btn-default pull-right" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
-                </div>
+                    {{-- <button type="button" class="btn btn-default pull-right" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button> --}}
+                {{-- </div> --}}
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div>
@@ -1535,9 +1534,7 @@
                             if (response.length == 0 ) {
                                 toastr.error('Sin Resultados.');
                             } else {
-
                                 for (let index = 0; index < response.length; index++) {
-
                                     mitable = mitable + "<tr><td>"+response[index].id+"</td><td>"+response[index].cliente.display+"</td><td>"+response[index].pasarela.title+"</td><td>"+response[index].delivery.name+"</td><td>"+response[index].total+"</td><td>"+response[index].published+"</td></tr>";
                                     if(response[index].pasarela_id=="{{setting('ventas.banipay_1')}}"||response[index].pasarela_id=="{{setting('ventas.banipay_2')}}"){
                                         total_banipay+=response[index].total;
@@ -1550,18 +1547,16 @@
                                             total_credito+=response[index].total;
                                         }
                                     }
-                                    //console.log(response[index]);
                                 }
                                 mitable = mitable +"<tr><td></td><td></td><td></td><td></td><td>Total en Banipay</td><td><b>"+total_banipay+"</b></td> </tr>"
                                 mitable = mitable +"<tr><td></td><td></td><td></td><td></td><td>Total a Credito</td><td><b>"+total_credito+"</b></td> </tr>"
                                 mitable = mitable +"<tr><td></td><td></td><td></td><td><td></td>Total en Efectivo</td><td><b>"+total_efectivo+"</b></td> </tr>"
-
                                 $('#table_deudas').append(mitable);
                             }
                         }
                     });
-                    Cajas_Deudas_Choferes();
-                    Choferes_Deudas();
+                    // Cajas_Deudas_Choferes();
+                    // Choferes_Deudas();
                 }
 
                 async function Sucursales(){

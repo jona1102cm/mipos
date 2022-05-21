@@ -717,6 +717,26 @@
                         </tr>
                         <tr>
                             <td>
+                                Venta con Tarjeta
+                                <input type="number" class="form-control" id="venta_tarjeta" value="0" readonly>
+                            </td>
+                            <td>
+                                Cantidad por Tarjeta
+                                <input type="number" class="form-control" id="cantidad_tarjeta" value="0" readonly>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Venta con QR
+                                <input type="number" class="form-control" id="venta_qr" value="0" readonly>
+                            </td>
+                            <td>
+                                Cantidad por QR
+                                <input type="number" class="form-control" id="cantidad_qr" value="0" readonly>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
                                 <label for="">Total Caja Bs.</label>
                                 <input type="number" class="form-control col-6" id="_total" value="0" readonly>
                             </td>
@@ -1547,16 +1567,15 @@
                 $('#ingresos').val(response.ingresos);
                 $('#egresos').val(response.egresos);
                 $('#venta_efectivo').val(response.total_efectivo);
-                // $('#venta_tarjeta').val(response.total_tarjeta);                            $('#venta_efectivo').val(response.total_efectivo);
-
+                $('#venta_tarjeta').val(response.total_tarjeta);
+                $('#venta_qr').val(response.total_qr);
                 // $('#venta_transferencia').val(response.total_transferencia);
-                // $('#venta_qr').val(response.total_qr);
                 // $('#venta_tigomoney').val(response.total_tigomoney);
                 $('#venta_banipay').val(response.total_banipay);
                 $('#cantidad_efectivo').val(response.cantidad_efectivo);
-                // $('#cantidad_tarjeta').val(response.cantidad_tarjeta);
+                $('#cantidad_tarjeta').val(response.cantidad_tarjeta);
+                $('#cantidad_qr').val(response.cantidad_qr);
                 // $('#cantidad_transferencia').val(response.cantidad_transferencia);
-                // $('#cantidad_qr').val(response.cantidad_qr);
                 // $('#cantidad_tigomoney').val(response.cantidad_tigomoney);
                 $('#cantidad_banipay').val(response.cantidad_banipay);
                 $('#ingreso_efectivo').val(response.ingreso_efectivo);
@@ -1658,8 +1677,14 @@
     // GET CAMBIO
     $("input[name='recibido']").keyup(function (e) {
         e.preventDefault();
+
         var cambio = $("input[name='recibido']").val() - $("input[name='total']").val();
         $("input[name='cambio']").val(cambio);
+
+        if (e.keyCode == 13) {
+            saveventas()
+        }
+
     });
 
      // CAMBIO TPV
@@ -1851,15 +1876,15 @@
         var _total = $('#_total').val();
         var cant_ventas = $('#cant_ventas').val();
         var venta_efectivo = $('#venta_efectivo').val();
-        // var venta_tarjeta = $('#venta_tarjeta').val();
+        var venta_tarjeta = $('#venta_tarjeta').val();
+        var venta_qr = $('#venta_qr').val();
         // var venta_transferencia = $('#venta_transferencia').val();
-        // var venta_qr = $('#venta_qr').val();
         // var venta_tigomoney = $('#venta_tigomoney').val();
         var venta_banipay = $('#venta_banipay').val();
         var cantidad_efectivo = $('#cantidad_efectivo').val();
-        // var cantidad_tarjeta = $('#cantidad_tarjeta').val();
+        var cantidad_tarjeta = $('#cantidad_tarjeta').val();
+        var cantidad_qr = $('#cantidad_qr').val();
         // var cantidad_transferencia = $('#cantidad_transferencia').val();
-        // var cantidad_qr = $('#cantidad_qr').val();
         // var cantidad_tigomoney = $('#cantidad_tigomoney').val();
         var cantidad_banipay = $('#cantidad_banipay').val();
         var efectivo_entregado = $('#efectivo_entregado').val();
@@ -1871,7 +1896,7 @@
         var editor_id = '{{ Auth::user()->id }}';
         var caja_id = micaja.caja_id;
         var status = 'close';
-        var midata = JSON.stringify({caja_id: caja_id, editor_id: editor_id, cant_ventas: cant_ventas, _total: _total, description: description, egresos: egresos, ingresos: ingresos, importe_inicial: importe_inicial, total_ventas: total_ventas, status: status, venta_efectivo: venta_efectivo, cantidad_efectivo: cantidad_efectivo, venta_banipay:venta_banipay, cantidad_banipay:cantidad_banipay , efectivo_entregado: efectivo_entregado, cortes: cortes, ingreso_efectivo: ingreso_efectivo, ingreso_linea: ingreso_linea, egreso_efectivo: egreso_efectivo, egreso_linea: egreso_linea});
+        var midata = JSON.stringify({caja_id: caja_id, editor_id: editor_id, cant_ventas: cant_ventas, _total: _total, description: description, egresos: egresos, ingresos: ingresos, importe_inicial: importe_inicial, total_ventas: total_ventas, status: status, venta_efectivo: venta_efectivo, cantidad_efectivo: cantidad_efectivo, venta_banipay:venta_banipay, cantidad_banipay:cantidad_banipay ,venta_tarjeta:venta_tarjeta,cantidad_tarjeta:cantidad_tarjeta,venta_qr:venta_qr,cantidad_qr:cantidad_qr, efectivo_entregado: efectivo_entregado, cortes: cortes, ingreso_efectivo: ingreso_efectivo, ingreso_linea: ingreso_linea, egreso_efectivo: egreso_efectivo, egreso_linea: egreso_linea});
         $.ajax({
             url: "{{ setting('admin.url') }}api/pos/caja/detalle/save/"+midata,
             success: function (response){
@@ -1895,6 +1920,8 @@
         var misventas = await axios("{{ setting('admin.url') }}api/pos/ventas/caja/"+$("input[name='caja_id']").val()+"/"+user_id);
         var total_efectivo=0;
         var total_banipay=0;
+        var total_tarjeta=0;
+        var total_qr=0;
         for (let index = 0; index < misventas.data.length; index++) {
             console.log(misventas.data[index].register_id);
 
@@ -1916,7 +1943,15 @@
 
                 }
                 else{
-                    total_efectivo+=misventas.data[index].total;
+                    if(misventas.data[index].pasarela.id==6){
+                        total_tarjeta+=misventas.data[index].total;
+                    }
+                    else if(misventas.data[index].pasarela.id==7){
+                        total_qr+=misventas.data[index].total;
+                    }
+                    else{
+                        total_efectivo+=misventas.data[index].total;
+                    }
 
                     if(misventas.data[index].option_id=="{{ setting('ventas.pedido_domicilio_id') }}"||misventas.data[index].option_id=="{{ setting('ventas.delivery_zona1') }}"||misventas.data[index].option_id=="{{ setting('ventas.delivery_zona2') }}"){
 
@@ -1930,7 +1965,7 @@
         }
         if('{{setting('ventas.fila_totales')}}'){
             $("#productos_caja").append("<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>");
-            $("#productos_caja").append("<tr><td></td><td><h4>Total Ventas Efectivo: </h4></td><td><h4>"+total_efectivo+"</h4></td><td></td><td></td><td><h4>Total Ventas Banipay: </h4></td><td><h4>"+total_banipay+"</h4></td><td></td><td></td><td></td><td></td></tr>");
+            $("#productos_caja").append("<tr><td><h4>Total Ventas Efectivo: </h4></td><td><h4>"+total_efectivo+"</h4></td><td></td><td><h4>Total Ventas Tarjeta: </h4></td><td><h4>"+total_tarjeta+"</h4></td><td></td><td><h4>Total Ventas QR: </h4></td><td><h4>"+total_qr+"</h4></td><td></td><td><h4>Total Ventas Banipay: </h4></td><td><h4>"+total_banipay+"</h4></td></tr>");
         }
     }
 
@@ -2066,7 +2101,9 @@
             toastr.error('Tu Carrito esta Vacio');
         }
         else{
+
             //Nro_Factura();
+            toastr.warning('Realizando nuevo pedido..');
             var cliente_id = $("input[name='cliente_id']").val();
             var cupon_id = $("input[name='cupon_id']").val();
             var pago_id = $("input[name='pago_id']").val();
@@ -2092,35 +2129,18 @@
 
             if($("input[name='factura']:checked").val()=="Factura"){
                 nrofactura =await axios("{{setting('admin.url')}}api/pos/nro_factura")
-                //$("input[name='nro_factura']").val(nro_factura)
-                //console.log(nrofactura.data)
                 nro_factura=nrofactura.data;
-
             }
             else{
                 nrofactura=null;
-                //$("input[name='nro_factura']").val(nro_factura)
                 nro_factura=nrofactura;
             }
-            //nro_factura=$("input[name='nro_factura']").val();
-
             var micart = JSON.parse(localStorage.getItem('micart'));
             var midata = JSON.stringify({'cliente_id': cliente_id, 'cupon_id': cupon_id, 'option_id': option_id, 'pago_id': pago_id, 'factura': factura, 'credito': credito ,'total': total, 'descuento': descuento, 'observacion': observacion, 'register_id': register_id, 'status_id': status_id, 'caja_id': caja_id, 'delivery_id': delivery_id, 'sucursal_id': sucursal_id, subtotal: subtotal, 'cantidad': micart.length, 'recibido': recibido, 'cambio': cambio, chofer_id : chofer_id, adicional:adicional, 'pensionado_id':pensionado_id, 'status_credito':status_credito, 'nro_factura':nro_factura });
+            var venta = await axios.get("{{ setting('admin.url') }}api/pos/ventas/save/"+midata)
             switch ($('#mipagos').val()) {
-                // case '1':
-                //     var venta = await axios.get("{{ setting('admin.url') }}api/pos/ventas/save/"+midata)
-                //     for (let index = 0; index < micart.length; index++) {
-                //         var midata2 = JSON.stringify({'producto_id': micart[index].id, 'venta_id': venta.data.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'name':micart[index].name, 'foto':micart[index].foto, 'description': micart[index].description, 'extra_name':micart[index].extra_name, 'observacion':micart[index].observacion});
-                //         var venta_detalle = axios.get("{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata2)
-                //         $("#micart tr#"+micart[index].id).remove();
-                //         mitotal();
-                //     }
-                //     if(venta.data.credito=="Credito"){
-                //        CrearCredito(venta.data.id, venta.data.cliente_id);
-                //     }
-                //     break;
                 case '2':
-                    var venta = await axios.get("{{ setting('admin.url') }}api/pos/ventas/save/"+midata)
+
                     for (let index = 0; index < micart.length; index++) {
                         var midata2 = JSON.stringify({'producto_id': micart[index].id, 'venta_id': venta.data.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'name':micart[index].name, 'foto':micart[index].foto, 'description': micart[index].description, 'extra_name':micart[index].extra_name, 'observacion':micart[index].observacion});
                         var venta_detalle = await axios.get("{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata2)
@@ -2151,13 +2171,13 @@
                                 setTimeout(function() {myWindow.close()}, {{ setting('impresion.tiempo_cierre') }});
                         }else{
                             localStorage.setItem('micart', JSON.stringify([]));
-                            toastr.success('Venta Realizada');
+                            // toastr.info('Venta #'+venta.data.id+' Realizada Correctamente');
                         }
 
                     break;
                 default:
                     // console.log('default')
-                    var venta = await axios.get("{{ setting('admin.url') }}api/pos/ventas/save/"+midata)
+                    // var venta = await axios.get("{{ setting('admin.url') }}api/pos/ventas/save/"+midata)
                     for (let index = 0; index < micart.length; index++) {
                         var midata2 = JSON.stringify({'producto_id': micart[index].id, 'venta_id': venta.data.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'name':micart[index].name, 'foto':micart[index].foto, 'description': micart[index].description, 'extra_name':micart[index].extra_name, 'observacion':micart[index].observacion});
                         var impresion="{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata2
@@ -2177,10 +2197,11 @@
                             setTimeout(function() {myWindow.close()}, {{ setting('impresion.tiempo_cierre') }});
                     }else{
                         localStorage.setItem('micart', JSON.stringify([]));
-                        toastr.success('Venta Realizada');
+                        // toastr.success('Venta Realizada');
                     }
                     break;
             }
+            toastr.info('Venta #'+venta.data.id+' Realizada Correctamente');
 
 
 
@@ -2321,7 +2342,7 @@
     async function addproduct(id) {
         $("#miresult").attr("hidden", true)
         var total = 0;
-        var micart = JSON.parse(localStorage.getItem('micart'));
+        var micart_temp = JSON.parse(localStorage.getItem('micart'));
 
         $("#micart tr#0").remove();
         // var mirep = false;
@@ -2443,20 +2464,24 @@
                             });
                         } else {
                             $('#mixtos').attr("hidden",true);
-                            var description=null;
-                            if(response.extra){
-                                $("#micart").append("<tr id="+newcode+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+miimage+"></td><td>"+response.name+"</td><td><input class='form-control' type='text'  onchange='updateobservacion("+response.id+","+newcode+")' id='observacion_"+newcode+"'></td><td><a class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+", "+response.id+","+newcode+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+newcode+"' onchange='updateprice("+response.id+","+newcode+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+","+newcode+")' value='1' min='1'  id='cant_"+newcode+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+newcode+"' readonly></td><td><a class='btn btn-sm btn-danger' onclick='midelete("+newcode+")'><i class='voyager-trash'></i></a></td></tr>");
+                            // var description=null;
+                            // if(response.extra){
+                                // $("#micart").append("<tr id="+newcode+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+miimage+"></td><td>"+response.name+"</td><td><input class='form-control' type='text'  onchange='updateobservacion("+response.id+","+newcode+")' id='observacion_"+newcode+"'></td><td><a class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+", "+response.id+","+newcode+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+newcode+"' onchange='updateprice("+response.id+","+newcode+")'></td><td><input class='form-control' type='number' onchange='updatecant("+response.id+","+newcode+")' onclick='updatecant("+response.id+","+newcode+")' value='1' min='1'  id='cant_"+newcode+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+newcode+"' readonly></td><td><a class='btn btn-sm btn-danger' onclick='midelete("+newcode+")'><i class='voyager-trash'></i></a></td></tr>");
 
-                            }else{
-                                $("#micart").append("<tr id="+newcode+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+miimage+"></td><td>"+response.name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+response.id+","+newcode+")' id='observacion_"+newcode+"'></td><td></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+newcode+"' onchange='updateprice("+response.id+","+newcode+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+","+newcode+")' value='1' min='1'  id='cant_"+newcode+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+newcode+"' readonly></td><td><a  class='btn btn-sm btn-danger' onclick='midelete("+newcode+")'><i class='voyager-trash'></i></a></td></tr>");
-                            }
-                            var temp = {'code': newcode, 'id': response.id, 'image': miimage, 'name': response.name, 'precio': response.precio, 'precio_inicial':response.precio, 'cant': 1, 'total': response.precio, 'description': '', 'extra':response.extra, 'extras':response.extras, 'extra_name':'', 'observacion':''};
-                            micart.push(temp);
-                            localStorage.setItem('micart', JSON.stringify(micart));
-                            mitotal();
-                            toastr.success(response.name+" - REGISTRADO");
+                            // }else{
+                                // $("#micart").append("<tr id="+newcode+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+miimage+"></td><td>"+response.name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+response.id+","+newcode+")' id='observacion_"+newcode+"'></td><td></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+newcode+"' onchange='updateprice("+response.id+","+newcode+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+","+newcode+")' value='1' min='1'  id='cant_"+newcode+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+newcode+"' readonly></td><td><a  class='btn btn-sm btn-danger' onclick='midelete("+newcode+")'><i class='voyager-trash'></i></a></td></tr>");
+                            // }
+                            var temp = {'code': newcode, 'id': response.id, 'image': miimage, 'name': response.name, 'precio': response.precio, 'precio_inicial':response.precio, 'cant': 1, 'total': response.precio, 'description': '', 'extra':response.extra, 'extras':response.extras, 'extra_name':'', 'observacion':''}
+                            micart_temp.push(temp);
+                            localStorage.setItem('micart', JSON.stringify(micart_temp))
+                            // micart()
+                            // mitotal()
+                            micart()
+                            toastr.success(response.name+" - REGISTRADO")
                         }
+                        // micart()
                     }
+
                 }
             });
         // }
@@ -2573,10 +2598,10 @@
             }else{
                 for (let index = 0; index < milist.length; index++) {
                     if(milist[index].extra){
-                        $("#micart").append("<tr id="+milist[index].code+"><td>"+milist[index].id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+milist[index].image+"></td><td>"+milist[index].name+"<br>"+milist[index].description+"<br>"+milist[index].extra_name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+milist[index].id+","+milist[index].code+")' value='"+milist[index].observacion+"' id='observacion_"+milist[index].code+"'></td><td><a  class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+milist[index].extras+", "+milist[index].id+","+milist[index].code+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+milist[index].precio+"' id='precio_"+milist[index].code+"' onchange='updateprice("+milist[index].id+","+milist[index].code+")'></td><td><input class='form-control' type='number' onclick='updatecant("+milist[index].id+","+milist[index].code+")' value='"+milist[index].cant+"' id='cant_"+milist[index].code+"'></td><td><input class='form-control' type='number' value='"+milist[index].total+"' id='total_"+milist[index].code+"' readonly></td><td><a class='btn btn-sm btn-danger' onclick='midelete("+milist[index].code+")'><i class='voyager-trash'></i></a></td></tr>");
+                        $("#micart").append("<tr id="+milist[index].code+"><td>"+milist[index].id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+milist[index].image+"></td><td>"+milist[index].name+"<br>"+milist[index].description+"<br>"+milist[index].extra_name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+milist[index].id+","+milist[index].code+")' value='"+milist[index].observacion+"' id='observacion_"+milist[index].code+"'></td><td><a  class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+milist[index].extras+", "+milist[index].id+","+milist[index].code+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+milist[index].precio+"' id='precio_"+milist[index].code+"' onchange='updateprice("+milist[index].id+","+milist[index].code+")'></td><td><input class='form-control' type='number' onchange='updatecant("+milist[index].id+","+milist[index].code+")' onclick='updatecant("+milist[index].id+","+milist[index].code+")' value='"+milist[index].cant+"' id='cant_"+milist[index].code+"'></td><td><input class='form-control' type='number' value='"+milist[index].total+"' id='total_"+milist[index].code+"' readonly></td><td><a class='btn btn-sm btn-danger' onclick='midelete("+milist[index].code+")'><i class='voyager-trash'></i></a></td></tr>");
                     }
                     else{
-                         $("#micart").append("<tr id="+milist[index].code+"><td>"+milist[index].id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+milist[index].image+"></td><td>"+milist[index].name+"<br>"+milist[index].description+"<br>"+milist[index].extra_name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+milist[index].id+","+milist[index].code+")' value='"+milist[index].observacion+"' id='observacion_"+milist[index].code+"'></td><td></td><td><input class='form-control' type='number' value='"+milist[index].precio+"' id='precio_"+milist[index].code+"' onchange='updateprice("+milist[index].id+","+milist[index].code+")'></td><td><input class='form-control' type='number' onclick='updatecant("+milist[index].id+","+milist[index].code+")' value='"+milist[index].cant+"' id='cant_"+milist[index].code+"'></td><td><input class='form-control' type='number' value='"+milist[index].total+"' id='total_"+milist[index].code+"' readonly></td><td><a class='btn btn-sm btn-danger' onclick='midelete("+milist[index].code+")'><i class='voyager-trash'></i></a></td></tr>");
+                         $("#micart").append("<tr id="+milist[index].code+"><td>"+milist[index].id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+milist[index].image+"></td><td>"+milist[index].name+"<br>"+milist[index].description+"<br>"+milist[index].extra_name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+milist[index].id+","+milist[index].code+")' value='"+milist[index].observacion+"' id='observacion_"+milist[index].code+"'></td><td></td><td><input class='form-control' type='number' value='"+milist[index].precio+"' id='precio_"+milist[index].code+"' onchange='updateprice("+milist[index].id+","+milist[index].code+")'></td><td><input class='form-control' type='number'  onchange='updatecant("+milist[index].id+","+milist[index].code+")' onclick='updatecant("+milist[index].id+","+milist[index].code+")' value='"+milist[index].cant+"' id='cant_"+milist[index].code+"'></td><td><input class='form-control' type='number' value='"+milist[index].total+"' id='total_"+milist[index].code+"' readonly></td><td><a class='btn btn-sm btn-danger' onclick='midelete("+milist[index].code+")'><i class='voyager-trash'></i></a></td></tr>");
                     }
                 }
                 mitotal();
