@@ -2107,18 +2107,18 @@
             var micart = JSON.parse(localStorage.getItem('micart'));
             var midata = JSON.stringify({'cliente_id': cliente_id, 'cupon_id': cupon_id, 'option_id': option_id, 'pago_id': pago_id, 'factura': factura, 'credito': credito ,'total': total, 'descuento': descuento, 'observacion': observacion, 'register_id': register_id, 'status_id': status_id, 'caja_id': caja_id, 'delivery_id': delivery_id, 'sucursal_id': sucursal_id, subtotal: subtotal, 'cantidad': micart.length, 'recibido': recibido, 'cambio': cambio, chofer_id : chofer_id, adicional:adicional, 'pensionado_id':pensionado_id, 'status_credito':status_credito, 'nro_factura':nro_factura });
             switch ($('#mipagos').val()) {
-                case '1':
-                    var venta = await axios.get("{{ setting('admin.url') }}api/pos/ventas/save/"+midata)
-                    for (let index = 0; index < micart.length; index++) {
-                        var midata2 = JSON.stringify({'producto_id': micart[index].id, 'venta_id': venta.data.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'name':micart[index].name, 'foto':micart[index].foto, 'description': micart[index].description, 'extra_name':micart[index].extra_name, 'observacion':micart[index].observacion});
-                        var venta_detalle = axios.get("{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata2)
-                        $("#micart tr#"+micart[index].id).remove();
-                        mitotal();
-                    }
-                    if(venta.data.credito=="Credito"){
-                       CrearCredito(venta.data.id, venta.data.cliente_id);
-                    }
-                    break;
+                // case '1':
+                //     var venta = await axios.get("{{ setting('admin.url') }}api/pos/ventas/save/"+midata)
+                //     for (let index = 0; index < micart.length; index++) {
+                //         var midata2 = JSON.stringify({'producto_id': micart[index].id, 'venta_id': venta.data.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'name':micart[index].name, 'foto':micart[index].foto, 'description': micart[index].description, 'extra_name':micart[index].extra_name, 'observacion':micart[index].observacion});
+                //         var venta_detalle = axios.get("{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata2)
+                //         $("#micart tr#"+micart[index].id).remove();
+                //         mitotal();
+                //     }
+                //     if(venta.data.credito=="Credito"){
+                //        CrearCredito(venta.data.id, venta.data.cliente_id);
+                //     }
+                //     break;
                 case '2':
                     var venta = await axios.get("{{ setting('admin.url') }}api/pos/ventas/save/"+midata)
                     for (let index = 0; index < micart.length; index++) {
@@ -2143,34 +2143,46 @@
                         var banipay = await axios.post('https://banipay.me:8443/api/payments/transaction', miconfig)
                         var midata3 = JSON.stringify({paymentId: banipay.data.paymentId, transactionGenerated: banipay.data.transactionGenerated, externalCode: banipay.data.externalCode})
                         await axios.get("{{ setting('admin.url') }}api/pos/banipay/save/"+midata3)
+
+
+                        if ($("input[name='season']:checked").val() == 'imprimir') {
+                            localStorage.setItem('micart', JSON.stringify([]));
+                                const myWindow = window.open( "{{ setting('admin.url') }}admin/ventas/imprimir/"+venta.data.id, "Recibo o Factura", "width=600,height=900");
+                                setTimeout(function() {myWindow.close()}, {{ setting('impresion.tiempo_cierre') }});
+                        }else{
+                            localStorage.setItem('micart', JSON.stringify([]));
+                            toastr.success('Venta Realizada');
+                        }
+
                     break;
                 default:
                     // console.log('default')
                     var venta = await axios.get("{{ setting('admin.url') }}api/pos/ventas/save/"+midata)
                     for (let index = 0; index < micart.length; index++) {
                         var midata2 = JSON.stringify({'producto_id': micart[index].id, 'venta_id': venta.data.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'name':micart[index].name, 'foto':micart[index].foto, 'description': micart[index].description, 'extra_name':micart[index].extra_name, 'observacion':micart[index].observacion});
-                        var venta_detalle = axios.get("{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata2)
-                        $("#micart tr#"+micart[index].id).remove();
-                        mitotal();
+                        var impresion="{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata2
+                        //console.log(impresion)
+                        var venta_detalle = await axios.get(impresion)
+                        mitotal()
+
+                    }
+                    //console.log(venta.data)
+                    if(venta.data.credito=="Credito"){
+                       CrearCredito(venta.data.id, venta.data.cliente_id);
+                    }
+
+                    if ($("input[name='season']:checked").val() == 'imprimir') {
+                        localStorage.setItem('micart', JSON.stringify([]));
+                            const myWindow = window.open( "{{ setting('admin.url') }}admin/ventas/imprimir/"+venta.data.id, "Recibo o Factura", "width=600,height=900");
+                            setTimeout(function() {myWindow.close()}, {{ setting('impresion.tiempo_cierre') }});
+                    }else{
+                        localStorage.setItem('micart', JSON.stringify([]));
+                        toastr.success('Venta Realizada');
                     }
                     break;
             }
 
-            if ($("input[name='season']:checked").val() == 'imprimir') {
-                localStorage.setItem('micart', JSON.stringify([]));
-                // console.log(factura)
-                // if (factura == "Recibo") {
-                    const myWindow = window.open( "{{ setting('admin.url') }}admin/ventas/imprimir/"+venta.data.id, "Recibo o Factura", "width=600,height=900");
-                    setTimeout(function() {myWindow.close()}, {{ setting('impresion.tiempo_cierre') }});
-                // } else {
-                //     const myWindow = window.open( "{{ setting('admin.url') }}admin/ventas/imprimir/"+venta.data.id, "Factura", "width=600,height=900");
-                //     setTimeout(function() {myWindow.close()}, 9000);
-                // }
 
-            }else{
-                localStorage.setItem('micart', JSON.stringify([]));
-                toastr.success('Venta Realizada');
-            }
 
         }
         //location.reload();

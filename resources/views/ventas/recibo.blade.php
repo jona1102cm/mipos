@@ -144,8 +144,8 @@
                                  <tr>
                                     <td><b>{{ $miproduct->name }} <br> </b><div style="font-size: {{ setting('impresion.text_secundario') }}">{{ $item->extra_name }}</div></td>
 
-                                     <td><b> {{ $item->observacion }}</b></td>
-                                     {{-- <td><b>{{ $item->observacion }}</b></td> --}}
+                                    <td><b>{{$item->observacion}} <br> {{$item->description}} </b></td>
+                                    {{-- <td><b>{{ $item->observacion }}</b></td> --}}
                                      <td align="center"><b>{{ $item->cantidad }}</b></td>
                                      <td align="center"><b>{{ $item->precio }}</b></td>
                                      <td align="center"><b>{{ $totalunit }}</b></td>
