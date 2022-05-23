@@ -34,7 +34,7 @@
 @section('content')
 @php
     $cocina = App\Cocina::find($dataTypeContent->getKey());
-    $pedidos = App\Venta::where('sucursal_id', $cocina->sucursal_id,)->where('status_id', 1)->orderBy('created_at', 'desc')->with('cliente')->get();
+    $pedidos = App\Venta::where('sucursal_id', $cocina->sucursal_id,)->where('status_id', 1)->orderBy('created_at', 'desc')->with('cliente', 'sucursal')->get();
 @endphp
     <div class="page-content read container-fluid">
         <div class="row">
@@ -55,8 +55,15 @@
                         <tbody>
                             @foreach ($pedidos as $item)
                                 <tr>
-                                    <td>{{ $item->id }}</td>
-                                    <td>{{ $item->cliente->display }}</td>
+                                    <td>{{ $item->id }}
+                                        <br>
+                                        T-{{ $item->ticket }}
+                                    </td>
+                                    <td>
+                                        {{ $item->cliente->display }}
+                                        <br>
+                                        {{ $item->created_at }}
+                                    </td>
                                     <td>
                                         @php
                                             $detalles = App\DetalleVenta::where('venta_id',$item->id)->get();
@@ -66,9 +73,13 @@
                                                 $producto = App\Producto::find($item2->producto_id);
                                             @endphp
                                             {{ 'Producto: '.$producto->name.' - Cant: '.$item->cantidad }} <br>
+
                                         @endforeach
                                     </td>
-                                    <td>{{ $item->estado->title }}</td>
+                                    <td>{{ $item->estado->title }}
+                                        <br>
+                                        {{ $item->sucursal->name }}
+                                    </td>
                                     <td>
                                         <a class="btn btn-sm btn-primary" onclick="despachar({{ $item->id }})">Despachar</a>
                                     </td>

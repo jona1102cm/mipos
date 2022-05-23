@@ -65,7 +65,7 @@
                                                 <option value="chofer_deudas"> Deudas de Choferes </option>
 
                                                 <option value="credito">Cobro Créditos</option>
-                                                <option value="reportes"> Reportes </option>
+                                                {{-- <option value="reportes"> Reportes </option> --}}
                                                 @if(setting('empresa.type_negocio')=="Restaurente")
                                                     <option value="pensionado_kardex"> Kardex Pensionados </option>
                                                 @endif
