@@ -14,6 +14,21 @@ class ProductsImport implements ToModel
     */
     public function model(array $row)
     {
+        // return new Producto([
+        //     'name'     => $row[0],
+        //     'description'    => $row[1],
+        //     'precio' => $row[2],
+        //     'categoria_id' => $row[3],
+        //     'sku'=> $row[4],
+        //     'description_long'=> $row[5],
+        //     'precio_compra'=> $row[6],
+        //     'vencimiento'=> $row[7],
+        //     'laboratorio_id'=> $row[8],
+        //     'stock'=> $row[9],
+        // ]);
+
+        $fecha=date('Y-m-d', strtotime($row[7]));
+        echo $fecha;
         return new Producto([
             'name'     => $row[0],
             'description'    => $row[1],
@@ -22,7 +37,7 @@ class ProductsImport implements ToModel
             'sku'=> $row[4],
             'description_long'=> $row[5],
             'precio_compra'=> $row[6],
-            'vencimiento'=> $row[7],
+            'vencimiento'=> $fecha,
             'laboratorio_id'=> $row[8],
             'stock'=> $row[9],
         ]);

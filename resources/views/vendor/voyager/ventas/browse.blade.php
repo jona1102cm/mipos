@@ -1091,6 +1091,9 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         $(document).ready(function () {
+            $('.js-example-basic-single').select2();
+            DesactivarPensionados();
+
             @if (!$dataType->server_side)
                 var table = $('#dataTable').DataTable({!! json_encode(
                     array_merge([
@@ -1119,6 +1122,27 @@
                 $('input[name="row_id"]').prop('checked', $(this).prop('checked')).trigger('change');
             });
         });
+        async function DesactivarPensionados(){
+            var table=await axios.get("{{ setting('admin.url') }}api/pos/pensionados");
+            for(let index=0;index < table.data.length;index++){
+                var aux= parseInt(CalculoDiasRestantes(table.data[index].fecha_final));
+                if(aux<0){
+                var actualizar= await axios("{{ setting('admin.url') }}api/pos/pensionados/actualizar/"+table.data[index].id);
+                }
+            }
+        }
+
+        function CalculoDiasRestantes(fecha_final){
+            var today=new Date();
+            var fechaInicio =   today.toISOString().split('T')[0];
+            var fechaFin    = fecha_final;
+            var fi=fechaInicio.toString();
+            var ff=fechaFin.toString();
+            var fechai = new Date(fi).getTime();
+            var fechaf    = new Date(ff).getTime();
+            var diff = fechaf - fechai;
+            return (diff/(1000*60*60*24));
+        }
 
 
         var deleteFormAction;
@@ -1839,27 +1863,27 @@
                 }
 
 
-            async function DesactivarPensionados(){
-                var table=await axios.get("{{ setting('admin.url') }}api/pos/pensionados");
-                for(let index=0;index < table.data.length;index++){
-                    var aux= parseInt(CalculoDiasRestantes(table.data[index].fecha_final));
-                    if(aux<0){
-                    var actualizar= await axios("{{ setting('admin.url') }}api/pos/pensionados/actualizar/"+table.data[index].id);
-                    }
-                }
-            }
+            // async function DesactivarPensionados(){
+            //     var table=await axios.get("{{ setting('admin.url') }}api/pos/pensionados");
+            //     for(let index=0;index < table.data.length;index++){
+            //         var aux= parseInt(CalculoDiasRestantes(table.data[index].fecha_final));
+            //         if(aux<0){
+            //         var actualizar= await axios("{{ setting('admin.url') }}api/pos/pensionados/actualizar/"+table.data[index].id);
+            //         }
+            //     }
+            // }
 
-            function CalculoDiasRestantes(fecha_final){
-                var today=new Date();
-                var fechaInicio =   today.toISOString().split('T')[0];
-                var fechaFin    = fecha_final;
-                var fi=fechaInicio.toString();
-                var ff=fechaFin.toString();
-                var fechai = new Date(fi).getTime();
-                var fechaf    = new Date(ff).getTime();
-                var diff = fechaf - fechai;
-                return (diff/(1000*60*60*24));
-            }
+            // function CalculoDiasRestantes(fecha_final){
+            //     var today=new Date();
+            //     var fechaInicio =   today.toISOString().split('T')[0];
+            //     var fechaFin    = fecha_final;
+            //     var fi=fechaInicio.toString();
+            //     var ff=fechaFin.toString();
+            //     var fechai = new Date(fi).getTime();
+            //     var fechaf    = new Date(ff).getTime();
+            //     var diff = fechaf - fechai;
+            //     return (diff/(1000*60*60*24));
+            // }
 
             //reportes
             async function mireport() {

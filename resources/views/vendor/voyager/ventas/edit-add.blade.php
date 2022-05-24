@@ -1087,7 +1087,7 @@
 
         Opciones();
         //PensionadoDefault();
-        // Pensionados();
+        Pensionados();
         //DesactivarPensionados();
 
         //-----------------------
@@ -2225,7 +2225,7 @@
         Pasarelas();
         Estados();
         Opciones();
-        //Pensionados();
+        Pensionados();
 
         $("[name=credito]").val(["Contado"]);
         $("[name=season]").val(["imprimir"]);
