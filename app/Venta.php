@@ -75,4 +75,8 @@ class Venta extends Model
     {
         return $this->belongsTo(Pensionado::class, 'pensionado_id');
     }
+    public function sucursal()
+    {
+        return $this->belongsTo(Sucursale::class, 'sucursal_id');
+    }
 }

@@ -794,7 +794,7 @@
                     <table class="table table-bordered table-hover" id="table-extras">
                         <thead>
                             <tr>
-                                <th>Imagen</th>
+                                {{-- <th>Imagen</th> --}}
                                 <th>ID</th>
                                 <th>Extra</th>
                                 <th>Precio</th>
@@ -1400,11 +1400,14 @@
         $("#table-extras tbody tr").remove();
         $("#producto_extra_id").val(producto_id);
         $("#tr_producto").val(code);
+        console.log(extras)
         var mitable="";
         var extrasp=  await axios.get("{{ setting('admin.url') }}api/pos/producto/extra/"+extras);
         for(let index=0; index < extrasp.data.length; index++){
-            var image = extrasp.data[index].image ? extrasp.data[index].image : "{{ setting('productos.imagen_default') }}"
-            mitable = mitable + "<tr><td> <img class='img-thumbnail img-sm img-responsive' height=40 width=40 src='{{setting('admin.url')}}storage/"+image+"'></td><td>"+extrasp.data[index].id+"</td><td><input class='form-control extra-name' readonly value='"+extrasp.data[index].name+"'></td><td><input class='form-control extra-precio' readonly  value='"+extrasp.data[index].precio+" Bs."+"'></td><td><input class='form-control extra-cantidad' style='width:100px' type='number' min='0' value='0'  id='extra_"+extrasp.data[index].id+"'></td></tr>";
+            // var image = extrasp.data[index].image ? extrasp.data[index].image : "{{ setting('productos.imagen_default') }}"
+            // mitable = mitable + "<tr><td> <img class='img-thumbnail img-sm img-responsive' height=40 width=40 src='{{setting('admin.url')}}storage/"+image+"'></td><td>"+extrasp.data[index].id+"</td><td><input class='form-control extra-name' readonly value='"+extrasp.data[index].name+"'></td><td><input class='form-control extra-precio' readonly  value='"+extrasp.data[index].precio+" Bs."+"'></td><td><input class='form-control extra-cantidad' style='width:100px' type='number' min='0' value='0'  id='extra_"+extrasp.data[index].id+"'></td></tr>";
+            mitable = mitable + "<tr><td>"+extrasp.data[index].id+"</td><td><input class='form-control extra-name' readonly value='"+extrasp.data[index].name+"'></td><td><input class='form-control extra-precio' readonly  value='"+extrasp.data[index].precio+" Bs."+"'></td><td><input class='form-control extra-cantidad' style='width:100px' type='number' min='0' value='0'  id='extra_"+extrasp.data[index].id+"'></td></tr>";
+
         }
         $('#table-extras').append(mitable);
     }
@@ -1923,26 +1926,26 @@
         var total_tarjeta=0;
         var total_qr=0;
         for (let index = 0; index < misventas.data.length; index++) {
-            console.log(misventas.data[index].register_id);
+            // console.log(misventas.data[index].register_id);
 
             // if(misventas.data[index].register_id==user_id||misventas.data[index].register_id==cliente_pagina_id||misventas.data[index].register_id==chatbot_id){}
                 //console.log("Hola");
 
-                var banipay = await axios("{{ setting('admin.url') }}api/pos/banipay/get/"+misventas.data[index].id);
-                var milink = "{{ setting('banipay.url_base') }}"+banipay.data.urlTransaction
+                // var banipay = await axios("{{ setting('admin.url') }}api/pos/banipay/get/"+misventas.data[index].id);
+                // var milink = "{{ setting('banipay.url_base') }}"+banipay.data.urlTransaction
 
-                if(misventas.data[index].pasarela.id=="{{setting('ventas.banipay_1')}}"||misventas.data[index].pasarela.id=="{{setting('ventas.banipay_2')}}"){
-                    total_banipay+=misventas.data[index].total;
+                // if(misventas.data[index].pasarela.id=="{{setting('ventas.banipay_1')}}"||misventas.data[index].pasarela.id=="{{setting('ventas.banipay_2')}}"){
+                //     total_banipay+=misventas.data[index].total;
 
-                    if(misventas.data[index].option_id=="{{ setting('ventas.pedido_domicilio_id') }}"||misventas.data[index].option_id=="{{ setting('ventas.delivery_zona1') }}"||misventas.data[index].option_id=="{{ setting('ventas.delivery_zona2') }}"){
-                        $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"<br><a href='"+milink+"' target='_blank'>Link de Pago</a></td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td><a href='#deliverys' aria-controls='deliverys' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' onclick='set_chofer("+misventas.data[index].id+")'>Chofer</a></td></tr>");
-                    }
-                    else{
-                        $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"<br><a href='"+milink+"' target='_blank'>Link de Pago</a></td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td></td></tr>");
-                    }
+                //     if(misventas.data[index].option_id=="{{ setting('ventas.pedido_domicilio_id') }}"||misventas.data[index].option_id=="{{ setting('ventas.delivery_zona1') }}"||misventas.data[index].option_id=="{{ setting('ventas.delivery_zona2') }}"){
+                //         $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"<br><a href='"+milink+"' target='_blank'>Link de Pago</a></td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td><a href='#deliverys' aria-controls='deliverys' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' onclick='set_chofer("+misventas.data[index].id+")'>Chofer</a></td></tr>");
+                //     }
+                //     else{
+                //         $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"<br><a href='"+milink+"' target='_blank'>Link de Pago</a></td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td></td></tr>");
+                //     }
 
-                }
-                else{
+                // }
+                // else{
                     if(misventas.data[index].pasarela.id==6){
                         total_tarjeta+=misventas.data[index].total;
                     }
@@ -1960,7 +1963,7 @@
                     else{
                         $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"</td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td></td></tr>");
                     }
-                }
+                // }
 
         }
         if('{{setting('ventas.fila_totales')}}'){
