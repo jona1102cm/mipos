@@ -395,35 +395,7 @@
                                     </form>
                                 </div>
                                 <div class="form-group col-lg-3 col-md-4">
-                                    <div class="form-group col-md-12">
-                                        <strong>Cliente</strong>
-                                        <select class="form-control js-example-basic-single" id="micliente"> </select>
-                                    </div>
-                                    <div class="form-group col-md-12">
-                                        <strong>Pasarela</strong>
-                                        <select class="form-control js-example-basic-single" id="mipagos"> </select>
-                                    </div>
 
-                                    {{-- <div class="form-group col-sm-12">
-                                        <strong>Tipo</strong>
-                                        <select class="form-control js-example-basic-single" id="venta_type"> </select>
-                                    </div> --}}
-                                    {{-- @if(setting('empresa.type_negocio')=="Restaurante")
-                                        <div class="form-group col-sm-12">
-                                            <strong>Pensionado</strong>
-                                            <select class="form-control js-example-basic-single" id="mipensionado"> </select>
-                                        </div>
-                                    @endif --}}
-
-                                    <div class="form-group col-md-12">
-                                        <strong>Cupon</strong>
-                                        <select class="form-control js-example-basic-single" id="micupon"> </select>
-                                    </div>
-
-                                    <div class="form-group col-md-12">
-                                        <strong>Delivery</strong>
-                                        <select class="form-control js-example-basic-single" id="midelivery"> </select>
-                                    </div>
 
                                     @foreach($dataTypeRows as $row)
                                         <!-- GET THE DISPLAY OPTIONS -->
@@ -460,6 +432,35 @@
                                             @endif
                                         </div>
                                     @endforeach
+                                    <div class="form-group col-md-12">
+                                        <strong>Cliente</strong>
+                                        <select class="form-control js-example-basic-single" id="micliente"> </select>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <strong>Pasarela</strong>
+                                        <select class="form-control js-example-basic-single" id="mipagos"> </select>
+                                    </div>
+
+                                    {{-- <div class="form-group col-sm-12">
+                                        <strong>Tipo</strong>
+                                        <select class="form-control js-example-basic-single" id="venta_type"> </select>
+                                    </div> --}}
+                                    {{-- @if(setting('empresa.type_negocio')=="Restaurante")
+                                        <div class="form-group col-sm-12">
+                                            <strong>Pensionado</strong>
+                                            <select class="form-control js-example-basic-single" id="mipensionado"> </select>
+                                        </div>
+                                    @endif --}}
+
+                                    <div class="form-group col-md-12">
+                                        <strong>Cupon</strong>
+                                        <select class="form-control js-example-basic-single" id="micupon"> </select>
+                                    </div>
+
+                                    <div class="form-group col-md-12">
+                                        <strong>Delivery</strong>
+                                        <select class="form-control js-example-basic-single" id="midelivery"> </select>
+                                    </div>
                                     <div class="form-group col-md-12" align="center">
                                         {!! QrCode::size(200)->generate('LoginWeb @2022') !!}
                                     </div>
