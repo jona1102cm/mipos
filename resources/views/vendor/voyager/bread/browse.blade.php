@@ -3280,6 +3280,92 @@
         </div><!-- /.modal -->
 
 
+        <div class="modal modal-primary fade" tabindex="-1" id="modal_capital" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                       <h4>Capital en Productos</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <strong>Sucursal</strong>
+                                <select class="form-control js-example-basic-single" name="misucursal" id="misucursal"></select>
+                            </div>
+                            {{-- <div class="col-sm-7">
+                                <button type="button" class="btn btn-primary pull-right" onclick="CalcularCapitalDefault()">Consultar</button>
+                            </div> --}}
+                            <div class="col-sm-12">
+                                <table class="table" id="table-capital-productos">
+                                    <thead>
+                                        <tr>
+                                            <th>Cantidad Productos</th>
+                                            <th>Total Stock * Cantidad Productos</th>
+                                            <th>Promedio de Ganancia por Producto</th>
+                                            <th><b>Capital en Productos</b></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+
+        <div class="modal modal-primary fade" tabindex="-1" id="modal_vencimiento_productos" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                       <h4>Vencimiento de Productos</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label for="">Fecha Inicio</label>
+                                <input type="date" class="form-control" id="fecha_inicial_vencimiento"  >
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="">Fecha Final</label>
+                                <input type="date" class="form-control" id="fecha_final_vencimiento"  >
+                            </div>
+                            <div class="form-group col-md-6">
+                                <strong>Sucursal</strong>
+                                <select class="form-control js-example-basic-single" name="misucursal_vencimiento" id="misucursal_vencimiento"></select>
+                            </div>
+                            {{-- <div class="col-sm-7">
+                                <button type="button" class="btn btn-primary pull-right" onclick="Consulta_Vencimiento_Productos()">Consultar</button>
+                            </div> --}}
+                            <div class="col-sm-12">
+                                <table class="table" id="table-vencimiento_productos">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Producto</th>
+                                            <th>Vencimiento</th>
+                                            <th>Días Restantes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+
         <!-- /.modal -->
 
 @stop
@@ -3484,12 +3570,14 @@
                         break;
 
                         case('capital_productos'):
+                            Sucursales()
                             $('#table-capital-productos tbody tr').remove();
                             $('#modal_capital').modal();
 
                         break;
 
                         case('vencimiento_productos'):
+                            SucursalesVencimiento()
                             $('#table-vencimiento_productos tbody tr').remove();
                             $('#modal_vencimiento_productos').modal();
                         break;
@@ -3499,9 +3587,55 @@
                         break
                     }
                 });
+                async function Sucursales() {
+                    var table= await axios.get("{{setting('admin.url')}}api/pos/sucursales")
 
-                async function Consulta_Vencimiento_Productos() {
-                    var table= await axios.get("{{setting('admin.url')}}api/pos/productos");
+                    $('#misucursal').append($('<option>', {
+                        value: null,
+                        text: 'Elija una Sucursal'
+                    }));
+                    for (let index = 0; index < table.data.length; index++) {
+                        // if(table.data[index].id!=producto.data.categoria_id){
+                            $('#misucursal').append($('<option>', {
+                                value: table.data[index].id,
+                                text: table.data[index].name
+                            }));
+                        // }
+                    }
+                }
+                $('#misucursal').on('change', function() {
+                    var sucursal = $('#misucursal').val();
+                    CalcularCapitalDefault(sucursal)
+                });
+
+                async function SucursalesVencimiento() {
+                    var table= await axios.get("{{setting('admin.url')}}api/pos/sucursales")
+
+                    $('#misucursal_vencimiento').append($('<option>', {
+                        value: null,
+                        text: 'Elija una Sucursal'
+                    }));
+                    for (let index = 0; index < table.data.length; index++) {
+                        // if(table.data[index].id!=producto.data.categoria_id){
+                            $('#misucursal_vencimiento').append($('<option>', {
+                                value: table.data[index].id,
+                                text: table.data[index].name
+                            }));
+                        // }
+                    }
+                }
+                $('#misucursal_vencimiento').on('change', function() {
+                    var sucursal = $('#misucursal_vencimiento').val();
+                    Consulta_Vencimiento_Productos(sucursal)
+                });
+
+
+
+                async function Consulta_Vencimiento_Productos(sucursal) {
+                    //var table= await axios.get("{{setting('admin.url')}}api/pos/productos");
+
+                    var table= await axios.get("{{setting('admin.url')}}api/pos/productos_sucursal/"+sucursal)
+
                     $('#table-vencimiento_productos tbody tr').remove();
 
                     var fecha_inicial=$('#fecha_inicial_vencimiento').val() ? $('#fecha_inicial_vencimiento').val():null;
@@ -3571,9 +3705,11 @@
 
 
 
-                async function CalcularCapitalDefault() {
+                async function CalcularCapitalDefault(sucursal) {
 
-                    var table= await axios.get("{{setting('admin.url')}}api/pos/productos");
+                    $('#table-capital-productos tbody tr').remove();
+
+                    var table= await axios.get("{{setting('admin.url')}}api/pos/productos_sucursal/"+sucursal)
                     var num_productos=table.data.length;
                     var num_total_stock_productos=0;
                     var promedio_prod=0;

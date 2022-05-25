@@ -65,7 +65,7 @@
                                                 <option value="chofer_deudas"> Deudas de Choferes </option>
 
                                                 <option value="credito">Cobro Créditos</option>
-                                                {{-- <option value="reportes"> Reportes </option> --}}
+                                                <option value="reportes"> Reportes </option>
                                                 @if(setting('empresa.type_negocio')=="Restaurente")
                                                     <option value="pensionado_kardex"> Kardex Pensionados </option>
                                                 @endif
@@ -1063,9 +1063,17 @@
                             <label for="">Fecha Final</label>
                             <input class="form-control" type="date" name="date2" id="date2">
                         </div>
-                        <div class="col-sm-12 text-center">
-                            <a href="#" onclick="mireport()" class="btn btn-sm btn-dark"> <i class="voyager-search"></i> Consultar</a>
+                        <div class="col-sm-6">
+                            <label for="">Cajas</label>
+                            <select name="caja_id" id="caja_id" class="form-control"></select>
                         </div>
+                        <div class="col-sm-6">
+                            <label for="">Cajar@s</label>
+                            <select name="register_id" id="register_id" class="form-control"></select>
+                        </div>
+                        {{-- <div class="col-sm-12 text-center">
+                            <a href="#" onclick="mireport()" class="btn btn-sm btn-dark"> <i class="voyager-search"></i> Consultar</a>
+                        </div> --}}
                     </div>
                         <table class="table table-responsive" id="report_table">
                             <tbody></tbody>
@@ -1516,6 +1524,39 @@
                         break
                         case 'reportes':
                             $('#modal_reportes').modal();
+                            $('#register_id').find('option').remove().end();
+                            $.ajax({
+                                url: "{{setting('admin.url')}}api/pos/cajeros",
+                                dataType: "json",
+                                success: function (response) {
+                                    $('#register_id').append($('<option>', {
+                                        value: null,
+                                        text: 'Elige un Cajero'
+                                    }));
+                                    for (let index = 0; index < response.length; index++) {
+                                        $('#register_id').append($('<option>', {
+                                            value: response[index].id,
+                                            text: response[index].name
+                                        }));
+                                    }
+                                }
+                            });
+                            $.ajax({
+                                url: "{{setting('admin.url')}}api/pos/cajas",
+                                dataType: "json",
+                                success: function (response) {
+                                    $('#caja_id').append($('<option>', {
+                                        value: null,
+                                        text: 'Elige una Caja'
+                                    }));
+                                    for (let index = 0; index < response.length; index++) {
+                                        $('#caja_id').append($('<option>', {
+                                            value: response[index].id,
+                                            text: response[index].title
+                                        }));
+                                    }
+                                }
+                            });
                         break
                         case 'credito':
                             LimpiarCobroCreditos();
@@ -1886,16 +1927,37 @@
             // }
 
             //reportes
-            async function mireport() {
+            // async function mireport() {
+            //     var midata1 = $("#date1").val()
+            //     var midata2 = $("#date2").val()
+            //     var caja_id = $("#caja_id").val()
+            //     var register_id = $("#register_id").val()
+            //     var midata = JSON.stringify({
+            //         date1: midata1,
+            //         date2: midata2,
+            //         caja_id: caja_id,
+            //         register_id: register_id
+            //     })
+            //     var ventas = await axios("{{ setting('admin.url') }}api/pos/ventas/fechas/editor/"+midata)
+            //     $('#report_table tbody tr').remove();
+            //     $('#report_table').append("<tr><td>Total Bs: </td><td> "+ventas.data.total+"</td></tr>");
+            //     $('#report_table').append("<tr><td>Cantidad: </td><td> "+ventas.data.cantidad+"</td></tr>");
+            //     $('#report_table').append("<tr><td>Pasarelas: </td><td> "+ventas.data.pasarelas+"</td></tr>");
+            //     $('#report_table').append("<tr><td>Impuestos: </td><td> "+ventas.data.impuestos+"</td></tr>");
+            //     $('#report_table').append("<tr><td>Delivery: </td><td> "+ventas.data.delivery+"</td></tr>");
+            //     $('#report_table').append("<tr><td>Estados: </td><td> "+ventas.data.estados+"</td></tr>");
+
+            // }
+            $('#caja_id').on('change', async function() {
                 var midata1 = $("#date1").val()
                 var midata2 = $("#date2").val()
-                var miuser = "{{ Auth::user()->id }}"
+                var caja_id = this.value
                 var midata = JSON.stringify({
                     date1: midata1,
                     date2: midata2,
-                    user: miuser
+                    caja_id: caja_id
                 })
-                var ventas = await axios("{{ setting('admin.url') }}api/pos/ventas/fechas/"+midata)
+                var ventas = await axios("{{ setting('admin.url') }}api/pos/ventas/fechas/caja/"+midata)
                 $('#report_table tbody tr').remove();
                 $('#report_table').append("<tr><td>Total Bs: </td><td> "+ventas.data.total+"</td></tr>");
                 $('#report_table').append("<tr><td>Cantidad: </td><td> "+ventas.data.cantidad+"</td></tr>");
@@ -1903,7 +1965,26 @@
                 $('#report_table').append("<tr><td>Impuestos: </td><td> "+ventas.data.impuestos+"</td></tr>");
                 $('#report_table').append("<tr><td>Delivery: </td><td> "+ventas.data.delivery+"</td></tr>");
                 $('#report_table').append("<tr><td>Estados: </td><td> "+ventas.data.estados+"</td></tr>");
+            });
 
-            }
+            $('#register_id').on('change', async function() {
+                var midata1 = $("#date1").val()
+                var midata2 = $("#date2").val()
+                var register_id = this.value
+                var midata = JSON.stringify({
+                    date1: midata1,
+                    date2: midata2,
+                    register_id: register_id
+                })
+                var ventas = await axios("{{ setting('admin.url') }}api/pos/ventas/fechas/editor/"+midata)
+                $('#report_table tbody tr').remove();
+                $('#report_table').append("<tr><td>Total Bs: </td><td> "+ventas.data.total+"</td></tr>");
+                $('#report_table').append("<tr><td>Cantidad: </td><td> "+ventas.data.cantidad+"</td></tr>");
+                $('#report_table').append("<tr><td>Pasarelas: </td><td> "+ventas.data.pasarelas+"</td></tr>");
+                $('#report_table').append("<tr><td>Impuestos: </td><td> "+ventas.data.impuestos+"</td></tr>");
+                $('#report_table').append("<tr><td>Delivery: </td><td> "+ventas.data.delivery+"</td></tr>");
+                $('#report_table').append("<tr><td>Estados: </td><td> "+ventas.data.estados+"</td></tr>");
+            });
+
     </script>
 @stop

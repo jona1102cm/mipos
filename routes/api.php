@@ -180,8 +180,8 @@ Route::get('option/{id}', function ($id) {
     return $midata;
 });
 
-Route::get('search/{criterio}', function ($criterio) {
-    $result = Producto::where('name', 'like', '%'.$criterio.'%')->where('title', 'like', '%'.$criterio.'%')->orderBy('name', 'desc')->get();
+Route::get('search/{criterio}/{sucursal}', function ($criterio, $sucursal) {
+    $result = Producto::where('sucursal_id',$sucursal)->where('name', 'like', '%'.$criterio.'%')->orWhere('title', 'like', '%'.$criterio.'%')->orWhere('etiqueta', 'like', '%'.$criterio.'%')->orderBy('name', 'desc')->with('categoria')->get();
     return $result;
 });
 
@@ -624,6 +624,11 @@ Route::get('pos/productos', function () {
     return  Producto::all();
 });
 
+// PRODUCTOS POR SUCURSAL
+Route::get('pos/productos_sucursal/{sucursal}', function ($sucursal) {
+    return  Producto::where('sucursal_id',$sucursal)->get();
+});
+
 // SEARCH PRODUCTO
 Route::get('pos/producto/search/{midata}', function ($midata) {
     return  Producto::where('name', 'like', '%'.$midata.'%')->with('categoria')->get();
@@ -724,7 +729,7 @@ Route::get('pos/ventas/cajauser/{register_id}', function ($register_id) {
 
 //TODOS LOS CAJEROS
 Route::get('pos/cajeros', function () {
-    return  User::all();
+    return  User::where('role_id', 3)->get();
 });
 
 //TODOS LOS CUPONES
@@ -1155,41 +1160,82 @@ Route::get('pos/update_datos_cliente/{data}',function($data){
 
 
 //REPORTES
-//Update cliente
-Route::get('pos/ventas/fechas/{midata}',function($midata){
+Route::get('pos/ventas/fechas/editor/{midata}',function($midata){
     $midata2=json_decode($midata);
-    $cantidad = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->user)->count();
-    $total = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->user)->sum('total');
+    $cantidad = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->register_id)->count();
+    $total = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->register_id)->sum('total');
 
     $array_pago = array();
     foreach (Pago::where('view', 'backend')->get() as $item) {
-        $miaux = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->user)->where('pago_id', $item->id)->count();
-        $miaux2 = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->user)->where('pago_id', $item->id)->sum('total');
+        $miaux = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->register_id)->where('pago_id', $item->id)->count();
+        $miaux2 = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->register_id)->where('pago_id', $item->id)->sum('total');
         array_push($array_pago, $miaux.' "'.$item->title.'" con Bs '.$miaux2);
     }
 
     $array_impuesto = array();
-    $miaux = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->user)->where('factura', 'Factura')->count();
-        $miaux2 = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->user)->where('factura', 'Factura')->sum('total');
+    $miaux = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->register_id)->where('factura', 'Factura')->count();
+        $miaux2 = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->register_id)->where('factura', 'Factura')->sum('total');
     array_push($array_impuesto, $miaux.' "Factura" con Bs '.$miaux2);
-    $miaux = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->user)->where('factura', 'Recibo')->count();
-    $miaux2 = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->user)->where('factura', 'Recibo')->sum('total');
+    $miaux = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->register_id)->where('factura', 'Recibo')->count();
+    $miaux2 = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->register_id)->where('factura', 'Recibo')->sum('total');
     array_push($array_impuesto, $miaux.' "Recibo" con Bs '.$miaux2);
 
     $array_delivery = array();
     foreach (Mensajero::all() as $item) {
-        $miaux = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->user)->where('delivery_id', $item->id)->count();
-        $miaux2 = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->user)->where('delivery_id', $item->id)->sum('total');
+        $miaux = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->register_id)->where('delivery_id', $item->id)->count();
+        $miaux2 = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->register_id)->where('delivery_id', $item->id)->sum('total');
         array_push($array_delivery, $miaux.' "'.$item->name.'" con Bs '.$miaux2);
     }
 
     $array_estados = array();
     foreach (Estado::all() as $item) {
-        $miaux = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->user)->where('status_id', $item->id)->count();
-        $miaux2 = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->user)->where('status_id', $item->id)->sum('total');
+        $miaux = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->register_id)->where('status_id', $item->id)->count();
+        $miaux2 = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->register_id)->where('status_id', $item->id)->sum('total');
         array_push($array_estados, $miaux.' "'.$item->title.'" con Bs '.$miaux2);
     }
+    return response()->json([
+        'cantidad' => $cantidad,
+        'total' => $total,
+        'pasarelas' => $array_pago,
+        'impuestos' => $array_impuesto,
+        'delivery' => $array_delivery,
+        'estados' => $array_estados
+    ]);
+});
 
+Route::get('pos/ventas/fechas/caja/{midata}',function($midata){
+    $midata2=json_decode($midata);
+    $cantidad = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->caja_id)->count();
+    $total = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->caja_id)->sum('total');
+
+    $array_pago = array();
+    foreach (Pago::where('view', 'backend')->get() as $item) {
+        $miaux = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->caja_id)->where('pago_id', $item->id)->count();
+        $miaux2 = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->caja_id)->where('pago_id', $item->id)->sum('total');
+        array_push($array_pago, $miaux.' "'.$item->title.'" con Bs '.$miaux2);
+    }
+
+    $array_impuesto = array();
+    $miaux = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->caja_id)->where('factura', 'Factura')->count();
+        $miaux2 = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->caja_id)->where('factura', 'Factura')->sum('total');
+    array_push($array_impuesto, $miaux.' "Factura" con Bs '.$miaux2);
+    $miaux = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->caja_id)->where('factura', 'Recibo')->count();
+    $miaux2 = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->caja_id)->where('factura', 'Recibo')->sum('total');
+    array_push($array_impuesto, $miaux.' "Recibo" con Bs '.$miaux2);
+
+    $array_delivery = array();
+    foreach (Mensajero::all() as $item) {
+        $miaux = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->caja_id)->where('delivery_id', $item->id)->count();
+        $miaux2 = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->caja_id)->where('delivery_id', $item->id)->sum('total');
+        array_push($array_delivery, $miaux.' "'.$item->name.'" con Bs '.$miaux2);
+    }
+
+    $array_estados = array();
+    foreach (Estado::all() as $item) {
+        $miaux = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->caja_id)->where('status_id', $item->id)->count();
+        $miaux2 = Venta::whereBetween('created_at', [$midata2->date1, $midata2->date2])->where('register_id', $midata2->caja_id)->where('status_id', $item->id)->sum('total');
+        array_push($array_estados, $miaux.' "'.$item->title.'" con Bs '.$miaux2);
+    }
     return response()->json([
         'cantidad' => $cantidad,
         'total' => $total,
