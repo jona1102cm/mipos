@@ -54,16 +54,16 @@
                             <form method="get" class="form-search">
                                 <div id="search-input">
                                     <div class="col-4">
-                                        <select id="search_key" name="key" style="width: 250px" class="js-example-basic-single">
-                                                <option value=""> ---- Elige un Filtro ----</option>
+                                        <select id="search_key" name="key" style="width: 300px" class="">
+                                                {{-- <option value=""> ---- Elige un Filtro ----</option> --}}
+                                                <option value="id">Buscar por ID</option>
                                                 {{-- <option value="caja_id"> Cajas </option> --}}
                                                 {{-- <option value="cliente_id"> Cliente </option> --}}
                                                 {{-- <option value="sucursal_id"> Sucursal </option> --}}
-                                                <option value="delivery_id"> Deliverys</option>
+                                                {{-- <option value="delivery_id"> Deliverys</option> --}}
                                                 {{-- <option value="chofer_id"> Choferes </option> --}}
                                                 {{-- <option value="register_id"> Editor </option> --}}
                                                 <option value="chofer_deudas"> Deudas de Choferes </option>
-
                                                 <option value="credito">Cobro Créditos</option>
                                                 <option value="reportes"> Reportes </option>
                                                 @if(setting('empresa.type_negocio')=="Restaurente")
@@ -71,11 +71,16 @@
                                                 @endif
                                         </select>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-2">
                                         <select id="filter" name="filter">
                                                 <option value="equals"> = </option>
+                                                {{-- <option value="contains">LIKE</option> --}}
                                         </select>
-                                        <select class="js-example-basic-single" id="s" name="s" onchange="this.form.submit()" style="width: 350px"></select>
+                                        {{-- <select class="js-example-basic-single" id="s" name="s" onchange="this.form.submit()" style="width: 350px"></select> --}}
+
+                                    </div>
+                                    <div class="col-4">
+                                        <input class="form-control" type="search"  id="s" name="s" onchange="this.form.submit()">
                                     </div>
                                 </div>
 
@@ -731,6 +736,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('voyager::generic.close') }}"><span aria-hidden="true">&times;</span></button>
                    <h4>Ventas a Crédito</h4>
                 </div>
                 <div class="modal-body">
@@ -739,23 +745,21 @@
                         <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Créditos</a></li>
                         <li role="presentation" ><a href="#historial" aria-controls="historial" role="tab" data-toggle="tab">Historial</a></li>
                         <li role="presentation" ><a href="#cobro" aria-controls="cobro" role="tab" data-toggle="tab">Cobrar</a></li>
-
                     </ul>
                     <div class="tab-content">
 
                         <div role="tabpanel" class="tab-pane active" id="home">
-                                <div class="col-sm-4">
-                                    <strong>Elija una Sucursal</strong>
-                                    <select name="" id="sucursal_consulta" class="form-control js-example-basic-single"></select>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    {{-- <strong>Elija una Sucursal</strong> --}}
+                                    <select name="" id="sucursal_consulta" class="form-control" data-width="100%"></select>
                                 </div>
-                                <div class="col-sm-4">
-                                    <strong>Elija un Cliente</strong>
+                                <div class="col-sm-6">
+                                    {{-- <strong>Elija un Cliente</strong> --}}
                                     <select name="" id="cliente_consulta" class="form-control js-example-basic-single"></select>
                                 </div>
-                                <div class="col-sm-7">
-                                    <button type="button" class="btn btn-primary pull-right" onclick="ConsultarCredito()">Consultar</button>
-                                </div>
-                                <div class="col-sm-12">
+                                <div class="col-sm-12 text-center">
+                                    <button type="button" class="btn btn-dark" onclick="ConsultarCredito()"> <i class="voyager-search"></i> Consultar</button>
                                     <table class="table" id="table_consultas_cobros">
                                         <thead>
                                             <tr>
@@ -771,7 +775,7 @@
                                         </tbody>
                                     </table>
                                 </div>
-                            <button type="button" class="btn btn-default pull-right" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
+                            </div>
                         </div>
 
                         <div role="tabpanel" class="tab-pane" id="historial">
@@ -835,8 +839,8 @@
                                     <input class="form-control" type="hidden" placeholder="Ingrese Restante" id="restante">
                                 </div>
                             </div>
-                            <button type="button" class="btn btn-primary pull-right" onclick="ActualizarCredito()">Guardar</button>
-                            <button type="button" class="btn btn-default pull-right" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
+                            <button type="button" class="btn btn-dark" onclick="ActualizarCredito()">Guardar</button>
+                            {{-- <button type="button" class="btn btn-default pull-right" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button> --}}
                         </div>
                     </div>
 
@@ -970,7 +974,6 @@
                             <div class="col-sm-5">
                                 <button type="button" class="btn btn-primary" id="" onclick="modal_conversion()">Convertir a Factura</button>
                             </div>
-
                         </div>
                         <div role="tabpanel" class="tab-pane" id="profile">
                             <div class="form-group col-sm-6">
@@ -992,10 +995,6 @@
                                 <tbody>
                                 </tbody>
                             </table>
-
-
-
-
                         </div>
                         <div role="tabpanel" class="tab-pane" id="create">
 
@@ -1336,7 +1335,7 @@
 
 
                 $('#search_key').on('change', async function() {
-                    $('.js-example-basic-single').select2();
+                    // $('.js-example-basic-single').select2();
                     switch (this.value) {
                         case 'cliente_id':
                             $('#s').find('option').remove().end();
@@ -1525,6 +1524,7 @@
                         case 'reportes':
                             $('#modal_reportes').modal();
                             $('#register_id').find('option').remove().end();
+
                             $.ajax({
                                 url: "{{setting('admin.url')}}api/pos/cajeros",
                                 dataType: "json",
@@ -1539,8 +1539,13 @@
                                             text: response[index].name
                                         }));
                                     }
+                                    $('#register_id').append($('<option>', {
+                                        value: 'all',
+                                        text: 'Todos los Cajeros'
+                                    }));
                                 }
                             });
+                            $('#caja_id').find('option').remove().end();
                             $.ajax({
                                 url: "{{setting('admin.url')}}api/pos/cajas",
                                 dataType: "json",
@@ -1555,6 +1560,10 @@
                                             text: response[index].title
                                         }));
                                     }
+                                    $('#caja_id').append($('<option>', {
+                                        value: 'all',
+                                        text: 'Todas las Cajas'
+                                    }));
                                 }
                             });
                         break
@@ -1729,20 +1738,20 @@
                 }
 
                 async function sucursal_consulta(){
-                    $('#sucursal_consulta').find('option').remove().end();
-                    var table= await axios.get("{{setting('admin.url')}}api/pos/sucursales");
-
+                    $('#sucursal_consulta').find('option').remove().end()
+                    var table= await axios.get("{{setting('admin.url')}}api/pos/sucursales")
                     $('#sucursal_consulta').append($('<option>', {
-                        value: 0,
+                        value: null,
                         text: 'Elige una Sucursal'
                     }));
                     for (let index = 0; index < table.data.length; index++) {
-                        const element = table.data[index];
+                        // const element = table.data[index];
                         $('#sucursal_consulta').append($('<option>', {
                             value: table.data[index].id,
                             text: table.data[index].name
                         }));
                     }
+                    // cliente_consulta()
                 }
 
                 $('#sucursal_consulta').on('change', function() {
@@ -1753,7 +1762,7 @@
                     $('#cliente_consulta').find('option').remove().end();
                     var table= await axios.get("{{setting('admin.url')}}api/pos/clientes");
                     $('#cliente_consulta').append($('<option>', {
-                        value: 0,
+                        value: null,
                         text: 'Elige una Sucursal'
                     }));
                     for (let index = 0; index < table.data.length; index++) {
@@ -1959,12 +1968,16 @@
                 })
                 var ventas = await axios("{{ setting('admin.url') }}api/pos/ventas/fechas/caja/"+midata)
                 $('#report_table tbody tr').remove();
-                $('#report_table').append("<tr><td>Total Bs: </td><td> "+ventas.data.total+"</td></tr>");
-                $('#report_table').append("<tr><td>Cantidad: </td><td> "+ventas.data.cantidad+"</td></tr>");
-                $('#report_table').append("<tr><td>Pasarelas: </td><td> "+ventas.data.pasarelas+"</td></tr>");
-                $('#report_table').append("<tr><td>Impuestos: </td><td> "+ventas.data.impuestos+"</td></tr>");
-                $('#report_table').append("<tr><td>Delivery: </td><td> "+ventas.data.delivery+"</td></tr>");
-                $('#report_table').append("<tr><td>Estados: </td><td> "+ventas.data.estados+"</td></tr>");
+                if (ventas.data) {
+                    $('#report_table').append("<tr><td>Total Ventas Bs: </td><td> "+ventas.data.total+"</td></tr>");
+                    $('#report_table').append("<tr><td>Cantidad de Ventas: </td><td> "+ventas.data.cantidad+"</td></tr>");
+                    $('#report_table').append("<tr><td>Pasarelas: </td><td> "+makeTableHTML(ventas.data.pasarelas)+"</td></tr>");
+                    $('#report_table').append("<tr><td>Impuestos: </td><td> "+makeTableHTML(ventas.data.impuestos)+"</td></tr>");
+                    $('#report_table').append("<tr><td>Delivery: </td><td> "+makeTableHTML(ventas.data.delivery)+"</td></tr>");
+                    $('#report_table').append("<tr><td>Estados: </td><td> "+makeTableHTML(ventas.data.estados)+"</td></tr>");
+                } else {
+                    toastr.error('Ingresa fechas validas')
+                }
             });
 
             $('#register_id').on('change', async function() {
@@ -1978,13 +1991,30 @@
                 })
                 var ventas = await axios("{{ setting('admin.url') }}api/pos/ventas/fechas/editor/"+midata)
                 $('#report_table tbody tr').remove();
-                $('#report_table').append("<tr><td>Total Bs: </td><td> "+ventas.data.total+"</td></tr>");
-                $('#report_table').append("<tr><td>Cantidad: </td><td> "+ventas.data.cantidad+"</td></tr>");
-                $('#report_table').append("<tr><td>Pasarelas: </td><td> "+ventas.data.pasarelas+"</td></tr>");
-                $('#report_table').append("<tr><td>Impuestos: </td><td> "+ventas.data.impuestos+"</td></tr>");
-                $('#report_table').append("<tr><td>Delivery: </td><td> "+ventas.data.delivery+"</td></tr>");
-                $('#report_table').append("<tr><td>Estados: </td><td> "+ventas.data.estados+"</td></tr>");
+                if (ventas.data) {
+                    $('#report_table').append("<tr><td>Total Bs: </td><td> "+ventas.data.total+"</td></tr>");
+                    $('#report_table').append("<tr><td>Cantidad: </td><td> "+ventas.data.cantidad+"</td></tr>");
+                    $('#report_table').append("<tr><td>Pasarelas: </td><td> "+makeTableHTML(ventas.data.pasarelas)+"</td></tr>");
+                    $('#report_table').append("<tr><td>Impuestos: </td><td> "+makeTableHTML(ventas.data.impuestos)+"</td></tr>");
+                    $('#report_table').append("<tr><td>Delivery: </td><td> "+makeTableHTML(ventas.data.delivery)+"</td></tr>");
+                    $('#report_table').append("<tr><td>Estados: </td><td> "+makeTableHTML(ventas.data.estados)+"</td></tr>");
+                } else {
+                    toastr.error('Ingresa fechas validas')
+                }
             });
+
+            function makeTableHTML(myArray) {
+                var result = "<table border=0>";
+                for(var i=0; i<myArray.length; i++) {
+                    result += "<tr>";
+                    for(var j=0; j<myArray[i].length; j++){
+                        result += "<td>"+myArray[i][j]+"</td>";
+                    }
+                    result += "</tr>";
+                }
+                result += "</table>";
+                return result;
+            }
 
     </script>
 @stop

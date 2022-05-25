@@ -20,14 +20,21 @@ class Producto extends Model
         'precio_compra',
         'images',
         'vencimiento',
-        'mixta',
         'type_producto_id',
         'extra',
         'extras',
         'ecommerce',
         'presentacion_id',
+        'laboratorio_id',
         'marca_id',
-        'status'
+        'title',
+        'lote',
+        'registro_sanitario',
+        'origen',
+        'sku',
+        'etiqueta',
+        'sucursal_id',
+        'mixta'
 	];
 
 	public function categoria()

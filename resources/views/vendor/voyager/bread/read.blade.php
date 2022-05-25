@@ -288,51 +288,38 @@
                                             <input type="number" class="form-control" id="total_compras" readonly>
                                         </div>
 
-                                        @php
-                                            $midata = App\Producto::find($dataTypeContent->getKey());
-                                            $fecha_vec =$midata->vencimiento ? $midata->vencimiento :null;
-                                            $stock_original=$midata->stock ? $midata->stock:null;
 
-                                            $categoria_id= $midata->categoria_id ? $midata->categoria_id :null;
-                                            $description= $midata->description ? $midata->description :null;
-                                            $image= $midata->image ? $midata->image :null;
-                                            $production= $midata->production ? $midata->production :null;
-                                            $description_long=  $midata->description_long ? $midata->description_long :null;
-                                            $images=  $midata->images ? $midata->images :null;
-                                            $mixta=  $midata->mixta ? $midata->mixta :null;
-                                            $type_producto_id=  $midata->type_producto_id ? $midata->type_producto_id :null;
-                                            $extra=  $midata->extra ? $midata->extra :null;
-                                            $extras=  $midata->extras ? $midata->extras :null;
-                                            $ecommerce=  $midata->ecommerce ? $midata->ecommerce :null;
-                                            $presentacion_id=  $midata->presentacion_id ? $midata->presentacion_id :null;
-                                            $laboratorio_id=  $midata->laboratorio_id ? $midata->laboratorio_id :null;
-                                            $marca_id=  $midata->marca_id ? $midata->marca_id :null;
+                                        <input type="hidden" class="form-control" id="producto_compras" >
+                                        <input type="hidden" class="form-control" id="fecha_vec_original">
+                                        <input type="hidden" class="form-control" id="stock_original" >
 
 
 
-                                        @endphp
-                                        <input type="hidden" class="form-control" id="producto_compras" value="{{$dataTypeContent->getKey()}}" >
-                                        <input type="hidden" class="form-control" id="fecha_vec_original" value="{{$fecha_vec}}">
-                                        <input type="hidden" class="form-control" id="stock_original" value="{{$stock_original}}">
-
-
-
-                                        <input type="hidden" class="form-control" id="categoria_id" value="{{$categoria_id}}">
+                                        <input type="hidden" class="form-control" id="categoria_id" >
                                         <input type="hidden" class="form-control" id="editor_id" >
-                                        <input type="hidden" class="form-control" id="name_producto" value="{{$midata->name}}" >
-                                        <input type="hidden" class="form-control" id="descripcion_compras_producto" value="{{$description}}" >
-                                        <input type="hidden" class="form-control" id="image" value="{{$image}}" >
-                                        <input type="hidden" class="form-control" id="production" value="{{$production}}" >
-                                        <input type="hidden" class="form-control" id="description_long" value="{{$description_long}}" >
-                                        <input type="hidden" class="form-control" id="images" value="{{$images}}" >
-                                        <input type="hidden" class="form-control" id="mixta" value="{{$mixta}}" >
-                                        <input type="hidden" class="form-control" id="type_producto_id" value="{{$type_producto_id}}" >
-                                        <input type="hidden" class="form-control" id="extra" value="{{$extra}}" >
-                                        <input type="hidden" class="form-control" id="extras" value="{{$extras}}" >
-                                        <input type="hidden" class="form-control" id="ecommerce" value="{{$ecommerce}}" >
-                                        <input type="hidden" class="form-control" id="presentacion_id" value="{{$presentacion_id}}" >
-                                        <input type="hidden" class="form-control" id="laboratorio_id" value="{{$laboratorio_id}}" >
-                                        <input type="hidden" class="form-control" id="marca_id" value="{{$marca_id}}" >
+                                        <input type="hidden" class="form-control" id="name_producto"  >
+                                        <input type="hidden" class="form-control" id="descripcion_compras_producto"  >
+                                        <input type="hidden" class="form-control" id="image"  >
+                                        <input type="hidden" class="form-control" id="production"  >
+                                        <input type="hidden" class="form-control" id="description_long"  >
+                                        <input type="hidden" class="form-control" id="images"  >
+                                        <input type="hidden" class="form-control" id="mixta"  >
+                                        <input type="hidden" class="form-control" id="type_producto_id"  >
+                                        <input type="hidden" class="form-control" id="extra"  >
+                                        <input type="hidden" class="form-control" id="extras"  >
+                                        <input type="hidden" class="form-control" id="ecommerce"  >
+                                        <input type="hidden" class="form-control" id="presentacion_id"  >
+                                        <input type="hidden" class="form-control" id="laboratorio_id"  >
+                                        <input type="hidden" class="form-control" id="marca_id" >
+                                        <input type="hidden" class="form-control" id="title_generico"  >
+                                        <input type="hidden" class="form-control" id="lote"  >
+                                        <input type="hidden" class="form-control" id="registro_sanitario"  >
+                                        <input type="hidden" class="form-control" id="origen"  >
+                                        <input type="hidden" class="form-control" id="sku"  >
+                                        <input type="hidden" class="form-control" id="etiqueta"  >
+                                        <input type="hidden" class="form-control" id="sucursal_id"  >
+
+
 
 
 
@@ -520,7 +507,6 @@
             <script>
                 $('document').ready(function () {
                     $('.js-example-basic-single').select2();
-                    $('#editor_id').val('{{ Auth::user()->id }}');
                     UpdateCosto();
                     Proveedores_Compras();
                     // Unidades_Compras();
@@ -660,17 +646,52 @@
         @section('javascript')
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <script>
-            $('document').ready(function () {
+            $('document').ready(async function () {
                 $('.js-example-basic-single').select2();
                 $('#editor_id').val('{{ Auth::user()->id }}');
                 UpdateCosto();
                 Proveedores_Compras();
                 // Unidades_Compras();
+                LLenarInputs()
 
 
 
 
             });
+
+            async function LLenarInputs() {
+                var prod="{{$dataTypeContent->getKey()}}"
+
+                var table = await axios("{{setting('admin.url')}}api/pos/producto/"+prod)
+
+                $('#producto_compras').val(table.data.id)
+                $('#fecha_vec_original').val(table.data.vencimiento)
+                $('#stock_original').val(table.data.stock)
+
+                $('#categoria_id').val(table.data.categoria_id)
+                $('#editor_id').val('{{ Auth::user()->id }}')
+                $('#name_producto').val(table.data.name)
+                $('#descripcion_compras_producto').val(table.data.description)
+                $('#image').val(table.data.image)
+                $('#production').val(table.data.production)
+                $('#description_long').val(table.data.description_long)
+                $('#images').val(table.data.images)
+                $('#mixta').val(table.data.mixta)
+                $('#type_producto_id').val(table.data.type_producto_id)
+                $('#extra').val(table.data.extra)
+                $('#extras').val(table.data.extras)
+                $('#ecommerce').val(table.data.ecommerce)
+                $('#presentacion_id').val(table.data.presentacion_id)
+                $('#laboratorio_id').val(table.data.laboratorio_id)
+                $('#marca_id').val(table.data.marca_id)
+                $('#title_generico').val(table.data.title)
+                $('#lote').val(table.data.lote)
+                $('#registro_sanitario').val(table.data.registro_sanitario)
+                $('#origen').val(table.data.origen)
+                $('#sku').val(table.data.sku)
+                $('#etiqueta').val(table.data.etiqueta)
+                $('#sucursal_id').val(table.data.sucursal_id)
+            }
 
             async function UpdateCosto(){
 
@@ -737,10 +758,18 @@
                 var presentacion_id=$('#presentacion_id').val();
                 var laboratorio_id=$('#laboratorio_id').val();
                 var marca_id=$('#marca_id').val();
+                var title_generico=$('#title_generico').val()
+                var lote=$('#lote').val()
+                var registro_sanitario=$('#registro_sanitario').val()
+                var origen=$('#origen').val()
+                var sku=$('#sku').val()
+                var etiqueta=$('#etiqueta').val()
+                var sucursal_id= $('#sucursal_id').val()
 
-                var midata = JSON.stringify({'description':description, 'editor_id':editor_id, 'cantidad':cantidad, 'costo':costo,'total':total, 'proveedor_id':proveedor_id, 'producto_id':producto_id, 'categoria_id':categoria_id, 'description_producto':description_producto, 'vencimiento':vencimiento, 'precio_venta':precio_venta,'name':name, 'image':image,'production':production, 'description_long':description_long, 'images':images, 'mixta':mixta, 'type_producto_id':type_producto_id, 'extra':extra, 'extras':extras, 'ecommerce':ecommerce, 'presentacion_id':presentacion_id, 'laboratorio_id':laboratorio_id, 'marca_id':marca_id, 'title':title});
 
-                var producto= await axios("{{setting('admin.url')}}api/pos/addproducto/"+midata);
+                var midata = JSON.stringify({'description':description, 'editor_id':editor_id, 'cantidad':cantidad, 'costo':costo,'total':total, 'proveedor_id':proveedor_id, 'producto_id':producto_id, 'categoria_id':categoria_id, 'description_producto':description_producto, 'vencimiento':vencimiento, 'precio_venta':precio_venta,'name':name, 'image':image,'production':production, 'description_long':description_long, 'images':images, 'mixta':mixta, 'type_producto_id':type_producto_id, 'extra':extra, 'extras':extras, 'ecommerce':ecommerce, 'presentacion_id':presentacion_id, 'laboratorio_id':laboratorio_id, 'marca_id':marca_id, 'title':title, 'title_generico':title_generico,'lote':lote, 'registro_sanitario':registro_sanitario,'origen':origen,'sku':sku,'etiqueta':etiqueta,'sucursal_id':sucursal_id });
+                var miurl = "{{setting('admin.url')}}api/pos/addproducto/"+midata
+                var producto= await axios(miurl);
 
                 if(producto.data.length!=0){
                     toastr.success("Producto Creado exitosamente");
@@ -777,7 +806,14 @@
                     $('#ecommerce').val("");
                     $('#presentacion_id').val("");
                     $('#laboratorio_id').val("");
-                    $('marca_id').val("");
+                    $('#marca_id').val("");
+                    $('#title_generico').val("");
+                    $('#lote').val("");
+                    $('#registro_sanitario').val("");
+                    $('#origen').val("");
+                    $('#sku').val("");
+                    $('#etiqueta').val("");
+
                      //$ins= App\Insumo::find(insumo_id);
                     toastr.success('Se Registró la Compra');
 

@@ -1555,7 +1555,6 @@
         $('#efectivo_entregado').val(total_corte);
 
         var cortes = JSON.stringify({corte: '0.5', cantidad: 10, valor: 5});
-        // $('#cortes').val(cortes);
     }
 
     //get totales
@@ -1567,7 +1566,6 @@
             url: "{{ setting('admin.url') }}api/pos/caja/get_total/"+midata,
             dataType: "json",
             success: function (response) {
-                // console.log(response);
                 $('#cant_ventas').val(response.cantidad);
                 $('#total_ventas').val(response.total);
                 $('#importe_inicial').val(micaja.importe);
@@ -1576,14 +1574,10 @@
                 $('#venta_efectivo').val(response.total_efectivo);
                 $('#venta_tarjeta').val(response.total_tarjeta);
                 $('#venta_qr').val(response.total_qr);
-                // $('#venta_transferencia').val(response.total_transferencia);
-                // $('#venta_tigomoney').val(response.total_tigomoney);
                 $('#venta_banipay').val(response.total_banipay);
                 $('#cantidad_efectivo').val(response.cantidad_efectivo);
                 $('#cantidad_tarjeta').val(response.cantidad_tarjeta);
                 $('#cantidad_qr').val(response.cantidad_qr);
-                // $('#cantidad_transferencia').val(response.cantidad_transferencia);
-                // $('#cantidad_tigomoney').val(response.cantidad_tigomoney);
                 $('#cantidad_banipay').val(response.cantidad_banipay);
                 $('#ingreso_efectivo').val(response.ingreso_efectivo);
                 $('#ingreso_linea').val(response.ingreso_linea);
@@ -1605,12 +1599,9 @@
         var total_efectivo_ingresos=0;
         var total_efectivo_egreso=0;
         var total_efectivo_egresos=0;
-
         var micaja = JSON.parse(localStorage.getItem('micaja'));
         var midata = JSON.stringify({caja_id: micaja.caja_id, editor_id: editor});
         var urli = "{{ setting('admin.url') }}api/pos/asientos/caja/editor/"+midata;
-        // console.log(urli);
-
         $.ajax({
             url: urli,
             dataType: "json",
@@ -1619,7 +1610,6 @@
                     toastr.error('Sin Resultados.');
                 } else {
                     for (let index = 0; index < response.length; index++) {
-
                         if (response[index].pago == 0) {
                             var pagotext="En Linea";
                             if(response[index].type=="Ingresos"){
@@ -1639,12 +1629,10 @@
 
                             }
                         }
-
                         mitable = mitable + "<tr><td>"+response[index].id+"</td><td>"+response[index].type+"</td><td>"+pagotext+"</td><td>"+response[index].monto+"</td><td>"+response[index].concepto+"</td><td>"+response[index].created_at+"</td></tr>";
                     }
                     $('#asiento_list').append(mitable);
                     if('{{setting('ventas.fila_totales')}}'){
-
                         $('#asiento_list').append("<tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>");
                         $('#asiento_list').append("<tr><td></td><td><h4>Total Efectivo: <h4></td><td><h4>"+(total_efectivo_ingresos-total_efectivo_egresos)+"</h4></td><td></td><td><h4>Total Banipay: </h4></td><td><h4>"+(total_banipay_ingresos-total_banipay_egresos)+"</h4></td></tr>");
                     }
@@ -1730,7 +1718,6 @@
         var inventario = false;
         if("{{setting('ventas.stock')}}"){
             inventario = true;
-            //var miresponse1 = await axios.get("{{ setting('admin.url') }}api/pos/producto/"+mixta1);
             prod1=miresponse1.data.name;
             cant_actual1 = miresponse1.data.stock;
             if(cant_actual1>1){
@@ -1741,7 +1728,6 @@
             }
         }
         if("{{setting('ventas.stock')}}"){
-            //var miresponse2 = await axios.get("{{ setting('admin.url') }}api/pos/producto/"+mixta2);
             prod2=miresponse2.data.name;
             cant_actual2 = miresponse2.data.stock;
             if(cant_actual2>1){
@@ -1757,24 +1743,19 @@
                 if(cant_i2){
                     var vencimiento1=miresponse1.vencimiento ? miresponse1.vencimiento :1;
                     var vencimiento2=miresponse2.vencimiento ? miresponse2.vencimiento :1;
-
                     if(vencimiento1 || CalculoDiasRestantes(miresponse1.vencimiento)>=1){
-
-
                         if(vencimiento2 || CalculoDiasRestantes(miresponse2.vencimiento)>=1){
-                            var micart = JSON.parse(localStorage.getItem('micart'));
+                            var micart_t = JSON.parse(localStorage.getItem('micart'));
                             var description = $('#mixta1 :selected').text() + ' - ' + $('#mixta2 :selected').text();
                             $.ajax({
                             url: "{{ setting('admin.url') }}api/pos/producto/"+id,
                             dataType: "json",
                             success: function (response) {
-                                Math.floor
                                 $('#mixtos').attr("hidden", true);
-                                $("#micart").append("<tr id="+newcode+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' id='observacion_"+newcode+"'></td><td><a class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+", "+response.id+","+newcode+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+newcode+"' onchange='updateprice("+response.id+","+newcode+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+","+newcode+")' value='1' id='cant_"+newcode+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+newcode+"' readonly></td><td><a class='btn btn-sm btn-danger' onclick='midelete("+newcode+")'><i class='voyager-trash'></i></a></td></tr>");
                                 var temp = {'code':newcode,'id': response.id, 'image': response.image, 'name': response.name, 'precio': response.precio, 'precio_inicial':response.precio , 'cant': 1, 'total': response.precio, 'description': description, 'extra': response.extra, 'extras':response.extras, 'extra_name':'', 'observacion':'' };
-                                micart.push(temp);
-                                localStorage.setItem('micart', JSON.stringify(micart));
-                                mitotal();
+                                micart_t.push(temp);
+                                localStorage.setItem('micart', JSON.stringify(micart_t));
+                                micart();
                                 toastr.success(response.name+" - REGISTRADO");
                                 }
                             });
@@ -1795,26 +1776,20 @@
         }
         else{
             var newprecio = (miresponse1.data.precio > miresponse2.data.precio) ?  miresponse1.data.precio : miresponse2.data.precio
-            var micart = JSON.parse(localStorage.getItem('micart'));
+            var micart_t = JSON.parse(localStorage.getItem('micart'));
             var miproduct = JSON.parse(localStorage.getItem('miproduct'));
             var description = $('#mixta1 :selected').text() + ' - ' + $('#mixta2 :selected').text();
             $.ajax({
                 url: "{{ setting('admin.url') }}api/pos/producto/"+miproduct.id,
                 dataType: "json",
                 success: function (response) {
-
                     var miimage =response.image ? response.image : "{{ setting('productos.imagen_default') }}";
-
                     $('#mixtos').attr("hidden", true);
-                    $("#micart").append("<tr id="+newcode+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+response.image+"></td><td>"+response.name+"<br>"+description+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+response.id+","+newcode+")' id='observacion_"+newcode+"'></td><td><a class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras'onclick='addextra("+response.extras+", "+response.id+","+newcode+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+newprecio+"' id='precio_"+newcode+"' onchange='updateprice("+response.id+","+newcode+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+","+newcode+")' value='1' id='cant_"+newcode+"'></td><td><input class='form-control' type='number' value='"+newprecio+"' id='total_"+newcode+"' readonly></td><td><a class='btn btn-sm btn-danger' onclick='midelete("+newcode+")'><i class='voyager-trash'></i></a></td></tr>");
-
                     var temp = {'code': newcode, 'id': response.id, 'image': miimage, 'name': response.name, 'precio': newprecio, 'precio_inicial': newprecio, 'cant': 1, 'total': newprecio, 'description': description, 'extra': response.extra, 'extras':response.extras, 'extra_name':'', 'observacion':''};
-                    micart.push(temp);
-                    localStorage.setItem('micart', JSON.stringify(micart));
-
-                    mitotal();
+                    micart_t.push(temp);
+                    localStorage.setItem('micart', JSON.stringify(micart_t));
+                    micart();
                     toastr.success(response.name+" - REGISTRADO");
-
                 }
             });
 
@@ -1885,14 +1860,10 @@
         var venta_efectivo = $('#venta_efectivo').val();
         var venta_tarjeta = $('#venta_tarjeta').val();
         var venta_qr = $('#venta_qr').val();
-        // var venta_transferencia = $('#venta_transferencia').val();
-        // var venta_tigomoney = $('#venta_tigomoney').val();
         var venta_banipay = $('#venta_banipay').val();
         var cantidad_efectivo = $('#cantidad_efectivo').val();
         var cantidad_tarjeta = $('#cantidad_tarjeta').val();
         var cantidad_qr = $('#cantidad_qr').val();
-        // var cantidad_transferencia = $('#cantidad_transferencia').val();
-        // var cantidad_tigomoney = $('#cantidad_tigomoney').val();
         var cantidad_banipay = $('#cantidad_banipay').val();
         var efectivo_entregado = $('#efectivo_entregado').val();
         var cortes = $('#cortes').val();
@@ -1907,7 +1878,6 @@
         $.ajax({
             url: "{{ setting('admin.url') }}api/pos/caja/detalle/save/"+midata,
             success: function (response){
-
                 localStorage.removeItem('micaja');
                 window.open( "{{ setting('admin.url') }}admin/detalle_cajas/imprimir/"+response.id, "Recibo", "width=500,height=700");
                 location.href = '/admin/profile';
@@ -1918,57 +1888,28 @@
     async function venta_caja() {
         $('#productos_caja tbody').empty();
         var user_id = '{{ Auth::user()->id }}';
-        // var cliente_pagina_id= {{setting('ventas.cliente_pag_id')}};
-        // var chatbot_id={{setting('ventas.chatbot_id')}};
-
-        // console.log(cliente_pagina_id);
-        // console.log(chatbot_id);
-
         var misventas = await axios("{{ setting('admin.url') }}api/pos/ventas/caja/"+$("input[name='caja_id']").val()+"/"+user_id);
         var total_efectivo=0;
         var total_banipay=0;
         var total_tarjeta=0;
         var total_qr=0;
         for (let index = 0; index < misventas.data.length; index++) {
-            // console.log(misventas.data[index].register_id);
+            if(misventas.data[index].pasarela.id==6){
+                total_tarjeta+=misventas.data[index].total;
+            }
+            else if(misventas.data[index].pasarela.id==7){
+                total_qr+=misventas.data[index].total;
+            }
+            else{
+                total_efectivo+=misventas.data[index].total;
+            }
+            if(misventas.data[index].option_id=="{{ setting('ventas.pedido_domicilio_id') }}"||misventas.data[index].option_id=="{{ setting('ventas.delivery_zona1') }}"||misventas.data[index].option_id=="{{ setting('ventas.delivery_zona2') }}"){
 
-            // if(misventas.data[index].register_id==user_id||misventas.data[index].register_id==cliente_pagina_id||misventas.data[index].register_id==chatbot_id){}
-                //console.log("Hola");
-
-                // var banipay = await axios("{{ setting('admin.url') }}api/pos/banipay/get/"+misventas.data[index].id);
-                // var milink = "{{ setting('banipay.url_base') }}"+banipay.data.urlTransaction
-
-                // if(misventas.data[index].pasarela.id=="{{setting('ventas.banipay_1')}}"||misventas.data[index].pasarela.id=="{{setting('ventas.banipay_2')}}"){
-                //     total_banipay+=misventas.data[index].total;
-
-                //     if(misventas.data[index].option_id=="{{ setting('ventas.pedido_domicilio_id') }}"||misventas.data[index].option_id=="{{ setting('ventas.delivery_zona1') }}"||misventas.data[index].option_id=="{{ setting('ventas.delivery_zona2') }}"){
-                //         $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"<br><a href='"+milink+"' target='_blank'>Link de Pago</a></td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td><a href='#deliverys' aria-controls='deliverys' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' onclick='set_chofer("+misventas.data[index].id+")'>Chofer</a></td></tr>");
-                //     }
-                //     else{
-                //         $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"<br><a href='"+milink+"' target='_blank'>Link de Pago</a></td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td></td></tr>");
-                //     }
-
-                // }
-                // else{
-                    if(misventas.data[index].pasarela.id==6){
-                        total_tarjeta+=misventas.data[index].total;
-                    }
-                    else if(misventas.data[index].pasarela.id==7){
-                        total_qr+=misventas.data[index].total;
-                    }
-                    else{
-                        total_efectivo+=misventas.data[index].total;
-                    }
-
-                    if(misventas.data[index].option_id=="{{ setting('ventas.pedido_domicilio_id') }}"||misventas.data[index].option_id=="{{ setting('ventas.delivery_zona1') }}"||misventas.data[index].option_id=="{{ setting('ventas.delivery_zona2') }}"){
-
-                        $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"</td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td><a href='#deliverys' aria-controls='deliverys' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' onclick='set_chofer("+misventas.data[index].id+")'>Chofer</a></td></tr>");
-                    }
-                    else{
-                        $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"</td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td></td></tr>");
-                    }
-                // }
-
+                $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"</td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td><a href='#deliverys' aria-controls='deliverys' role='tab' data-toggle='tab' class='btn btn-sm btn-primary' onclick='set_chofer("+misventas.data[index].id+")'>Chofer</a></td></tr>");
+            }
+            else{
+                $("#productos_caja").append("<tr><td>"+misventas.data[index].id+"</td><td>"+misventas.data[index].pasarela.title+"</td><td>"+misventas.data[index].cliente.display+"</td><td>"+misventas.data[index].delivery.name+"</td><td>"+misventas.data[index].chofer.name+"</td><td>"+misventas.data[index].factura+"</td><td>"+misventas.data[index].ticket+"</td><td>"+misventas.data[index].total+"</td><td>"+misventas.data[index].caja_status+"</td><td>"+misventas.data[index].published+"</td><td></td></tr>");
+            }
         }
         if('{{setting('ventas.fila_totales')}}'){
             $("#productos_caja").append("<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>");
@@ -2011,7 +1952,6 @@
                 var micaja = JSON.parse(localStorage.getItem('micaja'));
                 $("input[name='caja_id']").val(micaja.caja_id);
                 $("input[name='sucursal_id']").val(micaja.sucursal_id);
-
                 $("#info_caja").html("<h4>"+micaja.title+" - "+micaja.sucursal+" - "+micaja.importe+" Bs. - <a href='#' onclick='reset()'>Reset</a></h4>");
                 toastr.success('Caja Abierta Correctamente.');
                 $('#micaja').modal('hide');
@@ -2108,8 +2048,6 @@
             toastr.error('Tu Carrito esta Vacio');
         }
         else{
-
-            //Nro_Factura();
             toastr.warning('Realizando nuevo pedido..');
             var cliente_id = $("input[name='cliente_id']").val();
             var cupon_id = $("input[name='cupon_id']").val();
@@ -2171,20 +2109,15 @@
                         var midata3 = JSON.stringify({paymentId: banipay.data.paymentId, transactionGenerated: banipay.data.transactionGenerated, externalCode: banipay.data.externalCode})
                         await axios.get("{{ setting('admin.url') }}api/pos/banipay/save/"+midata3)
 
-
                         if ($("input[name='season']:checked").val() == 'imprimir') {
                             localStorage.setItem('micart', JSON.stringify([]));
                                 const myWindow = window.open( "{{ setting('admin.url') }}admin/ventas/imprimir/"+venta.data.id, "Recibo o Factura", "width=600,height=900");
                                 setTimeout(function() {myWindow.close()}, {{ setting('impresion.tiempo_cierre') }});
                         }else{
                             localStorage.setItem('micart', JSON.stringify([]));
-                            // toastr.info('Venta #'+venta.data.id+' Realizada Correctamente');
                         }
-
                     break;
                 default:
-                    // console.log('default')
-                    // var venta = await axios.get("{{ setting('admin.url') }}api/pos/ventas/save/"+midata)
                     for (let index = 0; index < micart.length; index++) {
                         var midata2 = JSON.stringify({'producto_id': micart[index].id, 'venta_id': venta.data.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'name':micart[index].name, 'foto':micart[index].foto, 'description': micart[index].description, 'extra_name':micart[index].extra_name, 'observacion':micart[index].observacion});
                         var impresion="{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata2
@@ -2193,7 +2126,6 @@
                         mitotal()
 
                     }
-                    //console.log(venta.data)
                     if(venta.data.credito=="Credito"){
                        CrearCredito(venta.data.id, venta.data.cliente_id);
                     }
@@ -2204,27 +2136,19 @@
                             setTimeout(function() {myWindow.close()}, {{ setting('impresion.tiempo_cierre') }});
                     }else{
                         localStorage.setItem('micart', JSON.stringify([]));
-                        // toastr.success('Venta Realizada');
                     }
                     break;
             }
             toastr.info('Venta #'+venta.data.id+' Realizada Correctamente');
-
-
-
         }
-        //location.reload();
         socket.emit("{{setting('notificaciones.cocina')}}", venta.data.id)
         LimpiarVenta();
     }
 
     async function LimpiarVenta() {
-
         $('input[name="register_id"]').val('{{ Auth::user()->id }}');
         $('input[name="chofer_id"]').val("{{setting('ventas.chofer')}}");
         $("input[name='status_credito']").val(0);
-
-
         Categorias();
         Deliverys();
         Cliente();
@@ -2233,41 +2157,18 @@
         Estados();
         Opciones();
         Pensionados();
-
         $("[name=credito]").val(["Contado"]);
         $("[name=season]").val(["imprimir"]);
         $("[name=factura]").val(["Recibo"]);
-
         $("input[name='total']").val(0);
         $("input[name='descuento']").val(0);
         $("input[name='observacion']").val("sin observ.");
         $("input[name='subtotal']").val(0);
         $("input[name='recibido']").val(0);
         $("input[name='cambio']").val(0);
-
         micart();
-
-        //console.log("entró");
-
-
     }
-
-    // async function Nro_Factura() {
-    //     if($("input[name='factura']:checked").val()=="Factura"){
-    //             var nro_factura =await axios("{{setting('admin.url')}}api/pos/nro_factura")
-    //             $("input[name='nro_factura']").val(nro_factura)
-    //             console.log("Si entré")
-
-    //     }
-    //     else{
-    //         var nro_factura=null;
-    //         $("input[name='nro_factura']").val(nro_factura)
-
-    //     }
-    // }
-
     $('#category').on('change', async function() {
-
         if (this.value == 0) {
             $.ajax({
                 url: "{{ setting('admin.url') }}api/pos/productos/",
@@ -2286,29 +2187,20 @@
                     }
                 }
             });
-            // toastr.success('Todos los Productos');
         } else {
-            // console.log('categoria haere')
             var products = await axios("{{ setting('admin.url') }}api/pos/productos/category/"+this.value)
-            // $.ajax({
-            //     url: "{{ setting('admin.url') }}api/pos/productos/category/"+this.value,
-            //     dataType: "json",
-            //     success: function (response) {
-                    $('#s').find('option').remove().end();
-                    $('#s').append($('<option>', {
-                        value: null,
-                        text: 'Elige un Producto'
-                    }));
-                    for (let index = 0; index < products.data.length; index++) {
-                        $('#s').append($('<option>', {
-                            value: products.data[index].id,
-                            text: products.data[index].categoria.abreviatura+'-'+products.data[index].name+'-'+products.data[index].precio+'-'+products.data[index].stock
-                        }));
-                    }
-            //     }
-            // });
+            $('#s').find('option').remove().end();
+            $('#s').append($('<option>', {
+                value: null,
+                text: 'Elige un Producto'
+            }));
+            for (let index = 0; index < products.data.length; index++) {
+                $('#s').append($('<option>', {
+                    value: products.data[index].id,
+                    text: products.data[index].categoria.abreviatura+'-'+products.data[index].name+'-'+products.data[index].precio+'-'+products.data[index].stock
+                }));
+            }
         }
-
     });
 
     function mitotal() {
@@ -2350,159 +2242,124 @@
         $("#miresult").attr("hidden", true)
         var total = 0;
         var micart_temp = JSON.parse(localStorage.getItem('micart'));
-
         $("#micart tr#0").remove();
-        // var mirep = false;
-        // for (let index = 0; index < micart.length; index++) {
-        //     if(micart[index].id == id){
-        //         mirep = true;
-        //         break;
-        //     }
-        // }
-        // if(mirep){
-        //     toastr.error("Producto ya Registrado");
-        // }else{
-
-            // var miproducto = await axios("{{ setting('admin.url') }}api/pos/producto/"+id)
-            // console.log(miproducto.data)
-            var newcode = Math.floor(1000 + Math.random() * 9000);
-            $.ajax({
-                url: "{{ setting('admin.url') }}api/pos/producto/"+id,
-                dataType: "json",
-                success: function (response) {
-                    var miimage =response.image ? response.image : "{{ setting('productos.imagen_default') }}"
-                    var producto_aux=response;
-                    if('{{setting('ventas.stock')}}'){
-                        console.log(producto_aux)
-                        if (response.mixta == 1 ) {
-                            $('#mixtos').attr("hidden",false);
-                            var micategory = $('#category').val();
-                            console.log(micategory)
-                            $.ajax({
-                                url: "{{ setting('admin.url') }}api/pos/producto/mixto/0/"+micategory,
-                                dataType: "json",
-                                success: function (response) {
+        var newcode = Math.floor(1000 + Math.random() * 9000);
+        $.ajax({
+            url: "{{ setting('admin.url') }}api/pos/producto/"+id,
+            dataType: "json",
+            success: function (response) {
+                var miimage =response.image ? response.image : "{{ setting('productos.imagen_default') }}"
+                var producto_aux=response;
+                if('{{setting('ventas.stock')}}'){
+                    console.log(producto_aux)
+                    if (response.mixta == 1 ) {
+                        $('#mixtos').attr("hidden",false);
+                        var micategory = $('#category').val();
+                        console.log(micategory)
+                        $.ajax({
+                            url: "{{ setting('admin.url') }}api/pos/producto/mixto/0/"+micategory,
+                            dataType: "json",
+                            success: function (response) {
+                                $('#mixta1').append($('<option>', {
+                                    value: null,
+                                    text: 'Elige una Mitad'
+                                }));
+                                for (let index = 0; index < response.length; index++) {
                                     $('#mixta1').append($('<option>', {
-                                        value: null,
-                                        text: 'Elige una Mitad'
+                                        value: response[index].id,
+                                        text: response[index].name
                                     }));
-                                    for (let index = 0; index < response.length; index++) {
-                                        $('#mixta1').append($('<option>', {
-                                            value: response[index].id,
-                                            text: response[index].name
-                                        }));
-                                    }
+                                }
+                                $('#mixta2').append($('<option>', {
+                                    value: null,
+                                    text: 'Elige una Mitad'
+                                }));
+                                for (let index = 0; index < response.length; index++) {
                                     $('#mixta2').append($('<option>', {
-                                        value: null,
-                                        text: 'Elige una Mitad'
+                                        value: response[index].id,
+                                            //text: response[index].name + ' '+ response[index].precio + ' Bs.'
+                                            text: response[index].name
                                     }));
-                                    for (let index = 0; index < response.length; index++) {
-                                        $('#mixta2').append($('<option>', {
-                                            value: response[index].id,
-                                             //text: response[index].name + ' '+ response[index].precio + ' Bs.'
-                                             text: response[index].name
-                                        }));
-                                    }
                                 }
-                            });
-                        } else {
-                            console.log('NO EXTRA')
-                            $('#mixtos').attr("hidden",true);
-                            var vencimiento=response.vencimiento ? response.vencimiento: 1 ;
-                            if((response.stock >= 1 && CalculoDiasRestantes(response.vencimiento)>0)||(vencimiento==1 && response.stock >= 1 )){
-                                console.log('CON STOCK')
-                                if(response.stock <= '{{setting('ventas.minimo_stock')}}')
-                                {
-                                    toastr.error("Solo quedan: "+response.stock+" "+response.name +" ");
-                                }
-                                var description=null;
-                                // if(response.extra){
-                                //     $("#micart").append("<tr id="+newcode+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+miimage+"></td><td>"+response.name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+newcode+")' id='observacion_"+newcode+"'></td><td><a class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+", "+response.id+","+newcode+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+newcode+"' onchange='updateprice("+response.id+","+newcode+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+","+newcode+")' value='1' min='1' max='"+response.stock+"' id='cant_"+newcode+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+newcode+"' readonly></td><td><a class='btn btn-sm btn-danger' onclick='midelete("+newcode+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
-                                // }
-                                // else{
-                                //     $("#micart").append("<tr id="+newcode+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+miimage+"></td><td>"+response.name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+newcode+")' id='observacion_"+newcode+"'></td><td></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+newcode+"' onchange='updateprice("+response.id+","+newcode+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+","+newcode+")' value='1' min='1' max='"+response.stock+"' id='cant_"+newcode+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+newcode+"' readonly></td><td><a class='btn btn-sm btn-danger' onclick='midelete("+newcode+")'><i class='voyager-trash'></i>Quitar</a></td></tr>");
-                                // }
+                            }
+                        });
+                    } else {
+                        $('#mixtos').attr("hidden",true);
+                        var vencimiento=response.vencimiento ? response.vencimiento: 1 ;
+                        if((response.stock >= 1 && CalculoDiasRestantes(response.vencimiento)>0)||(vencimiento==1 && response.stock >= 1 )){
+                            if(response.stock <= '{{setting('ventas.minimo_stock')}}')
+                            {
+                                toastr.error("Solo quedan: "+response.stock+" "+response.name +" ");
+                            }else{
                                 var temp = {'code':newcode, 'id': response.id, 'image': miimage, 'name': response.name, 'precio': response.precio, 'precio_inicial':response.precio, 'cant': 1, 'total': response.precio, 'description': '', 'extra':response.extra, 'extras':response.extras, 'extra_name':'', 'observacion':''}
                                 micart_temp.push(temp)
                                 localStorage.setItem('micart', JSON.stringify(micart_temp))
                                 micart()
                                 toastr.success(response.name+" - REGISTRADO")
-
-                            }
-                            else{
-                                if(response.stock<1){
-                                    toastr.error("No existe el producto: "+response.name +" en Stock");
-                                }
-                                if(CalculoDiasRestantes(response.vencimiento)<=0){
-                                    toastr.error("El producto: "+response.name +" está vencido");
-                                }
                             }
                         }
-                    } else {
-                        if (response.mixta == 1 ) {
-                            $('#mixtos').attr("hidden",false);
-                            $('#mixta1').find('option').remove().end();
-                            $('#mixta2').find('option').remove().end();
-                            $("#category").val(response.categoria_id).change();
-                            localStorage.setItem('miproduct', JSON.stringify(response))
-                            var micategory = $('#category').val();
-                            $.ajax({
-                                url: "{{ setting('admin.url') }}api/pos/producto/mixto/0/"+micategory,
-                                dataType: "json",
-                                success: function (response) {
-                                    $('#mixta1').append($('<option>', {
-                                        value: null,
-                                        text: 'Elige un Mitad'
-                                    }));
-                                    for (let index = 0; index < response.length; index++) {
-                                        $('#mixta1').append($('<option>', {
-                                            value: response[index].id,
-                                             text: response[index].name
-                                        }));
-                                    }
-                                    $('#mixta2').append($('<option>', {
-                                        value: null,
-                                        text: 'Elige un Mitad'
-                                    }));
-                                    for (let index = 0; index < response.length; index++) {
-                                        $('#mixta2').append($('<option>', {
-                                            value: response[index].id,
-                                             text: response[index].name
-                                        }));
-                                    }
-                                }
-                            });
-                        } else {
-                            $('#mixtos').attr("hidden",true);
-                            // var description=null;
-                            // if(response.extra){
-                                // $("#micart").append("<tr id="+newcode+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+miimage+"></td><td>"+response.name+"</td><td><input class='form-control' type='text'  onchange='updateobservacion("+response.id+","+newcode+")' id='observacion_"+newcode+"'></td><td><a class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+response.extras+", "+response.id+","+newcode+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+newcode+"' onchange='updateprice("+response.id+","+newcode+")'></td><td><input class='form-control' type='number' onchange='updatecant("+response.id+","+newcode+")' onclick='updatecant("+response.id+","+newcode+")' value='1' min='1'  id='cant_"+newcode+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+newcode+"' readonly></td><td><a class='btn btn-sm btn-danger' onclick='midelete("+newcode+")'><i class='voyager-trash'></i></a></td></tr>");
-
-                            // }else{
-                                // $("#micart").append("<tr id="+newcode+"><td>"+response.id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+miimage+"></td><td>"+response.name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+response.id+","+newcode+")' id='observacion_"+newcode+"'></td><td></td><td><input class='form-control' type='number' value='"+response.precio+"' id='precio_"+newcode+"' onchange='updateprice("+response.id+","+newcode+")'></td><td><input class='form-control' type='number' onclick='updatecant("+response.id+","+newcode+")' value='1' min='1'  id='cant_"+newcode+"'></td><td><input class='form-control' type='number' value='"+response.precio+"' id='total_"+newcode+"' readonly></td><td><a  class='btn btn-sm btn-danger' onclick='midelete("+newcode+")'><i class='voyager-trash'></i></a></td></tr>");
-                            // }
-                            var nuevoprecio=0;
-                            if((response.categoria_id==8)||(response.categoria_id==1)){
-                                nuevoprecio=Math.ceil(response.precio*(1-parseFloat("{{setting('ventas.promo_martes')}}")))
+                        else{
+                            if(response.stock<1){
+                                toastr.error("No existe el producto: "+response.name +" en Stock");
                             }
-                            else{
-                                nuevoprecio=response.precio
+                            if(CalculoDiasRestantes(response.vencimiento)<=0){
+                                toastr.error("El producto: "+response.name +" está vencido");
                             }
-                            console.log(response.categoria_id)
-                            var temp = {'code': newcode, 'id': response.id, 'image': miimage, 'name': response.name, 'precio': nuevoprecio, 'precio_inicial':nuevoprecio, 'cant': 1, 'total': nuevoprecio, 'description': '', 'extra':response.extra, 'extras':response.extras, 'extra_name':'', 'observacion':''}
-                            micart_temp.push(temp);
-                            localStorage.setItem('micart', JSON.stringify(micart_temp))
-                            // micart()
-                            // mitotal()
-                            micart()
-                            toastr.success(response.name+" - REGISTRADO")
                         }
-                        // micart()
                     }
-
+                } else {
+                    if (response.mixta == 1 ) {
+                        $('#mixtos').attr("hidden",false);
+                        $('#mixta1').find('option').remove().end();
+                        $('#mixta2').find('option').remove().end();
+                        $("#category").val(response.categoria_id).change();
+                        localStorage.setItem('miproduct', JSON.stringify(response))
+                        var micategory = $('#category').val();
+                        $.ajax({
+                            url: "{{ setting('admin.url') }}api/pos/producto/mixto/0/"+micategory,
+                            dataType: "json",
+                            success: function (response) {
+                                $('#mixta1').append($('<option>', {
+                                    value: null,
+                                    text: 'Elige un Mitad'
+                                }));
+                                for (let index = 0; index < response.length; index++) {
+                                    $('#mixta1').append($('<option>', {
+                                        value: response[index].id,
+                                            text: response[index].name
+                                    }));
+                                }
+                                $('#mixta2').append($('<option>', {
+                                    value: null,
+                                    text: 'Elige un Mitad'
+                                }));
+                                for (let index = 0; index < response.length; index++) {
+                                    $('#mixta2').append($('<option>', {
+                                        value: response[index].id,
+                                            text: response[index].name
+                                    }));
+                                }
+                            }
+                        });
+                    } else {
+                        $('#mixtos').attr("hidden",true);
+                        var nuevoprecio=0;
+                        if((response.categoria_id==8)||(response.categoria_id==1)){
+                            nuevoprecio=Math.ceil(response.precio*(1-parseFloat("{{setting('ventas.promo_martes')}}")))
+                        }
+                        else{
+                            nuevoprecio=response.precio
+                        }
+                        console.log(response.categoria_id)
+                        var temp = {'code': newcode, 'id': response.id, 'image': miimage, 'name': response.name, 'precio': nuevoprecio, 'precio_inicial':nuevoprecio, 'cant': 1, 'total': nuevoprecio, 'description': '', 'extra':response.extra, 'extras':response.extras, 'extra_name':'', 'observacion':''}
+                        micart_temp.push(temp);
+                        localStorage.setItem('micart', JSON.stringify(micart_temp))
+                        micart()
+                        toastr.success(response.name+" - REGISTRADO")
+                    }
                 }
-            });
-        // }
+            }
+        });
     }
 
     function midelete(id) {
@@ -2582,48 +2439,25 @@
     }
 
     async function updateprice(id,code) {
-
-
         updatecant(id,code);
-        // var milist = JSON.parse(localStorage.getItem('micart'));
-        // var newlist = [];
-        // for (let index = 0; index < milist.length; index++) {
-        //     if (milist[index].id == id) {
-
-        //         var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'description': milist[index].description ,'precio': parseInt($("#precio_"+id).val()), 'cant': milist[index].cant, 'total': milist[index].precio * milist[index].cant};
-        //         newlist.push(temp);
-
-        //     }else{
-        //         var temp = {'id': milist[index].id, 'image': milist[index].image, 'name': milist[index].name, 'description': milist[index].description , 'precio': milist[index].precio, 'cant': milist[index].cant, 'total': milist[index].precio, 'total':  milist[index].total};
-        //         newlist.push(temp);
-        //     }
-        // }
-
-
-        // localStorage.setItem('micart', JSON.stringify(newlist));
-        // var milist = JSON.parse(localStorage.getItem('micart'));
-        // var total = parseFloat(milist[id].precio).toFixed(2) * parseInt(milist[id].cant);
-        // $("#total_"+id).val(parseFloat(total).toFixed(2));
-        //mitotal();
     }
-
 
     function micart(){
         $("#micart tbody tr").remove();
         var milist = JSON.parse(localStorage.getItem('micart'));
-            if(milist.length == 0){
-                $("#micart").append("<tr id=0><td colspan='4'> <img class='img-responsive img-sm' src={{ setting('admin.url') }}storage/231-2317260_an-empty-shopping-cart-viewed-from-the-side.png></td></tr>");
-            }else{
-                for (let index = 0; index < milist.length; index++) {
-                    if(milist[index].extra){
-                        $("#micart").append("<tr id="+milist[index].code+"><td>"+milist[index].id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+milist[index].image+"></td><td>"+milist[index].name+"<br>"+milist[index].description+"<br>"+milist[index].extra_name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+milist[index].id+","+milist[index].code+")' value='"+milist[index].observacion+"' id='observacion_"+milist[index].code+"'></td><td><a  class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+milist[index].extras+", "+milist[index].id+","+milist[index].code+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+milist[index].precio+"' id='precio_"+milist[index].code+"' onchange='updateprice("+milist[index].id+","+milist[index].code+")'></td><td><input class='form-control' type='number' onchange='updatecant("+milist[index].id+","+milist[index].code+")' onclick='updatecant("+milist[index].id+","+milist[index].code+")' value='"+milist[index].cant+"' id='cant_"+milist[index].code+"'></td><td><input class='form-control' type='number' value='"+milist[index].total+"' id='total_"+milist[index].code+"' readonly></td><td><a class='btn btn-sm btn-danger' onclick='midelete("+milist[index].code+")'><i class='voyager-trash'></i></a></td></tr>");
-                    }
-                    else{
-                         $("#micart").append("<tr id="+milist[index].code+"><td>"+milist[index].id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+milist[index].image+"></td><td>"+milist[index].name+"<br>"+milist[index].description+"<br>"+milist[index].extra_name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+milist[index].id+","+milist[index].code+")' value='"+milist[index].observacion+"' id='observacion_"+milist[index].code+"'></td><td></td><td><input class='form-control' type='number' value='"+milist[index].precio+"' id='precio_"+milist[index].code+"' onchange='updateprice("+milist[index].id+","+milist[index].code+")'></td><td><input class='form-control' type='number'  onchange='updatecant("+milist[index].id+","+milist[index].code+")' onclick='updatecant("+milist[index].id+","+milist[index].code+")' value='"+milist[index].cant+"' id='cant_"+milist[index].code+"'></td><td><input class='form-control' type='number' value='"+milist[index].total+"' id='total_"+milist[index].code+"' readonly></td><td><a class='btn btn-sm btn-danger' onclick='midelete("+milist[index].code+")'><i class='voyager-trash'></i></a></td></tr>");
-                    }
+        if(milist.length == 0){
+            $("#micart").append("<tr id=0><td colspan='4'> <img class='img-responsive img-sm' src={{ setting('admin.url') }}storage/231-2317260_an-empty-shopping-cart-viewed-from-the-side.png></td></tr>");
+        }else{
+            for (let index = 0; index < milist.length; index++) {
+                if(milist[index].extra){
+                    $("#micart").append("<tr id="+milist[index].code+"><td>"+milist[index].id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+milist[index].image+"></td><td>"+milist[index].name+"<br>"+milist[index].description+"<br>"+milist[index].extra_name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+milist[index].id+","+milist[index].code+")' value='"+milist[index].observacion+"' id='observacion_"+milist[index].code+"'></td><td><a  class='btn btn-sm btn-success'  data-toggle='modal' data-target='#modal-lista_extras' onclick='addextra("+milist[index].extras+", "+milist[index].id+","+milist[index].code+")'><i class='voyager-plus'></i></a></td><td><input class='form-control' type='number' value='"+milist[index].precio+"' id='precio_"+milist[index].code+"' onchange='updateprice("+milist[index].id+","+milist[index].code+")'></td><td><input class='form-control' type='number' onchange='updatecant("+milist[index].id+","+milist[index].code+")' onclick='updatecant("+milist[index].id+","+milist[index].code+")' value='"+milist[index].cant+"' id='cant_"+milist[index].code+"'></td><td><input class='form-control' type='number' value='"+milist[index].total+"' id='total_"+milist[index].code+"' readonly></td><td><a class='btn btn-sm btn-danger' onclick='midelete("+milist[index].code+")'><i class='voyager-trash'></i></a></td></tr>");
                 }
-                mitotal();
+                else{
+                        $("#micart").append("<tr id="+milist[index].code+"><td>"+milist[index].id+"</td><td> <img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+milist[index].image+"></td><td>"+milist[index].name+"<br>"+milist[index].description+"<br>"+milist[index].extra_name+"</td><td><input class='form-control' type='text' onchange='updateobservacion("+milist[index].id+","+milist[index].code+")' value='"+milist[index].observacion+"' id='observacion_"+milist[index].code+"'></td><td></td><td><input class='form-control' type='number' value='"+milist[index].precio+"' id='precio_"+milist[index].code+"' onchange='updateprice("+milist[index].id+","+milist[index].code+")'></td><td><input class='form-control' type='number'  onchange='updatecant("+milist[index].id+","+milist[index].code+")' onclick='updatecant("+milist[index].id+","+milist[index].code+")' value='"+milist[index].cant+"' id='cant_"+milist[index].code+"'></td><td><input class='form-control' type='number' value='"+milist[index].total+"' id='total_"+milist[index].code+"' readonly></td><td><a class='btn btn-sm btn-danger' onclick='midelete("+milist[index].code+")'><i class='voyager-trash'></i></a></td></tr>");
+                }
             }
+            mitotal();
+        }
     }
 
     $("#micart").on('keyup', function (e) {
