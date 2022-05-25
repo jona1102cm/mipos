@@ -301,8 +301,9 @@
                                                     <th>#</th>
                                                     <th>Imagen</th>
                                                     <th>Categoria</th>
-                                                    <th>Producto</th>
-                                                    <th>Nombre Genérico</th>
+                                                    <th>N. Comercial</th>
+                                                    <th>N. Genérico</th>
+                                                    <th>Etiqueta</th>
                                                     <th>Stock</th>
                                                     <th>Vencimiento</th>
                                                     <th>Precio</th>
@@ -1322,7 +1323,7 @@
                 var img = miresult.data[index].image ? miresult.data[index].image : "{{ setting('productos.imagen_default') }}"
                 var nombre_genérico= miresult.data[index].title ? miresult.data[index].title : " "
                 var vencimiento = miresult.data[index].vencimiento ? miresult.data[index].vencimiento : " "
-                $('#mitableresult').append("<tr><td>"+miresult.data[index].id+"</td><td><img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+img+"></td><td>"+miresult.data[index].categoria.name+"</td><td>"+miresult.data[index].name+"</td><td>"+nombre_genérico+"</td><td>"+miresult.data[index].stock+"</td><td>"+vencimiento+"</td><td>"+miresult.data[index].precio+"</td><td><a class='btn btn-sm btn-success' onclick='addproduct("+miresult.data[index].id+")'>Agregar</a></td></tr>")
+                $('#mitableresult').append("<tr><td>"+miresult.data[index].id+"</td><td><img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+img+"></td><td>"+miresult.data[index].categoria.name+"</td><td>"+miresult.data[index].name+"</td><td>"+nombre_genérico+"</td><td>"+miresult.data[index].etiqueta+"</td><td>"+miresult.data[index].stock+"</td><td>"+vencimiento+"</td><td>"+miresult.data[index].precio+"</td><td><a class='btn btn-sm btn-success' onclick='addproduct("+miresult.data[index].id+")'>Agregar</a></td></tr>")
             }
         }
     });
