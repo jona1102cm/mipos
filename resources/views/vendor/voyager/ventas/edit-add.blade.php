@@ -1104,15 +1104,20 @@
         });
 
     function CalculoDiasRestantes(fecha_final){
-        var today=new Date();
-        var fechaInicio =   today.toISOString().split('T')[0];
-        var fechaFin    = fecha_final;
-        var fi=fechaInicio.toString();
-        var ff=fechaFin.toString();
-        var fechai = new Date(fi).getTime();
-        var fechaf    = new Date(ff).getTime();
-        var diff = fechaf - fechai;
-        return (diff/(1000*60*60*24));
+        if(fecha_final!=null){
+            var today=new Date();
+            var fechaInicio =   today.toISOString().split('T')[0];
+            var fechaFin    = fecha_final;
+            var fi=fechaInicio.toString();
+            var ff=fechaFin.toString();
+            var fechai = new Date(fi).getTime();
+            var fechaf    = new Date(ff).getTime();
+            var diff = fechaf - fechai;
+            return (diff/(1000*60*60*24));
+        }
+        else{
+            return null;
+        }
     }
 
     async function micliente() {
@@ -1131,17 +1136,17 @@
         }
     }
 
-    function CalculoDiasRestantes(fecha_final){
-        var today=new Date();
-        var fechaInicio =   today.toISOString().split('T')[0];
-        var fechaFin    = fecha_final;
-        var fi=fechaInicio.toString();
-        var ff=fechaFin.toString();
-        var fechai = new Date(fi).getTime();
-        var fechaf    = new Date(ff).getTime();
-        var diff = fechaf - fechai;
-        return (diff/(1000*60*60*24));
-    }
+    // function CalculoDiasRestantes(fecha_final){
+    //     var today=new Date();
+    //     var fechaInicio =   today.toISOString().split('T')[0];
+    //     var fechaFin    = fecha_final;
+    //     var fi=fechaInicio.toString();
+    //     var ff=fechaFin.toString();
+    //     var fechai = new Date(fi).getTime();
+    //     var fechaf    = new Date(ff).getTime();
+    //     var diff = fechaf - fechai;
+    //     return (diff/(1000*60*60*24));
+    // }
 
     async function Categorias() {
         $('#category').find('option').remove().end();
@@ -2291,20 +2296,23 @@
                             if(response.stock <= '{{setting('ventas.minimo_stock')}}')
                             {
                                 toastr.error("Solo quedan: "+response.stock+" "+response.name +" ");
-                            }else{
+                            }
+                            //else{
                                 var temp = {'code':newcode, 'id': response.id, 'image': miimage, 'name': response.name, 'precio': response.precio, 'precio_inicial':response.precio, 'cant': 1, 'total': response.precio, 'description': '', 'extra':response.extra, 'extras':response.extras, 'extra_name':'', 'observacion':''}
                                 micart_temp.push(temp)
                                 localStorage.setItem('micart', JSON.stringify(micart_temp))
                                 micart()
                                 toastr.success(response.name+" - REGISTRADO")
-                            }
+                            //}
                         }
                         else{
                             if(response.stock<1){
                                 toastr.error("No existe el producto: "+response.name +" en Stock");
                             }
                             if(CalculoDiasRestantes(response.vencimiento)<=0){
-                                toastr.error("El producto: "+response.name +" está vencido");
+                                if(response.vencimiento!=null){
+                                    toastr.error("El producto: "+response.name +" está vencido");
+                                }
                             }
                         }
                     }
