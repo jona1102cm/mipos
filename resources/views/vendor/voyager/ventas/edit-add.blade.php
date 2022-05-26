@@ -292,14 +292,16 @@
 
                             @else
                                 <div class="form-group col-lg-9 col-md-8 col-sm-12">
+                                    <strong> en el criterio de busqueda, NO ingresar caracteres especiales como ser: #, %</strong>
                                     <input type="search" id="misearch" class="form-control" placeholder="Ingresa un criterio de busqueda, QR o codigo de barra">
                                     <div>
-                                    <div id="miresult" hidden>
-                                        <table class="table table-responsive" id="mitableresult">
+                                    <div id="miresult" class="table-responsive" hidden>
+                                        <table class="table" id="mitableresult">
                                             <thead>
                                                 <tr>
-                                                    <th>#</th>
-                                                    <th>Imagen</th>
+                                                    {{-- <th>#</th> --}}
+                                                    <th>Accion</th>
+                                                    {{-- <th>Imagen</th> --}}
                                                     <th>Categoria</th>
                                                     <th>N. Comercial</th>
                                                     <th>N. Genérico</th>
@@ -308,7 +310,7 @@
                                                     <th>Vencimiento</th>
                                                     <th>Precio</th>
                                                     <th>Laboratorio</th>
-                                                    <th>Accion</th>
+
                                                 </tr>
                                             </thead>
                                             <tbody></tbody>
@@ -832,6 +834,7 @@
 
                     </ul>
                     <div class="tab-content">
+                        <h4>al ingresar los datos del nuevo cliente, NO ingresar caracteres espieciales como ser: #, %</h4>
                         <div role="tabpanel" class="tab-pane active" id="home">
                             <div class="form-group col-sm-6">
                                 <label for="">Nombres</label>
@@ -1315,8 +1318,10 @@
             event.preventDefault();
             toastr.info('buscando '+this.value)
             var micaja = JSON.parse(localStorage.getItem('micaja'));
-
-            var miresult = await axios.get("{{setting('admin.url')}}api/search/"+this.value+"/"+micaja.sucursal_id)
+            var minew = this.value
+            minew = minew.replace('%', '')
+            minew = minew.replace('#', '')
+            var miresult = await axios.get("{{setting('admin.url')}}api/search/"+minew+"/"+micaja.sucursal_id)
             $("#mitableresult tbody tr").remove()
             $("#miresult").attr("hidden", false)
             for(let index=0; index < miresult.data.length; index++){
@@ -1331,7 +1336,7 @@
                 var nombre_genérico= miresult.data[index].title ? miresult.data[index].title : " "
                 var vencimiento = miresult.data[index].vencimiento ? miresult.data[index].vencimiento : " "
                 var laboratorio= miresult.data[index].laboratorio_id ? miresult.data[index].laboratorio.name : " "
-                $('#mitableresult').append("<tr><td>"+miresult.data[index].id+"</td><td><img class='img-thumbnail img-sm img-responsive' src={{ setting('admin.url') }}storage/"+img+"></td><td>"+miresult.data[index].categoria.name+"</td><td>"+miresult.data[index].name+"</td><td>"+nombre_genérico+"</td><td>"+miresult.data[index].etiqueta+"</td><td>"+miresult.data[index].stock+"</td><td>"+vencimiento+"</td><td>"+miresult.data[index].precio+"</td><td>"+laboratorio+"</td><td><a class='btn btn-sm btn-success' onclick='addproduct("+miresult.data[index].id+")'>Agregar</a></td></tr>")
+                $('#mitableresult').append("<tr><td><a class='btn btn-xs btn-dark' onclick='addproduct("+miresult.data[index].id+")'>Agregar</a></td><td>"+miresult.data[index].categoria.name+"</td><td>"+miresult.data[index].name+"</td><td>"+nombre_genérico+"</td><td>"+miresult.data[index].etiqueta+"</td><td>"+miresult.data[index].stock+"</td><td>"+vencimiento+"</td><td>"+miresult.data[index].precio+"</td><td>"+laboratorio+"</td></tr>")
             }
         }
     });
@@ -1660,14 +1665,20 @@
         var pago=$("input[name='pago']:checked").val();
         var micaja = JSON.parse(localStorage.getItem('micaja'));
         var concepto = $('#concepto').val();
+        // var minew = micart[index].name
+        var micon = concepto.replace('#', '')
+        micon = micon.replace('%', '')
         var monto = $('#monto').val();
         var type = $('#type option:selected').val();
         var caja_id = micaja.caja_id;
         var editor_id = '{{ Auth::user()->id }}';
-        var midata = JSON.stringify({caja_id: caja_id, type: type, monto: monto, editor_id: editor_id, concepto: concepto, pago:pago});
-        console.log(midata);
+
+        var midata = JSON.stringify({caja_id: caja_id, type: type, monto: monto, editor_id: editor_id, concepto: micon, pago:pago});
+        // console.log(midata);
+        var miurl = "{{ setting('admin.url') }}api/pos/asiento/save/"+midata
+        console.log(miurl)
         $.ajax({
-            url: "{{ setting('admin.url') }}api/pos/asiento/save/"+midata,
+            url: miurl,
             dataType: "json",
             success: function (response) {
                 // console.log(response);
@@ -2095,7 +2106,11 @@
                 case '2':
 
                     for (let index = 0; index < micart.length; index++) {
-                        var midata2 = JSON.stringify({'producto_id': micart[index].id, 'venta_id': venta.data.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'name':micart[index].name, 'foto':micart[index].foto, 'description': micart[index].description, 'extra_name':micart[index].extra_name, 'observacion':micart[index].observacion});
+                        var minew = micart[index].name
+                        minew = minew.replace('#', '')
+                        minew = minew.replace('%', '')
+                        var midata2 = JSON.stringify({'producto_id': micart[index].id, 'venta_id': venta.data.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'name': minew, 'foto':micart[index].foto, 'description': micart[index].description, 'extra_name':micart[index].extra_name, 'observacion':micart[index].observacion});
+
                         var venta_detalle = await axios.get("{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata2)
                         $("#micart tr#"+micart[index].id).remove();
                         mitotal();
@@ -2127,7 +2142,10 @@
                     break;
                 default:
                     for (let index = 0; index < micart.length; index++) {
-                        var midata2 = JSON.stringify({'producto_id': micart[index].id, 'venta_id': venta.data.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'name':micart[index].name, 'foto':micart[index].foto, 'description': micart[index].description, 'extra_name':micart[index].extra_name, 'observacion':micart[index].observacion});
+                        var minew = micart[index].name
+                        minew = minew.replace('%', '')
+                        minew = minew.replace('#', '')
+                        var midata2 = JSON.stringify({'producto_id': micart[index].id, 'venta_id': venta.data.id, 'precio': micart[index].precio, 'cantidad': micart[index].cant, 'total': micart[index].total, 'name': minew, 'foto':micart[index].foto, 'description': micart[index].description, 'extra_name':micart[index].extra_name, 'observacion':micart[index].observacion});
                         var impresion="{{ setting('admin.url') }}api/pos/ventas/save/detalle/"+midata2
                         //console.log(impresion)
                         var venta_detalle = await axios.get(impresion)
