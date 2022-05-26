@@ -27,7 +27,8 @@ class ProductsImport implements ToModel
         //     'stock'=> $row[9],
         // ]);
 
-        $fecha=date('Y-m-d', strtotime($row[6]));
+        //$fecha=date('Y-m-d', strtotime($row[6]));
+        $fecha= $row[6] ? date('Y-m-d', $row[6]) : null;
         echo $fecha;
         return new Producto([
             'name'     => $row[0],
