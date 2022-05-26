@@ -29,7 +29,7 @@ class ProductsImport implements ToModel
 
         //$fecha=date('Y-m-d', strtotime($row[6]));
         $fecha= $row[6] ? date('Y-m-d', $row[6]) : null;
-        echo $fecha;
+        //echo $fecha;
         return new Producto([
             'name'     => $row[0],
             'title'    => $row[1],
@@ -38,7 +38,7 @@ class ProductsImport implements ToModel
             'laboratorio_id'=> $row[4],
             'precio_compra'=> $row[5],
             'vencimiento'=> $fecha,
-            'stock'=> $stock[7],
+            'stock'=> $row[7],
             'categoria_id'=> $row[8],
             'sucursal_id'=>1
         ]);

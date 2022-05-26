@@ -181,7 +181,7 @@ Route::get('option/{id}', function ($id) {
 });
 
 Route::get('search/{criterio}/{sucursal}', function ($criterio, $sucursal) {
-    $result = Producto::where('sucursal_id',$sucursal)->where('name', 'like', '%'.$criterio.'%')->orWhere('title', 'like', '%'.$criterio.'%')->orWhere('etiqueta', 'like', '%'.$criterio.'%')->orderBy('name', 'desc')->with('categoria')->get();
+    $result = Producto::where('sucursal_id',$sucursal)->where('name', 'like', '%'.$criterio.'%')->orWhere('title', 'like', '%'.$criterio.'%')->orWhere('etiqueta', 'like', '%'.$criterio.'%')->orderBy('name', 'desc')->with('categoria','laboratorio')->get();
     return $result;
 });
 

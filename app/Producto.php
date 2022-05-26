@@ -41,6 +41,10 @@ class Producto extends Model
     {
         return $this->belongsTo(Categoria::class, 'categoria_id');
     }
+    public function laboratorio()
+    {
+        return $this->belongsTo(Laboratorio::class, 'laboratorio_id');
+    }
     public function presentacion()
     {
         return $this->belongsTo(Presentacione::class, 'presentacion_id');
